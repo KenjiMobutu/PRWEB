@@ -32,6 +32,7 @@
     public function get_creator_id(){
       return $this->get_creator_id;
     }
+    
     //retourne le tricount par son id
     public static get_by_id($id){
       $query = self::execute("SELECT * FROM tricounts WHERE ID = :id", array("id"=>$id));
@@ -39,7 +40,7 @@
         if ($query->rowCount() == 0) {
             return false;
         } else {
-            return new User($data["ID"],$data["Mail"],$data["FullName"],$data["Title"],$data["Password"],$data["RegisteredAt"],$data["Birthdate"],$data["Role"]);
+            return new User($data["ID"],$data["title "],$data["description"],$data["created_at"],$data["creator"]);
         }
     }
 
