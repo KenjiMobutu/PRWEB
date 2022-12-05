@@ -16,24 +16,24 @@
       $this->creator = $creator;
     }
     //retourne l'id du tricount
-    public function get_id(){
+    public function get_id():int{
       return $this->id;
     }
     //retourne le titre du tricount
-    public function get_title(){
+    public function get_title():String{
       return $this->title;
     }
     //retourne la description
-    public function get_description(){
+    public function get_description():String{
       return $this->description;
     }
     //retourne la date de création
-    public function get_created_at(){
+    public function get_created_at():datetime{
       return $this->get_created_at;
     }
 
     //retourne l'id du créateur
-    public function get_creator_id(){
+    public function get_creator_id():int{
       return $this->get_creator_id;
     }
 
@@ -89,7 +89,8 @@
       }
       return $this;
     }
-    public function delete ($id): void{
+
+    public function delete ($id){
       Repartition_template::delete_by_tricount($tricount);
       Operation::delete_by_tricount($tricount);
       Participation::delete_by_tricount($tricount);
