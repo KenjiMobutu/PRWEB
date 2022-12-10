@@ -1,0 +1,65 @@
+/* MENU */
+* {
+    margin: 0;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
+.navbar {
+    width: 100%;
+    height: 50px;
+    background-color: rgb(18 102 241);
+}
+
+.navbar-container {
+    display: flex;
+    align-items: center;
+    padding: 0;
+    height: 100%;
+    color: white;
+}
+
+.logo-container {
+    flex: 3;
+    margin-left: 20px;
+}
+
+.logo {
+    font-family: 'Sen', sans-serif;
+}
+
+.menu-container {
+    flex: 9;
+}
+
+.menu-list {
+    display: flex;
+    list-style: none;
+    justify-content: flex-end;
+}
+
+.errors {
+    color: red;
+}
+
+.success {
+    color: green;
+}
+
+.menu-list-item a {
+    text-decoration: none;
+    margin: 20px;
+    float: right;
+    align-self: center;
+    color: #FFFFFF;
+}
+
+/* LOGIN PAGE  */
+
+
+
+/* SIGNUP PAGE  */
+
+/* PROFILE  */
