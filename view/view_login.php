@@ -20,10 +20,11 @@
     </div>
 <body>
     <div class="page">
-
         <div class="form">
-                
             <form action="main/login" method="post">
+            <div class="login-title">
+                    <h2>Log in</h2>
+                </div>
                 <table>
                     <tr>
                         <td><input class="sign" id="mail" name="mail" placeholder="example@email.com" type="email" value="<?= $mail ?>"></td>
@@ -32,8 +33,11 @@
                         <td><input class="sign" id="password" placeholder="Password" name="password" type="password" value="<?= $password ?>"></td>
                     </tr>
                 </table>
-                <input class="login-button" type="submit" value="Log In">
-                <a class="login-icon" href="main/signup">SIGNUP
+                <input class="login-button" type="submit" value="Log In"><br>
+                <div class="sign-link">
+                    <a class="login-icon" href="main/signup">Or sign up
+                </div>
+                
             </form>
             <?php if (count($errors) != 0) : ?>
                 <div class='errors'>

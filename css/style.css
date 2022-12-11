@@ -1,10 +1,12 @@
 /* MENU */
 * {
     margin: 0;
+    
 }
 
 body {
     font-family: 'Roboto', sans-serif;
+    width: auto;
 }
 
 .navbar {
@@ -23,7 +25,7 @@ body {
 
 .logo-container {
     flex: 3;
-    margin-left: 20px;
+    margin-left: 1em;
 }
 
 .logo {
@@ -58,8 +60,234 @@ body {
 
 /* LOGIN PAGE  */
 
+.form{
+    position: relative;
+    box-shadow: 0px 0px 8px 5px rgba(0, 0, 0, .4);
+    padding: 55px;
+}
+
+.login-title{
+    text-align: center;
+}
+
+.page{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -50px 0 0 -50px;
+}
+
+.sign-link{
+    text-align: center;
+}
+
+input[class=sign],
+select {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+input[type=submit],
+button[type=submit] {
+    width: 100%;
+    background-color: #2511dd;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+input[type=submit]:hover {
+    background-color: #4936f0;
+    color:white;
+}
 
 
 /* SIGNUP PAGE  */
 
+.sign-up-container{
+    position: relative;
+    box-shadow: 0px 0px 8px 5px rgba(0, 0, 0, .4);
+    width: 140%;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+.signup-title h2{
+    text-align:center;
+    padding-left: 25px;
+}
+
+.signup_page{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: -50px 0 0 -50px;
+}
+
+.sign-up-container ul li{
+    list-style: none;
+}
+
+input[class=signup-form-btn]{
+    width: 85%;
+    background-color: #5e43f3;
+    color: white;
+}
+
+input[class=signup-form-items],
+select {
+    width: 85%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.cancel-sign-up-btn{
+    transition-duration: 0.4s;
+    text-align: center;
+    color: black;
+    text-decoration: none;
+    width: 85%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #da260f;
+}
+
+.cancel-sign-up-btn:hover{
+    background-color: #f44336;
+    color: white;
+}
+
 /* PROFILE  */
+
+.profile-buttons ul li{
+list-style: none;
+}
+
+.profile-buttons .edit{
+    transition-duration: 0.4s;
+    text-align: center;
+    color: black;
+    text-decoration: none;
+    width: 85%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color:white;
+    border: 2px solid #2511dd;
+}
+
+.profile-buttons .edit:hover{
+    background-color: #2511dd;
+    color: white;
+}
+
+.profile-buttons .change{
+    transition-duration: 0.4s;
+    text-align: center;
+    color: black;
+    text-decoration: none;
+    width: 85%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color:white;
+    border: 2px solid #2511dd;
+}
+
+.profile-buttons .change:hover{
+    background-color: #2511dd;
+    color: white;
+}
+
+.profile-buttons .logout{
+    transition-duration: 0.4s;
+    text-align: center;
+    color: black;
+    text-decoration: none;
+    width: 85%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    background-color: #da260f;
+}
+
+.profile-buttons .logout:hover{
+    background-color: #f44336;
+    color: white;
+}
+
+.prf-body{
+    position:relative;
+}
+
+.profile-buttons{
+    position:fixed;
+    bottom:0;
+    width:100%;
+    
+}
+
+/* media queries */
+/* Mobile*/
+@media screen and (min-width: 320px) and (max-width: 480px){
+    .navbar {
+        width: 100%;
+        height: 100%;
+        background-color: rgb(241, 100, 18);
+    }
+
+    .navbar h1{
+        text-align: left;
+        font-size: medium;
+    }
+   
+    .form{
+        top: -150px;
+        left: -120px;
+        width: 90%;
+    }
+
+    .sign-up-container{
+        top: -150px;
+        left: -90px;
+        width: 120%;
+    }
+
+    .prf-body{
+        position:relative;
+    }
+    
+    .profile-buttons{
+        position:fixed;
+        bottom: 0px;;
+        width:100%;
+    }
+} 
+
+/* tablet and large mobiles */
+@media screen and (min-width: 575px) and (max-width: 767.98px){} 

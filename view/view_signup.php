@@ -25,7 +25,7 @@
     <div class="menu">
     </div>
     <div class="signup_page">
-        <div class="sing-up-container">
+        <div class="sign-up-container">
             <form class="signup-form" method="post" action="main/signup" enctype="multipart/form-data">
                 <div class="signup-title">
                     <h2>Sign up</h2>
@@ -33,11 +33,11 @@
                 <ul>
                     <li><input class="signup-form-items" type="email" placeholder="Email" name="mail" id="mail" value="<?= $mail ?>" required></li>
                     <li><input class="signup-form-items" type="text" placeholder="Full Name" name="full_name" id="full_name" value="<?= $full_name ?>" required></li>
-                    <li><input class="signup-form-items" type="int" pattern="^[a-zA-Z]+[0-9]+(\s+([0-9]+\s+)+)[0-9]+$" placeholder="IBAN" name="iban" id="iban" value="<?= $iban ?>"></li>
-                    <li><p>Please match this format : AA99 9999 9999 9999.</p></li>
+                    <li><input class="signup-form-items" type="int" pattern="^[a-zA-Z]+[0-9]+(\s+([0-9]+\s+)+)[0-9]+$" placeholder="IBAN ex : AA99 9999 9999 9999" name="iban" id="iban" value="<?= $iban ?>"></li>
                     <li><input class="signup-form-items" type="password" placeholder="Password" name="password" id="password" value="<?= $password ?>" required></li>
                     <li><input class="signup-form-items" type="password" placeholder="Confirm Password" name="password_confirm" id="password_confirm" value="<?= $password_confirm ?>" required></li>
                     <li><input class="signup-form-btn" type="submit" value="SIGN UP"></li>
+                    <li><a class="cancel-sign-up-btn" href="main/index">CANCEL</a></li>
                 </ul>
                 
             </form>
