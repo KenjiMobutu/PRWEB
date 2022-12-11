@@ -173,17 +173,17 @@ require_once "framework/Model.php";
         public function validate(): array
         {
             $errors = [];
-            // if (isset($this->mail) && self::validateEmail($this->mail)) {
-            //     $user = self::get_user_by_mail($this->mail);
-            //     if (!is_null($user) && ($this->getUserId() !== $user->getUserId())){
-            //         $errors[] = "This email is already used.";
-            //     }
+            if (isset($this->mail) && self::validateEmail($this->mail)) {
+                $user = self::get_user_by_mail($this->mail);
+                if (!is_null($user) && self::validate_unicity($this->mail)){
+                    $errors[] = "This email is already used.";
+                }
     
-            // }
+            }
     
-            // if (!(isset($this->fullName) && strlen($this->fullName) > 3 && strlen($this->fullName) < 128)) {
-            //     $errors[] = "Full Name must be between 3 and 128.";
-            // }
+            if (!(isset($this->full_name) && strlen($this->full_name) >= 3)) {
+                $errors[] = "Full Name must be at least 3 characters.";
+            }
         
     
             return $errors;
@@ -196,14 +196,6 @@ require_once "framework/Model.php";
                 return true;
             }
             return false;
-        }
-    
-        public static function validateFullName(string $fullName): bool
-        {
-            if (!(strlen($fullName) > 3 && strlen($fullName) < 129)) {
-                return false;
-            }
-            return true;
         }
 
         private static function validate_password($password)
