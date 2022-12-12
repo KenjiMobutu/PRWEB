@@ -1,5 +1,7 @@
-//title,description,created_at,creator,id
+<!-- //title,description,created_at,creator,id -->
 <?php
+
+require_once "framework/Model.php";
   class Tricounts extends Model{
 
     public $title;//(varchar 256)
@@ -29,17 +31,17 @@
     }
     //retourne la date de création
     public function get_created_at():datetime{
-      return $this->get_created_at;
+      return $this->created_at;
     }
 
     //retourne l'id du créateur
     public function get_creator_id():int{
-      return $this->get_creator_id;
+      return $this->creator;
     }
 
     //retourne le tricount par son id
-    public static get_by_id($id){
-      $query = self::execute("SELECT * FROM tricounts WHERE ID = :id", array("id"=>$id));
+    public static function get_by_id($id){
+      $query = self::execute("SELECT * FROM tricounts WHERE id = :id", array("id"=>$id));
         $data = $query->fetch();
         if ($query->rowCount() == 0) {
             return false;
@@ -49,7 +51,7 @@
     }
 
     //retourne le tricount par son créateur
-    public static get_by_creator($creator){
+    public static function get_by_creator($creator){
       $query = self::execute("SELECT * FROM tricounts WHERE creator = :creator", array("creator"=>$creator));
         $data = $query->fetch();
         if ($query->rowCount() == 0) {
@@ -91,9 +93,9 @@
     }
 
     public function delete ($id){
-      Repartition_template::delete_by_tricount($tricount);
-      Operation::delete_by_tricount($tricount);
-      Participation::delete_by_tricount($tricount);
+      Repartition_template::delete_by_tricount($id);
+      Operation::delete_by_tricount($id);
+      Participation::delete_by_tricount($id);
       $query=self::execute("DELETE from `tricounts` where id=:id", array("id"=>$id));
       if($query->rowCount()==0)
           return false;
