@@ -14,20 +14,28 @@
 
 <body>
 <?php include 'menu.html' ?>
-    <div class="title"><?= $user->getFullName() ?>'s Tricount!</div>
+<div class="prf-body">
+<div class="title"><?= $user->getFullName() ?>'s Tricount!</div>
         <div class="profile">
             <div class="name">
-                <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Vitae facilis blanditiis, eius odit consequuntur omnis.</p>
                 <h1>PROFILEEEEEEEEEEEEEE</h1>
-                <p>fullname : </p><?php echo $user->getFullName(); ?>
-                <p>role : </p><?php echo $user->getRole(); ?>
-                <p>iban : </p><?php echo $user->getUserIban(); ?>
-                <p>user id : </p><?php echo $user->getUserId(); ?> 
+                <div>
+                    <p>Hey <?php echo $user->getFullName(); ?> !</p>
+                </div>
+                <p>I know your email address is <span style="color:#e34646"><?php echo $user->getMail(); ?></span>.</p>
+                <p>What can i do for you?</p> 
                 <!-- LE ID S'AFFICHE QUE SI ON LOGOUT ET RE LOGIN pas besoin de lui la mais pour savoir-->
-
             </div>
-
     </div>
+    <div class="profile-buttons">
+        <ul>
+            <li><a class="edit" href="">Edit profile</a></li>
+            <li><a class="change" href="">Change password</a></li>
+            <li><a class="logout" href="user/logout">Logout</a></li>
+        </ul>
+    </div>
+</div>
+    
     
 </body>
 
