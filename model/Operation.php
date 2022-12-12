@@ -5,14 +5,14 @@ class Operation extends Model
 {
 
     private int $id;
-    private String $title;
+    private string $title;
     private int $tricount;
     private ?int $amount;
     private DateTime $operation_date;
     private int $initiator;
     private Datetime $created_at;
 
-    public function __construct(int $id, String $title, int $tricount, int $amount, Datetime $operation_date, int $initiator, Datetime $created_at)
+    public function __construct(int $id, string $title, int $tricount, int $amount, Datetime $operation_date, int $initiator, Datetime $created_at)
     {
         $this->$id = $id; //tricount id
         $this->$title = $title;
@@ -35,12 +35,13 @@ class Operation extends Model
                                 (SELECT u.ID from User u where u.ID = :user),
                                 :created_at)",
             array(
-                "star" => $this->start,
-                "sto" => $this->stop,
+                "id" => $this->id,
                 "title" => $this->title,
-                "descr" => $this->description,
-                "user" => $this->user,
-                "place" => $this->placeID,
+                "tricount" => $this->tricount,
+                "amount" => $this->amount,
+                "operation_date" => $this->operation_date,
+                "initiator" => $this->initiator,
+                "created_at" => $this->created_at
             )
         );
         $this->setOperationId();
@@ -53,7 +54,7 @@ class Operation extends Model
 
     }
 
-    public function update() : Operation
+    public function update(): Operation
     {
 
         if (!is_null($this->id)) {
