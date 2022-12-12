@@ -82,21 +82,32 @@ class User extends Model
     }
 
 
-    public function delete($id)
+    // public function delete($id)
     {
-        // Repartition_template_items::delete_by_user_id($id);
-        // Repartition::delete_by_user_id($id);
-        // Operation::delete_by_user_id($id);
-        // Participation::delete_by_user_id($id);
-        // Tricount::delete_by_user_id($id);
-        $query = self::execute("DELETE from `user` where id=:id", array("id" => $id));
-        if ($query->rowCount() == 0)
-            return false;
-        else
-            return $query;
-    }
+    //     if(Repartition_template_items::delete_by_user_id($id)){
+    //         if(Repartition::delete_by_user_id($id)){
+    //             if(Operation::delete_by_user_id($id)){
+    //                 if(Participation::delete_by_user_id($id)){
+    //                     if(Tricount::delete_by_user_id($id)){
+    //                         $query = self::execute("DELETE from `user` where id=:id", array("id" => $id));
+    //                         if ($query->rowCount() == 0)
+    //                             return false;
+    //                         else
+    //                             return $query;
+    //                     }else{
+        //                         echo "problème avec la fonction delete_by_user_id du modele tricount";
+        //                     }
+        //                 }else
+        //                 echo "problème avec la fonction delete_by_user_id du modele Participation";
+        //             }else
+        //             echo "problème avec la fonction delete_by_user_id du modele operation";
+        //         }
+        //         echo "problème avec la fonction delete_by_user_id du modele repartition";
+        //     }else
+        //     echo "problème avec la fonction delete_by_user_id du modele Repartition_template_items";
+        // }
 
-    public static function get_user_by_id($id)
+    public static function get_by_id($id)
     { //récup l'user par son id
         $query = self::execute("SELECT * FROM  `users` where id=:id", array("id" => $id));
         $data = $query->fetch(); //un seul resultat max
@@ -106,7 +117,7 @@ class User extends Model
             return new User($data["id"], $data["mail"], $data["hashed_password"], $data["full_name"], $data["role"], $data["iban"]);
         }
     }
-    public static function get_user_by_mail($mail)
+    public static function get_by_mail($mail)
     { //récup l'user par son id
         $query = self::execute("SELECT * FROM  `users` where mail=:mail", array("mail" => $mail));
         $data = $query->fetch(); //un seul resultat max
@@ -117,7 +128,7 @@ class User extends Model
         }
     }
 
-    public static function get_user_by_name($full_name)
+    public static function get_by_name($full_name)
     { //récup l'user par son full_name
         $query = self::execute("SELECT * FROM  `users` where full_name=:fullname", array("fullname" => $full_name));
         $data = $query->fetch(); //un seul resultat max
@@ -141,7 +152,7 @@ class User extends Model
 
     public function update()
     {
-        if (self::get_user_by_id($this->id) != null) {
+        if (self::get_by_id($this->id) != null) {
             self::execute("UPDATE users SET 
                 mail=:mail,
                 hashed_password=:hashed_password,
@@ -186,7 +197,7 @@ class User extends Model
     public static function validate_login($mail, $hashed_password): array
     {
         $errors = [];
-        $user = User::get_user_by_mail($mail);
+        $user = User::get_by_mail($mail);
         if ($user) {
             if (!self::check_password($hashed_password, $user->hashed_password)) {
                 $errors[] = "Wrong password. Please try again.";
@@ -201,7 +212,7 @@ class User extends Model
     {
         $errors = [];
         if (isset($this->mail) && self::validateEmail($this->mail)) {
-            $user = self::get_user_by_mail($this->mail);
+            $user = self::get_by_mail($this->mail);
             if (!is_null($user) && self::validate_unicity($this->mail)) {
                 $errors[] = "This email is already used.";
             }
@@ -248,7 +259,7 @@ class User extends Model
     public static function validate_unicity($email): array
     {
         $errors = [];
-        $user = self::get_user_by_mail($email);
+        $user = self::get_by_mail($email);
         if ($user) {
             $errors[] = "This email is already used.";
         }
