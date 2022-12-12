@@ -37,7 +37,7 @@ require_once "framework/Model.php";
             }
     }
 
-    public function delete_by_tricount($tricount) ($id){
+    public function delete_by_tricount($tricount){
       // Repartition_template_items::delete_by_user_id($id);
       // Repartition::delete_by_user_id($id);
       // Operation::delete_by_user_id($id);
