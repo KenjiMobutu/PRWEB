@@ -5,7 +5,7 @@ require_once "framework/Model.php";
     public ?int $weight;
     public ?int $user;
     public ?int $repartition_templates;
-  }
+
 
   public function __construct(?int $weight,String $user,int $repartition_templates){
     $this->weight = $weight;
@@ -24,6 +24,7 @@ require_once "framework/Model.php";
           } else
             return ($data["weight"]);
   }
+}
 
 
 ?>
