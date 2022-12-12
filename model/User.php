@@ -36,16 +36,22 @@ require_once "framework/Model.php";
         {
             return $this->full_name;
         }
+        public function setFullName(string $fullname): string
+        {
+            return $this->full_name = $fullname;
+        }
+        
 
-        public function getUserIban(): string | null
+        public function getIban(): string | null
         {
             return $this->iban;
         }
 
-        public function setUserIban(string $iban): void
+        public function setIban(string $iban): void
         {
             $this->iban = $iban;
         }
+       
 
         public function setRole(string $role): void
         {
@@ -61,35 +67,28 @@ require_once "framework/Model.php";
         {
             return $this->mail;
         }
+        public function setMail(string $mail): String
+        {
+            return $this->mail = $mail;
+        }
 
         public function isAdmin(): String{
             return $this->role=="admin";
         }
 
 
-        // public function delete ($id){
-        //     if(Repartition_template_items::delete_by_user_id($id)){
-        //         if(Repartition::delete_by_user_id($id)){
-        //             if(Operation::delete_by_user_id($id)){
-        //                 if(Participation::delete_by_user_id($id)){
-        //                     if(Tricount::delete_by_user_id($id)){
-        //                         $query=self::execute("DELETE from `user` where id=:id", array("id"=>$id));
-        //                         if($query->rowCount()==0)
-        //                             return false;
-        //                         else
-        //                             return $query;
-        //                     }else{
-        //                         echo "problème avec la fonction delete_by_user_id du modele tricount";
-        //                     }
-        //                 }else
-        //                 echo "problème avec la fonction delete_by_user_id du modele Participation";
-        //             }else
-        //             echo "problème avec la fonction delete_by_user_id du modele operation";
-        //         }
-        //         echo "problème avec la fonction delete_by_user_id du modele repartition";
-        //     }else
-        //     echo "problème avec la fonction delete_by_user_id du modele Repartition_template_items";
-        // }
+        public function delete ($id){
+            // Repartition_template_items::delete_by_user_id($id);
+            // Repartition::delete_by_user_id($id);
+            // Operation::delete_by_user_id($id);
+            // Participation::delete_by_user_id($id);
+            // Tricount::delete_by_user_id($id);
+            $query=self::execute("DELETE from `user` where id=:id", array("id"=>$id));
+            if($query->rowCount()==0)
+                return false;
+            else
+                return $query;
+        }
         
         public static function get_by_id($id){//récup l'user par son id
             $query = self::execute("SELECT * FROM  `users` where id=:id", array("id"=>$id));
@@ -100,7 +99,7 @@ require_once "framework/Model.php";
                 return new User($data["id"],$data["mail"],$data["hashed_password"],$data["full_name"],$data["role"],$data["iban"]);
             }
         }
-        public static function get_by_mail($mail){//récup l'user par son id
+        public static function get_user_by_mail($mail){//récup l'user par son id
             $query = self::execute("SELECT * FROM  `users` where mail=:mail", array("mail"=>$mail));
             $data = $query->fetch();//un seul resultat max
             if($query->rowCount() == 0){
@@ -110,7 +109,7 @@ require_once "framework/Model.php";
             }
         }
 
-        public static function get_by_name($full_name){ //récup l'user par son full_name
+        public static function get_user_by_name($full_name){ //récup l'user par son full_name
             $query = self::execute("SELECT * FROM  `users` where full_name=:fullname", array("fullname"=>$full_name));
             $data = $query->fetch();//un seul resultat max
             if($query->rowCount() == 0){
@@ -170,7 +169,7 @@ require_once "framework/Model.php";
         public static function validate_login($mail, $hashed_password): array
         {
         $errors = [];
-        $user = User::get_by_mail($mail);
+        $user = User::get_user_by_mail($mail);
         if ($user) {
             if (!self::check_password($hashed_password, $user->hashed_password)) {
                 $errors[] = "Wrong password. Please try again.";
@@ -185,7 +184,7 @@ require_once "framework/Model.php";
         {
             $errors = [];
             if (isset($this->mail) && self::validateEmail($this->mail)) {
-                $user = self::get_by_mail($this->mail);
+                $user = self::get_user_by_mail($this->mail);
                 if (!is_null($user) && self::validate_unicity($this->mail)){
                     $errors[] = "This email is already used.";
                 }
@@ -232,7 +231,7 @@ require_once "framework/Model.php";
         public static function validate_unicity($email): array
         {
             $errors = [];
-            $user = self::get_by_mail($email);
+            $user = self::get_user_by_mail($email);
             if ($user) {
                 $errors[] = "This email is already used.";
             }
