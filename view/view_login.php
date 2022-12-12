@@ -51,7 +51,7 @@
                     <ul>
                         <?php foreach ($errors as $error): ?>
                         <li>
-                            <<= $error ?>
+                            <?= $error ?>
                         </li>
                         <?php endforeach; ?>
                     </ul>
