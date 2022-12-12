@@ -10,7 +10,7 @@ class ControllerProfile extends Controller
 
     // static int $first_time = 0;
 
-    public function index() :void
+    public function index(): void
     {
         $this->profile();
     }
@@ -26,7 +26,7 @@ class ControllerProfile extends Controller
         if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
             $this->redirect('main', "error");
         }
-        $user= array_key_exists('param1', $_GET) && $loggedUser->isAdmin() ?
+        $user = array_key_exists('param1', $_GET) && $loggedUser->isAdmin() ? 
             User::get_user_by_id($_GET['param1']) : $loggedUser;
 
         if (is_null($user)) {
