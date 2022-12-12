@@ -39,7 +39,7 @@ require_once "framework/Model.php";
       return $this->creator;
     }
 
-    //retourne le tricount par son id
+    //retourne le tricount par son iD
     public static function get_by_id($id){
       $query = self::execute("SELECT * FROM tricounts WHERE id = :id", array("id"=>$id));
         $data = $query->fetch();
