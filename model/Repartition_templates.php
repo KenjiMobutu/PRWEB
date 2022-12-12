@@ -24,7 +24,7 @@ require_once "framework/Model.php";
             if ($query->rowCount() == 0){
                 return null;
             } else{
-                return new User($data["id"],$data["title"],$data["tricount"]);
+                return new repartition_templates($data["id"],$data["title"],$data["tricount"]);
             }
     }
     public function get_by_tricount($tricount): int {
@@ -33,7 +33,7 @@ require_once "framework/Model.php";
             if ($query->rowCount() == 0){
                 return null;
             } else{
-                return new User($data["id"],$data["title"],$data["tricount"]);
+                return new repartition_templates($data["id"],$data["title"],$data["tricount"]);
             }
     }
 
