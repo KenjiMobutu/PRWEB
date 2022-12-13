@@ -4,11 +4,12 @@
 require_once "framework/Model.php";
   class Tricounts extends Model{
 
+    public $id;//(int)
     public $title;//(varchar 256)
     public $description;//(varchar 1024)
     public $created_at;//(datetime)
     public $creator;//(int)
-    public $id;//(int)
+
 
     public function __construct($id,$title, $description,$created_at, $creator){
       $this->id = $id;
@@ -101,6 +102,33 @@ require_once "framework/Model.php";
           return false;
       else
           return $query;
+    }
+    public function by_user($user){
+      $query = self::execute("SELECT t.title FROM `tricounts` t JOIN  subscriptions s ON t.id = s.tricount where user=:user", array("user"=>$user));
+        $data = $query->fetchAll();
+        $tricount  = [];
+        foreach ($data as $row) {
+          $tricount[] = new Tricounts($row["id"],$row["title"],$row["description"],$row["created_at"],$row["creator"]);
+        }
+        return $tricount;
+    }
+    public static function list(){
+      $query = self::execute("SELECT * FROM `tricounts`", array());
+        $data = $query->fetchAll();
+        $tricount  = [];
+        foreach ($data as $row) {
+          $tricount[] = new Tricounts($row["id"],$row["title"],$row["description"],$row["created_at"],$row["creator"]);
+        }
+        return $tricount;
+    }
+    public static function one_of_list(){
+      $query = self::execute("SELECT * FROM `tricounts`", array());
+      if ($query->rowCount() == 0) {
+        return false;
+      } else {
+        $data = $query->fetch();
+        return new Tricounts($data["id"],$data["title"],$data["description"],$data["created_at"],$data["creator"]);
+      }
     }
 
 
