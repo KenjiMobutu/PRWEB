@@ -30,8 +30,20 @@ class ControllerTricount extends Controller{
   public function add(){
     $user = $this->get_user_or_redirect();
     if (!is_null($user)) {
+      $errors = [];
       $title = '';
       $description = '';
+      $created_at = date('Y-m-d H:i:s');
+      if ((isset($_POST["title"]) && $_POST["title"]!="")&&(isset($_POST["description"])&& $_POST["description"]!="")){
+        $title = $_POST["title"];
+        $description = $_POST["description"];
+        $creator = $user->id;
+        $tricount = new Tricounts($id =NULL,$title,$description,$created_at,$creator);
+        if (count($errors) == 0) {
+          $tricount->update();
+          $this->redirect("tricount", "index");
+        }
+      }
 
       (new View("add_tricount"))->show(array("user" => $user));
     } else {
