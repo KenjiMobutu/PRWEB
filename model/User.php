@@ -110,7 +110,7 @@ require_once "framework/Model.php";
                 return new User($data["id"],$data["mail"],$data["hashed_password"],$data["full_name"],$data["role"],$data["iban"]);
             }
         }
-        public static function get_user_by_mail($mail){//récup l'user par son id
+        public static function get_by_mail($mail){//récup l'user par son id
             $query = self::execute("SELECT * FROM  `users` where mail=:mail", array("mail"=>$mail));
             $data = $query->fetch();//un seul resultat max
             if($query->rowCount() == 0){
@@ -180,7 +180,7 @@ require_once "framework/Model.php";
         public static function validate_login($mail, $hashed_password): array
         {
         $errors = [];
-        $user = User::get_user_by_mail($mail);
+        $user = User::get_by_mail($mail);
         if ($user) {
             if (!self::check_password($hashed_password, $user->hashed_password)) {
                 $errors[] = "Wrong password. Please try again.";
