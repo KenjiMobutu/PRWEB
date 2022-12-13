@@ -1,4 +1,6 @@
 <?php
+require_once "framework/Model.php";
+
     class Participations extends Model{
         public int $tricount;
         public int $user;

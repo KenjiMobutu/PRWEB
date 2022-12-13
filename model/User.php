@@ -1,5 +1,6 @@
 <?php
 require_once "framework/Model.php";
+//seul l'iban peut être null 
 
     class User extends Model{
         public ?int $id;
@@ -129,20 +130,35 @@ require_once "framework/Model.php";
             }
         }
 
+        public function update_profile(){
+            if(self::get_by_id($this->id) != null){
+                self::execute("UPDATE users 
+                    SET full_name=:full_name, 
+                    mail=:mail,
+                    iban=:iban 
+                    where id=:id", 
+                        array("id"=>$this->id,
+                        "full_name"=>$this->full_name,
+                        "mail"=>$this->mail,
+                        "iban"=>$this->iban));
+            }
+            return $this;
+        }
+
         public function update() {
             if(self::get_by_id($this->id) != null){
                 self::execute("UPDATE users SET 
                 mail=:mail,
                 hashed_password=:hashed_password,
                 full_name=:full_name,
-                Role=:role,
+                role=:role,
                 iban=:iban,
                 WHERE id=:id ",
                             array("id"=>$this->id,
                             "mail"=>$this->mail,
                             "hashed_password"=>$this->hashed_password,
                             "full_name"=>$this->full_name,
-                            "Role"=>$this->role, 
+                            "role"=>$this->role, 
                             "iban"=>$this->iban));
             }else{
                 self::execute("INSERT INTO
@@ -193,10 +209,17 @@ require_once "framework/Model.php";
     
             if (!(isset($this->full_name) && strlen($this->full_name) >= 3)) {
                 $errors[] = "Full Name must be at least 3 characters.";
-            }
-        
+            }       
     
             return $errors;
+        }
+
+        public static function validateFullName($full_name) : bool
+        {
+            if(strlen($full_name) >= 3 ){
+                return false;
+            }
+            return true;
         }
     
     
@@ -242,6 +265,19 @@ require_once "framework/Model.php";
         public static function check_password(string $clear_password, string $hash): bool
         {
             return $hash === Tools::my_hash($clear_password);
+        }
+        
+        public static function validate_iban($iban):bool{
+            $pattern = '[a-zA-Z]+[0-9]+\s[0-9]+\s[0-9]+\s[0-9]+';
+            str_replace(' ','',$iban);
+            //si il n'est pas vide
+            if(!is_null($iban)){
+                if (!preg_match($pattern, $iban)) {
+                    return false;
+                }
+                return true;
+            }
+            return true;
         }
 
     }

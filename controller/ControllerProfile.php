@@ -37,41 +37,42 @@ class ControllerProfile extends Controller
    {
        /** @var User $loggedUser */
        $loggedUser = $this->get_user_or_redirect();
+       $errors = [];
+
        if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
            $this->redirect('main', "error");
        }
+
        $user = array_key_exists('param1', $_GET) && $loggedUser->isAdmin() ? 
            User::get_by_id($_GET['param1']) : $loggedUser;
-       $errors = [];
        $success = array_key_exists('param2', $_GET) && $_GET['param2'] === 'ok' ? 
            "Your profile has been successfully updated." : "";
 
 
        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if(array_key_exists("fullName", $_POST)){
+                if(User::validateFullName($_POST["fullName"])){
+                    $errors[] = "Your name is incorrect";
+                }
+            }
 
-           if (
-               array_key_exists("mail", $_POST)
-               && array_key_exists("fullName", $_POST)
-               && array_key_exists("title", $_POST)
-           ) {
-               $mail = $_POST["mail"];
-               $fullName = $_POST["fullName"];
-               $title = $_POST["iban"];
-           } else {
-               $this->redirect('main', "error");
-           }
+            if ( array_key_exists("mail", $_POST) ) {
+                if(!User::validateEmail($_POST["mail"]))
+                    $errors[] = "wrong mail";
+            }
+            
 
-           $user->setMail($mail);
-           $user->setFullName($fullName);
-           $user->setIban($title);
+            if(array_key_exists("iban", $_POST) &&(!is_null($_POST["iban"]))){
+                if(User::validate_iban($_POST["iban"])){
+                    $errors[] = "The current iban is incorrect";
+                }
+            }
+            
 
-
-           $errors = $user->validate();
-
-           if (empty($errors)) {
-               $user->update();
-               $this->redirect("profile", "edit_profile", $user->getUserId(), "ok");
-           }
+            if (empty($errors)) {
+                $user->update_profile();
+                $this->redirect("user", "profile", $user->getUserId(), "ok");
+            }
        }
 
 

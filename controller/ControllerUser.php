@@ -30,7 +30,7 @@ class ControllerUser extends Controller
             $this->redirect('main', "error");
         }
         $user= array_key_exists('param1', $_GET) && $loggedUser->isAdmin() ?
-            User::get_user_by_id($_GET['param1']) : $loggedUser;
+            User::get_by_id($_GET['param1']) : $loggedUser;
 
         if (is_null($user)) {
             $user = $loggedUser;
