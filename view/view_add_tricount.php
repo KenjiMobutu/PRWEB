@@ -35,7 +35,7 @@
                 Add new Tricount
             </div>
             <div class="right">
-                <a href="tricount/add" class="headerButton goBack" >
+                <a href="tricount/add" class="headerButton goBack"  >
                     <ion-icon name="save-outline"></ion-icon>
                 </a>
             </div>
@@ -46,7 +46,7 @@
     <div class="section mt-2 mb-2">
             <div class="card">
                 <div class="card-body">
-                    <form>
+                    <form id="addTricount" action="tricount/add" method="post">
                         <div class="form-group boxed">
                             <div class="input-wrapper">
                                 <label class="label" for="text4b">Title</label>
@@ -60,7 +60,7 @@
                                 <textarea id="textarea4b" name="description" rows="2" class="form-control" placeholder="Your description here!"></textarea>
                             </div>
                         </div>
-
+                        <button type="submit" value="add" class="btn">Add</button>
                     </form>
                 </div>
             </div>
