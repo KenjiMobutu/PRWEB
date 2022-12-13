@@ -425,37 +425,6 @@ select {
   color: #FFF;
 }
 
-.appHeader.bg-primary, .appHeader.bg-secondary, .appHeader.bg-success, .appHeader.bg-warning, .appHeader.bg-danger, .appHeader.bg-info, .appHeader.bg-light, .appHeader.bg-dark {
-  border: 0;
-}
-
-.appHeader.bg-primary:before {
-  background: #6236FF !important;
-}
-
-.appHeader.bg-secondary:before {
-  background: #8494A8 !important;
-}
-
-.appHeader.bg-success:before {
-  background: #1DCC70 !important;
-}
-
-.appHeader.bg-warning:before {
-  background: #FFB400 !important;
-}
-
-.appHeader.bg-danger:before {
-  background: #FF396F !important;
-}
-
-.appHeader.bg-info:before {
-  background: #05D0A4 !important;
-}
-
-.appHeader.bg-dark:before {
-  background: #222 !important;
-}
 .extraHeader {
   position: fixed;
   left: 0;
