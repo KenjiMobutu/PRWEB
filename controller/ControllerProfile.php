@@ -40,7 +40,6 @@ class ControllerProfile extends Controller
        $errors = [];
 
        if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
-           $this->redirect('main', "error");
        }
 
        $user = array_key_exists('param1', $_GET) && $loggedUser->isAdmin() ? 
@@ -51,26 +50,28 @@ class ControllerProfile extends Controller
 
        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if(array_key_exists("fullName", $_POST)){
-                if(User::validateFullName($_POST["fullName"])){
+                if(User::validateFullName($_POST["fullName"]) == false){
                     $errors[] = "Your name is incorrect";
                 }
+            }else{
+                $this->redirect('main', "error");
             }
 
             if ( array_key_exists("mail", $_POST) ) {
-                if(!User::validateEmail($_POST["mail"]))
+                if(User::validateEmail($_POST["mail"]) == false)
                     $errors[] = "wrong mail";
+            }else{
+                $this->redirect('main', "error");
             }
-            
-
-            if(array_key_exists("iban", $_POST) &&(!is_null($_POST["iban"]))){
-                if(User::validate_iban($_POST["iban"])){
-                    $errors[] = "The current iban is incorrect";
-                }
-            }
-            
-
+            $updatedUser = new User($user->id,$_POST["mail"],$user->hashed_password, $_POST["fullName"], $user->role,$_POST["iban"]);
+            // if(array_key_exists("iban", $_POST) &&(!is_null($_POST["iban"]))){
+            //     if(User::validate_iban($_POST["iban"])){
+            //         $errors[] = "The current iban is incorrect";
+            //     }
+            // }
             if (empty($errors)) {
-                $user->update_profile();
+                
+                $updatedUser->update_profile($_POST["mail"], $_POST["fullName"], $_POST["iban"]);
                 $this->redirect("user", "profile", $user->getUserId(), "ok");
             }
        }

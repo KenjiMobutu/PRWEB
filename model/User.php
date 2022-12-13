@@ -52,7 +52,8 @@ require_once "framework/Model.php";
         {
             $this->iban = $iban;
         }
-       
+
+               
 
         public function setRole(string $role): void
         {
@@ -110,7 +111,7 @@ require_once "framework/Model.php";
             }
         }
 
-        public static function get_by_name($full_name){ //récup l'user par son full_name
+        public static function get_user_by_name($full_name){ //récup l'user par son full_name
             $query = self::execute("SELECT * FROM  `users` where full_name=:fullname", array("fullname"=>$full_name));
             $data = $query->fetch();//un seul resultat max
             if($query->rowCount() == 0){
@@ -130,7 +131,7 @@ require_once "framework/Model.php";
             }
         }
 
-        public function update_profile(){
+        public function update_profile($full_name, $mail,$iban){
             if(self::get_by_id($this->id) != null){
                 self::execute("UPDATE users 
                     SET full_name=:full_name, 
@@ -138,9 +139,9 @@ require_once "framework/Model.php";
                     iban=:iban 
                     where id=:id", 
                         array("id"=>$this->id,
-                        "full_name"=>$this->full_name,
-                        "mail"=>$this->mail,
-                        "iban"=>$this->iban));
+                        "full_name"=>$full_name,
+                        "mail"=>$mail,
+                        "iban"=>$iban));
             }
             return $this;
         }
@@ -154,12 +155,13 @@ require_once "framework/Model.php";
                 role=:role,
                 iban=:iban,
                 WHERE id=:id ",
-                            array("id"=>$this->id,
+                            array(
                             "mail"=>$this->mail,
                             "hashed_password"=>$this->hashed_password,
                             "full_name"=>$this->full_name,
                             "role"=>$this->role, 
-                            "iban"=>$this->iban));
+                            "iban"=>$this->iban,
+                            "id"=>$this->id));
             }else{
                 self::execute("INSERT INTO
                  `users`(mail,
@@ -216,7 +218,7 @@ require_once "framework/Model.php";
 
         public static function validateFullName($full_name) : bool
         {
-            if(strlen($full_name) >= 3 ){
+            if(strlen($full_name) <= 3 ){
                 return false;
             }
             return true;
@@ -267,18 +269,18 @@ require_once "framework/Model.php";
             return $hash === Tools::my_hash($clear_password);
         }
         
-        public static function validate_iban($iban):bool{
-            $pattern = '[a-zA-Z]+[0-9]+\s[0-9]+\s[0-9]+\s[0-9]+';
-            str_replace(' ','',$iban);
-            //si il n'est pas vide
-            if(!is_null($iban)){
-                if (!preg_match($pattern, $iban)) {
-                    return false;
-                }
-                return true;
-            }
-            return true;
-        }
+        // public static function validate_iban($iban):bool{
+        //     $pattern = '^[a-zA-Z]+[0-9]+(\s+([0-9]+\s+)+)[0-9]+$';
+        //     str_replace(' ','',$iban);
+        //     //si il n'est pas vide
+        //     if(!is_null($iban)){
+        //         if (!preg_match($pattern, $iban)) {
+        //             return false;
+        //         }
+        //         return true;
+        //     }
+        //     return true;
+        // }
 
     }
 ?>

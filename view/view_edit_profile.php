@@ -18,13 +18,12 @@
     <div class="title">
             <?= $user->getFullName() ?>
     </div>
-    <!-- pour faire des var_dump -->
-    <!-- <?php  
+    <?php  
                 // var_dump(filter_var($user->getMail(), FILTER_VALIDATE_EMAIL));
 
                 // var_dump($user->getIban());
                 // var_dump($user->getMail())
-    ?> -->
+    ?>
     <div class="edit_profile">
         <div class="chprof-form-items">
                 <!-- Form pour collecter les données du user -->
@@ -39,18 +38,24 @@
 
                 <!-- récup son iban (peut être null) -->
                 <label for="iban">IBAN:</label><br>
-                <input type="text" id="iban" name="iban" value="<?php echo $user->getIban(); ?>"><br><br>
+                <input type="text" id="iban" name="iban" pattern = '/^[a-zA-Z]+[0-9]+(\s+([0-9]+\s+)+)[0-9]+$/' value="<?php echo $user->getIban(); ?>"><br><br>
 
                 <!-- Submit button to send the form data -->
-                <input type="submit" value="Update">
+                
+                <input type="submit" value="<?= $user->id?>">submit
+                <?php
+                    
+                ?>
             </form>
             <a href="profile/change_password">change your password</a>
+            
             <?php if (count($errors) != 0): ?>
             <div class='errors'>
                 <p>Please correct the following error(s) :</p>
                 <ul>
                     <?php foreach ($errors as $error): ?>
                     <li>
+                        
                         <?= $error ?>
                     </li>
                     <?php endforeach; ?>
