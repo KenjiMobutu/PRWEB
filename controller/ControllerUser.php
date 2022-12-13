@@ -7,7 +7,7 @@ require_once 'model/User.php';
 class ControllerUser extends Controller
 {
 
-    //page d'accueil. 
+    //page d'accueil.
     public function index() :void
     {
         if (isset($_GET["param1"])) {

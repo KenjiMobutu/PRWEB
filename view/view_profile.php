@@ -38,7 +38,7 @@
                 </div>
             </div>
             <div class="profile-buttons">
-                <ul>
+                <ul><li><a class="create" href="Tricount/index">Tricount list</a></li>
                     <li><a class="create" href="">Create tricount</a></li>
                     <li><a class="edit" href="Profile/edit_profile"<?php $user->id ?>>Edit profile</a></li>
                     <li><a class="change" href="">Change password</a></li>
