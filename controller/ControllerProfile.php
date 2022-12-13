@@ -20,16 +20,10 @@ class ControllerProfile extends Controller
     /**
      * @throws Exception
      */
-    public function profile()
-    {
+    public function profile() {
         $user = $this->get_user_or_redirect();
-        if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
-            $this->redirect('main', "error");
-        }
-        $user = array_key_exists('param1', $_GET);
-
-
-        (new View("profile"))->show(array("user" => $user)); //show may throw Exception
+        
+        (new View("profile"))->show(array("user" => $user));//show may throw Exception
     }
 
     public function change_password()
