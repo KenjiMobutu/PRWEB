@@ -17,7 +17,7 @@ require_once "framework/Model.php";
   }
 
   public function get_weight_by_user($user): int {
-    $query = self::execute("SELECT weight FROM  `repartition_templates` where tricount=:tricount", array("tricount"=>$tricount));
+    $query = self::execute("SELECT weight FROM  `Repartition_template_items` where user=:user", array("user"=>$user));
           $data = $query->fetch();//un seul resultat max
           if ($query->rowCount() == 0){
               return null;

@@ -93,9 +93,9 @@ require_once "framework/Model.php";
     }
 
     public function delete ($id){
-      Repartition_template::delete_by_tricount($id);
-      Operation::delete_by_tricount($id);
-      Participation::delete_by_tricount($id);
+      // Repartition_template::delete_by_tricount($id);
+      // Operation::delete_by_tricount($id);
+      // Participation::delete_by_tricount($id);
       $query=self::execute("DELETE from `tricounts` where id=:id", array("id"=>$id));
       if($query->rowCount()==0)
           return false;
