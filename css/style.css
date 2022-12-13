@@ -314,6 +314,8 @@ select {
 .section.full {
   padding: 0;
 }
+
+
 /* HEADER */
 .appHeader {
   height: 56px;
@@ -507,6 +509,16 @@ select {
   100% {
     transform: rotate(180deg);
   }
+}
+.card {
+  margin-top: 5em;
+  background: #ffffff;
+  border-radius: 10px;
+  border: 0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.09);
+}
+.card .card-body {
+  padding: 16px;
 }
 
 
