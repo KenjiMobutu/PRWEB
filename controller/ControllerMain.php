@@ -40,7 +40,7 @@ class ControllerMain extends Controller
 
             $errors = User::validate_login($mail, $password);
             if (empty($errors)) {
-                $this->log_user(User::get_user_by_mail($mail));
+                $this->log_user(User::get_by_mail($mail));
             }
         }
         (new View("login"))->show(array("mail" => $mail, "password" => $password, "errors" => $errors));
@@ -64,7 +64,7 @@ class ControllerMain extends Controller
                 array_key_exists('password_confirm', $_POST) &&
                 array_key_exists('full_name', $_POST) &&
                 array_key_exists('iban', $_POST)
-                
+
             ) {
 
                 $mail = $_POST['mail'];
@@ -72,9 +72,9 @@ class ControllerMain extends Controller
                 $password_confirm = $_POST['password_confirm'];
                 $full_name = $_POST['full_name'];
                 $iban = $_POST['iban'];
-                
+
                 $newUser = new User($id = null,$mail,Tools::my_hash($password), $full_name,$role='user', $iban);
-                
+
                 $errors = User::validate_passwords($password, $password_confirm);
                 $errors = array_merge($errors, $newUser->validate());
                 if (empty($errors)) {
