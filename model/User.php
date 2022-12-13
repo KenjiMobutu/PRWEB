@@ -21,9 +21,9 @@ require_once "framework/Model.php";
             $this->id = $id;
             $this->mail = $mail;
             $this->hashed_password = $hashed_password;
-            $this->full_name = $full_name; 
-            $this->role = self::ROLE_USER;        
-            $this->iban = $iban;        
+            $this->full_name = $full_name;
+            $this->role = self::ROLE_USER;
+            $this->iban = $iban;
         }
 
         //retourne l'id de l'utilisateur
@@ -90,7 +90,7 @@ require_once "framework/Model.php";
         //     }else
         //     echo "problème avec la fonction delete_by_user_id du modele Repartition_template_items";
         // }
-        
+
         public static function get_by_id($id){//récup l'user par son id
             $query = self::execute("SELECT * FROM  `users` where id=:id", array("id"=>$id));
             $data = $query->fetch();//un seul resultat max
@@ -132,7 +132,7 @@ require_once "framework/Model.php";
 
         public function update() {
             if(self::get_by_id($this->id) != null){
-                self::execute("UPDATE users SET 
+                self::execute("UPDATE users SET
                 mail=:mail,
                 hashed_password=:hashed_password,
                 full_name=:full_name,
@@ -143,13 +143,13 @@ require_once "framework/Model.php";
                             "mail"=>$this->mail,
                             "hashed_password"=>$this->hashed_password,
                             "full_name"=>$this->full_name,
-                            "Role"=>$this->role, 
+                            "Role"=>$this->role,
                             "iban"=>$this->iban));
             }else{
                 self::execute("INSERT INTO
                  `users`(mail,
-                 hashed_password, 
-                 full_name, 
+                 hashed_password,
+                 full_name,
                  role,
                  iban)
                 VALUES(:mail,
@@ -160,12 +160,12 @@ require_once "framework/Model.php";
                 array("mail"=>$this->mail,
                         "hashed_password"=>$this->hashed_password,
                         "full_name"=>$this->full_name,
-                        "role"=>$this->role, 
+                        "role"=>$this->role,
                         "iban"=>$this->iban));
             }
             return $this;
         }
-       
+
         //VALIDATIONS
         public static function validate_login($mail, $hashed_password): array
         {
@@ -189,18 +189,18 @@ require_once "framework/Model.php";
                 if (!is_null($user) && self::validate_unicity($this->mail)){
                     $errors[] = "This email is already used.";
                 }
-    
+
             }
-    
+
             if (!(isset($this->full_name) && strlen($this->full_name) >= 3)) {
                 $errors[] = "Full Name must be at least 3 characters.";
             }
-        
-    
+
+
             return $errors;
         }
-    
-    
+
+
         public static function validateEmail($email): bool
         {
             if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -220,7 +220,7 @@ require_once "framework/Model.php";
             }
             return $errors;
         }
-    
+
         public static function validate_passwords($password, $password_confirm)
         {
             $errors = User::validate_password($password);
@@ -238,11 +238,21 @@ require_once "framework/Model.php";
             }
             return $errors;
         }
-    
+
         //indique si un mot de passe correspond à son hash
         public static function check_password(string $clear_password, string $hash): bool
         {
             return $hash === Tools::my_hash($clear_password);
+        }
+
+        public function list_by_user() :array{
+            $query = self::execute("SELECT * FROM `tricounts` t JOIN  subscriptions s ON t.id = s.tricount where user=:user", array("user"=>$this->id));
+            $data = $query->fetchAll();
+            if ($query->rowCount() == 0) {
+                return false;
+            } else {
+                return new Tricounts($data["ID"],$data["title "],$data["description"],$data["created_at"],$data["creator"]);
+            }
         }
 
     }
