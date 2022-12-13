@@ -36,16 +36,22 @@ require_once "framework/Model.php";
         {
             return $this->full_name;
         }
+        public function setFullName(string $fullname): string
+        {
+            return $this->full_name = $fullname;
+        }
+        
 
-        public function getUserIban(): string | null
+        public function getIban(): string | null
         {
             return $this->iban;
         }
 
-        public function setUserIban(string $iban): void
+        public function setIban(string $iban): void
         {
             $this->iban = $iban;
         }
+       
 
         public function setRole(string $role): void
         {
@@ -60,6 +66,10 @@ require_once "framework/Model.php";
         public function getMail(): String
         {
             return $this->mail;
+        }
+        public function setMail(string $mail): String
+        {
+            return $this->mail = $mail;
         }
 
         public function isAdmin(): String{
@@ -80,7 +90,7 @@ require_once "framework/Model.php";
                 return $query;
         }
         
-        public static function get_user_by_id($id){//récup l'user par son id
+        public static function get_by_id($id){//récup l'user par son id
             $query = self::execute("SELECT * FROM  `users` where id=:id", array("id"=>$id));
             $data = $query->fetch();//un seul resultat max
             if ($query->rowCount() == 0){
@@ -120,7 +130,7 @@ require_once "framework/Model.php";
         }
 
         public function update() {
-            if(self::get_user_by_id($this->id) != null){
+            if(self::get_by_id($this->id) != null){
                 self::execute("UPDATE users SET 
                 mail=:mail,
                 hashed_password=:hashed_password,
