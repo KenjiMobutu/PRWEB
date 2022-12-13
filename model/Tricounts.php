@@ -46,7 +46,7 @@ require_once "framework/Model.php";
         if ($query->rowCount() == 0) {
             return false;
         } else {
-            return new User($data["ID"],$data["title "],$data["description"],$data["created_at"],$data["creator"]);
+            return new Tricounts($data["id"],$data["title "],$data["description"],$data["created_at"],$data["creator"]);
         }
     }
 
@@ -57,7 +57,7 @@ require_once "framework/Model.php";
         if ($query->rowCount() == 0) {
             return false;
         } else {
-            return new User($data["ID"],$data["title "],$data["description"],$data["created_at"],$data["creator"]);
+            return new Tricounts($data["ID"],$data["title "],$data["description"],$data["created_at"],$data["creator"]);
         }
     }
 
