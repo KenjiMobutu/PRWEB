@@ -42,7 +42,6 @@
                     <input class="login-button" type="submit" value="Log In"><br>
                     <div class="sign-link">
                         <a class="login-icon" href="main/signup">Or sign up</a>
-                            
                     </div>
 
                 </form>
