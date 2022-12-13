@@ -36,16 +36,22 @@ require_once "framework/Model.php";
         {
             return $this->full_name;
         }
+        public function setFullName(string $fullname): string
+        {
+            return $this->full_name = $fullname;
+        }
 
-        public function getUserIban(): string | null
+
+        public function getIban(): string | null
         {
             return $this->iban;
         }
 
-        public function setUserIban(string $iban): void
+        public function setIban(string $iban): void
         {
             $this->iban = $iban;
         }
+
 
         public function setRole(string $role): void
         {
@@ -60,6 +66,10 @@ require_once "framework/Model.php";
         public function getMail(): String
         {
             return $this->mail;
+        }
+        public function setMail(string $mail): String
+        {
+            return $this->mail = $mail;
         }
 
         public function isAdmin(): String{
@@ -110,7 +120,7 @@ require_once "framework/Model.php";
             }
         }
 
-        public static function get_by_name($full_name){ //récup l'user par son full_name
+        public static function get_user_by_name($full_name){ //récup l'user par son full_name
             $query = self::execute("SELECT * FROM  `users` where full_name=:fullname", array("fullname"=>$full_name));
             $data = $query->fetch();//un seul resultat max
             if($query->rowCount() == 0){
@@ -185,7 +195,7 @@ require_once "framework/Model.php";
         {
             $errors = [];
             if (isset($this->mail) && self::validateEmail($this->mail)) {
-                $user = self::get_by_mail($this->mail);
+                $user = self::get_user_by_mail($this->mail);
                 if (!is_null($user) && self::validate_unicity($this->mail)){
                     $errors[] = "This email is already used.";
                 }
@@ -232,7 +242,7 @@ require_once "framework/Model.php";
         public static function validate_unicity($email): array
         {
             $errors = [];
-            $user = self::get_by_mail($email);
+            $user = self::get_user_by_mail($email);
             if ($user) {
                 $errors[] = "This email is already used.";
             }
