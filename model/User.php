@@ -83,7 +83,7 @@ class User extends Model
 
 
     // public function delete($id)
-    {
+    // {
     //     if(Repartition_template_items::delete_by_user_id($id)){
     //         if(Repartition::delete_by_user_id($id)){
     //             if(Operation::delete_by_user_id($id)){
