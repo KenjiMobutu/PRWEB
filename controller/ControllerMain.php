@@ -21,11 +21,11 @@ class ControllerMain extends Controller
 
     public function error()
     {
-        /** @var User $loggedUser */
-        $loggedUser = $this->get_user_or_redirect();
+        /** @var User $user */
+        $user = $this->get_user_or_redirect();
 
         $error = "YOU CANNOT ACCESS THIS RESOURCE!";
-        (new View("error"))->show(["loggedUser" => $loggedUser, "error" => $error]);
+        (new View("error"))->show(["user" => $user, "error" => $error]);
     }
 
 

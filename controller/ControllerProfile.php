@@ -13,6 +13,7 @@ class ControllerProfile extends Controller
     public function index(): void
     {
         $this->profile();
+
     }
 
     //profil de l'utilisateur connecté ou donné
@@ -27,8 +28,6 @@ class ControllerProfile extends Controller
             $this->redirect('main', "error");
         }
         $user = array_key_exists('param1', $_GET);
-
-
         (new View("profile"))->show(array("user" => $user)); //show may throw Exception
     }
 
