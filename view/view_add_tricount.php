@@ -51,7 +51,7 @@
                         <div class="form-group boxed">
                             <div class="input-wrapper">
                                 <label class="label" for="text4b">Title</label>
-                                <input type="text" class="form-control" id="text4b" placeholder="Title">
+                                <input type="text" class="form-control" id="text4b" placeholder="Your Title here!">
                             </div>
                         </div>
 
