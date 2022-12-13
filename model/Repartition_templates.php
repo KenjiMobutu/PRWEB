@@ -31,16 +31,18 @@ class Repartition_templates extends Model
     } else {
       return new repartition_templates($data["id"], $data["title"], $data["tricount"]);
     }
-    public function get_by_tricount($tricount): int {
-      $query = self::execute("SELECT * FROM  `repartition_templates` where tricount=:tricount", array("tricount"=>$tricount));
-            $data = $query->fetch();//un seul resultat max
-            if ($query->rowCount() == 0){
-                return null;
-            } else{
-                return new User($data["id"],$data["title"],$data["tricount"]);
-            }
+  }
+  public function get_by_tricount($tricount): int
+  {
+    $query = self::execute("SELECT * FROM  `repartition_templates` where tricount=:tricount", array("tricount" => $tricount));
+    $data = $query->fetch(); //un seul resultat max
+    if ($query->rowCount() == 0) {
+      return null;
+    } else {
+      return new User($data["id"], $data["title"], $data["tricount"]);
     }
   }
+
 
   public function delete_by_tricount($tricount)
   {
