@@ -83,7 +83,7 @@ class User extends Model
 
 
     // public function delete($id)
-    // {
+    {
     //     if(Repartition_template_items::delete_by_user_id($id)){
     //         if(Repartition::delete_by_user_id($id)){
     //             if(Operation::delete_by_user_id($id)){
@@ -95,17 +95,17 @@ class User extends Model
     //                         else
     //                             return $query;
     //                     }else{
-    //                         echo "problème avec la fonction delete_by_user_id du modele tricount";
-    //                     }
-    //                 }else
-    //                 echo "problème avec la fonction delete_by_user_id du modele Participation";
-    //             }else
-    //             echo "problème avec la fonction delete_by_user_id du modele operation";
-    //         }
-    //         echo "problème avec la fonction delete_by_user_id du modele repartition";
-    //     }else
-    //     echo "problème avec la fonction delete_by_user_id du modele Repartition_template_items";
-    // }
+        //                         echo "problème avec la fonction delete_by_user_id du modele tricount";
+        //                     }
+        //                 }else
+        //                 echo "problème avec la fonction delete_by_user_id du modele Participation";
+        //             }else
+        //             echo "problème avec la fonction delete_by_user_id du modele operation";
+        //         }
+        //         echo "problème avec la fonction delete_by_user_id du modele repartition";
+        //     }else
+        //     echo "problème avec la fonction delete_by_user_id du modele Repartition_template_items";
+        // }
 
     public static function get_by_id($id)
     { //récup l'user par son id
@@ -148,20 +148,6 @@ class User extends Model
         } else {
             return new User($data["id"], $data["mail"], $data["hashed_password"], $data["full_name"], $data["role"], $data["iban"]);
         }
-    }
-
-    public function update_password()
-    {
-        if (self::get_by_id($this->id) != null) {
-            self::execute("UPDATE users SET 
-                hashed_password=:hashed_password WHERE id=:id ",
-                array(
-                    "hashed_password" => $this->hashed_password,
-                    "id" => $this->id
-                )
-            );
-        }
-        return $this;
     }
 
     public function update()
