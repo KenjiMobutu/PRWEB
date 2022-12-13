@@ -30,6 +30,8 @@ class ControllerTricount extends Controller{
   public function add(){
     $user = $this->get_user_or_redirect();
     if (!is_null($user)) {
+      $title = '';
+      $description = '';
 
       (new View("add_tricount"))->show(array("user" => $user));
     } else {

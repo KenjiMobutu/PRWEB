@@ -20,7 +20,7 @@
 
     <body>
         <!-- loader -->
-        <div id="loader">
+        <div id="loaders">
             <img src="css/img/loading-icon.png" alt="icon" class="loading-icon">
         </div>
         <!-- * loader -->

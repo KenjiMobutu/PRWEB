@@ -47,18 +47,17 @@
             <div class="card">
                 <div class="card-body">
                     <form>
-
                         <div class="form-group boxed">
                             <div class="input-wrapper">
                                 <label class="label" for="text4b">Title</label>
-                                <input type="text" class="form-control" id="text4b" placeholder="Your Title here!">
+                                <input type="text" name="title" class="form-control" id="text4b" placeholder="Your Title here!">
                             </div>
                         </div>
 
                         <div class="form-group boxed">
                             <div class="input-wrapper">
                                 <label class="label" for="textarea4b">Description (optional)</label>
-                                <textarea id="textarea4b" rows="2" class="form-control" placeholder="Your description here!"></textarea>
+                                <textarea id="textarea4b" name="description" rows="2" class="form-control" placeholder="Your description here!"></textarea>
                             </div>
                         </div>
 
