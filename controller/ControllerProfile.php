@@ -22,14 +22,19 @@ class ControllerProfile extends Controller
      */
     public function profile()
     {
-        $user = $this->get_user_or_redirect();
+        $loggedUser = $this->get_user_or_redirect();
         if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
             $this->redirect('main', "error");
         }
-        $user= array_key_exists('param1', $_GET);
+        $user= array_key_exists('param1', $_GET) && $loggedUser->isAdmin() ?
+            User::get_by_id($_GET['param1']) : $loggedUser;
 
-        (new View("profile"))->show(array("user"=> $user)); //show may throw Exception
-   }
+        if (is_null($user)) {
+            $user = $loggedUser;
+        }
+        (new View("profile"))->show(array("loggedUser" => $loggedUser, "user" => $user)); //show may throw Exception
+   
+    }
         
     
 
@@ -65,17 +70,17 @@ class ControllerProfile extends Controller
                 //         $errors[] = "Bad Iban";
                 //     }
                 // }
-                $updatedUser = new User($user->id,
-                            $_POST["mail"],
-                            $user->hashed_password,
-                            $_POST["fullName"], 
-                            $user->role,
-                            $_POST["iban"]);
+                // $updatedUser = new User($user->id,
+                //             $_POST["mail"],
+                //             $user->hashed_password,
+                //             $_POST["fullName"], 
+                //             $user->role,
+                //             $_POST["iban"]);
                     //var_dump($updatedUser); die(); 
             }
             if(empty($errors)){
-                $updatedUser->update_profile($_POST["fullName"],$_POST["mail"],  $_POST["iban"]);
-                $this->redirect("user","profile",$updatedUser->id,"ok");
+                $user->update_profile($_POST["fullName"],$_POST["mail"],  $_POST["iban"]);
+                $this->redirect("profile","result_profile",$user->id,"ok");
             }
        }
 
@@ -86,6 +91,16 @@ class ControllerProfile extends Controller
            "success" => $success,
            "loggedUser" => $loggedUser
        ]);
+   }
+   public function result_profile(){
+        $loggedUser = $this->get_user_or_redirect();
+        $user = array_key_exists('param1', $_GET) && $loggedUser->isAdmin() ? 
+           User::get_by_id($_GET['param1']) : $loggedUser;
+        if(!empty($_GET["param1"])){//récup l'id du user
+            $user = User::get_by_id($_GET["param1"]);
+            
+            (new View("profile"))->show(array("loggedUser"=>$loggedUser,"user"=>$user));
+        }
    }
 
 }

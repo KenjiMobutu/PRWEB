@@ -143,7 +143,6 @@ require_once "framework/Model.php";
                         "mail"=>$mail,
                         "iban"=>$iban));
             }
-            return $this;
         }
 
         public function update() {
