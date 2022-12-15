@@ -49,30 +49,33 @@ class ControllerProfile extends Controller
 
 
        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            if(array_key_exists("fullName", $_POST)){
-                if(User::validateFullName($_POST["fullName"]) == false){
-                    $errors[] = "Your name is incorrect";
+            if(isset($_POST["mail"]) || isset($_POST["fullName"]) || isset($_POST["iban"])){
+                if(isset($_POST["mail"])){
+                    if(!User::validateEmail($_POST["mail"])){
+                        $errors[] = "Wrong mail";
+                    }
                 }
-            }else{
-                $this->redirect('main', "error");
+                if(isset($_POST["fullName"])){
+                    if(!User::validateFullName($_POST["fullName"])){
+                        $errors[] = "Bad name. Too short.";
+                    }
+                }
+                // if(isset($_POST["iban"])){
+                //     if(User::validate_iban($_POST["iban"])){
+                //         $errors[] = "Bad Iban";
+                //     }
+                // }
+                $updatedUser = new User($user->id,
+                            $_POST["mail"],
+                            $user->hashed_password,
+                            $_POST["fullName"], 
+                            $user->role,
+                            $_POST["iban"]);
+                    //var_dump($updatedUser); die(); 
             }
-
-            if ( array_key_exists("mail", $_POST) ) {
-                if(User::validateEmail($_POST["mail"]) == false)
-                    $errors[] = "wrong mail";
-            }else{
-                $this->redirect('main', "error");
-            }
-            $updatedUser = new User($user->id,$_POST["mail"],$user->hashed_password, $_POST["fullName"], $user->role,$_POST["iban"]);
-            // if(array_key_exists("iban", $_POST) &&(!is_null($_POST["iban"]))){
-            //     if(User::validate_iban($_POST["iban"])){
-            //         $errors[] = "The current iban is incorrect";
-            //     }
-            // }
-            if (empty($errors)) {
-                
-                $updatedUser->update_profile($_POST["mail"], $_POST["fullName"], $_POST["iban"]);
-                $this->redirect("user", "profile", $user->getUserId(), "ok");
+            if(empty($errors)){
+                $updatedUser->update_profile($_POST["fullName"],$_POST["mail"],  $_POST["iban"]);
+                $this->redirect("user","profile",$updatedUser->id,"ok");
             }
        }
 
@@ -84,4 +87,5 @@ class ControllerProfile extends Controller
            "loggedUser" => $loggedUser
        ]);
    }
+
 }
