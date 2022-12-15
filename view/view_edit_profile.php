@@ -42,7 +42,7 @@
 
                 <!-- Submit button to send the form data -->
                 
-                <input type="submit" value="<?= $user->id?>">submit
+                <input type="submit" value="submit">
                 <?php
                     
                 ?>

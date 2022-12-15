@@ -22,7 +22,7 @@ class ControllerUser extends Controller
 
     public function profile() {
         $user = $this->get_user_or_redirect();
-        
+        $user = User::get_by_id($user->id);
         (new View("profile"))->show(array("user" => $user));//show may throw Exception
     }
 
