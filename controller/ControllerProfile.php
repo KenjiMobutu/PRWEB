@@ -36,6 +36,34 @@ class ControllerProfile extends Controller
    
     }
         
+    public function change_password()
+    {
+        $loggedUser = $this->get_user_or_redirect();
+        if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
+            $this->redirect('main', "error");
+        }
+        $user= array_key_exists('param1', $_GET) && $loggedUser->isAdmin() ?
+            User::get_user_by_id($_GET['param1']) : $loggedUser;
+
+                // If the connected user is updated, also verify the current password
+                if (array_key_exists('currentPassword', $_POST)) {
+                    if (!User::check_password($_POST["currentPassword"], $user->getPassword())) {
+                        $errors[] = "The current password is not correct.";
+                    }
+                }
+                // If passwords are valid, update user
+                if (empty($errors)) {
+                    $user->setPassword(Tools::my_hash($_POST["newPassword"]));
+                    $user->update_password();
+                    $this->redirect("profile", "change_password", $user->getUserId(), "ok");
+                }else {
+                    $this->redirect('main', "error");
+                }
+            
+            (new View("profile"))->show(array("loggedUser" => $loggedUser, "user" => $user)); //show may throw Exception
+    }
+
+
     
 
    public function edit_profile()

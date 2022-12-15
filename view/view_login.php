@@ -41,7 +41,8 @@
                     </table>
                     <input class="login-button" type="submit" value="Log In"><br>
                     <div class="sign-link">
-                        <a class="login-icon" href="main/signup">Or sign up
+                        <a class="login-icon" href="main/signup">Or sign up</a>
+                            
                     </div>
 
                 </form>
@@ -51,7 +52,7 @@
                     <ul>
                         <?php foreach ($errors as $error): ?>
                         <li>
-                            <<= $error ?>
+                            <p><?= $error ?></p>
                         </li>
                         <?php endforeach; ?>
                     </ul>
