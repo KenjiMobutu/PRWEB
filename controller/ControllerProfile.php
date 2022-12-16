@@ -145,9 +145,13 @@ class ControllerProfile extends Controller
         // $user = $this->get_user_or_redirect();
         // $user = array_key_exists('param1', $_GET) && $user->isAdmin() ? 
         //    User::get_by_id($_GET['param1']) : $user;
-
+        $user = $this->get_user_or_redirect();
         if(!empty($_GET["param1"])){//récup l'id du user
-            $user = User::get_by_id($_GET["param1"]);
+            if($user->id == $_GET["param1"]){
+                $user = User::get_by_id($_GET["param1"]);
+            }else{
+                $this->redirect("main","error");
+            }
             
             (new View("profile"))->show(array("user"=>$user));
         }
