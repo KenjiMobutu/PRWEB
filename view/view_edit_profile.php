@@ -38,7 +38,7 @@
 
                 <!-- récup son iban (peut être null) -->
                 <label for="iban">IBAN:</label><br>
-                <input type="text" id="iban" name="iban" pattern = '/^[a-zA-Z]+[0-9]+(\s+([0-9]+\s+)+)[0-9]+$/' value="<?php echo $user->getIban(); ?>"><br><br>
+                <input type="text" id="iban" name="iban" pattern = '[BE]+\d\d(\s([0-9]+\s)+)\d\d\d\d'placeholder="IBAN ex : BE99 9999 9999 9999" value="<?php echo $user->getIban(); ?>"><br><br>
 
                 <!-- Submit button to send the form data -->
                 
