@@ -23,16 +23,7 @@ class ControllerProfile extends Controller
     public function profile()
     {
         $user = $this->get_user_or_redirect();
-        if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
-            $this->redirect('main', "error");
-        }
-        // $user= array_key_exists('param1', $_GET) && $user->isAdmin() ?
-        //     User::get_by_id($_GET['param1']) : $user;
-
         $user = User::get_by_id($user->id);
-        if (is_null($user)) {
-            $user = $user;
-        }
         (new View("profile"))->show(array("user" => $user)); //show may throw Exception
     }
         
