@@ -15,20 +15,23 @@
 
         <div class="templates_container">
             <table class="tab_templates">
-                <?php foreach($templates as $tmp) :?>
+            <?php foreach($templates as $tmp) :?>
                     <tr>
                         <!-- on récupère juste le titre  -->
                         <th><?= $tmp['title'] ?></th>
-                        
                     </tr>
-                    <ul>
-                    <!-- on doit récupérer les noms des user -->
-                        <?php foreach($participant as $participe): ?>
-                            <li>
-                                <?= $participe["full_name"] ?>
-                            </li>
-                        <?php endforeach;?>
-                    </ul>
+                        <th>
+                            <ul>
+                            <!-- on doit récupérer les noms des user -->
+                                <?php foreach($participant as $participe): ?>
+                                    <li>
+                                            <?= $participe["full_name"] ?>                                
+                                    </li>
+                                <?php endforeach;?>
+                            </ul>
+                        </th>
+                        
+                    
                 <?php endforeach; ?>
             </table>
         </div>
