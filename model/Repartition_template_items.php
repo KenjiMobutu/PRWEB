@@ -32,8 +32,8 @@
     }
 
     public static function get_by_user($user){
-      $query = self::execute("SELECT * FROM  repartition_template_items rti, repartition_templates rt 
-                              where rti.repartition_template = rt.id 
+      $query = self::execute("SELECT * FROM  repartition_template_items rti, repartition_templates rt
+                              where rti.repartition_template = rt.id
                               and rti.user=:user",
                               array("user" => $user));
       $data = $query->fetchAll();
@@ -42,7 +42,7 @@
       } else
         return $data;
     }
-    
+
   }
 
 
