@@ -34,7 +34,6 @@ class ControllerProfile extends Controller
             $user = $user;
         }
         (new View("profile"))->show(array("user" => $user)); //show may throw Exception
-   
     }
         
     public function change_password()
@@ -91,15 +90,10 @@ class ControllerProfile extends Controller
    public function edit_profile()
    {
        /** @var User $user */
-       $user = $this->get_user_or_redirect();
-       $errors = [];
+        $user = $this->get_user_or_redirect();
+        $errors = [];
 
-        //    if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
-        //    }
 
-        //    $user = array_key_exists('param1', $_GET) && $user->isAdmin() ? 
-        //        User::get_by_id($_GET['param1']) : $user;
-        
         $user = User::get_by_id($user->id);
         $success = array_key_exists('param2', $_GET) && $_GET['param2'] === 'ok' ? 
            "Your profile has been successfully updated." : "";
@@ -117,22 +111,10 @@ class ControllerProfile extends Controller
                         $errors[] = "Bad name. Too short.";
                     }
                 }
-                // if(isset($_POST["iban"])){
-                //     if(User::validate_iban($_POST["iban"])){
-                //         $errors[] = "Bad Iban";
-                //     }
-                // }
-                // $updatedUser = new User($user->id,
-                //             $_POST["mail"],
-                //             $user->hashed_password,
-                //             $_POST["fullName"], 
-                //             $user->role,
-                //             $_POST["iban"]);
-                    //var_dump($updatedUser); die(); 
             }
             if(empty($errors)){
                 $user->update_profile($_POST["fullName"],$_POST["mail"],  $_POST["iban"]);
-                $this->redirect("profile","result_profile",$user->id,"ok");
+                $this->redirect("profile","profile",$user->id,"ok");
             }
         }
         (new View("edit_profile"))->show([
@@ -152,7 +134,6 @@ class ControllerProfile extends Controller
             }else{
                 $this->redirect("main","error");
             }
-            
             (new View("profile"))->show(array("user"=>$user));
         }
    }
