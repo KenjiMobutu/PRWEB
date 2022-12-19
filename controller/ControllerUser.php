@@ -8,22 +8,23 @@ class ControllerUser extends Controller
 {
 
     //page d'accueil.
-    public function index() :void
+    public function index(): void
     {
         if (isset($_GET["param1"])) {
             $this->redirect('profile');
         }
     }
 
-    public function logout() :void
+    public function logout(): void
     {
         Controller::logout();
     }
 
-    public function profile() {
+    public function profile()
+    {
         $user = $this->get_user_or_redirect();
-        $user = User::get_by_id($user->id);
-        (new View("profile"))->show(array("user" => $user));//show may throw Exception
+        $userId = User::get_by_id($user->id);
+        (new View("profile"))->show(array("user" => $user)); //show may throw Exception
     }
 
 }
