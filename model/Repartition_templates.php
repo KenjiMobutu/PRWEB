@@ -33,7 +33,7 @@ class Repartition_templates extends Model
       return new repartition_templates($data["id"], $data["title"], $data["tricount"]);
     }
   }
-    public function get_by_tricount($tricount): int | null 
+    public static function get_by_tricount($tricount) 
     {
       $query = self::execute("SELECT * FROM  `repartition_templates` where tricount=:tricount", array("tricount"=>$tricount));
             $data = $query->fetch();//un seul resultat max
@@ -42,6 +42,18 @@ class Repartition_templates extends Model
             } else{
                 return new repartition_templates($data["id"],$data["title"],$data["tricount"]);
             }
+    }
+
+    public function get_items(){
+      $query =self::execute("select rti.* from repartition_template_items rti, repartition_templates rt 
+                            where rt.id = rti.repartition_template 
+                            and rt.id=:id", array("id"=>$this));
+      $data = $query->fetch();
+      if ($query->rowCount() == 0){
+        return null;
+      } else{
+          return new repartition_template_items($data["weight"],$data["user"],$data["repartition_templates"]);
+      }
     }
   
 

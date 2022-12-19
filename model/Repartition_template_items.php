@@ -6,7 +6,7 @@
   class Repartition_template_items extends Model
   {
     public ?int $weight;
-    public ?int $user;
+    public ?User $user;
     public ?int $repartition_templates;
 
 
@@ -20,6 +20,11 @@
     {
       return $this->weight;
     }
+    public function get_user() 
+    {
+      return $this->user;
+    }
+    
 
     public static function get_weight_by_user($user): int
     {
@@ -31,7 +36,19 @@
         return ($data["weight"]);
     }
 
-    public static function get_by_user($user){
+    public static function get_participations($id){
+      $query = self::execute("SELECT u.full_name, sum(rti.weight)
+                            from repartition_template_items rti, user u
+                            where rti.user =u.id
+                            and rti.repartition_templates=:id", array("id"=>$id));
+      $data = $query->fetch();
+      if($query->rowCount()==0){
+        return null;
+      }
+      return $data;
+    }
+
+    public static function get_by_user($user){ //à refaire
       $query = self::execute("SELECT * FROM  repartition_template_items rti, repartition_templates rt 
                               where rti.repartition_template = rt.id 
                               and rti.user=:user",

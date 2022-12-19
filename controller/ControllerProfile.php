@@ -22,18 +22,18 @@ class ControllerProfile extends Controller
      */
     public function profile()
     {
-        $user = $this->get_user_or_redirect();
+        $loggedUser = $this->get_user_or_redirect();
         if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
             $this->redirect('main', "error");
         }
         // $user= array_key_exists('param1', $_GET) && $user->isAdmin() ?
         //     User::get_by_id($_GET['param1']) : $user;
 
-        $user = User::get_by_id($user->id);
-        if (is_null($user)) {
-            $user = $user;
+        if (isset($_GET['param1']) && is_numeric($_GET['param1'])) {
+            $user = User::get_by_id($loggedUser->id);
         }
-        (new View("profile"))->show(array("user" => $user)); //show may throw Exception
+    
+        (new View("profile"))->show(array("user" => $user, "user"=>$loggedUser)); //show may throw Exception
     }
         
     public function change_password()
@@ -90,11 +90,11 @@ class ControllerProfile extends Controller
    public function edit_profile()
    {
        /** @var User $user */
-        $user = $this->get_user_or_redirect();
+        $loggedUser = $this->get_user_or_redirect();
         $errors = [];
 
 
-        $user = User::get_by_id($user->id);
+        $user = User::get_by_id($loggedUser->id);
         $success = array_key_exists('param2', $_GET) && $_GET['param2'] === 'ok' ? 
            "Your profile has been successfully updated." : "";
 

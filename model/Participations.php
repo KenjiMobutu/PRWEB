@@ -17,12 +17,16 @@ require_once "framework/Model.php";
 
         }
         public static function get_by_tricount_and_creator($tricount){
-            $query = self::execute("SELECT DISTINCT u.full_name
-                        from subscriptions s, tricounts t, users u, repartition_template_items rti
-                        where s.tricount =:tricount
-                        and s.user = u.id
-                        and u.id = rti.user
-                        or u.id = t.creator;", 
+            $query = self::execute("SELECT DISTINCT u.full_name, rti.weight, rti.repartition_template
+            from subscriptions s, 
+                    tricounts t,
+                    users u, 
+                    repartition_template_items rti,
+                    repartition_templates rt
+            where s.tricount =:tricount
+            and (s.user = u.id or u.id = t.creator)
+            and u.id = rti.user 
+            and rti.repartition_template = rt.id",
                             array("tricount"=>$tricount));
             $data = $query->fetchAll();
             if($query->rowCount() == 0)

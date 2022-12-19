@@ -25,9 +25,10 @@ class ControllerTemplates extends Controller
             $this->redirect('main', "error");
         }else{
             $tricount = Tricounts::get_by_id($_GET['param1']);
-            $participant = Participations::get_by_tricount_and_creator($tricount->id);
+            // $participant = Participations::get_by_tricount_and_creator($tricount->id);
+            $repartitionTemplate = Repartition_templates::get_by_tricount($tricount->id);
         }
-        (new View("templates"))->show(array("user"=>$user,"templates"=>$templates, "tricount"=>$tricount, "participant"=>$participant ));
+        (new View("templates"))->show(array("user"=>$user,"templates"=>$templates, "tricount"=>$tricount, "repartitionTemplate"=>$repartitionTemplate));
     }
 }
 ?>
