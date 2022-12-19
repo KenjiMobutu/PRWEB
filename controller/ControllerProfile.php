@@ -33,6 +33,9 @@ class ControllerProfile extends Controller
         if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
             $this->redirect('main', "error");
         }
+        if(isset($_GET['param1']) && $_GET['param1'] !== $user->getUserId()){
+            $this->redirect('main', 'error');
+        }
         $errors = [];
         $success = array_key_exists('param2', $_GET) && $_GET['param2'] === 'ok' ? 
             "Your password has been successfully changed." : '';
