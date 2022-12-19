@@ -455,7 +455,7 @@ select {
   right: 0;
   bottom: 0;
   z-index: 99999;
-  background-image: linear-gradient(56deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 28%, rgba(0,212,255,1) 100%);
+  background-image: linear-gradient(56deg, rgb(11, 36, 0) 0%, rgb(35, 121, 9) 28%, rgb(0, 255, 183) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -499,7 +499,7 @@ select {
 }
 
 .card-block .card-main {
-  background-image: linear-gradient(56deg, rgba(2,0,36,1) 0%, rgba(9,9,121,1) 28%, rgba(0,212,255,1) 100%);
+  background-image: linear-gradient(56deg, rgb(11, 36, 0) 0%, rgb(35, 121, 9) 28%, rgb(0, 255, 183) 100%);
   position: absolute;
   border-radius: 10px;
   left: 0;

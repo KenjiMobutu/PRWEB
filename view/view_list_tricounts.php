@@ -24,7 +24,6 @@
             <img src="css/img/loading-icon.png" alt="icon" class="loading-icon">
         </div>
         <!-- * loader -->
-
         <div class="appHeader">
             <div class="left">
                 <a href="#" class="headerButton goBack">
