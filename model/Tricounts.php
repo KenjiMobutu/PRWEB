@@ -1,44 +1,49 @@
 <!-- //title,description,created_at,creator,id -->
 <?php
 
-require_once "framework/Model.php";
-  class Tricounts extends Model{
+  class Tricounts extends Model
+{
 
-    public $id;//(int)
-    public $title;//(varchar 256)
-    public $description;//(varchar 1024)
-    public $created_at;//(datetime)
-    public $creator;//(int)
+  public $title; //(varchar 256)
+  public $description; //(varchar 1024)
+  public $created_at; //(datetime)
+  public $creator; //(int)
+  public $id; //(int)
 
+  public function __construct($id, $title, $description, $created_at, $creator)
+  {
+    $this->id = $id;
+    $this->title = $title;
+    $this->description = $description;
+    $this->created_at = $created_at;
+    $this->creator = $creator;
+  }
+  //retourne l'id du tricount
+  public function get_id(): int
+  {
+    return $this->id;
+  }
+  //retourne le titre du tricount
+  public function get_title(): string
+  {
+    return $this->title;
+  }
+  //retourne la description
+  public function get_description(): string
+  {
+    return $this->description;
+  }
+  //retourne la date de création
+  public function get_created_at(): datetime
+  {
+    return $this->created_at;
+  }
 
-    public function __construct($id,$title, $description,$created_at, $creator){
-      $this->id = $id;
-      $this->title = $title;
-      $this->description = $description;
-      $this->created_at = $created_at;
-      $this->creator = $creator;
-    }
-    //retourne l'id du tricount
-    public function get_id():int{
-      return $this->id;
-    }
-    //retourne le titre du tricount
-    public function get_title():String{
-      return $this->title;
-    }
-    //retourne la description
-    public function get_description():String{
-      return $this->description;
-    }
-    //retourne la date de création
-    public function get_created_at():datetime{
-      return $this->created_at;
-    }
-
-    //retourne l'id du créateur
-    public function get_creator_id():int{
-      return $this->creator;
-    }
+  //retourne l'id du créateur
+  public function get_creator_id(): int
+  {
+    return $this->creator;
+  }
 
     //retourne le tricount par son id
     public static function get_by_id($id){
@@ -47,37 +52,41 @@ require_once "framework/Model.php";
         if ($query->rowCount() == 0) {
             return false;
         } else {
-            return new User($data["ID"],$data["title "],$data["description"],$data["created_at"],$data["creator"]);
+            return new Tricounts($data["id"],$data["title"],$data["description"],$data["created_at"],$data["creator"]);
         }
     }
 
-    //retourne le tricount par son créateur
-    public static function get_by_creator($creator){
-      $query = self::execute("SELECT * FROM tricounts WHERE creator = :creator", array("creator"=>$creator));
-        $data = $query->fetch();
-        if ($query->rowCount() == 0) {
-            return false;
-        } else {
-            return new User($data["ID"],$data["title "],$data["description"],$data["created_at"],$data["creator"]);
-        }
+  //retourne le tricount par son créateur
+  public static function get_by_creator($creator)
+  {
+    $query = self::execute("SELECT * FROM tricounts WHERE creator = :creator", array("creator" => $creator));
+    $data = $query->fetch();
+    if ($query->rowCount() == 0) {
+      return false;
+    } else {
+      return new Tricounts($data["id"], $data["title"], $data["description"], $data["created_at"], $data["creator"]);
     }
+  }
 
-    public function update() {
-      if(!is_null($this->id)){
-          self::execute("UPDATE tricounts SET
+  public function update()
+  {
+    if (!is_null($this->id)) {
+      self::execute("UPDATE tricounts SET
           title=:title,
           description=:description,
           created_at=:created_at,
           creator=:creator
           WHERE id=:id ",
-                      array("id"=>$this->id,
-                      "title"=>$this->title,
-                      "description"=>$this->description,
-                      "created_at"=>$this->created_at,
-                      "creator"=>$this->creator,
-                      ));
-      }else{
-          self::execute("INSERT INTO
+        array(
+          "id" => $this->id,
+          "title" => $this->title,
+          "description" => $this->description,
+          "created_at" => $this->created_at,
+          "creator" => $this->creator,
+        )
+      );
+    } else {
+      self::execute("INSERT INTO
           tricounts (title,description,
           created_at,
           creator)
@@ -85,18 +94,22 @@ require_once "framework/Model.php";
           :description,
           :created_at,
           :creator)",
-          array("title"=>$this->title,
-                  "description"=>$this->description,
-                  "created_at"=>$this->created_at,
-                  "creator"=>$this->creator));
-      }
-      return $this;
+        array(
+          "title" => $this->title,
+          "description" => $this->description,
+          "created_at" => $this->created_at,
+          "creator" => $this->creator
+        )
+      );
     }
+    return $this;
+  }
 
-    public function delete ($id){
-      Repartition_template::delete_by_tricount($id);
-      Operation::delete_by_tricount($id);
-      Participation::delete_by_tricount($id);
+    public function delete ($id)
+    {
+      // Repartition_template::delete_by_tricount($id);
+      // Operation::delete_by_tricount($id);
+      // Participation::delete_by_tricount($id);
       $query=self::execute("DELETE from `tricounts` where id=:id", array("id"=>$id));
       if($query->rowCount()==0)
           return false;
@@ -132,7 +145,8 @@ require_once "framework/Model.php";
     }
 
 
-  }
+}
+
 
 
 ?>
