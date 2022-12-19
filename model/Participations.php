@@ -1,4 +1,6 @@
 <?php
+require_once "framework/Model.php";
+
     class Participations extends Model{
         public int $tricount;
         public int $user;
@@ -13,6 +15,19 @@
             $query = self::execute("SELECT * from subscriptions where tricount =:tricount", 
             array("tricount"=>$tricount));
 
+        }
+        public static function get_by_tricount_and_creator($tricount){
+            $query = self::execute("SELECT DISTINCT u.full_name
+                        from subscriptions s, tricounts t, users u, repartition_template_items rti
+                        where s.tricount =:tricount
+                        and s.user = u.id
+                        and u.id = rti.user
+                        or u.id = t.creator;", 
+                            array("tricount"=>$tricount));
+            $data = $query->fetchAll();
+            if($query->rowCount() == 0)
+                return null;
+            return $data;
         }
         
         public static function get_by_user($user){
