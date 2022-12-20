@@ -25,11 +25,17 @@
                             <!-- on doit récupérer les noms des user -->
                                 <?php foreach($items as $participe): ?>
 
-                                    <!-- <?php echo '<pre>'; print_r($participe); echo '</pre>';?> insane comment to do -->
+                                    <!-- <?php echo '<pre>'; print_r($participe["user"][0]); echo '</pre>';?> mieux que var_dump imo  -->
                                     <li>
                                         <p>
-
-                                             <?php echo $participe->get_user_info($participe['user']);?> (<?php echo $participe["weight"] ?>/) 
+                                            <?php foreach($participe as $row) : ?>
+                                                 <!-- <?php echo '<pre>'; print_r($row->get_user_info());  echo '</pre>';?>   -->
+                                                <?php echo $row->get_user_info(); 
+                                                        echo "("; echo $row->get_weight_by_user($row->get_user());
+                                                             echo "/"; 
+                                                                echo $row->get_Sum_Weight();
+                                                                    echo ")";?>
+                                            <?php endforeach ; ?>
                                         </p>
                                                                          
                                     </li>

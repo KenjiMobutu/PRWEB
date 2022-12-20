@@ -48,7 +48,10 @@ class ControllerTemplates extends Controller
                 
             }
         }
-        (new View("templates"))->show(array("user"=>$user,"templates"=>$templates, "tricount"=>$tricount, "items"=>$items));
+        (new View("templates"))->show(array("user"=>$user,
+                                            "templates"=>$templates, 
+                                            "tricount"=>$tricount, 
+                                            "items"=>$items));
     }
 
 
