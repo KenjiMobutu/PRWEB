@@ -6,11 +6,11 @@
   class Repartition_template_items extends Model
   {
     public ?int $weight;
-    public ?User $user;
+    public ?int $user;
     public ?int $repartition_templates;
 
 
-    public function __construct(?int $weight, string $user, int $repartition_templates)
+    public function __construct(?int $weight, int $user, int $repartition_templates)
     {
       $this->weight = $weight;
       $this->user = $user;
@@ -28,12 +28,24 @@
 
     public static function get_weight_by_user($user): int
     {
-      $query = self::execute("SELECT weight FROM  `repartition_templates_items` where user=:user", array("user" => $user));
+      $query = self::execute("SELECT * FROM  `repartition_templates_items` where user=:user", array("user" => $user));
       $data = $query->fetch(); //un seul resultat max
       if ($query->rowCount() == 0) {
         return null;
       } else
         return ($data["weight"]);
+    }
+
+    public static function get_Sum_Weight($repartitionID){
+      $query = self::execute("SELECT sum(weight) 
+                              from `repartition_templates_items`
+                              where  repartition_templates =:repartition_template", 
+                              array("repartition_template"=>$repartitionID));
+      $data = $query->fetch();
+      if ($query->rowCount() == 0) {
+        return null;
+      } else
+        return $data;
     }
 
     public static function get_participations($id){
@@ -48,6 +60,10 @@
       return $data;
     }
 
+    public function get_by_user_2(){
+      
+    }
+
     public static function get_by_user($user){ //à refaire
       $query = self::execute("SELECT * FROM  repartition_template_items rti, repartition_templates rt 
                               where rti.repartition_template = rt.id 
@@ -59,7 +75,9 @@
       } else
         return $data;
     }
+
     
+
   }
 
 

@@ -36,24 +36,45 @@ class Repartition_templates extends Model
     public static function get_by_tricount($tricount) 
     {
       $query = self::execute("SELECT * FROM  `repartition_templates` where tricount=:tricount", array("tricount"=>$tricount));
-            $data = $query->fetch();//un seul resultat max
+            $data = $query->fetchAll();                 //c'était un fetch avant
+            $templates = [];
             if ($query->rowCount() == 0){
                 return null;
             } else{
-                return new repartition_templates($data["id"],$data["title"],$data["tricount"]);
+              foreach($data as $row){
+                  $templates[] = new Repartition_templates($row["id"],$row["title"],$row["tricount"]);
+              }
+                // return new repartition_templates($data["id"],$data["title"],$data["tricount"]);
+                return $templates;
             }
     }
 
     public function get_items(){
       $query =self::execute("select rti.* from repartition_template_items rti, repartition_templates rt 
                             where rt.id = rti.repartition_template 
-                            and rt.id=:id", array("id"=>$this));
-      $data = $query->fetch();
+                            and rt.id=:id", array("id"=>$this->id));
+      $data = $query->fetchAll();
+      $items=[];
       if ($query->rowCount() == 0){
         return null;
       } else{
-          return new repartition_template_items($data["weight"],$data["user"],$data["repartition_templates"]);
+        foreach($data as $row){
+          $items[] = new repartition_template_items($row["weight"],$row["user"],$row["repartition_template"]);
+          // dans items je dois renvoyer un user de la même façon
+        }
       }
+      return $items;
+    }
+    public function get_user_info($user){  // on récupère les noms des utilisateurs lié a un template_items
+      $query = self::execute("SELECT * 
+                              from users 
+                              where id=:id",
+                              array("id"=>$user));
+      $data = $query->fetch();
+      if ($query->rowCount() == 0) {
+        return null;
+      } else
+        return $data["full_name"];
     }
   
 

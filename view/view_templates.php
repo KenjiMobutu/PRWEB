@@ -16,22 +16,20 @@
         <div class="templates_container">
             <table class="tab_templates">
             <?php foreach($templates as $rt) :?>
-
-                <?php var_dump($templates); die() ;
-                ?>
-                
-
                     <tr>
                         <!-- on récupère juste le titre  -->
-                        <th><?= $rt['title'] ?></th>
+                        <th><?= $rt->get_title(); ?></th>
                     </tr>
                         <th class="info_templates">
                             <ul>
                             <!-- on doit récupérer les noms des user -->
-                                <?php foreach($rt->get_items() as $participe): ?>
+                                <?php foreach($items as $participe): ?>
+
+                                    <!-- <?php echo '<pre>'; print_r($participe); echo '</pre>';?> insane comment to do -->
                                     <li>
                                         <p>
-                                             <?php echo $participe["user"]->full_name  ?> (<?php echo $participe["weight"] ?>/) 
+
+                                             <?php echo $participe->get_user_info($participe['user']);?> (<?php echo $participe["weight"] ?>/) 
                                         </p>
                                                                          
                                     </li>
