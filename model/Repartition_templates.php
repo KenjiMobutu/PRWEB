@@ -18,11 +18,12 @@ class Repartition_templates extends Model
   {
     return $this->id;
   }
+
   public function get_title(): string|null
   {
     return $this->title;
   }
-  public function get_by_id($id): int
+  public function get_by_id($id): int | null
   {
     $query = self::execute("SELECT * FROM  `repartition_templates` where id=:id", array("id" => $id));
     $data = $query->fetch(); //un seul resultat max
@@ -32,31 +33,31 @@ class Repartition_templates extends Model
       return new repartition_templates($data["id"], $data["title"], $data["tricount"]);
     }
   }
-  public function get_by_tricount($tricount): int
-  {
-    $query = self::execute("SELECT * FROM  `repartition_templates` where tricount=:tricount", array("tricount" => $tricount));
-    $data = $query->fetch(); //un seul resultat max
-    if ($query->rowCount() == 0) {
-      return null;
-    } else {
-      return new User($data["id"], $data["title"], $data["tricount"]);
+    public function get_by_tricount($tricount): int | null 
+    {
+      $query = self::execute("SELECT * FROM  `repartition_templates` where tricount=:tricount", array("tricount"=>$tricount));
+            $data = $query->fetch();//un seul resultat max
+            if ($query->rowCount() == 0){
+                return null;
+            } else{
+                return new repartition_templates($data["id"],$data["title"],$data["tricount"]);
+            }
     }
-  }
+  
 
+    public function delete_by_tricount($tricount){
+      // Repartition_template_items::delete_by_user_id($id);
+      // Repartition::delete_by_user_id($id);
+      // Operation::delete_by_user_id($id);
+      // Participation::delete_by_user_id($id);
+      // Tricount::delete_by_user_id($id);
+      $query=self::execute("DELETE from `repartition_templates` where tricount=:tricount", array("tricount"=>$tricount));
+      if($query->rowCount()==0)
+          return false;
+      else
+          return $query;
+    }
 
-  public function delete_by_tricount($tricount)
-  {
-    // Repartition_template_items::delete_by_user_id($id);
-    // Repartition::delete_by_user_id($id);
-    // Operation::delete_by_user_id($id);
-    // Participation::delete_by_user_id($id);
-    // Tricount::delete_by_user_id($id);
-    $query = self::execute("DELETE from `repartition_templates` where tricount=:tricount", array("tricount" => $tricount));
-    if ($query->rowCount() == 0)
-      return false;
-    else
-      return $query;
-  }
 
   public function update()
   {

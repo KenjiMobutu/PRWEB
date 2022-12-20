@@ -1,8 +1,7 @@
 <!-- //title,description,created_at,creator,id -->
 <?php
 
-require_once "framework/Model.php";
-class Tricounts extends Model
+  class Tricounts extends Model
 {
 
   public $title; //(varchar 256)
@@ -46,17 +45,16 @@ class Tricounts extends Model
     return $this->creator;
   }
 
-  //retourne le tricount par son iD
-  public static function get_by_id($id)
-  {
-    $query = self::execute("SELECT * FROM tricounts WHERE id = :id", array("id" => $id));
-    $data = $query->fetch();
-    if ($query->rowCount() == 0) {
-      return false;
-    } else {
-      return new Tricounts($data["ID"], $data["title "], $data["description"], $data["created_at"], $data["creator"]);
+    //retourne le tricount par son id
+    public static function get_by_id($id){
+      $query = self::execute("SELECT * FROM tricounts WHERE id = :id", array("id"=>$id));
+        $data = $query->fetch();
+        if ($query->rowCount() == 0) {
+            return false;
+        } else {
+            return new Tricounts($data["id"],$data["title"],$data["description"],$data["created_at"],$data["creator"]);
+        }
     }
-  }
 
   //retourne le tricount par son créateur
   public static function get_by_creator($creator)
@@ -66,7 +64,7 @@ class Tricounts extends Model
     if ($query->rowCount() == 0) {
       return false;
     } else {
-      return new Tricounts($data["ID"], $data["title "], $data["description"], $data["created_at"], $data["creator"]);
+      return new Tricounts($data["id"], $data["title"], $data["description"], $data["created_at"], $data["creator"]);
     }
   }
 
@@ -107,20 +105,48 @@ class Tricounts extends Model
     return $this;
   }
 
-  public function delete($id)
-  {
-    Repartition_template::delete_by_tricount($id);
-    Operation::delete_by_tricount($id);
-    Participation::delete_by_tricount($id);
-    $query = self::execute("DELETE from `tricounts` where id=:id", array("id" => $id));
-    if ($query->rowCount() == 0)
-      return false;
-    else
-      return $query;
-  }
+    public function delete ($id)
+    {
+      // Repartition_template::delete_by_tricount($id);
+      // Operation::delete_by_tricount($id);
+      // Participation::delete_by_tricount($id);
+      $query=self::execute("DELETE from `tricounts` where id=:id", array("id"=>$id));
+      if($query->rowCount()==0)
+          return false;
+      else
+          return $query;
+    }
+    public function by_user($user){
+      $query = self::execute("SELECT t.title FROM `tricounts` t JOIN  subscriptions s ON t.id = s.tricount where user=:user", array("user"=>$user));
+        $data = $query->fetchAll();
+        $tricount  = [];
+        foreach ($data as $row) {
+          $tricount[] = new Tricounts($row["id"],$row["title"],$row["description"],$row["created_at"],$row["creator"]);
+        }
+        return $tricount;
+    }
+    public static function list(){
+      $query = self::execute("SELECT * FROM `tricounts`", array());
+        $data = $query->fetchAll();
+        $tricount  = [];
+        foreach ($data as $row) {
+          $tricount[] = new Tricounts($row["id"],$row["title"],$row["description"],$row["created_at"],$row["creator"]);
+        }
+        return $tricount;
+    }
+    public static function one_of_list(){
+      $query = self::execute("SELECT * FROM `tricounts`", array());
+      if ($query->rowCount() == 0) {
+        return false;
+      } else {
+        $data = $query->fetch();
+        return new Tricounts($data["id"],$data["title"],$data["description"],$data["created_at"],$data["creator"]);
+      }
+    }
 
 
 }
+
 
 
 ?>
