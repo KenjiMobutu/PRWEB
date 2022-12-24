@@ -27,16 +27,18 @@
 
                                     <!-- <?php echo '<pre>'; print_r($participe["user"][0]); echo '</pre>';?> mieux que var_dump imo  -->
                                     <li>
-                                        <p>
                                             <?php foreach($participe as $row) : ?>
-                                                 <!-- <?php echo '<pre>'; print_r($row->get_user_info());  echo '</pre>';?>   -->
-                                                <?php echo $row->get_user_info(); 
-                                                        echo "("; echo $row->get_weight_by_user($row->get_user());
+                                                <?php echo $row->get_user_info(); ?> 
+                                                    <?php if($row->get_repartition_template() === $row->repartition_template): ?>
+                                                        <?php echo "("; echo $row->get_weight_by_user($row->get_user(), $row->repartition_template);
                                                              echo "/"; 
                                                                 echo $row->get_Sum_Weight();
-                                                                    echo ")";?>
+                                                                    echo ")"; ?>
+                                                        <?php endif;?>
+                                                        <!-- <?php echo '<pre>'; print_r($row->get_repartition_template() ===$row->repartition_template) ; echo '</pre>' ; ?> -->
+
                                             <?php endforeach ; ?>
-                                        </p>
+                                        
                                                                          
                                     </li>
                                 <?php endforeach;?>

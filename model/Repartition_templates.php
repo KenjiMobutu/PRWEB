@@ -65,17 +65,7 @@ class Repartition_templates extends Model
       }
       return $items;
     }
-    public function get_user_info($user){  // on récupère les noms des utilisateurs lié a un template_items
-      $query = self::execute("SELECT * 
-                              from users 
-                              where id=:id",
-                              array("id"=>$user));
-      $data = $query->fetch();
-      if ($query->rowCount() == 0) {
-        return null;
-      } else
-        return $data["full_name"];
-    }
+    
   
 
     public function delete_by_tricount($tricount){

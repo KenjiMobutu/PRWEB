@@ -29,9 +29,13 @@
     }
     
 
-    public static function get_weight_by_user($user): int
+    public static function get_weight_by_user($user, $repartition_template): int
     {
-      $query = self::execute("SELECT * FROM  `repartition_template_items` where user=:user", array("user" => $user));
+      $query = self::execute("SELECT * 
+                              FROM  `repartition_template_items` 
+                              where user=:user
+                              and repartition_template=:repartition_template ", 
+                              array("user" => $user,"repartition_template"=>$repartition_template));
       $data = $query->fetch(); //un seul resultat max
       if ($query->rowCount() == 0) {
         return null;
@@ -48,7 +52,7 @@
       if ($query->rowCount() == 0) {
         return null;
       } else
-        return $data["SUM(weight)"];
+        return $data[0]; //ou return $data["SUM(weight)"]
     }
 
     public static function get_participations($id){
@@ -61,10 +65,6 @@
         return null;
       }
       return $data;
-    }
-
-    public function get_by_user_2(){
-      
     }
 
     public static function get_by_user($user){ //à refaire
@@ -81,9 +81,11 @@
 
     public function get_user_info(){  // on récupère les noms des utilisateurs lié a un template_items
       $query = self::execute("SELECT * 
-                              from users 
-                              where id=:id",
-                              array("id"=>$this->user));
+                              from users u, repartition_template_items rti
+                              where rti.user = u.id
+                              and  rti.repartition_template =:repartition_template 
+                              and u.id=:id",
+                              array("id"=>$this->user, "repartition_template"=>$this->repartition_template));
       $data = $query->fetch();
       if ($query->rowCount() == 0) {
         return null;
