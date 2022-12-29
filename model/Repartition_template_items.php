@@ -93,7 +93,20 @@
         return $data["full_name"];
     }
 
+
+    public static function delete_by_repartition_template($repartition_template){
+      $query = self::execute("DELETE 
+                              FROM repartition_template_items
+                              where repartition_template=:repartition_template",
+                              array("repartition_template"=>$repartition_template));
+      if($query->rowCount()==0)
+        return false;
+      return $query;
+    }
+
   }
 
+
+ 
 
 ?>

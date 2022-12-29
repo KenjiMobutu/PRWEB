@@ -38,20 +38,49 @@ class ControllerTemplates extends Controller
     {
         $userlogged = $this->get_user_or_redirect();
         $user = User::get_by_id($userlogged->id);
+        $items = [];
         if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
             $this->redirect('main', "error");
         }else{
             $tricount = Tricounts::get_by_id($_GET["param1"]);
             $templates = Repartition_templates::get_by_tricount($_GET["param1"]);
-            foreach($templates as $template){
-                $items[] = $template->get_items();
-                
+            if($templates !== null){
+                foreach($templates as $template){
+                    $items[] = $template->get_items();
+                    
+                }
             }
         }
         (new View("templates"))->show(array("user"=>$user,
                                             "templates"=>$templates, 
                                             "tricount"=>$tricount, 
                                             "items"=>$items));
+    }
+
+    public function delete_template(){
+
+        $userlogged = $this->get_user_or_redirect();
+        $user = User::get_by_id($userlogged->id);
+        if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
+            $this->redirect('main', "error");
+        }else{    
+            $template = Repartition_templates::get_by_id($_GET['param1']);
+            if($template === null){
+                $this->redirect("user","profile");
+            }
+        }
+        if(isset($_POST['submitted'])){
+            if($_POST['submitted'] === "Cancel"){
+                $this->redirect("templates","templates",$template->tricount); // recuperer l'id du tricount lié au template
+            }else if ($_POST['submitted'] === "Delete"){
+                $tricount = $template->tricount;
+                $template = $template->delete_by_id();
+                $this->redirect("templates","templates", $tricount);
+            }
+        }
+
+        (new View("delete_template"))->show(array("user"=>$user,
+                                            "template"=>$template));
     }
 
 

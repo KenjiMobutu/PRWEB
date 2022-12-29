@@ -23,7 +23,7 @@ class Repartition_templates extends Model
   {
     return $this->title;
   }
-  public function get_by_id($id): int | null
+  public static function get_by_id($id): Repartition_templates | null
   {
     $query = self::execute("SELECT * FROM  `repartition_templates` where id=:id", array("id" => $id));
     $data = $query->fetch(); //un seul resultat max
@@ -79,6 +79,15 @@ class Repartition_templates extends Model
           return false;
       else
           return $query;
+    }
+
+    public function delete_by_id(){
+      //doit supprimer le tricount depuis repartition_template_items
+      Repartition_template_items::delete_by_repartition_template($this->id);
+      $query=self::execute("DELETE from `repartition_templates` where id=:id", array("id"=>$this->id));
+      if($query->rowCount()==0)
+        return false;
+      return $query;
     }
 
 
