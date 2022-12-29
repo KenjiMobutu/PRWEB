@@ -74,6 +74,7 @@ class Repartition_templates extends Model
       // Operation::delete_by_user_id($id);
       // Participation::delete_by_user_id($id);
       // Tricount::delete_by_user_id($id);
+      Repartition_template_items::delete_by_repartition_template($this->id);
       $query=self::execute("DELETE from `repartition_templates` where tricount=:tricount", array("tricount"=>$tricount));
       if($query->rowCount()==0)
           return false;
