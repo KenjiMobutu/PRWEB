@@ -103,8 +103,8 @@ require_once "framework/Model.php";
       else
           return $query;
     }
-    public function by_user($user){
-      $query = self::execute("SELECT t.title FROM `tricounts` t JOIN  subscriptions s ON t.id = s.tricount where user=:user", array("user"=>$user));
+    public static function by_user($user){
+      $query = self::execute("SELECT t.* FROM `tricounts` t JOIN  subscriptions s ON t.id = s.tricount where t.creator=:user", array("user"=>$user));
         $data = $query->fetchAll();
         $tricount  = [];
         foreach ($data as $row) {
@@ -112,14 +112,20 @@ require_once "framework/Model.php";
         }
         return $tricount;
     }
-    public static function list(){
-      $query = self::execute("SELECT * FROM `tricounts`", array());
-        $data = $query->fetchAll();
-        $tricount  = [];
-        foreach ($data as $row) {
-          $tricount[] = new Tricounts($row["id"],$row["title"],$row["description"],$row["created_at"],$row["creator"]);
-        }
-        return $tricount;
+    public static function list($creator){
+      $query = self::execute("SELECT DISTINCT tricounts.*
+                              FROM tricounts
+                              LEFT JOIN subscriptions
+                              ON tricounts.id = subscriptions.tricount
+                              WHERE tricounts.creator =:creator
+                              OR subscriptions.user =:creator",
+                              array("creator"=>$creator));
+      $data = $query->fetchAll();
+      $tricount  = [];
+      foreach ($data as $row) {
+        $tricount[] = new Tricounts($row["id"],$row["title"],$row["description"],$row["created_at"],$row["creator"]);
+      }
+      return $tricount;
     }
     public static function one_of_list(){
       $query = self::execute("SELECT * FROM `tricounts`", array());
@@ -129,6 +135,15 @@ require_once "framework/Model.php";
         $data = $query->fetch();
         return new Tricounts($data["id"],$data["title"],$data["description"],$data["created_at"],$data["creator"]);
       }
+    }
+    public static function number_of_friends($tricountId){
+      $query = self::execute("SELECT count(*)
+                              FROM subscriptions s, tricounts t
+                              where s.tricount = t.id
+                              and t.id=:tricountId",
+                              array("tricountId"=>$tricountId));
+        $data = $query->fetch();
+        return $data[0];
     }
 
 
