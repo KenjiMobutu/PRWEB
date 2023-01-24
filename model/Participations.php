@@ -10,31 +10,31 @@
 
 
         public static function get_by_tricount($tricount){
-            $query = self::execute("SELECT * from subscriptions where tricount =:tricount", 
+            $query = self::execute("SELECT * from subscriptions where tricount =:tricount",
             array("tricount"=>$tricount));
 
         }
-        
+
         public static function get_by_user($user){
-            $query = self::execute("SELECT * from subscriptions where user =:user", 
-            array("tricount"=>$user));
+            $query = self::execute("SELECT * from subscriptions where user =:user",
+            array("user"=>$user));
         }
-        
+
 
 
         public static function delete_by_user_id($id): bool{
-            $query = self::execute("DELETE 
-                from subscriptions 
-                where user=:id", 
+            $query = self::execute("DELETE
+                from subscriptions
+                where user=:id",
                 array("user"=>$id));
             if($query->rowCount()==0)
                 return false;
             else
-                return true; 
+                return true;
         }
         public static function delete_by_tricount_id($id): bool{
             $query = self::execute("DELETE
-                FROM subscriptions 
+                FROM subscriptions
                 where tricount =:id",
                 array("tricount"=>$id));
             if($query->rowCount()==0)
@@ -45,7 +45,7 @@
 
         public function update(){
             if(self::get_by_tricount($this->tricount) != null){
-                self::execute("UPDATE subscriptions 
+                self::execute("UPDATE subscriptions
                 SET
                 tricount=:tricount,
                 user=:user
@@ -63,10 +63,22 @@
             }
             return $this;
         }
+    public function by_tricount($user){
+        $query = self::execute("SELECT s.*
+                              FROM subscriptions s, tricounts t
+                              where s.tricount = t.id
+                              And t.creator = :creator", array("user"=>$user));
+        $data = $query->fetchAll();
+        $subscription  = [];
+        foreach ($data as $row) {
+          $subscription[] = new Participations($row["tricount"],$row["user"]);
+        }
+        return $subscription;
+    }
 
 
 
 
     }
- 
+
 ?>
