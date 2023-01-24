@@ -19,11 +19,6 @@
     </head>
 
     <body>
-        <!-- loader -->
-        <div id="loaders">
-            <img src="css/img/loading-icon.png" alt="icon" class="loading-icon">
-        </div>
-        <!-- * loader -->
         <div class="appHeader">
             <div class="left">
                 <a href="#" class="headerButton goBack">
@@ -64,7 +59,7 @@
                             </div>
                             <div class="in">
                                 <div class="card-number">
-                                    <span class="label">With ... friends </span>
+                                    <span class="label">With <?php echo $tl->number_of_friends($tl->id) ?> friends </span>
                                 </div>
                             </div>
                         </div>
