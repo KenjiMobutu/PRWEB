@@ -3,6 +3,7 @@ require_once 'model/Repartition_templates.php';
 require_once 'model/Repartition_template_items.php';
 require_once 'model/User.php';
 require_once 'model/Tricounts.php';
+require_once 'model/Participations.php';
 require_once 'framework/View.php';
 require_once 'framework/Controller.php';
 
@@ -19,7 +20,9 @@ class ControllerTricount extends Controller{
     if (is_null($user)) {
       $user = $loggedUser;
     }
-    $tricounts_list = Tricounts::list();
+    $tricounts_list = Tricounts::list($user->id);
+    //var_dump($tricounts_list);
+    //$subcription_list = Participations::get_by_tricount($user);
     //var_dump($tricounts_list);
     //$user_tricounts_list = $tricounts_list->by_user($loggedUser->id);
     //var_dump($user_tricounts_list);
