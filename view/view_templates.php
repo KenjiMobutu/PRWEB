@@ -18,37 +18,35 @@
                 <?php if($templates !== null) : ?>
                     <?php foreach($templates as $rt) :?>
                             <tr>
-                                <!-- on récupère juste le titre  -->
                                 <th><?= $rt->get_title(); ?></th>
                             </tr>
+                            <tr>
                                 <th class="info_templates">
                                     <ul>
-                                    <!-- on doit récupérer les noms des user -->
                                         <?php foreach($items as $participe): ?>
 
-                                            <!-- <?php echo '<pre>'; print_r($participe["user"][0]); echo '</pre>';?> mieux que var_dump imo  -->
-                                            <li>
+                                            <!-- <?php echo '<pre>'; print_r($templates); echo '</pre>';?>  -->                    
                                                     <?php foreach($participe as $row) : ?>
-                                                        <?php echo $row->get_user_info(); ?> 
-                                                            <?php if($row->get_repartition_template() === $row->repartition_template): ?>
-                                                                <?php echo "("; echo $row->get_weight_by_user($row->get_user(), $row->repartition_template);
-                                                                    echo "/"; 
-                                                                        echo $row->get_Sum_Weight();
-                                                                            echo ")"; ?>
-                                                                <?php endif;?>
-                                                                <!-- <?php echo '<pre>'; print_r($row->get_repartition_template() ===$row->repartition_template) ; echo '</pre>' ; ?> -->
+                                                        <?php if($row->get_repartition_template() === $rt->get_id()): ?>
+                                                           <li> <?php echo $row->get_user_info();?> 
+                                                                    <?php echo "("; echo $row->get_weight_by_user($row->get_user(), $row->repartition_template);
+                                                                        echo "/"; 
+                                                                            echo $row->get_Sum_Weight();
+                                                                                echo ")"; ?></li>
+                                                        
+                                                        <?php endif;?>
 
                                                     <?php endforeach ; ?>
                                                 
                                                                                 
-                                            </li>
                                         <?php endforeach;?>
                                     </ul>
-                                </th>                        
+                                </th>       
+                                </tr>                 
                             
                         <?php endforeach; ?>
                         <?php else : ?>
-                            <p>no template for now</p>
+                            <p>no template for now.</p>
                     <?php endif;?>
             </table>
         </div>
