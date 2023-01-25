@@ -8,20 +8,22 @@ class Operation extends Model
     private string $title;
     private int $tricount;
     private ?int $amount;
-    private DateTime $operation_date;
+    private ?DateTime $operation_date;
     private int $initiator;
-    private Datetime $created_at;
+    private ?Datetime $created_at;
 
-    public function __construct(int $id, string $title, int $tricount, int $amount, Datetime $operation_date, int $initiator, Datetime $created_at)
+    public function __construct(int $id, string $title, int $tricount, int $amount, DateTime $operation_date, int $initiator, Datetime $created_at)
     {
+        
         $this->$id = $id; //tricount id
         $this->$title = $title;
         $this->$tricount = $tricount;
         $this->$amount = $amount;
-        $this->$operation_date = $operation_date;
+        $this->$operation_date =$operation_date;
         $this->$initiator = $initiator; //user id
         $this->$created_at = $created_at;
     }
+
 
     public function create()
     {
@@ -149,10 +151,44 @@ class Operation extends Model
         }
     }
 
+    public static function getOperationByTricountId(int $id): array
+    {
+        $result = [];
+        $query = self::execute("SELECT * FROM operations where tricount = :id", array("id"=>$id));
+        $data = $query->fetchAll();
+        if ($query->rowCount() == 0) {
+            return $result;
+        } else {
+            // echo '<pre>';
+            // print_r($data);
+            // echo '</pre>';
+            // die();
+            foreach ($data as $row) {
+                $result[] = new Operation(
+                    $row["id"],
+                    $row["title"],
+                    $row["tricount"],
+                    $row["amount"],
+                    strtotime($row["operation_date"]->format('Y/m/d')),
+                    // new DateTime($row["operation_date"]->format('Y-m-d')),
+                    $row["initiator"],
+                    new DateTime($row["created_at"])
+                );
+            }
+        }
+        return $result;
+    }
+
+    public static function getOperationId($tricountId){
+        $query = self::execute("SELECT * FROM operations where tricount = :tricountId", array("tricountId"=>$tricountId));
+        $data = $query->fetch();
+        return $data;
+    }
+
     public static function getOperationByUserID(int $initiator): array
     {
         $result = [];
-        $query = self::execute("SELECT * FROM operations where initiator = :initiator", ["inititator" => $initiator]);
+        $query = self::execute("SELECT * FROM operations where initiator = :initiator", array("initiator"=>$initiator));
         $data = $query->fetchAll();
         if ($query->rowCount() == 0) {
             return $result;

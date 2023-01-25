@@ -45,6 +45,12 @@
     return $this->creator;
   }
 
+  public static function get_total_amount_by_tric_id($id){
+      $query = self::execute("SELECT sum(amount) FROM operations WHERE tricount = :tricount", array("tricount"=>$id));
+      $data = $query->fetch();
+      return $data;
+  }
+
     //retourne le tricount par son id
     public static function get_by_id($id){
       $query = self::execute("SELECT * FROM tricounts WHERE id = :id", array("id"=>$id));
