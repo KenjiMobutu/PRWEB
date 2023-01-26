@@ -9,6 +9,7 @@ require_once 'model/participations.php';
 
 
 
+
 class ControllerTemplates extends Controller
 {
     public function index() : void
@@ -47,16 +48,91 @@ class ControllerTemplates extends Controller
             if($templates !== null){
                 foreach($templates as $template){
                     $items[] = $template->get_items();
-                    
+                
                 }
             }
         }
+        
         (new View("templates"))->show(array("user"=>$user,
                                             "templates"=>$templates, 
                                             "tricount"=>$tricount, 
-                                            "items"=>$items));
+                                            "items"=>$items,));
     }
 
+    public function edit_template(){
+        $userlogged = $this->get_user_or_redirect();
+        $user = User::get_by_id($userlogged->id);
+        $listUser = [];
+        
+        if($_GET['param1'] !==null && (isset($_GET['param2']) && $_GET['param2'] !== null)){
+            $tricount = Tricounts::get_by_id($_GET["param1"]);
+            $template = Repartition_templates::get_by_id($_GET['param2']);
+            if($template === null){
+                $this->redirect("user","profile");
+            }
+        
+            $listUser[] = Repartition_template_items::get_user_by_repartition($template->id);
+            // foreach($listUser as $lst)
+
+               // $userList[] = $lst->getUserInfo();
+        
+            (new View("edit_template"))->show(array("user"=>$user, 
+                                                    "tricount"=>$tricount,
+                                                    "template"=>$template,
+                                                    "listUser"=>$listUser));
+        }else{           
+            if($_GET['param1'] !== null ){
+                $tricount = Tricounts::get_by_id($_GET["param1"]);
+                $listUser = Participations::get_by_tricount($tricount->id);
+                // foreach($listUser as $lst)
+                //     $userList[] = $lst["user"]->getUserInfo();
+                (new View("edit_template"))->show(array("user"=>$user,
+                                                        "tricount"=>$tricount,
+                                                        "listUser"=>$listUser));
+            }
+        }
+    }
+
+    public function editTemplate(){
+        if(isset($_POST)) {
+            foreach($_POST as $p):
+            var_dump($p);
+            endforeach;
+            // créer un tableau pour y mettre les données 
+            // $data = array();
+            // Boucle pour récupérer les données de chaque input ? 
+            if(isset($_POST["template_title"])){
+                // foreach ($_POST as $key => $value) {
+                //     if(strpos($key, "checked_") !== false) {
+                //         // Récupérer l'id de l'utilisateur en enlevant checked_
+                //         $user_id = str_replace("checked_", "", $key);
+                //         // Ajouter les données du user a data
+                //         $data[] = array(
+                //             "user_id" => $user_id,
+                //             "checked" => $value,
+                //             "name" => $_POST["name_" . $user_id],
+                //             "weight" => $_POST["weight_" . $user_id]
+                //         );
+                //     }
+                // }
+                if(isset($_POST["checked"])){     
+                    $template = Repartition_templates::newTemplate($_POST["template_title"], $_POST["tricountId"]);
+                    if($template !== null){
+                        foreach($_POST["checked"] as $post):
+                            $template_items = new Repartition_template_items($_POST["weight"],$_POST['tricountId'],$post);
+                            $template_items->update();
+                        endforeach;
+                        $this->redirect("templates", "templates", $_POST["tricountId"]);
+                    }
+                    
+                }
+            }
+        } else {
+            //message d'erreur
+            echo "Aucune donnée reçue";
+        }
+
+    }
     public function delete_template(){
 
         $userlogged = $this->get_user_or_redirect();
@@ -82,7 +158,6 @@ class ControllerTemplates extends Controller
         (new View("delete_template"))->show(array("user"=>$user,
                                             "template"=>$template));
     }
-
 
 }
 ?>
