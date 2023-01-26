@@ -42,7 +42,10 @@
             else
                 return true;
         }
-
+        public function add(){
+            self::execute("INSERT INTO `subscriptions`(`tricount`, `user`) VALUES (:tricount,:user)",
+                    array("tricount"=>$this->tricount,"user"=>$this->user));
+        }
         public function update(){
             if(self::get_by_tricount($this->tricount) != null){
                 self::execute("UPDATE subscriptions
@@ -63,11 +66,11 @@
             }
             return $this;
         }
-    public function by_tricount($user){
+    public static function by_tricount($tricount){
         $query = self::execute("SELECT s.*
                               FROM subscriptions s, tricounts t
                               where s.tricount = t.id
-                              And t.creator = :creator", array("user"=>$user));
+                              And s.tricount = :tricount", array("tricount"=>$tricount));
         $data = $query->fetchAll();
         $subscription  = [];
         foreach ($data as $row) {
