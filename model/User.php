@@ -4,7 +4,7 @@ require_once "framework/Model.php";
     class User extends Model{
         public ?int $id;
         public String $mail;
-        public String $hashed_password;
+        public ?String $hashed_password;
         public String $full_name;
         public String $role;
         public ?String $iban;
@@ -109,6 +109,27 @@ require_once "framework/Model.php";
             } else{
                 return new User($data["id"],$data["mail"],$data["hashed_password"],$data["full_name"],$data["role"],$data["iban"]);
             }
+        }
+        public static function get_all(){//récup tous les users
+            $query = self::execute("SELECT * FROM  `users` ", array());
+            $data = $query->fetchAll();
+            $results = [];
+            foreach ($data as $row) {
+                $results[] = new User($row["id"],$row["mail"],$row["hashed_password"],$row["full_name"],$row["role"],$row["iban"]);
+            }
+            return $results;
+        }
+        public static function not_participate($tricountId){//récup tous les users qui ne participent pas
+            $query = self::execute("SELECT *
+                                    FROM users
+                                    WHERE id
+                                    NOT IN (SELECT user FROM subscriptions WHERE tricount =:tricountId)", array("tricountId"=>$tricountId));
+            $data = $query->fetchAll();
+            $results = [];
+            foreach ($data as $row) {
+                $results[] = new User($row["id"],$row["mail"],$row["hashed_password"],$row["full_name"],$row["role"],$row["iban"]);
+            }
+            return $results;
         }
         public static function get_by_mail($mail){//récup l'user par son id
             $query = self::execute("SELECT * FROM  `users` where mail=:mail", array("mail"=>$mail));
