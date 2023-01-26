@@ -9,6 +9,41 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
 <body>
+<style>
+        .templates_container {
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        table.tab_templates {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table.tab_templates th {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            background-color: #333;
+            color: #fff;
+        }
+
+        table.tab_templates td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        table.tab_templates tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        table.tab_templates tr:hover {
+            background-color: #ddd;
+        }
+
+
+
+</style>
     <?php include 'menu.html' ?>
     <div class="view_templates">
         <p><?php echo $tricount->get_title();?> > templates</p>
@@ -25,20 +60,19 @@
                                     <ul>
                                         <?php foreach($items as $participe): ?>
 
-                                            <!-- <?php echo '<pre>'; print_r($templates); echo '</pre>';?>  -->                    
+                                            <!-- <?php echo '<pre>'; print_r($templates); echo '</pre>';?>  -->   
+                                            <?php if ($participe !== null) : ?>                 
                                                     <?php foreach($participe as $row) : ?>
                                                         <?php if($row->get_repartition_template() === $rt->get_id()): ?>
-                                                           <li> <?php echo $row->get_user_info();?> 
+                                                        <li> <?php echo $row->get_user_info();?> 
                                                                     <?php echo "("; echo $row->get_weight_by_user($row->get_user(), $row->repartition_template);
                                                                         echo "/"; 
                                                                             echo $row->get_Sum_Weight();
                                                                                 echo ")"; ?></li>
                                                         
                                                         <?php endif;?>
-
-                                                    <?php endforeach ; ?>
-                                                
-                                                                                
+                                                    <?php endforeach ; ?>  
+                                            <?php endif; ?>            
                                         <?php endforeach;?>
                                     </ul>
                                 </th>       

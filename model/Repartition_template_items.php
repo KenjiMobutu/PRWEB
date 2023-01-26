@@ -6,7 +6,7 @@
   class Repartition_template_items extends Model
   {
     public ?int $weight;
-    public ?int $user;
+    public int $user;
     public ?int $repartition_template;
 
 
@@ -79,6 +79,36 @@
         return $data;
     }
 
+    public static function get_user_by_repartition($repartition){
+      $query = self::execute("SELECT * 
+                            FROM repartition_template_items
+                            where repartition_template = :repartition", array("repartition" => $repartition));
+      $data[] = $query->fetchAll();
+      if($query->rowCount() ==0)
+        return null;
+      return $data;
+    }
+
+    public static function newTemplateItems($weight, int $templateId, $user){
+        if($weight === null || $templateId === null || $user === null){
+          return null;
+        }else{
+          $query = self::execute("INSERT INTO
+                                  repartition_template_items 
+                                  (`weight`,
+                                  user, 
+                                  repartition_template)
+                                  VALUES (:`weight`,
+                                    :user,
+                                    :template) ",
+                                    array("weight"=>$weight,
+                                    "template"=>$templateId,
+                                    "user"=>$user)
+                                );
+          return $query;
+        }
+    }
+
     public function get_user_info(){  // on récupère les noms des utilisateurs lié a un template_items
       $query = self::execute("SELECT * 
                               from users u, repartition_template_items rti
@@ -104,6 +134,36 @@
       return $query;
     }
 
+
+    public function update()
+    {
+      if (!is_null($this->repartition_template)) {
+        self::execute("UPDATE `repartition_template_items` SET
+            weight=:weight,
+            user =:user
+
+            WHERE repartition_template=:repartition_template ",
+          array(
+            "weight" => $this->weight,
+            "user" => $this->user,
+            "repartition_template" => $this->repartition_template
+          )
+        );
+      } else {
+        self::execute("INSERT INTO
+            `repartition_template_items` (weight,user, repartition_template)
+            VALUES(:`weight`,
+            :`user`,
+            :repartition_template)",
+          array(
+            "weigh"=>$this->weight,
+            "user"=>$this->user,
+            "repartition_template" => $this->repartition_template
+          )
+        );
+      }
+      return $this;
+    }
   }
 
 

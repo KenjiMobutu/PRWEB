@@ -91,6 +91,24 @@ class Repartition_templates extends Model
       return $query;
     }
 
+    public static function newTemplate($titre, $tricount){
+      if($titre === null || $tricount === null)
+        return null;
+      else{
+        $query = self::execute("INSERT INTO
+                                repartition_templates
+                                (title, tricount)
+                                VALUES(:titre,
+                                      :tricount)",
+                                array(
+                                  "titre"=>$titre,
+                                  "tricount"=>$tricount
+                                )
+                              );
+        return $query;
+      }
+    }
+
 
   public function update()
   {
@@ -118,9 +136,6 @@ class Repartition_templates extends Model
     }
     return $this;
   }
-
-
-
 }
 
 
