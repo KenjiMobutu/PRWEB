@@ -3,9 +3,9 @@ require_once "framework/Model.php";
 
 class Repartition_templates extends Model
 {
-  public ?int $id;
-  public string $title; //(varchar 256)
-  public int $tricount;
+  public $id;
+  public $title; //(varchar 256)
+  public $tricount;
 
   public function __construct(?int $id, string $title, int $tricount)
   {
@@ -23,6 +23,11 @@ class Repartition_templates extends Model
   {
     return $this->title;
   }
+  public function get_tricount(): int|null
+  {
+    return $this->tricount;
+  }
+
   public static function get_by_id($id): Repartition_templates | null
   {
     $query = self::execute("SELECT * FROM  `repartition_templates` where id=:id", array("id" => $id));
@@ -105,8 +110,12 @@ class Repartition_templates extends Model
                                   "tricount"=>$tricount
                                 )
                               );
-        return $query;
+        $data = $query->fetch();
+
       }
+        if($query->rowCount() ==0)
+              return false;
+        return new Repartition_template_items( self::lastInsertId(), $data["title"], $data["tricount"]);
     }
 
 

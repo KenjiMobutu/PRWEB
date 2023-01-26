@@ -30,7 +30,7 @@ class ControllerProfile extends Controller
         //     User::get_by_id($_GET['param1']) : $user;
 
         if (isset($_GET['param1']) && is_numeric($_GET['param1'])) {
-            $user = User::get_by_id($loggedUser->id);
+            $user = User::get_by_id($loggedUser->getUserId());
         }
     
         (new View("profile"))->show(array("user" => $user, "user"=>$loggedUser)); //show may throw Exception
@@ -94,7 +94,7 @@ class ControllerProfile extends Controller
         $errors = [];
 
 
-        $user = User::get_by_id($loggedUser->id);
+        $user = User::get_by_id($loggedUser->getUserId());
         $success = array_key_exists('param2', $_GET) && $_GET['param2'] === 'ok' ? 
            "Your profile has been successfully updated." : "";
 
@@ -114,7 +114,7 @@ class ControllerProfile extends Controller
             }
             if(empty($errors)){
                 $user->update_profile($_POST["fullName"],$_POST["mail"],  $_POST["iban"]);
-                $this->redirect("profile","profile",$user->id,"ok");
+                $this->redirect("profile","profile",$user->getUserId(),"ok");
             }
         }
         (new View("edit_profile"))->show([
@@ -129,7 +129,7 @@ class ControllerProfile extends Controller
         //    User::get_by_id($_GET['param1']) : $user;
         $user = $this->get_user_or_redirect();
         if(!empty($_GET["param1"])){//récup l'id du user
-            if($user->id == $_GET["param1"]){
+            if($user->getUserId() == $_GET["param1"]){
                 $user = User::get_by_id($_GET["param1"]);
             }else{
                 $this->redirect("main","error");

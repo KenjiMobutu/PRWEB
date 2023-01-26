@@ -5,12 +5,12 @@
 
   class Repartition_template_items extends Model
   {
-    public ?int $weight;
-    public int $user;
-    public ?int $repartition_template;
+    public  $weight;
+    public  $user;
+    public  $repartition_template;
 
 
-    public function __construct(?int $weight, int $user, int $repartition_template)
+    public function __construct( $weight,  $user, $repartition_template)
     {
       $this->weight = $weight;
       $this->user = $user;
@@ -135,6 +135,22 @@
     }
 
 
+    public static function addNewItems($user,  $repartition_template , $weight){
+      $query = self::execute("INSERT INTO
+            repartition_template_items (`user`, `repartition_template`, `weight`)
+            VALUES(:user,
+            :repartition_template,
+            :weight)",
+          array(
+            "weight"=>$weight,
+            "user"=>$user,
+            "repartition_template" => $repartition_template
+          )
+        );
+      return $query;
+    }
+
+    
     public function update()
     {
       if (!is_null($this->repartition_template)) {

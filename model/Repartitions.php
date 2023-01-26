@@ -5,11 +5,11 @@ require_once 'model/Operation.php';
 
 class Repartitions extends Model
 {
-    public int $weight;
+    private int $weight;
 
-    public int $operation;
+    private int $operation;
 
-    public int $user;
+    private int $user;
 
     public function __construct(int $weight, int $operation, int $user)
     {

@@ -38,7 +38,7 @@ class ControllerTemplates extends Controller
     public function templates()
     {
         $userlogged = $this->get_user_or_redirect();
-        $user = User::get_by_id($userlogged->id);
+        $user = User::get_by_id($userlogged->getUserId());
         $items = [];
         if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
             $this->redirect('main', "error");
@@ -61,7 +61,7 @@ class ControllerTemplates extends Controller
 
     public function edit_template(){
         $userlogged = $this->get_user_or_redirect();
-        $user = User::get_by_id($userlogged->id);
+        $user = User::get_by_id($userlogged->getUserId());
         $listUser = [];
         
         if($_GET['param1'] !==null && (isset($_GET['param2']) && $_GET['param2'] !== null)){
@@ -71,7 +71,7 @@ class ControllerTemplates extends Controller
                 $this->redirect("user","profile");
             }
         
-            $listUser[] = Repartition_template_items::get_user_by_repartition($template->id);
+            $listUser[] = Repartition_template_items::get_user_by_repartition($template->get_id());
             // foreach($listUser as $lst)
 
                // $userList[] = $lst->getUserInfo();
@@ -80,58 +80,52 @@ class ControllerTemplates extends Controller
                                                     "tricount"=>$tricount,
                                                     "template"=>$template,
                                                     "listUser"=>$listUser));
-        }else{           
+        }else{     
             if($_GET['param1'] !== null ){
                 $tricount = Tricounts::get_by_id($_GET["param1"]);
-                $listUser = Participations::get_by_tricount($tricount->id);
+                $listUser = Participations::get_by_tricount($tricount->get_id());
                 // foreach($listUser as $lst)
                 //     $userList[] = $lst["user"]->getUserInfo();
+            }
+            
                 (new View("edit_template"))->show(array("user"=>$user,
                                                         "tricount"=>$tricount,
                                                         "listUser"=>$listUser));
-            }
+            
         }
+        
     }
 
     public function editTemplate(){
-        if(isset($_POST)) {
-            foreach($_POST as $p):
-            var_dump($p);
-            endforeach;
-            // créer un tableau pour y mettre les données 
-            // $data = array();
-            // Boucle pour récupérer les données de chaque input ? 
-            if(isset($_POST["template_title"])){
-                // foreach ($_POST as $key => $value) {
-                //     if(strpos($key, "checked_") !== false) {
-                //         // Récupérer l'id de l'utilisateur en enlevant checked_
-                //         $user_id = str_replace("checked_", "", $key);
-                //         // Ajouter les données du user a data
-                //         $data[] = array(
-                //             "user_id" => $user_id,
-                //             "checked" => $value,
-                //             "name" => $_POST["name_" . $user_id],
-                //             "weight" => $_POST["weight_" . $user_id]
-                //         );
-                //     }
-                // }
-                if(isset($_POST["checked"])){     
-                    $template = Repartition_templates::newTemplate($_POST["template_title"], $_POST["tricountId"]);
-                    if($template !== null){
-                        foreach($_POST["checked"] as $post):
-                            $template_items = new Repartition_template_items($_POST["weight"],$_POST['tricountId'],$post);
-                            $template_items->update();
-                        endforeach;
-                        $this->redirect("templates", "templates", $_POST["tricountId"]);
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if(isset($_POST["template_title"]) && isset($_POST["c"]) && isset($_POST["w"])){
+                // Récupère les valeurs des inputs
+                $checkedUsers = $_POST["c"];
+                $weights = $_POST["w"];
+    
+                // Utilise les valeurs pour ajouter à la base de données ou pour d'autres traitements
+                $template = new Repartition_templates(null ,$_POST["template_title"], $_POST["tricountId"]);
+                
+                if($template !== null){
+                    for($i = 0; $i < $checkedUsers; $i++) {
+                        Repartition_template_items::addNewItems($checkedUsers[$i],
+                         $template->id,
+                          $weights[$i]);
                     }
-                    
+                    $this->redirect("templates", "templates", $_POST["tricountId"]);    
                 }
             }
-        } else {
-            //message d'erreur
-            echo "Aucune donnée reçue";
-        }
 
+            // if(isset($_POST["template_title"]) || isset($_POST["c"]) || isset($_POST["w"])){
+            //     $template = Repartition_templates::newTemplate($_POST["template_title"], $_POST["tricountId"]);
+            //     if($template !== null){
+
+            //         foreach($_POST["w"] as $key => $wUser) {
+            //             Repartition_template_items::addNewItems($_POST["c"][$key],$_POST["tricountId"] ,$wUser );
+            //         }
+            //     }
+            // }      
+        }
     }
     public function delete_template(){
 
@@ -147,9 +141,9 @@ class ControllerTemplates extends Controller
         }
         if(isset($_POST['submitted'])){
             if($_POST['submitted'] === "Cancel"){
-                $this->redirect("templates","templates",$template->tricount); // recuperer l'id du tricount lié au template
+                $this->redirect("templates","templates",$template->get_tricount()); // recuperer l'id du tricount lié au template
             }else if ($_POST['submitted'] === "Delete"){
-                $tricount = $template->tricount;
+                $tricount = $template->get_tricount();
                 $template = $template->delete_by_id();
                 $this->redirect("templates","templates", $tricount);
             }
