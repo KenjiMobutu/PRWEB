@@ -104,13 +104,28 @@ class ControllerTemplates extends Controller
                 $weights = $_POST["w"];
     
                 // Utilise les valeurs pour ajouter à la base de données ou pour d'autres traitements
-                $template = new Repartition_templates(null ,$_POST["template_title"], $_POST["tricountId"]);
+                $template = new Repartition_templates(null,$_POST["template_title"], $_POST["tricountId"] );
+                $template->newTemplate($_POST["template_title"], $_POST["tricountId"]);
+
+                
                 
                 if($template !== null){
-                    for($i = 0; $i < $checkedUsers; $i++) {
-                        Repartition_template_items::addNewItems($checkedUsers[$i],
-                         $template->id,
-                          $weights[$i]);
+                    for($i = 0; $i <= count($checkedUsers)+1; $i++) {
+                    //     echo "<pre>";
+                    //     if(isset($checkedUsers[$i]) && $checkedUsers[$i] !== null){
+                    //         print_r($checkedUsers);
+                    //         print_r(" i :   " . $i . " \n");
+                    //         print_r(" checked User " . $checkedUsers[$i] . " \n");
+                    //         print_r("weight " .$weights[$i] . " \n");
+                    //     }
+                      
+                    //   echo "</pre>";
+                        if(isset($checkedUsers[$i]) && $checkedUsers[$i] !== null){
+                           Repartition_template_items::addNewItems($checkedUsers[$i],
+                            $template->id,
+                            $weights[$i]); 
+                        }
+                        
                     }
                     $this->redirect("templates", "templates", $_POST["tricountId"]);    
                 }

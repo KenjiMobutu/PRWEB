@@ -81,12 +81,12 @@
 
         <input type="text" name="tricountId" value="<?php echo $tricount->get_id() ?>" hidden>
         <?php foreach($listUser as $listusr): ?>
-            <input type="checkbox" name="c" value="<?= $listusr->user; ?>" checked ="checked">
+            <input type="checkbox" name="c[<?= $listusr->user; ?>]" value="<?= $listusr->user; ?>" checked ="checked">
                                 <?php // mettre c[User->id] ça fera un tableau avec des données?>
 
             <input type="text" name="user" value="<?php $listusr->user;?>" placeholder="<?php echo $listusr->getUserInfo(); ?>"  disabled="disabled">
 
-            <input type="number" name="w" value="1"  min="0" max="100" weight>
+            <input type="number" name="w[<?= $listusr->user; ?>]" value="1"  min="0" max="100" weight>
                                     <?php // mettre w[User->id] ça fera un tableau avec des données?>
             <br><br>
             <?php // récupérer les donnée grace a l'id user.?>

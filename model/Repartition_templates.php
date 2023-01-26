@@ -3,12 +3,12 @@ require_once "framework/Model.php";
 
 class Repartition_templates extends Model
 {
-  public $id;
+  public $id = null;
   public $title; //(varchar 256)
   public $tricount;
 
-  public function __construct(?int $id, string $title, int $tricount)
-  {
+  public function __construct($id  ,$title ,$tricount )
+  {      
     $this->id = $id;
     $this->title = $title;
     $this->tricount = $tricount;
@@ -19,7 +19,7 @@ class Repartition_templates extends Model
     return $this->id;
   }
 
-  public function get_title(): string|null
+  public function get_title(): string
   {
     return $this->title;
   }
@@ -27,7 +27,21 @@ class Repartition_templates extends Model
   {
     return $this->tricount;
   }
+  public function setId($id)
+  {
+      $this->id = $id;
+  }
 
+  public function setRepartitionTemplatesId()
+  {
+      $query = self::execute("SELECT id FROM repartition_templates WHERE id = :id", array("id" => Model::lastInsertId()));
+      $data = $query->fetchAll();
+      foreach ($data as $row) {
+          $id = $row['id'];
+      }
+      $this->setId($id);
+  }
+  
   public static function get_by_id($id): Repartition_templates | null
   {
     $query = self::execute("SELECT * FROM  `repartition_templates` where id=:id", array("id" => $id));
@@ -96,7 +110,7 @@ class Repartition_templates extends Model
       return $query;
     }
 
-    public static function newTemplate($titre, $tricount){
+    public function newTemplate($titre, $tricount){
       if($titre === null || $tricount === null)
         return null;
       else{
@@ -110,12 +124,11 @@ class Repartition_templates extends Model
                                   "tricount"=>$tricount
                                 )
                               );
-        $data = $query->fetch();
-
+      
+        $this->setRepartitionTemplatesId();
+        return $query->fetch();
       }
-        if($query->rowCount() ==0)
-              return false;
-        return new Repartition_template_items( self::lastInsertId(), $data["title"], $data["tricount"]);
+        
     }
 
 
