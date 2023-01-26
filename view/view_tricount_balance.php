@@ -35,7 +35,6 @@
                     
                 <?php endforeach;?>
                 <br>
-                <p>Total is : <?php echo $total["0"] ?></p>
             </ul>
         </div>
     </div>

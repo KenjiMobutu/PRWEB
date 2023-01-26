@@ -31,30 +31,5 @@ class ControllerTemplates extends Controller
         (new View("templates"))->show(array("user"=>$user,"templates"=>$templates, "tricount"=>$tricount, "participant"=>$participant ));
     }
 
-    public function balance(){
-        $user = $this->get_user_or_redirect();
-        $user = User::get_by_id($user->id);
-        if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
-            $this->redirect('main', "error");
-        }else{
-        
-        $operation = Operation::getOperationId($_GET['param1']);
-        
-        $tricount = Tricounts::get_by_id($_GET['param1']);
-        // echo '<pre>';
-        //     print_r($tricount->get_id());
-        //     echo '</pre>';
-        //     die();
-        $tricountID = $tricount->get_id();
-        $weights = Repartitions::get_user_and_weight_by_operation_id($tricount->get_id());
-        $total = Tricounts::get_total_amount_by_tric_id($tricountID);
-        
-            // echo '<pre>';
-            // print_r($total);
-            // echo '</pre>';
-            // die();
-        }
-        (new View("tricount_balance"))->show(array("user"=>$user, "tricount"=>$tricount, "weights"=>$weights, "total"=>$total ));
-    }
 }
 ?>

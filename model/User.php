@@ -29,6 +29,18 @@ class User extends Model
         $this->iban = $iban;
     }
 
+    public static function getUsers(){
+        $result=[];
+        $query = self::execute("SELECT * FROM  `users`",array());
+        $data = $query->fetchAll();
+        
+            foreach($data as $row){
+                $result[]= new User($row["id"], $row["mail"], $row["hashed_password"], $row["full_name"], $row["role"], $row["iban"]);
+            }
+            return $result;
+            
+    }
+
     //retourne l'id de l'utilisateur
     public function getUserId()
     {
