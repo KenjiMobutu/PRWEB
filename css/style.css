@@ -1,3 +1,9 @@
+@charset "UTF-8";
+@import url("css/src/bootstrap/bootstrap.min.css");
+@import url("css/src/splide/splide.min.css");
+@import url("https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css");
+@import url("https://fonts.googleapis.com/css?family=Poppins:400,500,600&display=swap");
+
 /* MENU */
 * {
   margin: 0;
@@ -302,6 +308,408 @@ select {
   color: #fff;
 }
 
+/* List tricount */
+#listTricount {
+  padding: 56px 0;
+  margin-bottom: env(safe-area-inset-bottom);
+  margin-top: env(safe-area-inset-top);
+}
+
+#listTricount.extra-header-active {
+  padding-top: 106px;
+}
+
+#listTricount.full-height {
+  min-height: 100vh;
+}
+
+.section {
+  padding: 0 16px;
+}
+
+.section.full {
+  padding: 0;
+}
+
+
+/* HEADER of list tricount*/
+.appHeader {
+  height: 56px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: env(safe-area-inset-top);
+  left: 0;
+  right: 0;
+  z-index: 999;
+  background: #FFFFFF;
+  color: #27173E;
+  border-bottom: 1px solid #DCDCE9;
+}
+
+.appHeader:before {
+  content: '';
+  height: env(safe-area-inset-top);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  z-index: 99999;
+  background: #FFF;
+}
+
+
+.appHeader.no-border {
+  border: 0;
+  box-shadow: none;
+}
+
+.appHeader.transparent {
+  background: transparent;
+}
+
+.appHeader.transparent:before {
+  background: #EDEDF5;
+}
+
+.appHeader .left,
+.appHeader .right {
+  height: 56px;
+  display: flex;
+  align-items: center;
+  position: absolute;
+}
+
+.appHeader .left .icon,
+.appHeader .left ion-icon,
+.appHeader .right .icon,
+.appHeader .right ion-icon {
+  font-size: 26px;
+}
+
+.appHeader .left .headerButton,
+.appHeader .right .headerButton {
+  min-width: 36px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  color: #2c2937;
+  position: relative;
+}
+
+.appHeader .left .headerButton .btn,
+.appHeader .right .headerButton .btn {
+  font-size: 16px;
+  height: 32px;
+  padding: 0px 14px;
+}
+
+.appHeader .left .headerButton:active,
+.appHeader .right .headerButton:active {
+  opacity: .6;
+}
+
+.appHeader .left {
+  left: 10px;
+  top: 0;
+}
+
+.appHeader .right {
+  right: 10px;
+  top: 0;
+}
+
+.appHeader .pageTitle {
+  font-size: 17px;
+  font-weight: 500;
+  padding: 0 10px;
+}
+
+.appHeader .pageTitle .logo {
+  max-height: 24px;
+}
+
+.appHeader.text-light {
+  color: #FFF;
+}
+
+.appHeader.text-light .headerButton {
+  color: #FFF;
+}
+
+.extraHeader {
+  position: fixed;
+  left: 0;
+  top: 50px;
+  height: 50px;
+  right: 0;
+  width: 100%;
+  padding: 5px 16px;
+  display: flex;
+  margin-top: env(safe-area-inset-top);
+  align-items: center;
+  background: #FFF;
+  z-index: 1000;
+  border-bottom: 1px solid #DCDCE9;
+}
+
+.testPreview .appHeader {
+  position: relative;
+  top: 0;
+  z-index: 0;
+}
+
+/* Tricount cart */
+#loader {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 99999;
+  background-image: linear-gradient(56deg, rgb(11, 36, 0) 0%, rgb(35, 121, 9) 28%, rgb(0, 255, 183) 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+#loader .loading-icon {
+  width: 42px;
+  height: auto;
+  animation: loadingAnimation 0.5s ease-in-out infinite;
+}
+
+#loader.hidden {
+  display: none;
+}
+@keyframes loadingAnimation {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(180deg);
+  }
+}
+.card {
+  margin-top: 5em;
+  background: #ffffff;
+  border-radius: 10px;
+  border: 0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.09);
+}
+.card .card-body {
+  padding: 16px;
+}
+
+.card-block {
+  margin: auto;
+  width: 80%;
+  height: 110px;
+  border-radius: 10px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.09);
+  color: #fff;
+  position: relative;
+
+}
+
+.card-block .card-main {
+  background-image: linear-gradient(56deg, rgb(11, 36, 0) 0%, rgb(35, 121, 9) 68%, rgb(0, 255, 183) 100%);
+  position: absolute;
+  border-radius: 10px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  display: flex;
+  align-items: flex-end;
+  padding: 20px 24px;
+}
+
+.card-block .card-button {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+.card-block .card-button > .btn {
+  background: transparent !important;
+  color: #fff !important;
+}
+
+.card-block span.label {
+  font-size: 11px;
+  letter-spacing: 1px;
+  opacity: 0.5;
+  line-height: 1em;
+  margin-bottom: 5px;
+  text-transform: uppercase;
+  display: block;
+  font-weight: 500;
+}
+
+.card-block .in .card-number {
+  font-size: 17px;
+  letter-spacing: 3px;
+  font-weight: 500;
+}
+
+.card-block .in .card-expiry {
+  font-size: 14px;
+  font-weight: 500;
+  margin-right: 20px;
+}
+
+.card-block .in .card-ccv {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.card-block .bottom {
+  display: flex;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.card-block .balance {
+  position: absolute;
+  left: 24px;
+  top: 24px;
+}
+
+.card-block .balance .title {
+  font-weight: 700;
+  color: #fff;
+  margin-top: 7px;
+  font-size: 24px;
+}
+
+.dropdown .dropdown-menu,
+.dropup .dropdown-menu {
+  border: 1px solid #DCDCE9;
+  min-width: 120px;
+  padding: 8px 0;
+  border-radius: 10px;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.dropdown .dropdown-menu .dropdown-item,
+.dropup .dropdown-menu .dropdown-item {
+  padding: 9px 16px;
+  line-height: 1.2em;
+  color: #27173E;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+}
+
+.dropdown .dropdown-menu .dropdown-item:hover, .dropdown .dropdown-menu .dropdown-item:active,
+.dropup .dropdown-menu .dropdown-item:hover,
+.dropup .dropdown-menu .dropdown-item:active {
+  background: rgba(220, 220, 233, 0.5);
+  color: #27173E;
+}
+
+.dropdown .dropdown-menu .dropdown-item .dropdown-divider,
+.dropup .dropdown-menu .dropdown-item .dropdown-divider {
+  border-top: 1px solid #DCDCE9;
+}
+
+.dropdown .dropdown-menu .dropdown-header,
+.dropup .dropdown-menu .dropdown-header {
+  padding: 9px 16px;
+  color: #958d9e;
+  font-weight: 400;
+  font-size: 11px;
+}
+
+.dropdown .dropdown-menu .text,
+.dropup .dropdown-menu .text {
+  padding: 9px 16px;
+  color: #958d9e;
+}
+.dropdown .dropdown-menu .icon,
+.dropdown .dropdown-menu ion-icon,
+.dropup .dropdown-menu .icon,
+.dropup .dropdown-menu ion-icon {
+  font-size: 17px;
+  margin-right: 6px;
+  width: 20px;
+  height: 20px;
+  justify-content: center;
+  align-items: center;
+  line-height: 1em;
+  display: inline-flex;
+  color: #27173E;
+}
+
+.appHeader .dropdown-menu {
+  margin-top: -12px !important;
+}
+
+.dropdown-toggle:after {
+  border-radius: 4px;
+  margin-left: 7px;
+}
+
+
+.btn {
+  height: 36px;
+  padding: 3px 18px;
+  font-size: 13px;
+  line-height: 1.2em;
+  font-weight: 500;
+  box-shadow: none !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s all;
+  text-decoration: none !important;
+  border-radius: 10px;
+  border-width: 2px;
+}
+.btn i.icon,
+.btn ion-icon {
+  font-size: 22px;
+  margin-right: 7px;
+  margin-top: -2px;
+}
+.button-card{
+  text-decoration: none;
+  color: rgb(201, 193, 193);
+  text-align: left !important;
+}
+.button-card .label{
+  text-align: left !important;
+}
+.button-card:hover{
+  text-decoration: none;
+  color: rgb(255, 255, 255);
+}
+
+.edit-settingsTitle{
+  padding-top: 5em;
+  margin-left: 2em;
+}
+.edit-settingsInput {
+  margin-left: 2em;
+}
+.edit-settingsInput h2 {
+  font-size: medium;
+}
+.selectSub{
+  width: 40%;
+}
+
+
+
+
+/* .......> */
+
 /* media queries */
 /* Mobile*/
 @media screen and (min-width: 320px) and (max-width: 480px) {
@@ -337,6 +745,7 @@ select {
     bottom: 0px;
     width: 100%;
   }
+
 }
 
 /* tablet and large mobiles */

@@ -19,47 +19,54 @@
     </head>
 
     <body>
+        <!-- loader -->
+        <div id="loader">
+            <img src="css/img/loading-icon.png" alt="icon" class="loading-icon">
+        </div>
+        <!-- * loader -->
+
         <div class="appHeader">
             <div class="left">
                 <a href="#" class="headerButton goBack">
-                    <ion-icon name="chevron-back-outline"></ion-icon>
+                    <ion-icon name="chevron-back-outline"></ion-icon>CANCEL
                 </a>
             </div>
             <div class="pageTitle">
-                Your tricount
+                Add new Tricount
             </div>
             <div class="right">
-                <a href="tricount/add" class="headerButton goBack" >
-                    <ion-icon name="add-outline"></ion-icon>
+                <a href="tricount/add" class="headerButton goBack"  >
+                    <ion-icon name="save-outline"></ion-icon>
                 </a>
             </div>
         </div>
-        <div id="listTricount">
-                <div class="section mt-2">
-                    <!-- tricount block -->
-                <?php foreach ($tricounts_list as $tl):  ?>
-                    <div class="card-block mb-2">
-                        <form action="tricount/edit/<?= $tl->get_id()?>" method="POST">
-                        <button class="button-card" >
-                        <div class="card-main">
-                            <div class="balance">
-                                <span class="label"><?=$tl->get_title() ?></span>
-                                <h1 class="title"><?= $tl->get_description()  == null ? "No description" : $tl->get_description() ?></h1>
-                            </div>
-                            <div class="in">
-                                <div class="card-number">
-                                    <span class="label"><?php echo $tl->number_of_friends($tl->get_id()) == 0 ? "you're alone!" :"with ". $tl->number_of_friends($tl->get_id())." friends" ?> </span>
-                                </div>
-                            </div>
-                            <input type='text' name="id" id="id" value="<?= $tl->get_id() ?>" hidden >
-                        </div>
-                        </button>
-                        </form>
-                    </div>
-                <?php endforeach; ?>
-                </div>
-        </div>
+
     <!-- * tricount block -->
+
+    <div class="section mt-2 mb-2">
+            <div class="card">
+                <div class="card-body">
+                    <form id="addTricount" action="tricount/add" method="post">
+                        <div class="form-group boxed">
+                            <div class="input-wrapper">
+                                <label class="label" for="text4b">Title</label>
+                                <input type="text" name="title" class="form-control" id="text4b" placeholder="Your Title here!">
+                            </div>
+                        </div>
+
+                        <div class="form-group boxed">
+                            <div class="input-wrapper">
+                                <label class="label" for="textarea4b">Description (optional)</label>
+                                <textarea id="textarea4b" name="description" rows="2" class="form-control" placeholder="Your description here!"></textarea>
+                            </div>
+                        </div>
+                        <button type="submit" value="add" class="btn">Add</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
 
         <!-- JavaScript Bundle with Popper -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>

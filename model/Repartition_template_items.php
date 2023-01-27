@@ -20,22 +20,49 @@
     {
       return $this->weight;
     }
-    public function get_user() : int
-    {
-      return $this->user;
-    }
-    public function get_repartition_template() : int{
-      return $this->repartition_template;
-    }
-    
 
-    public static function get_weight_by_user($user, $repartition_template): int
+    public function get_rt(){
+      return $this->repartition_templates;
+    }
+
+    public function insertVladRTi(){
+      $query = self::execute(
+        "INSERT INTO `repartition_templates_items` (`weight`, `user`, `repartition_templates`)
+                VALUES (:title,
+                        :tricount,
+                        :repartition_templates)",
+        array(
+            "weight" => $this->weight,
+            "user" => $this->user,
+            "repartition_templates" => $this->repartition_templates
+        )
+    );
+    $this->setRepartitionTemplateItemsId();
+    return $query->fetch();
+    }
+
+    public function setId($id)
     {
-      $query = self::execute("SELECT * 
-                              FROM  `repartition_template_items` 
+        $this->id = $id;
+    }
+
+    public function setRepartitionTemplatesItemsId()
+    {
+        $query = self::execute("SELECT id FROM repartition_templates WHERE id = :id", array("id" => Model::lastInsertId()));
+        $data = $query->fetchAll();
+        foreach ($data as $row) {
+            $id = $row['id'];
+        }
+        $this->setId($id);
+    }
+
+    public static function get_weight_by_user($user): int
+    {
+      $query = self::execute("SELECT *
+                              FROM  `repartition_template_items`
                               where user=:user
-                              and repartition_template=:repartition_template ", 
-                              array("user" => $user,"repartition_template"=>$repartition_template));
+                              /*and repartition_template=:repartition_template*/ ",
+                              array("user" => $user/*,"repartition_template"=>$repartition_template*/));
       $data = $query->fetch(); //un seul resultat max
       if ($query->rowCount() == 0) {
         return null;
@@ -43,10 +70,11 @@
         return ($data["weight"]);
     }
 
+
     public function get_Sum_Weight(){
       $query = self::execute("SELECT SUM(weight)
                                   FROM `repartition_template_items`
-                                  WHERE repartition_template =:repartition_template;", 
+                                  WHERE repartition_template =:repartition_template;",
                               array("repartition_template"=>$this->repartition_template));
       $data = $query->fetch();
       if ($query->rowCount() == 0) {
@@ -68,8 +96,8 @@
     }
 
     public static function get_by_user($user){ //à refaire
-      $query = self::execute("SELECT * FROM  repartition_template_items rti, repartition_templates rt 
-                              where rti.repartition_template = rt.id 
+      $query = self::execute("SELECT * FROM  repartition_template_items rti, repartition_templates rt
+                              where rti.repartition_template = rt.id
                               and rti.user=:user",
                               array("user" => $user));
       $data = $query->fetchAll();
@@ -185,6 +213,6 @@
   }
 
 
- 
+
 
 ?>

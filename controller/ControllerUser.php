@@ -7,20 +7,21 @@ require_once 'model/User.php';
 class ControllerUser extends Controller
 {
 
-    //page d'accueil. 
-    public function index() :void
+    //page d'accueil.
+    public function index(): void
     {
         if (isset($_GET["param1"])) {
             $this->redirect('profile');
         }
     }
 
-    public function logout() :void
+    public function logout(): void
     {
         Controller::logout();
     }
 
-    public function profile() {
+    public function profile()
+    {
         $user = $this->get_user_or_redirect();
         $user = User::get_by_id($user->getUserId());
         (new View("profile"))->show(array("user" => $user));//show may throw Exception

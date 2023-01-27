@@ -38,7 +38,7 @@
                 </div>
             </div>
             <div class="profile-buttons">
-                <ul>
+                <ul><li><a class="create" href="tricount/index">Tricount list</a></li>
                     <li><a class="create" href="">Create tricount</a></li>
                     <li><a class="edit" href="Templates/templates">Templates </a></li>
                     <li><a class="edit" href="Profile/edit_profile">Edit profile</a></li>
