@@ -61,8 +61,8 @@
       $query = self::execute("SELECT *
                               FROM  `repartition_template_items`
                               where user=:user
-                              and repartition_template=:repartition_template ",
-                              array("user" => $user,"repartition_template"=>$repartition_template));
+                              /*and repartition_template=:repartition_template*/ ",
+                              array("user" => $user/*,"repartition_template"=>$repartition_template*/));
       $data = $query->fetch(); //un seul resultat max
       if ($query->rowCount() == 0) {
         return null;
