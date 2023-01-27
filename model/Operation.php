@@ -1,8 +1,7 @@
 <?php
-require_once 'framework/Model.php';
+require_once "framework/Model.php";
 
-class Operation extends Model
-{
+class Operation extends Model{
 
     private  $id;
     private  $title;
@@ -307,3 +306,4 @@ class Operation extends Model
 
 
 }
+?>
