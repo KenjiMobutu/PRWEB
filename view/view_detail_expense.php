@@ -26,8 +26,14 @@
         <form action="operation/next_expense" method="post">
             <input type="hidden" name="tricount_id" value="<?php echo $tricount->get_id(); ?>" hidden>
             <input type="hidden" name="operation" value="<?php echo $operation_data->get_id(); ?>" hidden>
-            <input type="submit" value="Next">
+            <input type="submit" name="submit" value="Previous">
         </form>
+        <form action="operation/next_expense" method="post">
+            <input type="hidden" name="tricount_id" value="<?php echo $tricount->get_id(); ?>" hidden>
+            <input type="hidden" name="operation" value="<?php echo $operation_data->get_id(); ?>" hidden>
+            <input type="submit" name="submit" value="Next">
+        </form>
+
     </div>
 
 

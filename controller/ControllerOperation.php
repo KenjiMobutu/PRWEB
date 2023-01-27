@@ -160,8 +160,11 @@ class ControllerOperation extends Controller{
             $idOperation = $_POST["operation"];
             $operation = Operation::get_by_id($idOperation);
 
-
-            $nextOperation = $operation->get_next_operation_by_tricount($idOperation,$tricount->get_id());
+            if($_POST["submit"] === "Next")
+                $nextOperation = $operation->get_next_operation_by_tricount($idOperation,$tricount->get_id());
+            else if($_POST["submit"] === "Previous") {
+                $nextOperation = $operation->get_previous_operation_by_tricount($idOperation,$tricount->get_id());
+            }
             if($nextOperation){
                 $this->redirect("operation", "detail_expense", $nextOperation->get_id());
             }
