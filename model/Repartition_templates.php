@@ -3,26 +3,28 @@ require_once "framework/Model.php";
 
 class Repartition_templates extends Model
 {
-  public ?int $id;
+  public $id;
   public string $title; //(varchar 256)
   public int $tricount;
 
-  public function __construct(?int $id, string $title, int $tricount)
+  public function __construct(string $title, int $tricount, $id=NULL)
   {
-    $this->id = $id;
+    
     $this->title = $title;
     $this->tricount = $tricount;
+    $this->id = $id;
   }
 
   public function get_id(): int
   {
     return $this->id;
   }
+
   public function get_title(): string|null
   {
     return $this->title;
   }
-  public function get_by_id($id): int
+  public function get_by_id($id): int | null
   {
     $query = self::execute("SELECT * FROM  `repartition_templates` where id=:id", array("id" => $id));
     $data = $query->fetch(); //un seul resultat max
@@ -32,31 +34,60 @@ class Repartition_templates extends Model
       return new repartition_templates($data["id"], $data["title"], $data["tricount"]);
     }
   }
-  public function get_by_tricount($tricount): int
-  {
-    $query = self::execute("SELECT * FROM  `repartition_templates` where tricount=:tricount", array("tricount" => $tricount));
-    $data = $query->fetch(); //un seul resultat max
-    if ($query->rowCount() == 0) {
-      return null;
-    } else {
-      return new User($data["id"], $data["title"], $data["tricount"]);
+    public static function get_by_tricount($tricount): int | null 
+    {
+      $query = self::execute("SELECT * FROM  `repartition_templates` where tricount=:tricount", array("tricount"=>$tricount));
+            $data = $query->fetch();//un seul resultat max
+            if ($query->rowCount() == 0){
+                return null;
+            } else{
+                return new repartition_templates($data["id"],$data["title"],$data["tricount"]);
+            }
     }
-  }
+  
 
+    public function delete_by_tricount($tricount){
+      // Repartition_template_items::delete_by_user_id($id);
+      // Repartition::delete_by_user_id($id);
+      // Operation::delete_by_user_id($id);
+      // Participation::delete_by_user_id($id);
+      // Tricount::delete_by_user_id($id);
+      $query=self::execute("DELETE from `repartition_templates` where tricount=:tricount", array("tricount"=>$tricount));
+      if($query->rowCount()==0)
+          return false;
+      else
+          return $query;
+    }
 
-  public function delete_by_tricount($tricount)
-  {
-    // Repartition_template_items::delete_by_user_id($id);
-    // Repartition::delete_by_user_id($id);
-    // Operation::delete_by_user_id($id);
-    // Participation::delete_by_user_id($id);
-    // Tricount::delete_by_user_id($id);
-    $query = self::execute("DELETE from `repartition_templates` where tricount=:tricount", array("tricount" => $tricount));
-    if ($query->rowCount() == 0)
-      return false;
-    else
-      return $query;
-  }
+    public function insertVladRT(){
+      $query = self::execute(
+        "INSERT INTO `repartition_templates` (`title`, `tricount`) 
+                VALUES (:title,
+                        :tricount)",
+        array(
+            "title" => $this->title,
+            "tricount" => $this->tricount
+        )
+    );
+    $this->setRepartitionTemplatesId();
+    return $query->fetch();
+    }
+
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    public function setRepartitionTemplatesId()
+    {
+        $query = self::execute("SELECT id FROM repartition_templates WHERE id = :id", array("id" => Model::lastInsertId()));
+        $data = $query->fetchAll();
+        foreach ($data as $row) {
+            $id = $row['id'];
+        }
+        $this->setId($id);
+    }
+
 
   public function update()
   {
