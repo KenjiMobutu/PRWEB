@@ -45,6 +45,17 @@
     return $this->creator;
   }
 
+  public static function get_tricount_by_operation_id($id){
+    $query= self::execute("SELECT * FROM operations JOIN tricounts on operations.tricount = tricounts.id 
+    WHERE operations.id=:id",array("id"=>$id));
+    $data = $query->fetch();
+    if ($query->rowCount() == 0) {
+        return false;
+    } else {
+        return new Tricounts($data["id"],$data["title"],$data["description"],$data["created_at"],$data["creator"]);
+    }
+  }
+
   public static function get_tricount_by_user_id($id){
 
     $query= self::execute("SELECT * FROM tricounts WHERE creator=:id",array("creator"=>$id));

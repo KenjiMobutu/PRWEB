@@ -65,6 +65,29 @@ class ControllerOperation extends Controller{
         (new View("tricount_balance"))->show(array("user"=>$user, "tricount"=>$tricount, "weights"=>$weights));
     }
 
+    public function detail_expense(){
+        $user = $this->get_user_or_redirect();
+        $user = User::get_by_id($user->id);
+        if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
+            $this->redirect('main', "error");
+        }else{
+        $userId = $user->getUserId();
+        $operationId = $_GET['param1'];
+        // $t=Operation::get_tricount_by_operation_id($operationId);
+        $tricount = Tricounts::get_tricount_by_operation_id($operationId);
+        $participants = Operation::getNumberParticipantsByOperationId($operationId);
+        $operation_data=Operation::getOperationByOperationId($operationId);
+       $usr = $operation_data->getInitiator();
+            // echo '<pre>';
+            // var_dump($usr);
+            // echo '</pre>';
+            // die();
+        }
+
+        (new View("detail_expense"))->show(array("user"=>$user, "operation_data"=>$operation_data, "participants" => $participants,"tricount"=>$tricount, "usr" => $usr ));
+
+    }
+
     public function add(){
         $user = $this->get_user_or_redirect();
         $user = User::get_by_id($user->id);
