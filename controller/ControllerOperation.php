@@ -77,7 +77,7 @@ class ControllerOperation extends Controller{
         $tricount = Tricounts::get_tricount_by_operation_id($operationId);
         $participants = Operation::getNumberParticipantsByOperationId($operationId);
         $operation_data=Operation::getOperationByOperationId($operationId);
-       $usr = $operation_data->getInitiator();
+        $usr = $operation_data->getInitiator();
             // echo '<pre>';
             // var_dump($usr);
             // echo '</pre>';
@@ -124,22 +124,130 @@ class ControllerOperation extends Controller{
                     array_key_exists("operation_date",$_POST) &&
                     array_key_exists("initiator",$_POST)
                 ){
-
+                    
                     $title=$_POST["title"];
                     $tricount = $_POST["tricId"];
                     $amount = floatval($_POST["amount"]);
                     $operation_date = $_POST["operation_date"];
-                    $initiator = User::get_by_id($userId);
-                    $created_at = date('d-m-y h:i:s');
+                    $initiator = $_POST["initiator"];
+                    $created_at = date('y-m-d h:i:s');
+
+                  
+                    // echo '<pre>';
+                    // print_r($_POST["initiator"]);
+                    // echo '</pre>';
+                    // die();
+                    
 
                     if($user){
-                        $operation = new Operation($title,$tricount,$amount,$operation_date,$initiator->getUserId(),$created_at);
+                        $operation = new Operation($title,$tricount,$amount,$operation_date,$initiator,$created_at);
                     }
 
                     $errors=$operation->validate();
 
                     if(empty($errors)){
                         $operation->insert();
+                        $this->redirect("operation", "expenses", $_POST["tricId"]);
+                    }else{
+                        echo "<b>Validation Failed:<b> <br>";
+                        foreach($errors as $error) {
+                            echo $error . "<br>";
+                        }
+                    }
+                 }
+                }
+            }
+    }
+
+    public function edit(){
+        $user = $this->get_user_or_redirect();
+        $user = User::get_by_id($user->getUserId());
+        if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
+            $this->redirect('main', "error");
+        }else{
+        $userId = $user->getUserId();
+        $tricount = Tricounts::get_tricount_by_operation_id($_GET['param1']);
+        // $tricountID = $tricount->id;
+        $operationId = $_GET['param1'];
+        $operation_data=Operation::getOperationByOperationId($operationId);
+        $usr = $operation_data->getInitiator();
+        $users = User::getUsers();
+        $rti = Repartition_template_items::get_by_user($userId);
+        // echo '<pre>';
+        // print_r($rti);
+        // echo '</pre>';
+        // die();
+        
+        }
+
+        (new View("edit_expense"))->show(array("user"=>$user, "operation_data"=>$operation_data, "users"=>$users,"rti"=>$rti, "tricount"=>$tricount, "usr" => $usr ));
+
+    }
+
+    public function edit_expense(){
+        $user = $this->get_user_or_redirect();
+        $errors     = [];
+        if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
+            $this->redirect('main', "error");
+        }else{
+            $userId = $user->getUserId();
+
+            if ($_SERVER['REQUEST_METHOD'] === 'POST'){
+
+                // echo '<pre>';
+                //     print_r($_POST);
+                //     echo '</pre>';
+                //     die();
+                if(
+                    array_key_exists("operationId",$_POST) &&
+                    array_key_exists("title",$_POST) &&
+                    array_key_exists("tricId",$_POST) &&
+                    array_key_exists("amount",$_POST) &&
+                    array_key_exists("operation_date",$_POST) &&
+                    array_key_exists("initiator",$_POST)
+                ){
+
+                    $operation = Operation::getOperationByOperationId($_POST["operationId"]);
+                    
+                    if($operation !== null){
+
+                        $title=$_POST["title"];
+                        $tricount = $_POST["tricId"];
+                        $amount = floatval($_POST["amount"]);
+                        $operation_date = $_POST["operation_date"];
+                        $init = User::get_by_name($_POST["initiator"]);
+                        $initiator = $init->getUserId();
+                        $created_at = date('y-m-d h:i:s');
+
+                        if($title){
+                            $operation->setTitle($title);
+                        }
+                        if($tricount){
+                            $operation->setTricount($tricount);
+                        }
+                        if($amount){
+                            $operation->setAmount($amount);
+                        }
+                        if($operation_date){
+                            $operation->setOperation_date($operation_date);
+                        }
+                        if($initiator){
+                            $operation->setInitiator($initiator);
+                        }
+                        if($created_at){
+                            $operation->setCreated_at($created_at);
+                        }
+                    }
+                  
+                    // echo '<pre>';
+                    // print_r($operation);
+                    // echo '</pre>';
+                    // die();
+                  
+                    $errors=$operation->validate();
+
+                    if(empty($errors)){
+                        $operation->update();
                         $this->redirect("operation", "expenses", $_POST["tricId"]);
                     }else{
                         echo "<b>Validation Failed:<b> <br>";

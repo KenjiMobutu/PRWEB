@@ -10,7 +10,9 @@
     <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
 </head>
 <style>
-
+            a{
+                color:yellow;
+            }
             .cont{
                 margin:25px;
             }
@@ -204,9 +206,10 @@
                                             echo '<a href="Operation/detail_expense/'.$id_expense.'">
                                                 <div class="data-card">
                                                         <h2 class="title">'.$am->title.'</h2>
+                                                        <input type="hidden" name="operationId" value="$id_expense">
                                                         <p class="amount">'.$am->amount.'$</p>
-                                                        <p class="initiator">Paid by '.$am->initiator.'</p>
-                                                        <p class="date">'.$am->created_at.'</p>
+                                                        <p class="initiator">Paid by '.$am->getInitiator().'</p>
+                                                        <p class="date">'.$am->operation_date.'</p>
                                                 </div>
                                             </a>';
                                             endforeach;

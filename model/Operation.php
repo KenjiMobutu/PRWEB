@@ -134,7 +134,7 @@ class Operation extends Model{
         if (!is_null($this->id)) {
             $query = self::execute(
                 "UPDATE operations SET
-            `id`=:id,
+            
             `title`=:title,
             `tricount`=:tricount,
             `amount`=:amount,
@@ -142,7 +142,7 @@ class Operation extends Model{
             `initiator`=:initiator,
             `created_at`=:created_at WHERE ID = :ID",
                 array(
-                    "id" => $this->id,
+                    "ID" => $this->id,
                     "title" => $this->title,
                     "tricount" => $this->tricount,
                     "amount" => $this->amount,
@@ -154,23 +154,21 @@ class Operation extends Model{
         } else {
             self::execute(
                 "INSERT INTO operations(
-                 `id`,
                  `title`,
-                 tricount,
+                 `tricount`,
                  `amount`,
                  `operation_date`,
                  `initiator`,
                  `created_at`)
-            VALUES(:id,
+            VALUES(
                    :title,
-                   :Title,
                    :tricount,
                    :amount,
                    :operation_date,
                    :initiator,
                    :created_at)",
                 [
-                    "id" => $this->id,
+                    
                     "title" => $this->title,
                     "tricount" => $this->tricount,
                     "amount" => $this->amount,
@@ -341,6 +339,39 @@ class Operation extends Model{
       }
       return $operation;
     }
+
+
+    public function setTitle(string $title): void
+    {
+        $this->title = $title;
+    }
+
+    public function setTricount(int $tricount): void
+    {
+        $this->tricount = $tricount;
+    }
+
+    public function setAmount(float $amount): void
+    {
+        $this->amount = $amount;
+    }
+
+    public function setOperation_date(string $operation_date): void
+    {
+        $this->operation_date = $operation_date;
+    }
+
+    public function setInitiator(int $initiator): void
+    {
+        $this->initiator = $initiator;
+    }
+
+    public function setCreated_at(string $created_at): void
+    {
+        $this->created_at = $created_at;
+    }
+
+    
 
 
 }

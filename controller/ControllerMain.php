@@ -24,7 +24,7 @@ class ControllerMain extends Controller
         /** @var User $userser */
         $user = $this->get_user_or_redirect();
 
-        $error = "YOU CANNOT ACCESS THIS RESOURCE!";
+        $error = "Something went wrong. :)";
         (new View("error"))->show(["error" => $error, "user" => $user]);
     }
 
