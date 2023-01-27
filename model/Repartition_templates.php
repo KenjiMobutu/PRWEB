@@ -4,10 +4,10 @@ require_once "framework/Model.php";
 class Repartition_templates extends Model
 {
   public $id;
-  public string $title; //(varchar 256)
-  public int $tricount;
+  public $title; //(varchar 256)
+  public  $tricount;
 
-  public function __construct(string $title, int $tricount, $id=NULL)
+  public function __construct($title, $tricount, $id=NULL)
   {
 
     $this->title = $title;
@@ -28,7 +28,7 @@ class Repartition_templates extends Model
   {
     return $this->tricount;
   }
-  
+
 
 
 
@@ -42,7 +42,7 @@ class Repartition_templates extends Model
       return new repartition_templates($data["id"], $data["title"], $data["tricount"]);
     }
   }
-    public function get_by_tricount($tricount): int | null
+    public static function get_by_tricount($tricount)
     {
       $query = self::execute("SELECT * FROM  `repartition_templates` where tricount=:tricount", array("tricount"=>$tricount));
             $data = $query->fetchAll();                 //c'était un fetch avant

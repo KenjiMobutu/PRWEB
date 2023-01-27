@@ -6,8 +6,8 @@ require_once 'model/Repartition_templates.php';
 require_once 'model/Repartition_template_items.php';
 require_once 'model/tricounts.php';
 require_once 'model/participations.php';
-require_once 'model/repartitions.php';
-require_once 'model/operation.php';
+
+
 
 
 class ControllerTemplates extends Controller
