@@ -59,8 +59,8 @@ class ControllerTricount extends Controller{
     if (isset($_GET['param1']) || isset($_POST['param1'])) {
       $id = isset($_POST['param1']) ? $_POST['param1'] : $_GET['param1'];
       $tricount = Tricounts::get_by_id($id);
-      $subscriptions = Participations::by_tricount($tricount->id);
-      $users = User::not_participate($tricount->id);
+      $subscriptions = Participations::by_tricount($tricount->get_id());
+      $users = User::not_participate($tricount->get_id());
       foreach($subscriptions as $s){
         $sub[] = User::get_by_id($s->user);
       }
