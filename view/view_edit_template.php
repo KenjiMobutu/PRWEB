@@ -80,16 +80,22 @@
 <h1></h1>
     <form action="templates/editTemplate" method="post">
         <p>Title :</p>
-        <input type="text" name="template_title" id="template_title" value="<?php 
+        <input type="text" name="template_title" id="template_title" 
+        value="<?php 
         if(isset($template))
-            $template->get_title() ?>" required>
+            echo $template->get_title();
+        ?>" required>
         <p>
-            Template items :
+
+        <!-- <?php //echo '<pre>'; print_r($listItems); echo '</pre>';?> -->
+        Template items :
         </p><br>
-        <!-- <?php echo '<pre>'; print_r($listUser); echo '</pre>';?> -->
 
 
-        <input type="text" name="tricountId" value="<?php echo $tricount->get_id() ?>" hidden>
+<!-- pour récupérer l'id du tricount dans le submit du form -->
+        <input type="text" name="tricountId" value="<?php echo $tricount->get_id(); ?>" hidden>
+
+        <input type="text" name="templateID" value="<?php if(isset($_GET["param2"])){ echo $_GET["param2"];}  ?>" hidden>
         <?php foreach($listUser as $listusr): ?>
             <input type="checkbox" name="c[<?= $listusr->user; ?>]" value="<?= $listusr->user; ?>" checked ="checked">
                                 <?php // mettre c[User->id] ça fera un tableau avec des données?>

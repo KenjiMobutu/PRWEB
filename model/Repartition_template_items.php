@@ -20,6 +20,10 @@
     {
       return $this->weight;
     }
+    public function get_user(): int
+    {
+      return $this->user;
+    }
 
     public function get_rt(){
       return $this->repartition_template;
@@ -40,29 +44,13 @@
     // $this->setRepartitionTemplatesItemsId();
     return $query->fetch();
     }
-
-    // public function setId($id)
-    // {
-    //     $this->id = $id;
-    // }
-
-    // public function setRepartitionTemplatesItemsId()
-    // {
-    //     $query = self::execute("SELECT id FROM repartition_templates WHERE id = :id", array("id" => Model::lastInsertId()));
-    //     $data = $query->fetchAll();
-    //     foreach ($data as $row) {
-    //         $id = $row['id'];
-    //     }
-    //     $this->setId($id);
-    // }
-
-    public static function get_weight_by_user($user): int
+    public static function get_weight_by_user($user, $repartition_template): int
     {
-      $query = self::execute("SELECT *
-                              FROM  `repartition_template_items`
+      $query = self::execute("SELECT * 
+                              FROM  `repartition_template_items` 
                               where user=:user
-                              /*and repartition_template=:repartition_template*/ ",
-                              array("user" => $user/*,"repartition_template"=>$repartition_template*/));
+                              and repartition_template=:repartition_template ", 
+                              array("user" => $user,"repartition_template"=>$repartition_template));
       $data = $query->fetch(); //un seul resultat max
       if ($query->rowCount() == 0) {
         return null;
@@ -108,15 +96,16 @@
     }
 
     public static function get_user_by_repartition($repartition){
-      $query = self::execute("SELECT * 
-                            FROM repartition_template_items
+      $query = self::execute("SELECT rti.* 
+                            FROM repartition_template_items rti
                             where repartition_template = :repartition", array("repartition" => $repartition));
-      $data[] = $query->fetchAll();
+      $data = $query->fetchAll();
       $items =[];
       if($query->rowCount() ==0)
         return null;
-      foreach($data as $row)
-        $items[] = new Repartition_template_items($row["weight"], $row["user"], $row["repartition_template"]);
+      foreach($data as $row){
+                $items[] = new Repartition_template_items($row["weight"], $row["user"], $row["repartition_template"]);
+      }
       return $items;
     }
     public static function newTemplateItems($weight, int $templateId, $user){
@@ -202,7 +191,7 @@
             :`user`,
             :repartition_template)",
           array(
-            "weigh"=>$this->weight,
+            "weight"=>$this->weight,
             "user"=>$this->user,
             "repartition_template" => $this->repartition_template
           )

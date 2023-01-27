@@ -14,6 +14,10 @@
             width: 80%;
             margin: 0 auto;
         }
+        
+            a{
+                color: #f2f2f2;
+            }
 
         table.tab_templates {
             width: 100%;
@@ -53,7 +57,7 @@
                 <?php if($templates !== null) : ?>
                     <?php foreach($templates as $rt) :?>
                             <tr>
-                                <th>     <a href="templates/edit_template/<?php echo $tricount->get_id();?>/<?php echo $rt->get_id()?>">  <?= $rt->get_title(); ?></th></a>
+                                <th>     <a href="templates/edit_template/<?php echo $tricount->get_id();?>/<?php echo $rt->get_id()?>"> <?= $rt->get_title();?></th></a>
                             </tr>
                             <tr>
                                 <th class="info_templates">
@@ -63,7 +67,7 @@
                                             <!-- <?php echo '<pre>'; print_r($templates); echo '</pre>';?>  -->   
                                             <?php if ($participe !== null) : ?>                 
                                                     <?php foreach($participe as $row) : ?>
-                                                        <?php if($row->get_repartition_template() === $rt->get_id()): ?>
+                                                        <?php if($row->get_rt() === $rt->get_id()): ?>
                                                             
                                                             <li> <?php echo $row->get_user_info();?> 
                                                                     <?php echo "("; echo $row->get_weight_by_user($row->get_user(), $row->repartition_template);
