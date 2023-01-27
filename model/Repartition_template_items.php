@@ -43,9 +43,7 @@
         return ($data["weight"]);
     }
 
-    public static function get_by_user($user){
-      $query = self::execute("SELECT * FROM  repartition_template_items rti, repartition_templates rt
-                              where rti.repartition_template = rt.id
+  
     public function get_Sum_Weight(){
       $query = self::execute("SELECT SUM(weight)
                                   FROM `repartition_template_items`

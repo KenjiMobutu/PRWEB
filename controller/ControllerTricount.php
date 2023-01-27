@@ -21,7 +21,7 @@ class ControllerTricount extends Controller{
     if (is_null($user)) {
       $user = $loggedUser;
     }
-    $tricounts_list = Tricounts::list($user->id);
+    $tricounts_list = Tricounts::list($user->getUserId());
     (new View("list_tricounts"))->show(array("loggedUser" => $loggedUser, "user" => $user, "tricounts_list"=>$tricounts_list));
   }
 

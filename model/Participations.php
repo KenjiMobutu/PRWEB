@@ -12,7 +12,7 @@ require_once "framework/Model.php";
 
 
         public static function get_by_tricount($tricount){
-            $query = self::execute("SELECT * from subscriptions where tricount =:tricount",
+        $query = self::execute("SELECT * from subscriptions where tricount =:tricount");
             $query = self::execute("SELECT s.*, t.creator from subscriptions s, tricounts t
                                             where s.tricount = t.id
                                             and s.tricount =:tricount
