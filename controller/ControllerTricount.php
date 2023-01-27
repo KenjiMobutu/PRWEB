@@ -2,7 +2,9 @@
 require_once 'model/Repartition_templates.php';
 require_once 'model/Repartition_template_items.php';
 require_once 'model/User.php';
+require_once 'model/Operation.php';
 require_once 'model/Tricounts.php';
+require_once 'model/Participations.php';
 require_once 'framework/View.php';
 require_once 'framework/Controller.php';
 
@@ -19,22 +21,54 @@ class ControllerTricount extends Controller{
     if (is_null($user)) {
       $user = $loggedUser;
     }
-    $tricounts_list = Tricounts::list();
-    //var_dump($tricounts_list);
-    //$user_tricounts_list = $tricounts_list->by_user($loggedUser->id);
-    //var_dump($user_tricounts_list);
+    $tricounts_list = Tricounts::list($user->id);
     (new View("list_tricounts"))->show(array("loggedUser" => $loggedUser, "user" => $user, "tricounts_list"=>$tricounts_list));
-
   }
 
   public function add(){
     $user = $this->get_user_or_redirect();
     if (!is_null($user)) {
+      $id = NULL;
+      $errors = [];
+      $title = '';
+      $description = '';
+      $tricount = '';
+      $created_at = date('Y-m-d H:i:s');
+      if ((isset($_POST["title"]) && $_POST["title"]!="")&&(isset($_POST["description"])&& $_POST["description"]!="")){
+        $title = $_POST["title"];
+        $description = $_POST["description"];
+        $creator = $user->id;
+        $tricount = new Tricounts($id,$title,$description,$created_at,$creator);
+        if (count($errors) == 0) {
+          $tricount->update();
+          $this->redirect("tricount", "viewById",$tricount->id);
+        }
+      }
 
-      (new View("add_tricount"))->show(array("user" => $user));
+      (new View("add_tricount"))->show(array("user" => $user,"tricount" =>$tricount));
     } else {
       $this->redirect("user","profile");
     }
+  }
+
+  public function edit(){
+    $user = $this->get_user_or_redirect();
+    $id = null;
+    $sub = [];
+
+    if (isset($_GET['param1']) || isset($_POST['param1'])) {
+      $id = isset($_POST['param1']) ? $_POST['param1'] : $_GET['param1'];
+      $tricount = Tricounts::get_by_id($id);
+      $subscriptions = Participations::by_tricount($tricount->id);
+      $users = User::not_participate($tricount->id);
+      foreach($subscriptions as $s){
+        $sub[] = User::get_by_id($s->user);
+      }
+    }else {
+      $this->redirect("tricount","index");
+    }
+
+    (new View("edit_tricount"))->show(array("user" => $user,"tricount" => $tricount,"subscriptions" =>$subscriptions, "sub" => $sub,"users" => $users));
   }
 
 }

@@ -316,7 +316,7 @@ select {
 }
 
 
-/* HEADER */
+/* HEADER of list tricount*/
 .appHeader {
   height: 56px;
   display: flex;
@@ -455,7 +455,7 @@ select {
   right: 0;
   bottom: 0;
   z-index: 99999;
-  background: #6c2bee;
+  background-image: linear-gradient(56deg, rgb(11, 36, 0) 0%, rgb(35, 121, 9) 28%, rgb(0, 255, 183) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -490,18 +490,19 @@ select {
   padding: 16px;
 }
 
-
 .card-block {
-  height: 220px;
-  background: #6c2bee;
+  margin: auto;
+  width: 80%;
+  height: 110px;
   border-radius: 10px;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.09);
   color: #fff;
   position: relative;
+
 }
 
 .card-block .card-main {
-  background-image: linear-gradient(-180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.23) 100%);
+  background-image: linear-gradient(56deg, rgb(11, 36, 0) 0%, rgb(35, 121, 9) 68%, rgb(0, 255, 183) 100%);
   position: absolute;
   border-radius: 10px;
   left: 0;
@@ -661,7 +662,32 @@ select {
   margin-right: 7px;
   margin-top: -2px;
 }
+.button-card{
+  text-decoration: none;
+  color: rgb(201, 193, 193);
+  text-align: left !important;
+}
+.button-card .label{
+  text-align: left !important;
+}
+.button-card:hover{
+  text-decoration: none;
+  color: rgb(255, 255, 255);
+}
 
+.edit-settingsTitle{
+  padding-top: 5em;
+  margin-left: 2em;
+}
+.edit-settingsInput {
+  margin-left: 2em;
+}
+.edit-settingsInput h2 {
+  font-size: medium;
+}
+.selectSub{
+  width: 40%;
+}
 
 
 

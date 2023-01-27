@@ -4,15 +4,15 @@ require_once 'framework/Model.php';
 class Operation extends Model
 {
 
-    private int $id;
-    private string $title;
-    private int $tricount;
-    private ?int $amount;
-    private DateTime $operation_date;
-    private int $initiator;
-    private Datetime $created_at;
+    public  $id;
+    public  $title;
+    public $tricount;
+    public $amount;
+    public $operation_date;
+    public $initiator;
+    public  $created_at;
 
-    public function __construct(int $id, string $title, int $tricount, int $amount, Datetime $operation_date, int $initiator, Datetime $created_at)
+    public function __construct( $id,  $title, $tricount, $amount,  $operation_date, $initiator,  $created_at)
     {
         $this->$id = $id; //tricount id
         $this->$title = $title;
@@ -23,8 +23,8 @@ class Operation extends Model
         $this->$created_at = $created_at;
     }
 
-    public function create()
-    {
+
+    public function create(){
         $query = self::execute(
             "INSERT INTO `operations` (`id`, `title`, `tricount`, `amount`, `operation_date`, `inititator`,`created_at`)
                         VALUES (:id,
@@ -187,5 +187,27 @@ class Operation extends Model
     {
         $this->id = $id;
     }
+
+    public static function byTricountId($tricount){
+        $query = self::execute("SELECT o.*
+                                FROM `operations` o
+                                Where o.tricount =:id ",
+                              array("id"=>$tricount));
+      $data = $query->fetchAll();
+        $operation = [];
+      foreach ($data as $row) {
+        $operation[] =new Operation(
+            $row['id'],
+            $row['title'],
+            $row['tricount'],
+            $row['amount'],
+            $row['operation_date'],
+            $row['initiator'],
+            $row['created_at']
+        );
+      }
+      return $operation;
+    }
+
 
 }
