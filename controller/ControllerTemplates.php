@@ -68,13 +68,11 @@ class ControllerTemplates extends Controller
             $tricount = Tricounts::get_by_id($_GET["param1"]);
             $template = Repartition_templates::get_by_id($_GET['param2']);
             if($template === null){
-                $this->redirect("user","profile");
+                $this->redirect("templates","edit_template".$tricount->get_id());
             }
-        
-            $listUser[] = Repartition_template_items::get_user_by_repartition($template->get_id());
-            // foreach($listUser as $lst)
+            $listUser = Participations::get_by_tricount($tricount->get_id());
 
-               // $userList[] = $lst->getUserInfo();
+            $listItems[] = Repartition_template_items::get_user_by_repartition($template->get_id());
         
             (new View("edit_template"))->show(array("user"=>$user, 
                                                     "tricount"=>$tricount,
@@ -84,8 +82,7 @@ class ControllerTemplates extends Controller
             if($_GET['param1'] !== null ){
                 $tricount = Tricounts::get_by_id($_GET["param1"]);
                 $listUser = Participations::get_by_tricount($tricount->get_id());
-                // foreach($listUser as $lst)
-                //     $userList[] = $lst["user"]->getUserInfo();
+                
             }
             
                 (new View("edit_template"))->show(array("user"=>$user,
@@ -110,16 +107,7 @@ class ControllerTemplates extends Controller
                 
                 
                 if($template !== null){
-                    for($i = 0; $i <= count($checkedUsers)+1; $i++) {
-                    //     echo "<pre>";
-                    //     if(isset($checkedUsers[$i]) && $checkedUsers[$i] !== null){
-                    //         print_r($checkedUsers);
-                    //         print_r(" i :   " . $i . " \n");
-                    //         print_r(" checked User " . $checkedUsers[$i] . " \n");
-                    //         print_r("weight " .$weights[$i] . " \n");
-                    //     }
-                      
-                    //   echo "</pre>";
+                    for($i = 0; $i <= count($checkedUsers)+1; $i++) {                                       
                         if(isset($checkedUsers[$i]) && $checkedUsers[$i] !== null){
                            Repartition_template_items::addNewItems($checkedUsers[$i],
                             $template->id,
@@ -129,17 +117,7 @@ class ControllerTemplates extends Controller
                     }
                     $this->redirect("templates", "templates", $_POST["tricountId"]);    
                 }
-            }
-
-            // if(isset($_POST["template_title"]) || isset($_POST["c"]) || isset($_POST["w"])){
-            //     $template = Repartition_templates::newTemplate($_POST["template_title"], $_POST["tricountId"]);
-            //     if($template !== null){
-
-            //         foreach($_POST["w"] as $key => $wUser) {
-            //             Repartition_template_items::addNewItems($_POST["c"][$key],$_POST["tricountId"] ,$wUser );
-            //         }
-            //     }
-            // }      
+            }       
         }
     }
     public function delete_template(){

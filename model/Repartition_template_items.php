@@ -84,11 +84,13 @@
                             FROM repartition_template_items
                             where repartition_template = :repartition", array("repartition" => $repartition));
       $data[] = $query->fetchAll();
+      $items =[];
       if($query->rowCount() ==0)
         return null;
-      return $data;
+      foreach($data as $row)
+        $items[] = new Repartition_template_items($row["weight"], $row["user"], $row["repartition_template"]);
+      return $items;
     }
-
     public static function newTemplateItems($weight, int $templateId, $user){
         if($weight === null || $templateId === null || $user === null){
           return null;

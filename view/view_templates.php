@@ -53,7 +53,7 @@
                 <?php if($templates !== null) : ?>
                     <?php foreach($templates as $rt) :?>
                             <tr>
-                           <th> <?= $rt->get_title(); ?></th>
+                                <th>     <a href="templates/edit_template/<?php echo $tricount->get_id();?>/<?php echo $rt->get_id()?>">  <?= $rt->get_title(); ?></th></a>
                             </tr>
                             <tr>
                                 <th class="info_templates">
@@ -65,11 +65,11 @@
                                                     <?php foreach($participe as $row) : ?>
                                                         <?php if($row->get_repartition_template() === $rt->get_id()): ?>
                                                             
-                                                            <a href="templates/edit_template/<?php echo $rt->get_id()?>">  <li> <?php echo $row->get_user_info();?> 
+                                                            <li> <?php echo $row->get_user_info();?> 
                                                                     <?php echo "("; echo $row->get_weight_by_user($row->get_user(), $row->repartition_template);
                                                                         echo "/"; 
                                                                             echo $row->get_Sum_Weight();
-                                                                                echo ")"; ?></li></a>
+                                                                                echo ")"; ?></li>
                                                         
                                                         <?php endif;?>
                                                     <?php endforeach ; ?>  

@@ -30,7 +30,7 @@
         }
 
          
-        input[type="text"], input[type="number"] {
+        input[type="text"] {
             padding: 10px;
             margin: 10px;
             border-radius: 5px;
@@ -39,6 +39,16 @@
             color: white;
 
         }
+        input[type="number"] {
+            flex: 1;
+            padding: 10px;
+            margin: 1px;
+            border-radius: 15px;
+            border: none;
+            background-color: #34495e;
+            color: white;
+        }
+       
 
         input[type="submit"] {
             margin: 20px;
@@ -72,7 +82,7 @@
         <p>Title :</p>
         <input type="text" name="template_title" id="template_title" value="<?php 
         if(isset($template))
-            $template->get_titles() ?>" required>
+            $template->get_title() ?>" required>
         <p>
             Template items :
         </p><br>
@@ -85,9 +95,11 @@
                                 <?php // mettre c[User->id] ça fera un tableau avec des données?>
 
             <input type="text" name="user" value="<?php $listusr->user;?>" placeholder="<?php echo $listusr->getUserInfo(); ?>"  disabled="disabled">
-
-            <input type="number" name="w[<?= $listusr->user; ?>]" value="1"  min="0" max="100" weight>
-                                    <?php // mettre w[User->id] ça fera un tableau avec des données?>
+            <fieldset>
+                <legend>Weight</legend>
+                <input type="number" name="w[<?= $listusr->user; ?>]" value="1"  min="0" max="100" weight>
+            </fieldset>
+                            <?php // mettre w[User->id] ça fera un tableau avec des données?>
             <br><br>
             <?php // récupérer les donnée grace a l'id user.?>
 
