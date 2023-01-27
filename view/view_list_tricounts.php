@@ -56,7 +56,7 @@
                         </button>
                         </form>
                     </div>
-                    <?php endforeach; ?>
+                <?php endforeach; ?>
                 </div>
         </div>
     <!-- * tricount block -->
