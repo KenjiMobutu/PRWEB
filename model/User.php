@@ -119,11 +119,11 @@ require_once "framework/Model.php";
             }
             return $results;
         }
-        public static function not_participate($tricountId){//récup tous les users qui ne participent pas
+        public static function not_participate($tricountId){//récup tous les users
             $query = self::execute("SELECT *
-                                    FROM users
-                                    WHERE id
-                                    NOT IN (SELECT user FROM subscriptions WHERE tricount =:tricountId)", array("tricountId"=>$tricountId));
+            FROM users
+            WHERE id
+            NOT IN (SELECT user FROM subscriptions WHERE tricount =:tricountId)", array("tricountId"=>$tricountId));
             $data = $query->fetchAll();
             $results = [];
             foreach ($data as $row) {
