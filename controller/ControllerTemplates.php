@@ -111,8 +111,7 @@ class ControllerTemplates extends Controller
 
                 if(!is_null($template)){
                     Repartition_template_items::delete_by_repartition_template($template->get_id());
-                    for($i = 0; $i <= count($checkedUsers)+2; $i++) {           
-                                                 
+                    for($i = 0; $i <= count($checkedUsers)+2; $i++) {                               
                         if((isset($checkedUsers[$i]) && $checkedUsers[$i] !== null) && isset($weights[$i]) && $weights[$i] !== null ){
                            Repartition_template_items::addNewItems($checkedUsers[$i],
                             $template->id,
@@ -143,7 +142,6 @@ class ControllerTemplates extends Controller
                             $template->id,
                             $weights[$i]); 
                         }
-                        
                     }
                     $this->redirect("templates", "templates",$_POST["tricountId"]);    
                 }

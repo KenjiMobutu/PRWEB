@@ -16,7 +16,7 @@
         }
         
             a{
-                color: #f2f2f2;
+                color: rgb(147,87,87);                
             }
 
         table.tab_templates {

@@ -14,23 +14,22 @@
 <body>
     <?php include 'menu.html' ?>
     <div class="cont">
-    <p><?php echo $tricount->get_title();?> > <?php echo $operation_data->title ?>  <button class="edit-btn">
+        <p><?php echo $tricount->get_title();?> > <?php echo $operation_data->title ?>  <button class="edit-btn">
             <a href="https/edit" style="text-decoration: none; color: black;">Edit</a>
         </button>
         <div class="view_expenses">   
-        <h2><?php echo $operation_data->amount ?></h2>
-        <p>Paid by <?php echo $usr ?></p><p><?php echo $operation_data->operation_date ?></p>
-        <p>For <?php echo $participants["0"] ?> participants, including me</p>    
-        <?php echo $operation_data->title ?>
-           
-            
-            
-            
-            
-
+            <h2><?php echo $operation_data->amount ?></h2>
+            <p>Paid by <?php echo $usr ?></p><p><?php echo $operation_data->operation_date ?></p>
+            <p>For <?php echo $participants["0"] ?> participants, including me</p>    
+            <?php echo $operation_data->title ?>
         </div>
+        <form action="operation/next_expense" method="post">
+            <input type="hidden" name="tricount_id" value="<?php echo $tricount->get_id(); ?>" hidden>
+            <input type="hidden" name="operation" value="<?php echo $operation_data->get_id(); ?>" hidden>
+            <input type="submit" value="Next">
+        </form>
     </div>
-    
+
 
 </body>
 </html>

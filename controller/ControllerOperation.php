@@ -153,6 +153,23 @@ class ControllerOperation extends Controller{
     }
 
 
+    public function next_expense(){
+        if(isset($_POST["tricount_id"])&& isset($_POST["operation"]) ){
+            $idTricount = $_POST["tricount_id"];
+            $tricount = Tricounts::get_by_id($idTricount);
+            $idOperation = $_POST["operation"];
+            $operation = Operation::get_by_id($idOperation);
+
+
+            $nextOperation = $operation->get_next_operation_by_tricount($idOperation,$tricount->get_id());
+            if($nextOperation){
+                $this->redirect("operation", "detail_expense", $nextOperation->get_id());
+            }
+            else{
+                $this->redirect("operation", "detail_expense", $_POST["operation"]);
+            }
+        }
+    }
 }
 
 ?>
