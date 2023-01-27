@@ -67,7 +67,7 @@ class ControllerOperation extends Controller{
 
     public function detail_expense(){
         $user = $this->get_user_or_redirect();
-        $user = User::get_by_id($user->id);
+        $user = User::get_by_id($user->getUserId());
         if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
             $this->redirect('main', "error");
         }else{
