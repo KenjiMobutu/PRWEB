@@ -22,7 +22,7 @@
     }
 
     public function get_rt(){
-      return $this->repartition_templates;
+      return $this->repartition_template;
     }
 
     public function insertVladRTi(){
@@ -34,27 +34,27 @@
         array(
             "weight" => $this->weight,
             "user" => $this->user,
-            "repartition_templates" => $this->repartition_templates
+            "repartition_templates" => $this->repartition_template
         )
     );
-    $this->setRepartitionTemplateItemsId();
+    // $this->setRepartitionTemplatesItemsId();
     return $query->fetch();
     }
 
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
+    // public function setId($id)
+    // {
+    //     $this->id = $id;
+    // }
 
-    public function setRepartitionTemplatesItemsId()
-    {
-        $query = self::execute("SELECT id FROM repartition_templates WHERE id = :id", array("id" => Model::lastInsertId()));
-        $data = $query->fetchAll();
-        foreach ($data as $row) {
-            $id = $row['id'];
-        }
-        $this->setId($id);
-    }
+    // public function setRepartitionTemplatesItemsId()
+    // {
+    //     $query = self::execute("SELECT id FROM repartition_templates WHERE id = :id", array("id" => Model::lastInsertId()));
+    //     $data = $query->fetchAll();
+    //     foreach ($data as $row) {
+    //         $id = $row['id'];
+    //     }
+    //     $this->setId($id);
+    // }
 
     public static function get_weight_by_user($user): int
     {
