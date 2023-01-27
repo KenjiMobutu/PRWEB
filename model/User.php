@@ -4,12 +4,12 @@ require_once "framework/Model.php";
 
 class User extends Model
 {
-    public ?int $id;
-    public string $mail;
-    public ?string $hashed_password;
-    public string $full_name;
-    public string $role;
-    public ?string $iban;
+    private ?int $id;
+    private string $mail;
+    private string $hashed_password;
+    private string $full_name;
+    private string $role;
+    private ?string $iban;
 
     protected const ROLE_ADMIN = 'admin';
     protected const ROLE_USER = 'user';

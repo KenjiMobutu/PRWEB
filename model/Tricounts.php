@@ -4,11 +4,11 @@
   class Tricounts extends Model
 {
 
-  public $title; //(varchar 256)
-  public $description; //(varchar 1024)
-  public $created_at; //(datetime)
-  public $creator; //(int)
-  public $id; //(int)
+  private $title; //(varchar 256)
+  private $description; //(varchar 1024)
+  private $created_at; //(datetime)
+  private $creator; //(int)
+  private $id; //(int)
 
 
     public function __construct($id,$title, $description,$created_at, $creator){

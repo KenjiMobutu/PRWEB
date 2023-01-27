@@ -4,15 +4,15 @@ require_once 'framework/Model.php';
 class Operation extends Model
 {
 
-    public  $id;
-    public  $title;
-    public $tricount;
-    public $amount;
-    public $operation_date;
-    public $initiator;
-    public  $created_at;
+    private  $id;
+    private  $title;
+    private  $tricount;
+    private  $amount;
+    private  $operation_date;
+    private  $initiator;
+    private  $created_at;
 
-    public function __construct( $id,  $title, $tricount, $amount,  $operation_date, $initiator,  $created_at)
+    public function __construct($id,$title, $tricount, $amount, $operation_date, $initiator, $created_at)
     {
         $this->$id = $id; //tricount id
         $this->$title = $title;

@@ -3,13 +3,13 @@ require_once "model/User.php";
 require_once 'framework/Model.php';
 require_once 'model/Operation.php';
 
-class Repatitions extends Model
+class Repartitions extends Model
 {
-    public int $weight;
+    private int $weight;
 
-    public int $operation;
+    private int $operation;
 
-    public int $user;
+    private int $user;
 
     public function __construct(int $weight, int $operation, int $user)
     {
@@ -48,7 +48,7 @@ class Repatitions extends Model
     {
         $query = self::execute("SELECT weight, user FROM repartitions WHERE operation=:operation", array("operation" => $operation));
         $data = $query->fetch();
-        return new Repatitions($data["weight"], $data["operation"], $data["user"]);
+        return new Repartitions($data["weight"], $data["operation"], $data["user"]);
     }
 
 
