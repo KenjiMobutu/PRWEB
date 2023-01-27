@@ -3,15 +3,15 @@ require_once "framework/Model.php";
 
 class Operation extends Model{
 
-    private  $id;
-    private  $title;
-    private  $tricount;
-    private  $amount;
-    private  $operation_date;
-    private  $initiator;
-    private  $created_at;
+    public  $id;
+    public string $title;
+    public int $tricount;
+    public float $amount;
+    public String $operation_date;
+    public int $initiator;
+    public String $created_at;
 
-    public function __construct($id,$title, $tricount, $amount, $operation_date, $initiator, $created_at)
+    public function __construct(string $title, int $tricount, float $amount, string $operation_date, int $initiator, string $created_at, $id=NULL)
     {
 
         $this->title = $title;
@@ -42,6 +42,10 @@ class Operation extends Model{
 
     public function getCreatedAt(){
         return $this->created_at;
+    }
+
+    public function get_id(){
+        return $this->id;
     }
 
     public function getUserFullName(){
