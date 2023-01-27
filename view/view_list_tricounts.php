@@ -19,12 +19,6 @@
     </head>
 
     <body>
-        <!-- loader -->
-        <div id="loader">
-            <img src="css/img/loading-icon.png" alt="icon" class="loading-icon">
-        </div>
-        <!-- * loader -->
-
         <div class="appHeader">
             <div class="left">
                 <a href="#" class="headerButton goBack">
@@ -45,32 +39,24 @@
                     <!-- tricount block -->
                 <?php foreach ($tricounts_list as $tl):  ?>
                     <div class="card-block mb-2">
+                        <form action="tricount/edit/<?= $tl->get_id()?>" method="POST">
+                        <button class="button-card" >
                         <div class="card-main">
-                            <div class="card-button dropdown">
-                                <button type="button" class="btn btn-link btn-icon" data-bs-toggle="dropdown">
-                                    <ion-icon name="ellipsis-horizontal"></ion-icon>
-                                </button>
-                                <div class="dropdown-menu dropdown-menu-end">
-                                    <a class="dropdown-item" href="#">
-                                        <ion-icon name="pencil-outline"></ion-icon>Edit
-                                    </a>
-                                    <a class="dropdown-item" href="#">
-                                        <ion-icon name="close-outline"></ion-icon>Remove
-                                    </a>
-                                </div>
-                            </div>
                             <div class="balance">
-                                <span class="label"><?=$tl->title ?></span>
-                                <h1 class="title"><?= $tl->description  == null ? "No description" : $tl->description ?></h1>
+                                <span class="label"><?=$tl->get_title() ?></span>
+                                <h1 class="title"><?= $tl->get_description()  == null ? "No description" : $tl->get_description() ?></h1>
                             </div>
                             <div class="in">
                                 <div class="card-number">
-                                    <span class="label">With ... friends </span>
+                                    <span class="label"><?php echo $tl->number_of_friends($tl->get_id()) == 0 ? "you're alone!" :"with ". $tl->number_of_friends($tl->get_id())." friends" ?> </span>
                                 </div>
                             </div>
+                            <input type='text' name="id" id="id" value="<?= $tl->get_id() ?>" hidden >
                         </div>
+                        </button>
+                        </form>
                     </div>
-                    <?php endforeach; ?>
+                <?php endforeach; ?>
                 </div>
         </div>
     <!-- * tricount block -->

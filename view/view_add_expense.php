@@ -107,11 +107,11 @@
                 <?php foreach($users as $usr): ?>
 
                     <div class="checks">
-                        <input type="checkbox" name="<?php echo $usr->full_name ?>" id="<?php echo $usr->id ?>">
-                            <span><?php echo $usr->full_name ?></span>
+                        <input type="checkbox" name="<?php echo $usr->getFullName() ?>" id="<?php echo $usr->getUserId() ?>">
+                            <span><?php echo $usr->getFullName() ?></span>
                         <fieldset>
                             <legend>Weight</legend>
-                            <input type="number" name="user_weight" id="<?php echo $usr->id ?>" value="1" min="0" max="50">
+                            <input type="number" name="user_weight" id="<?php echo $usr->getUserId() ?>" value="1" min="0" max="50">
                         </fieldset>
                     </div>
                 <?php endforeach; ?>

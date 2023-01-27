@@ -19,54 +19,58 @@
     </head>
 
     <body>
-        <!-- loader -->
-        <div id="loader">
-            <img src="css/img/loading-icon.png" alt="icon" class="loading-icon">
-        </div>
-        <!-- * loader -->
-
         <div class="appHeader">
             <div class="left">
                 <a href="#" class="headerButton goBack">
-                    <ion-icon name="chevron-back-outline"></ion-icon>CANCEL
+                    <ion-icon name="chevron-back-outline"></ion-icon>
                 </a>
             </div>
             <div class="pageTitle">
-                Add new Tricount
+                <?= $tricount->get_title() ?> Edit
             </div>
             <div class="right">
-                <a href="tricount/add" class="headerButton goBack"  >
-                    <ion-icon name="save-outline"></ion-icon>
+                <a href="tricount/add" class="headerButton goBack" >
+                    <ion-icon name="add-outline"></ion-icon>
                 </a>
             </div>
         </div>
+        <div>
 
-    <!-- * tricount block -->
-
-    <div class="section mt-2 mb-2">
-            <div class="card">
-                <div class="card-body">
-                    <form id="addTricount" action="tricount/add" method="post">
-                        <div class="form-group boxed">
-                            <div class="input-wrapper">
-                                <label class="label" for="text4b">Title</label>
-                                <input type="text" name="title" class="form-control" id="text4b" placeholder="Your Title here!">
-                            </div>
-                        </div>
-
-                        <div class="form-group boxed">
-                            <div class="input-wrapper">
-                                <label class="label" for="textarea4b">Description (optional)</label>
-                                <textarea id="textarea4b" name="description" rows="2" class="form-control" placeholder="Your description here!"></textarea>
-                            </div>
-                        </div>
-                        <button type="submit" value="add" class="btn">Add</button>
-                    </form>
-                </div>
-            </div>
         </div>
 
+    <!-- * tricount block -->
+        <div class="edit-settingsTitle">
+            <h1>Settings</h1>
+        </div>
+        <div class="edit-settingsInput">
+            <h2>Title :</h2>
+            <input name='title' value='<?= $tricount->get_title() ?>'>
+            <h2>Description (optional) :</h2>
+            <input name='description' value='<?= $tricount->get_description() == null ? "no Description" : $tricount->get_description()?>'>
+        </div>
+        <div class="edit-settingsTitle">
+            <h1>Subscriptions</h1>
+            <?php foreach ($sub as $s):  ?>
+                <li>
+                    <input name='name' value='<?= $s->full_name == null ? "no Description" : $s->full_name ?>'>
+                </li>
+            <?php endforeach; ?>
+            <form id="addSubscriber" action="participation/add/<?= $tricount->get_id() ?>" method="post">
+                <div>
+                    <select class="selectSub" name="names" id="names">
+                    <option value="">--Add a new subscriber--</option>
+                        <?php foreach ($users as $u):  ?>
+                            <option name="subName" id="subName" value='<?= $u->id?>'><?= $u->full_name?></option>
+                            <?=var_dump($u->id)?>;
+                        <?php endforeach; ?>
+                    </select>
 
+                    <button>add</button>
+
+                </div>
+
+            </form>
+        </div>
 
         <!-- JavaScript Bundle with Popper -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>

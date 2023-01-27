@@ -5,7 +5,7 @@ require_once 'model/Operation.php';
 
 class Repartitions extends Model
 {
-    public ?int $weight;
+    private ?int $weight;
 
     public ?int $operation;
 
@@ -53,7 +53,7 @@ class Repartitions extends Model
     public function create()
     {
         $query = self::execute(
-            "INSERT INTO `repartitions` (`operation`, `user`, `weight`) 
+            "INSERT INTO `repartitions` (`operation`, `user`, `weight`)
             VALUES (':operation', ':user', ':weight');",
             array(
                 "operation" => $this->operation,

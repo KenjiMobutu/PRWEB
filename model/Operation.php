@@ -1,11 +1,9 @@
 <?php
-require_once 'framework/Model.php';
-require_once 'model/tricounts.php';
+require_once "framework/Model.php";
+require_once 'model/Operation.php';
+class Operation extends Model{
 
-class Operation extends Model
-{
-
-    public $id;
+    public  $id;
     public string $title;
     public int $tricount;
     public float $amount;
@@ -13,9 +11,9 @@ class Operation extends Model
     public int $initiator;
     public String $created_at;
 
-    public function __construct(string $title, int $tricount, float $amount, String $operation_date, int $initiator, String $created_at, $id=NULL)
+    public function __construct(string $title, int $tricount, float $amount, string $operation_date, int $initiator, string $created_at, $id=NULL)
     {
-       
+
         $this->title = $title;
         $this->tricount = $tricount;
         $this->amount = $amount;
@@ -38,7 +36,7 @@ class Operation extends Model
     }
 
     public function getInitiator(){
-        
+
         return $this->getUserFullName();
     }
 
@@ -93,7 +91,7 @@ class Operation extends Model
     public function insert()
     {
         $query = self::execute(
-            "INSERT INTO `operations` (`title`, `tricount`, `amount`, `operation_date`, `initiator`, `created_at`) 
+            "INSERT INTO `operations` (`title`, `tricount`, `amount`, `operation_date`, `initiator`, `created_at`)
                     VALUES (:title,
                             :tricount,
                             :amount,
@@ -112,7 +110,7 @@ class Operation extends Model
         $this->setOperationId();
         return $query->fetch();
     }
-    
+
 
     public function validate()
     {
@@ -267,7 +265,7 @@ class Operation extends Model
             return null;
         } else
         {
-            foreach($data as $row){      
+            foreach($data as $row){
                 $operation_date = (string) $row["operation_date"];;
                 $created_at = (string) $row["created_at"];
                 $result[] = new Operation(
@@ -323,4 +321,27 @@ class Operation extends Model
         $this->id = $id;
     }
 
+    public static function byTricountId($tricount){
+        $query = self::execute("SELECT o.*
+                                FROM `operations` o
+                                Where o.tricount =:id ",
+                              array("id"=>$tricount));
+      $data = $query->fetchAll();
+        $operation = [];
+      foreach ($data as $row) {
+        $operation[] =new Operation(
+            $row['id'],
+            $row['title'],
+            $row['tricount'],
+            $row['amount'],
+            $row['operation_date'],
+            $row['initiator'],
+            $row['created_at']
+        );
+      }
+      return $operation;
+    }
+
+
 }
+?>

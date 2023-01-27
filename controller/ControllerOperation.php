@@ -1,11 +1,11 @@
-<?php 
+<?php
 require_once 'model/User.php';
 require_once 'framework/View.php';
 require_once 'framework/Controller.php';
 require_once 'model/tricounts.php';
 require_once 'model/participations.php';
 require_once 'model/repartitions.php';
-require_once 'model/operation.php';
+
 require_once 'model/Repartition_templates.php';
 require_once 'model/Repartition_template_items.php';
 
@@ -17,10 +17,10 @@ class ControllerOperation extends Controller{
             $this->redirect('expenses');
         }
     }
-    
+
     public function expenses(){
         $user = $this->get_user_or_redirect();
-        $user = User::get_by_id($user->id);
+        $user = User::get_by_id($user->getUserId());
         if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
             $this->redirect('main', "error");
         }else{
@@ -32,7 +32,7 @@ class ControllerOperation extends Controller{
         $totalExp = Tricounts::get_total_amount_by_tric_id($tricountID);
         $mytot = Tricounts::get_my_total($userId);
             // echo '<pre>';
-            // print_r($mytot);
+            // print_r($amounts);
             // echo '</pre>';
             // die();
         }
@@ -41,13 +41,13 @@ class ControllerOperation extends Controller{
 
     public function balance(){
         $user = $this->get_user_or_redirect();
-        $user = User::get_by_id($user->id);
+        $user = User::get_by_id($user->getUserId());
         if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
             $this->redirect('main', "error");
         }else{
-        
+
         $operation = Operation::getOperationId($_GET['param1']);
-        
+
         $tricount = Tricounts::get_by_id($_GET['param1']);
         // echo '<pre>';
         //     print_r($tricount->get_id());
@@ -90,7 +90,7 @@ class ControllerOperation extends Controller{
 
     public function add(){
         $user = $this->get_user_or_redirect();
-        $user = User::get_by_id($user->id);
+        $user = User::get_by_id($user->getUserId());
         if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
             $this->redirect('main', "error");
         }else{
@@ -104,9 +104,9 @@ class ControllerOperation extends Controller{
             // die();
         $tricount = Tricounts::get_by_id($_GET['param1']);
         }
-        
+
         (new View("add_expense"))->show(array("user"=>$user, "tricount"=>$tricount, "rti"=>$rti,"users"=>$users ));
-        
+
     }
 
     public function add_expense(){
@@ -124,7 +124,7 @@ class ControllerOperation extends Controller{
                     array_key_exists("operation_date",$_POST) &&
                     array_key_exists("initiator",$_POST)
                 ){
-                    
+
                     $title=$_POST["title"];
                     $tricount = $_POST["tricId"];
                     $amount = floatval($_POST["amount"]);
@@ -135,7 +135,7 @@ class ControllerOperation extends Controller{
                     if($user){
                         $operation = new Operation($title,$tricount,$amount,$operation_date,$initiator->getUserId(),$created_at);
                     }
-                    
+
                     $errors=$operation->validate();
 
                     if(empty($errors)){
@@ -147,7 +147,7 @@ class ControllerOperation extends Controller{
                             echo $error . "<br>";
                         }
                     }
-                 } 
+                 }
                 }
             }
     }

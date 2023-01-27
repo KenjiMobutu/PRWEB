@@ -12,13 +12,14 @@
 body {
   font-family: "Roboto", sans-serif;
   width: auto;
-  background-color: rgb(255, 255, 255);
+  background-color: #333;         /* j'ai modif ça*/
+  color: #d5d5d5;                 /* j'ai modif ça*/
 }
 
 .navbar {
   width: 100%;
   height: 50px;
-  background-color: rgb(156, 18, 0);
+  background-color: #722f37;        /* j'ai modif ça*/
 }
 
 .navbar-container {
@@ -62,6 +63,13 @@ body {
   float: right;
   align-self: center;
   color: #ffffff;
+}
+.menu-list-item a:hover {
+  text-decoration: none;
+  margin: 20px;
+  float: right;
+  align-self: center;
+  color: #b55b5c;        /* j'ai modif ça*/
 }
 
 /* LOGIN PAGE  */
@@ -185,11 +193,11 @@ select {
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
-  background-color: #da260f;
+  background-color: #3ebcbc;
 }
 
 .cancel-sign-up-btn:hover {
-  background-color: #f44336;
+  background-color: #3ebcbc;
   color: white;
 }
 
@@ -212,11 +220,11 @@ select {
   border-radius: 4px;
   box-sizing: border-box;
   background-color: white;
-  border: 2px solid #2511dd;
+  border: 2px solid #3ebcbc;
 }
 
 .profile-buttons .edit:hover {
-  background-color: #2511dd;
+  background-color: #3ebcbc;
   color: white;
 }
 
@@ -233,11 +241,11 @@ select {
   border-radius: 4px;
   box-sizing: border-box;
   background-color: white;
-  border: 2px solid #2511dd;
+  border: 2px solid #3ebcbc;
 }
 
 .profile-buttons .create:hover {
-  background-color: #2511dd;
+  background-color: #3ebcbc;
   color: white;
 }
 
@@ -254,11 +262,11 @@ select {
   border-radius: 4px;
   box-sizing: border-box;
   background-color: white;
-  border: 2px solid #2511dd;
+  border: 2px solid #3ebcbc;
 }
 
 .profile-buttons .change:hover {
-  background-color: #2511dd;
+  background-color: #3ebcbc;
   color: white;
 }
 
@@ -279,7 +287,7 @@ select {
 
 .profile-buttons .logout:hover {
   background-color: #f44336;
-  color: white; 
+  color: white;
 }
 
 .prf-body {
@@ -290,6 +298,14 @@ select {
   position: fixed;
   bottom: 0;
   width: 100%;
+}
+
+
+/*template*/
+
+.templates_container .tab_templates {
+  border: 4px solid rgba(248, 1, 1, 0.4);
+  color: #fff;
 }
 
 /* List tricount */
@@ -316,7 +332,7 @@ select {
 }
 
 
-/* HEADER */
+/* HEADER of list tricount*/
 .appHeader {
   height: 56px;
   display: flex;
@@ -455,7 +471,7 @@ select {
   right: 0;
   bottom: 0;
   z-index: 99999;
-  background: #6c2bee;
+  background-image: linear-gradient(56deg, rgb(11, 36, 0) 0%, rgb(35, 121, 9) 28%, rgb(0, 255, 183) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -490,18 +506,19 @@ select {
   padding: 16px;
 }
 
-
 .card-block {
-  height: 220px;
-  background: #6c2bee;
+  margin: auto;
+  width: 80%;
+  height: 110px;
   border-radius: 10px;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.09);
   color: #fff;
   position: relative;
+
 }
 
 .card-block .card-main {
-  background-image: linear-gradient(-180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.23) 100%);
+  background-image: linear-gradient(56deg, rgb(11, 36, 0) 0%, rgb(35, 121, 9) 68%, rgb(0, 255, 183) 100%);
   position: absolute;
   border-radius: 10px;
   left: 0;
@@ -661,7 +678,32 @@ select {
   margin-right: 7px;
   margin-top: -2px;
 }
+.button-card{
+  text-decoration: none;
+  color: rgb(201, 193, 193);
+  text-align: left !important;
+}
+.button-card .label{
+  text-align: left !important;
+}
+.button-card:hover{
+  text-decoration: none;
+  color: rgb(255, 255, 255);
+}
 
+.edit-settingsTitle{
+  padding-top: 5em;
+  margin-left: 2em;
+}
+.edit-settingsInput {
+  margin-left: 2em;
+}
+.edit-settingsInput h2 {
+  font-size: medium;
+}
+.selectSub{
+  width: 40%;
+}
 
 
 
