@@ -41,6 +41,30 @@
     return $this->creator;
   }
 
+  public static function get_tricount_by_user_id($id){
+
+    $query= self::execute("SELECT * FROM tricounts WHERE creator=:id",array("creator"=>$id));
+    $data=$query->fetchAll();
+    $result=[];
+    foreach ($data as $row) {
+      $result[] = new Tricounts($row["id"],$row["title"],$row["description"],$row["created_at"],$row["creator"]);
+    }
+    return $result;
+
+  }
+
+  public static function get_my_total($id){
+    $query = self::execute("SELECT sum(amount) FROM operations WHERE initiator = :initiator", array("initiator"=>$id));
+    $data = $query->fetch();
+    return $data;
+}
+
+  public static function get_total_amount_by_tric_id($id){
+      $query = self::execute("SELECT sum(amount) FROM operations WHERE tricount = :tricount", array("tricount"=>$id));
+      $data = $query->fetch();
+      return $data;
+  }
+
     //retourne le tricount par son id
     public static function get_by_id($id){
       $query = self::execute("SELECT * FROM tricounts WHERE id = :id", array("id"=>$id));
@@ -113,7 +137,7 @@
           return $query;
     }
     public static function by_user($user){
-      $query = self::execute("SELECT t.* FROM `tricounts` t JOIN  subscriptions s ON t.id = s.tricount where t.creator=:user", array("user"=>$user));
+      $query = self::execute("SELECT t.title FROM `tricounts` t JOIN  subscriptions s ON t.id = s.tricount where user=:user", array("user"=>$user));
         $data = $query->fetchAll();
         $tricount  = [];
         foreach ($data as $row) {

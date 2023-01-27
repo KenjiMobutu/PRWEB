@@ -1,4 +1,4 @@
-<?php 
+<?php
 require_once 'model/User.php';
 require_once 'framework/View.php';
 require_once 'framework/Controller.php';
@@ -6,8 +6,8 @@ require_once 'model/Repartition_templates.php';
 require_once 'model/Repartition_template_items.php';
 require_once 'model/tricounts.php';
 require_once 'model/participations.php';
-
-
+require_once 'model/repartitions.php';
+require_once 'model/operation.php';
 
 
 class ControllerTemplates extends Controller
@@ -16,7 +16,7 @@ class ControllerTemplates extends Controller
     {
         $this->templates();
     }
-    
+
     /**
      *                      que doit faire templates?
      * recevoir l'id du tricount pour afficher le nom dans la vue       ($get param 1 )
@@ -31,8 +31,8 @@ class ControllerTemplates extends Controller
      * afficher le nom du template
      * faire un foreach pour récupérer les données du templates
      * faire appel a une fonction qui permet de récup le full name du user par son id
-     * récupérer le poid lié au user 
-     * récupérer la fonction qui fait la somme du poid du template 
+     * récupérer le poid lié au user
+     * récupérer la fonction qui fait la somme du poid du template
      */
 
     public function templates()
@@ -48,14 +48,14 @@ class ControllerTemplates extends Controller
             if($templates !== null){
                 foreach($templates as $template){
                     $items[] = $template->get_items();
-                
+
                 }
             }
         }
-        
+
         (new View("templates"))->show(array("user"=>$user,
-                                            "templates"=>$templates, 
-                                            "tricount"=>$tricount, 
+                                            "templates"=>$templates,
+                                            "tricount"=>$tricount,
                                             "items"=>$items,));
     }
 
@@ -63,37 +63,37 @@ class ControllerTemplates extends Controller
         $userlogged = $this->get_user_or_redirect();
         $user = User::get_by_id($userlogged->getUserId());
         $listUser = [];
-        
+
         if($_GET['param1'] !==null && (isset($_GET['param2']) && $_GET['param2'] !== null)){
             $tricount = Tricounts::get_by_id($_GET["param1"]);
             $template = Repartition_templates::get_by_id($_GET['param2']);
             if($template === null){
                 $this->redirect("user","profile");
             }
-        
+
             $listUser[] = Repartition_template_items::get_user_by_repartition($template->get_id());
             // foreach($listUser as $lst)
 
                // $userList[] = $lst->getUserInfo();
-        
-            (new View("edit_template"))->show(array("user"=>$user, 
+
+            (new View("edit_template"))->show(array("user"=>$user,
                                                     "tricount"=>$tricount,
                                                     "template"=>$template,
                                                     "listUser"=>$listUser));
-        }else{     
+        }else{
             if($_GET['param1'] !== null ){
                 $tricount = Tricounts::get_by_id($_GET["param1"]);
                 $listUser = Participations::get_by_tricount($tricount->get_id());
                 // foreach($listUser as $lst)
                 //     $userList[] = $lst["user"]->getUserInfo();
             }
-            
+
                 (new View("edit_template"))->show(array("user"=>$user,
                                                         "tricount"=>$tricount,
                                                         "listUser"=>$listUser));
-            
+
         }
-        
+
     }
 
     public function editTemplate(){
@@ -102,13 +102,13 @@ class ControllerTemplates extends Controller
                 // Récupère les valeurs des inputs
                 $checkedUsers = $_POST["c"];
                 $weights = $_POST["w"];
-    
+
                 // Utilise les valeurs pour ajouter à la base de données ou pour d'autres traitements
                 $template = new Repartition_templates(null,$_POST["template_title"], $_POST["tricountId"] );
                 $template->newTemplate($_POST["template_title"], $_POST["tricountId"]);
 
-                
-                
+
+
                 if($template !== null){
                     for($i = 0; $i <= count($checkedUsers)+1; $i++) {
                     //     echo "<pre>";
@@ -118,16 +118,16 @@ class ControllerTemplates extends Controller
                     //         print_r(" checked User " . $checkedUsers[$i] . " \n");
                     //         print_r("weight " .$weights[$i] . " \n");
                     //     }
-                      
+
                     //   echo "</pre>";
                         if(isset($checkedUsers[$i]) && $checkedUsers[$i] !== null){
                            Repartition_template_items::addNewItems($checkedUsers[$i],
                             $template->id,
-                            $weights[$i]); 
+                            $weights[$i]);
                         }
-                        
+
                     }
-                    $this->redirect("templates", "templates", $_POST["tricountId"]);    
+                    $this->redirect("templates", "templates", $_POST["tricountId"]);
                 }
             }
 
@@ -139,7 +139,7 @@ class ControllerTemplates extends Controller
             //             Repartition_template_items::addNewItems($_POST["c"][$key],$_POST["tricountId"] ,$wUser );
             //         }
             //     }
-            // }      
+            // }
         }
     }
     public function delete_template(){
@@ -148,7 +148,7 @@ class ControllerTemplates extends Controller
         $user = User::get_by_id($userlogged->id);
         if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
             $this->redirect('main', "error");
-        }else{    
+        }else{
             $template = Repartition_templates::get_by_id($_GET['param1']);
             if($template === null){
                 $this->redirect("user","profile");

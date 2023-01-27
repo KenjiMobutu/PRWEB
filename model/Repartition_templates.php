@@ -3,15 +3,16 @@ require_once "framework/Model.php";
 
 class Repartition_templates extends Model
 {
-  public $id = null;
-  public $title; //(varchar 256)
-  public $tricount;
+  public $id;
+  public string $title; //(varchar 256)
+  public int $tricount;
 
-  public function __construct($id  ,$title ,$tricount )
-  {      
-    $this->id = $id;
+  public function __construct(string $title, int $tricount, $id=NULL)
+  {
+
     $this->title = $title;
     $this->tricount = $tricount;
+    $this->id = $id;
   }
 
   public function get_id(): int
@@ -27,21 +28,10 @@ class Repartition_templates extends Model
   {
     return $this->tricount;
   }
-  public function setId($id)
-  {
-      $this->id = $id;
-  }
-
-  public function setRepartitionTemplatesId()
-  {
-      $query = self::execute("SELECT id FROM repartition_templates WHERE id = :id", array("id" => Model::lastInsertId()));
-      $data = $query->fetchAll();
-      foreach ($data as $row) {
-          $id = $row['id'];
-      }
-      $this->setId($id);
-  }
   
+
+
+
   public static function get_by_id($id): Repartition_templates | null
   {
     $query = self::execute("SELECT * FROM  `repartition_templates` where id=:id", array("id" => $id));
@@ -52,7 +42,7 @@ class Repartition_templates extends Model
       return new repartition_templates($data["id"], $data["title"], $data["tricount"]);
     }
   }
-    public static function get_by_tricount($tricount) 
+    public function get_by_tricount($tricount): int | null
     {
       $query = self::execute("SELECT * FROM  `repartition_templates` where tricount=:tricount", array("tricount"=>$tricount));
             $data = $query->fetchAll();                 //c'était un fetch avant
@@ -69,8 +59,8 @@ class Repartition_templates extends Model
     }
 
     public function get_items(){
-      $query =self::execute("select rti.* from repartition_template_items rti, repartition_templates rt 
-                            where rt.id = rti.repartition_template 
+      $query =self::execute("select rti.* from repartition_template_items rti, repartition_templates rt
+                            where rt.id = rti.repartition_template
                             and rt.id=:id", array("id"=>$this->id));
       $data = $query->fetchAll();
       $items=[];
@@ -84,8 +74,8 @@ class Repartition_templates extends Model
       }
       return $items;
     }
-    
-  
+
+
 
     public function delete_by_tricount($tricount){
       // Repartition_template_items::delete_by_user_id($id);
@@ -99,6 +89,35 @@ class Repartition_templates extends Model
           return false;
       else
           return $query;
+    }
+
+    public function insertVladRT(){
+      $query = self::execute(
+        "INSERT INTO `repartition_templates` (`title`, `tricount`)
+                VALUES (:title,
+                        :tricount)",
+        array(
+            "title" => $this->title,
+            "tricount" => $this->tricount
+        )
+    );
+    $this->setRepartitionTemplatesId();
+    return $query->fetch();
+    }
+
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
+    public function setRepartitionTemplatesId()
+    {
+        $query = self::execute("SELECT id FROM repartition_templates WHERE id = :id", array("id" => Model::lastInsertId()));
+        $data = $query->fetchAll();
+        foreach ($data as $row) {
+            $id = $row['id'];
+        }
+        $this->setId($id);
     }
 
     public function delete_by_id(){
@@ -124,11 +143,11 @@ class Repartition_templates extends Model
                                   "tricount"=>$tricount
                                 )
                               );
-      
+
         $this->setRepartitionTemplatesId();
         return $query->fetch();
       }
-        
+
     }
 
 
