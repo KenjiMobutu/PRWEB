@@ -1,5 +1,6 @@
 <?php
 require_once 'framework/Model.php';
+require_once 'model/tricounts.php';
 
 class Operation extends Model
 {
@@ -45,10 +46,48 @@ class Operation extends Model
         return $this->created_at;
     }
 
+    public function get_id(){
+        return $this->id;
+    }
+
     public function getUserFullName(){
         $query = self::execute("SELECT * FROM users  WHERE users.id =:id", array("id"=>$this->initiator));
         $data=$query->fetch();
         return $data["full_name"];
+    }
+
+    public static function getNumberParticipantsByOperationId($id){
+        $query = self::execute("SELECT count(user) FROM repartitions
+        JOIN operations ON operations.id = repartitions.operation
+        WHERE operations.id = :id", array("id"=>$id));
+        $data = $query->fetch();
+        return $data;
+    }
+
+    public static function getOperationByOperationId($id) {
+        // database connection
+        
+        $query = self::execute("SELECT * FROM operations WHERE id =:id", array("id" => $id));
+        $data = $query->fetchAll();
+        if ($query->rowCount() == 0) {
+            return null;
+        } else
+        {
+            foreach($data as $row){      
+                $operation_date = (string) $row["operation_date"];;
+                $created_at = (string) $row["created_at"];
+                $result = new Operation(
+                    $row["title"],
+                    $row["tricount"],
+                    $row["amount"],
+                    $operation_date,
+                    $row["initiator"],
+                    $created_at,
+                    $row["id"]
+                );
+            }
+        }
+        return $result;
     }
 
     public function insert()

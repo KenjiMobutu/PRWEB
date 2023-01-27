@@ -76,9 +76,8 @@
     }
 </style>
 
-
 <div class="add-exp">
-<!-- <p><?php echo $tricount->get_title();?> > New expense</p> -->
+<p><?php echo $tricount->get_title();?> > New expense</p>
     <form action="operation/add_expense" method="post">
             <input class="addExp" placeholder="Title" type="text" id="title" name="title">
             <br>
@@ -104,7 +103,7 @@
             </select>
             <label for="who">For whom? (select at least one)</label>
 
-            <form action="" method="post"></form>    
+            <!-- <form action="" method="post"></form>    
                 <?php foreach($users as $usr): ?>
 
                     <div class="checks">
@@ -125,7 +124,7 @@
                     </fieldset>
                 </div>
             
-            </form>
+            </form> -->
 
             <input type="submit" value="Submit">
         </form>
