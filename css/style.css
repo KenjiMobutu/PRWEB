@@ -705,7 +705,45 @@ select {
   width: 40%;
 }
 
+/* view_template*/
+.templates_container_1 {
+  width: 80%;
+  margin: 0 auto;
+}
 
+  a{
+      color: rgb(147,87,87);                
+  }
+  #addNewTemplate{
+      float: right;
+      color: #FFDB58;
+  }
+
+table.tab_templates {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table.tab_templates th {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  background-color: #333;
+  color: #fff;
+}
+
+table.tab_templates td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #ddd;
+}
+
+table.tab_templates tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+table.tab_templates tr:hover {
+  background-color: #ddd;
+}
 
 
 /* .......> */

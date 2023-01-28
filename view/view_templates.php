@@ -10,49 +10,17 @@
 </head>
 <body>
 <style>
-        .templates_container {
-            width: 80%;
-            margin: 0 auto;
-        }
         
-            a{
-                color: rgb(147,87,87);                
-            }
-
-        table.tab_templates {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        table.tab_templates th {
-            padding: 12px 15px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-            background-color: #333;
-            color: #fff;
-        }
-
-        table.tab_templates td {
-            padding: 12px 15px;
-            border-bottom: 1px solid #ddd;
-        }
-
-        table.tab_templates tr:nth-child(even) {
-            background-color: #f2f2f2;
-        }
-
-        table.tab_templates tr:hover {
-            background-color: #ddd;
-        }
 
 
 
 </style>
     <?php include 'menu.html' ?>
     <div class="view_templates">
-        <p><?php echo $tricount->get_title();?> > templates</p>
+        <?php echo $tricount->get_title() . " > templates";?> 
+        <a href="templates/edit_template/<?php echo $tricount->get_id();?>" id="addNewTemplate"> New template</a>
 
-        <div class="templates_container">
+        <div class="templates_container_1">
             <table class="tab_templates">
                 <?php if($templates !== null) : ?>
                     <?php foreach($templates as $rt) :?>

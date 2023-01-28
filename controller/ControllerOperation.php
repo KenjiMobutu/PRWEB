@@ -173,6 +173,25 @@ class ControllerOperation extends Controller{
             }
         }
     }
+    // /**      idée de fonction si on doit mettre une fonction a part pour previous_experience
+    //  * public function previous_experience(){
+    //     if(isset($_POST["tricount_id"])&& isset($_POST["operation"]) ){
+    //         $idTricount = $_POST["tricount_id"];
+    //         $tricount = Tricounts::get_by_id($idTricount);
+    //         $idOperation = $_POST["operation"];
+    //         $operation = Operation::get_by_id($idOperation);
+
+
+    //         $prevOperation = $operation->get_prev_operation_by_tricount($idOperation,$tricount->get_id());
+    //         if($prevOperation){
+    //             $this->redirect("operation", "detail_expense", $prevOperation->get_id());
+    //         }
+    //         else{
+    //             $this->redirect("operation", "detail_expense", $_POST["operation"]);
+    //         }
+    //     }
+    // } 
+    // */
 }
 
 ?>

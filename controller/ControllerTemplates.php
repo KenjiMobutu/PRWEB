@@ -113,6 +113,8 @@ class ControllerTemplates extends Controller
                     Repartition_template_items::delete_by_repartition_template($template->get_id());
                     for($i = 0; $i <= count($checkedUsers)+2; $i++) {                               
                         if((isset($checkedUsers[$i]) && $checkedUsers[$i] !== null) && isset($weights[$i]) && $weights[$i] !== null ){
+                            if($weights[$i] ==="" || $weights[$i] == "0")
+                                $weights[$i] = 1;
                            Repartition_template_items::addNewItems($checkedUsers[$i],
                             $template->id,
                             $weights[$i]); 

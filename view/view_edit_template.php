@@ -92,18 +92,21 @@
         </p><br>
 
 
-<!-- pour récupérer l'id du tricount dans le submit du form -->
+<!-- pour récupérer l'id du tricount & template si reçu dans le submit du form -->
         <input type="text" name="tricountId" value="<?php echo $tricount->get_id(); ?>" hidden>
-
         <input type="text" name="templateID" value="<?php if(isset($_GET["param2"])){ echo $_GET["param2"];}  ?>" hidden>
         <?php foreach($listUser as $listusr): ?>
-            <input type="checkbox" name="c[<?= $listusr->user; ?>]" value="<?= $listusr->user; ?>" checked ="checked">
-                                <?php // mettre c[User->id] ça fera un tableau avec des données?>
 
+           <!-- mettre c[User->id] ça fera un tableau avec des données -->              <!-- check si c'est un edit t'emplate et récupère les items liés-->
+            <input type="checkbox" name="c[<?= $listusr->user; ?>]" value="<?= $listusr->user; ?>" <?php if(isset($template)){
+                                                                                                            if($listusr->is_in_Items($template->get_id())) {
+                                                                                                                echo "checked = 'checked'" ;} };?> >
             <input type="text" name="user" value="<?php $listusr->user;?>" placeholder="<?php echo $listusr->getUserInfo(); ?>"  disabled="disabled">
             <fieldset>
                 <legend>Weight</legend>
-                <input type="number" name="w[<?= $listusr->user; ?>]" value="1"  min="0" max="100" weight>
+                <input type="number" name="w[<?= $listusr->user; ?>]"min="0"  <?php if(isset($template)){
+                                                                                    if($listusr->is_in_Items($template->get_id())) {
+                                                                                        echo "value=".$listusr->get_weight_by_user($template->get_id());}; }else echo "value=1";?>>
             </fieldset>
                             <?php // mettre w[User->id] ça fera un tableau avec des données?>
             <br><br>

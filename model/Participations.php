@@ -114,7 +114,34 @@ require_once "framework/Model.php";
     }
 
 
-
+    public function is_in_Items($templateID){
+        $query = self::execute("SELECT DISTINCT rti.* 
+                from repartition_template_items rti, operations o 
+                where o.tricount =:tricount 
+                and rti.repartition_template = :repartition_template 
+                and rti.user = :user",
+                array("tricount"=>$this->tricount,
+                        "user"=>$this->user,
+                        "repartition_template"=>$templateID));
+        if($query->rowCount()==0){
+            return false;
+        }
+        return $query;
+       
+    }
+    public function get_weight_by_user($repartition_template): int
+    {
+      $query = self::execute("SELECT * 
+                              FROM  `repartition_template_items` 
+                              where user=:user
+                              and repartition_template=:repartition_template ", 
+                              array("user" => $this->user,"repartition_template"=>$repartition_template));
+      $data = $query->fetch(); //un seul resultat max
+      if ($query->rowCount() == 0) {
+        return null;
+      } else
+        return ($data["weight"]);
+    }
 
     }
 
