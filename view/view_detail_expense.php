@@ -28,10 +28,6 @@
         <p>Paid by <?php echo $usr ?></p><p><?php echo $operation_data->operation_date ?></p>
         <p>For <?php echo $participants["0"] ?> participants, including me</p>    
         <?php echo $operation_data->title ?>
-            <h2><?php echo $operation_data->amount ?></h2>
-            <p>Paid by <?php echo $usr ?></p><p><?php echo $operation_data->operation_date ?></p>
-            <p>For <?php echo $participants["0"] ?> participants, including me</p>    
-            <?php echo $operation_data->title ?>
         </div>
         <form action="operation/next_expense" method="post">
             <input type="hidden" name="tricount_id" value="<?php echo $tricount->get_id(); ?>" hidden>
