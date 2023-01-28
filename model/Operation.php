@@ -64,14 +64,14 @@ class Operation extends Model{
 
     public static function getOperationByOperationId($id) {
         // database connection
-        
+
         $query = self::execute("SELECT * FROM operations WHERE id =:id", array("id" => $id));
         $data = $query->fetchAll();
         if ($query->rowCount() == 0) {
             return null;
         } else
         {
-            foreach($data as $row){      
+            foreach($data as $row){
                 $operation_date = (string) $row["operation_date"];;
                 $created_at = (string) $row["created_at"];
                 $result = new Operation(
@@ -134,7 +134,7 @@ class Operation extends Model{
         if (!is_null($this->id)) {
             $query = self::execute(
                 "UPDATE operations SET
-            
+
             `title`=:title,
             `tricount`=:tricount,
             `amount`=:amount,
@@ -168,7 +168,7 @@ class Operation extends Model{
                    :initiator,
                    :created_at)",
                 [
-                    
+
                     "title" => $this->title,
                     "tricount" => $this->tricount,
                     "amount" => $this->amount,
@@ -192,6 +192,13 @@ class Operation extends Model{
         $data[] = $query1->fetchAll();
         $data[] = $query2->fetchAll();
         return $data;
+    }
+    public static function delete_by_tricount($id){
+        $query=self::execute("DELETE from `operations` where tricount=:id", array("id"=>$id));
+        if($query->rowCount()==0)
+            return false;
+        else
+            return $query;
     }
 
     private function validateDate(string $operation_date): bool
@@ -371,7 +378,7 @@ class Operation extends Model{
         $this->created_at = $created_at;
     }
 
-    
+
 
 
 }
