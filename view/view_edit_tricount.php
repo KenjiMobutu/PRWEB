@@ -65,7 +65,16 @@
                     </select>
                     <button>add</button>
                 </div>
-
+            </form>
+        </div>
+        <div class="button-manage-repartition-template">
+            <form action="https://www.w3docs.com/">
+                <button type="submit">Click me</button>
+            </form>
+        </div>
+        <div class="button-delete-tricount">
+            <form action="tricount/delete/<?= $tricount->get_id()?>" method="POST" >
+                <button class="delete-tricount" type="submit">Delete this tricount</button>
             </form>
         </div>
 
