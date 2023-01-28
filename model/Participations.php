@@ -74,11 +74,11 @@ require_once "framework/Model.php";
             else
                 return true;
         }
-        public static function delete_by_tricount_id($id): bool{
+        public static function delete_by_tricount_id($id){
             $query = self::execute("DELETE
                 FROM subscriptions
                 where tricount =:id",
-                array("tricount"=>$id));
+                array("id"=>$id));
             if($query->rowCount()==0)
                 return false;
             else

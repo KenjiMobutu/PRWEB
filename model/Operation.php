@@ -64,14 +64,14 @@ class Operation extends Model{
 
     public static function getOperationByOperationId($id) {
         // database connection
-        
+
         $query = self::execute("SELECT * FROM operations WHERE id =:id", array("id" => $id));
         $data = $query->fetchAll();
         if ($query->rowCount() == 0) {
             return null;
         } else
         {
-            foreach($data as $row){      
+            foreach($data as $row){
                 $operation_date = (string) $row["operation_date"];;
                 $created_at = (string) $row["created_at"];
                 $result = new Operation(
@@ -134,7 +134,7 @@ class Operation extends Model{
         if (!is_null($this->id)) {
             $query = self::execute(
                 "UPDATE operations SET
-            `id`=:id,
+
             `title`=:title,
             `tricount`=:tricount,
             `amount`=:amount,
@@ -142,7 +142,7 @@ class Operation extends Model{
             `initiator`=:initiator,
             `created_at`=:created_at WHERE ID = :ID",
                 array(
-                    "id" => $this->id,
+                    "ID" => $this->id,
                     "title" => $this->title,
                     "tricount" => $this->tricount,
                     "amount" => $this->amount,
@@ -154,23 +154,21 @@ class Operation extends Model{
         } else {
             self::execute(
                 "INSERT INTO operations(
-                 `id`,
                  `title`,
-                 tricount,
+                 `tricount`,
                  `amount`,
                  `operation_date`,
                  `initiator`,
                  `created_at`)
-            VALUES(:id,
+            VALUES(
                    :title,
-                   :Title,
                    :tricount,
                    :amount,
                    :operation_date,
                    :initiator,
                    :created_at)",
                 [
-                    "id" => $this->id,
+
                     "title" => $this->title,
                     "tricount" => $this->tricount,
                     "amount" => $this->amount,
@@ -194,6 +192,13 @@ class Operation extends Model{
         $data[] = $query1->fetchAll();
         $data[] = $query2->fetchAll();
         return $data;
+    }
+    public static function delete_by_tricount($id){
+        $query=self::execute("DELETE from `operations` where tricount=:id", array("id"=>$id));
+        if($query->rowCount()==0)
+            return false;
+        else
+            return $query;
     }
 
     private function validateDate(string $operation_date): bool
@@ -410,6 +415,39 @@ class Operation extends Model{
             $data["id"]
         );
     }
+
+    public function setTitle(string $title): void
+    {
+        $this->title = $title;
+    }
+
+    public function setTricount(int $tricount): void
+    {
+        $this->tricount = $tricount;
+    }
+
+    public function setAmount(float $amount): void
+    {
+        $this->amount = $amount;
+    }
+
+    public function setOperation_date(string $operation_date): void
+    {
+        $this->operation_date = $operation_date;
+    }
+
+    public function setInitiator(int $initiator): void
+    {
+        $this->initiator = $initiator;
+    }
+
+    public function setCreated_at(string $created_at): void
+    {
+        $this->created_at = $created_at;
+    }
+
+
+
 
 }
 ?>

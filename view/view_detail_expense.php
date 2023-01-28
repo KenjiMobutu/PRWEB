@@ -15,9 +15,19 @@
     <?php include 'menu.html' ?>
     <div class="cont">
         <p><?php echo $tricount->get_title();?> > <?php echo $operation_data->title ?>  <button class="edit-btn">
-            <a href="https/edit" style="text-decoration: none; color: black;">Edit</a>
+            <a href="Operation/edit/<?php echo $operation_data->id ?>" style="text-decoration: none; color: black;">Edit</a>
         </button>
+        <?php
+            // echo '<pre>';
+            // print_r($operation_data);
+            // echo '</pre>';
+            // die();
+            ?>
         <div class="view_expenses">   
+        <h2><?php echo $operation_data->amount ?></h2>
+        <p>Paid by <?php echo $usr ?></p><p><?php echo $operation_data->operation_date ?></p>
+        <p>For <?php echo $participants["0"] ?> participants, including me</p>    
+        <?php echo $operation_data->title ?>
             <h2><?php echo $operation_data->amount ?></h2>
             <p>Paid by <?php echo $usr ?></p><p><?php echo $operation_data->operation_date ?></p>
             <p>For <?php echo $participants["0"] ?> participants, including me</p>    

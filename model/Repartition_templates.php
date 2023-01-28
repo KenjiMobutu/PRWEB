@@ -54,7 +54,7 @@ class Repartition_templates extends Model
   }
     public static function get_by_tricount($tricount) 
     {
-      $query = self::execute("SELECT * FROM  `repartition_templates` where tricount=:tricount", array("tricount"=>$tricount));
+      $query = self::execute("SELECT * FROM `repartition_templates` where tricount=:tricount", array("tricount"=>$tricount));
             $data = $query->fetchAll();                 //c'était un fetch avant
             $templates = [];
             if ($query->rowCount() == 0){
@@ -87,13 +87,13 @@ class Repartition_templates extends Model
     
   
 
-    public function delete_by_tricount($tricount){
+    public static function delete_by_tricount($tricount){
       // Repartition_template_items::delete_by_user_id($id);
       // Repartition::delete_by_user_id($id);
       // Operation::delete_by_user_id($id);
       // Participation::delete_by_user_id($id);
       // Tricount::delete_by_user_id($id);
-      Repartition_template_items::delete_by_repartition_template($this->id);
+      Repartition_template_items::delete_by_repartition_template($tricount);
       $query=self::execute("DELETE from `repartition_templates` where tricount=:tricount", array("tricount"=>$tricount));
       if($query->rowCount()==0)
           return false;
