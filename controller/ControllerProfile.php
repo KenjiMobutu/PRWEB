@@ -21,10 +21,20 @@ class ControllerProfile extends Controller
     /**
      * @throws Exception
      */
-    public function profile() {
-        $user = $this->get_user_or_redirect();
-        
-        (new View("profile"))->show(array("user" => $user));//show may throw Exception
+    public function profile()
+    {
+        $loggedUser = $this->get_user_or_redirect();
+        if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
+            $this->redirect('main', "error");
+        }
+        // $user= array_key_exists('param1', $_GET) && $user->isAdmin() ?
+        //     User::get_by_id($_GET['param1']) : $user;
+
+        if (isset($_GET['param1']) && is_numeric($_GET['param1'])) {
+            $user = User::get_by_id($loggedUser->getUserId());
+        }
+
+        (new View("profile"))->show(array("user" => $user, "user"=>$loggedUser)); //show may throw Exception
     }
 
     public function change_password()
@@ -33,11 +43,11 @@ class ControllerProfile extends Controller
         if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
             $this->redirect('main', "error");
         }
-        if(isset($_GET['param1']) && $_GET['param1'] !== $user->getUserId()){
+        if (isset($_GET['param1']) && $_GET['param1'] !== $user->getUserId()) {
             $this->redirect('main', 'error');
         }
         $errors = [];
-        $success = array_key_exists('param2', $_GET) && $_GET['param2'] === 'ok' ? 
+        $success = array_key_exists('param2', $_GET) && $_GET['param2'] === 'ok' ?
             "Your password has been successfully changed." : '';
 
 
@@ -74,4 +84,60 @@ class ControllerProfile extends Controller
             "success" => $success
         ]);
     }
+
+
+
+
+   public function edit_profile()
+   {
+       /** @var User $user */
+        $loggedUser = $this->get_user_or_redirect();
+        $errors = [];
+
+
+        $user = User::get_by_id($loggedUser->getUserId());
+        $success = array_key_exists('param2', $_GET) && $_GET['param2'] === 'ok' ?
+            "Your profile has been successfully updated." : "";
+
+
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if (isset($_POST["mail"]) || isset($_POST["fullName"]) || isset($_POST["iban"])) {
+                if (isset($_POST["mail"])) {
+                    if (!User::validateEmail($_POST["mail"])) {
+                        $errors[] = "Wrong mail";
+                    }
+                }
+                if (isset($_POST["fullName"])) {
+                    if (!User::validateFullName($_POST["fullName"])) {
+                        $errors[] = "Bad name. Too short.";
+                    }
+                }
+            }
+            if(empty($errors)){
+                $user->update_profile($_POST["fullName"],$_POST["mail"],  $_POST["iban"]);
+                $this->redirect("profile","profile",$user->getUserId(),"ok");
+            }
+        }
+        (new View("edit_profile"))->show([
+            "user" => $user,
+            "errors" => $errors,
+            "success" => $success,
+        ]);
+    }
+    public function result_profile()
+    {
+        // $user = $this->get_user_or_redirect();
+        // $user = array_key_exists('param1', $_GET) && $user->isAdmin() ?
+        //    User::get_by_id($_GET['param1']) : $user;
+        $user = $this->get_user_or_redirect();
+        if(!empty($_GET["param1"])){//récup l'id du user
+            if($user->getUserId() == $_GET["param1"]){
+                $user = User::get_by_id($_GET["param1"]);
+            } else {
+                $this->redirect("main", "error");
+            }
+            (new View("profile"))->show(array("user" => $user));
+        }
+    }
+
 }
