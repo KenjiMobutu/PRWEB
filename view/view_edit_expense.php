@@ -77,20 +77,29 @@
 </style>
 
 <div class="add-exp">
-<p><?php echo $tricount->get_title();?> > New expense</p>
-    <form action="operation/add_expense" method="post">
-            <input class="addExp" placeholder="Title" type="text" id="title" name="title">
-            <br>
+<p><?php echo $tricount->get_title();?> > Edit expense</p>
+    <form action="operation/edit_expense/<?php echo $operation_data->id ?>" method="post">
+    <input type="hidden" id="operationId" name="operationId" value="<?php echo $operation_data->id?>">        
+    <input class="addExp" placeholder="Title" type="text" id="title" value="<?php echo $operation_data->title ?>" name="title">
             <input type="hidden" id="tricId" name="tricId" value="<?php echo $tricount->get_id()?>">
-            <input class="addExp" placeholder="Amount (EUR)" type="number" id="amount" name="amount">
+            <br>
+            <input class="addExp" placeholder="Amount (EUR)" value="<?php echo $operation_data->amount ?>" type="number" id="amount" name="amount">
             <br>
             <label  for="operation_date">Date</label>
-            <input class="addExp" type="date" id="operation_date" name="operation_date">
+            <input class="addExp" type="date" id="operation_date" value="<?php echo $operation_data->operation_date?>" name="operation_date">
             <br>
+            
             <label for="paid_by">Paid By</label>
-            <select id="initiator" name="initiator">
+            <select value="<?php echo $usr ?>" id="initiator" name="initiator">
+            <option selected value="<?php echo $usr ?>"><?php echo $usr ?></option>
+            <?php 
+                    // echo '<pre>';
+                    // print_r($usr);
+                    // echo '</pre>';
+                    // die(); 
+                    ?>
             <?php foreach($users as $urss): ?>
-                <option value="<?php echo $urss->getUserId()?>"><?php echo $urss->getFullName()?></option>
+                <option value="<?php echo $urss->getFullName()?>"><?php echo $urss->getFullName()?></option>
                 <?php endforeach;?>
             </select>
             <br>
@@ -128,6 +137,12 @@
 
             <input type="submit" value="Submit">
         </form>
+
+        <!-- Operation/delete/<?php echo $operation_data->id ?> -->
+        <input  type="submit" value="DELETE">
+        <button class="delete-btn">
+            <a href="" style="text-decoration: none; background-color: red;">DELETE</a>
+        </button>
 </div>
 	
 </body>

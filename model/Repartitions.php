@@ -44,7 +44,7 @@ class Repartitions extends Model
         }
     }
 
-    public static function get_user_arnd_weight_by_operation_id($operation){
+    public static function get_user_and_weight_by_operation_id($operation){
         $query = self::execute("SELECT user, weight FROM repartitions WHERE operation=:id", array("id"=>$operation));
         $data = $query->fetchAll();
         return $data;

@@ -3,15 +3,15 @@ require_once "framework/Model.php";
 require_once 'model/Operation.php';
 class Operation extends Model{
 
-    private  $id;
-    private  $title;
-    private  $tricount;
-    private  $amount;
-    private  $operation_date;
-    private  $initiator;
-    private  $created_at;
+    public  $id;
+    public string $title;
+    public int $tricount;
+    public float $amount;
+    public String $operation_date;
+    public int $initiator;
+    public String $created_at;
 
-    public function __construct($id,$title, $tricount, $amount, $operation_date, $initiator, $created_at)
+    public function __construct(string $title, int $tricount, float $amount, string $operation_date, int $initiator, string $created_at, $id=NULL)
     {
 
         $this->title = $title;
@@ -44,10 +44,48 @@ class Operation extends Model{
         return $this->created_at;
     }
 
+    public function get_id(){
+        return $this->id;
+    }
+
     public function getUserFullName(){
         $query = self::execute("SELECT * FROM users  WHERE users.id =:id", array("id"=>$this->initiator));
         $data=$query->fetch();
         return $data["full_name"];
+    }
+
+    public static function getNumberParticipantsByOperationId($id){
+        $query = self::execute("SELECT count(user) FROM repartitions
+        JOIN operations ON operations.id = repartitions.operation
+        WHERE operations.id = :id", array("id"=>$id));
+        $data = $query->fetch();
+        return $data;
+    }
+
+    public static function getOperationByOperationId($id) {
+        // database connection
+        
+        $query = self::execute("SELECT * FROM operations WHERE id =:id", array("id" => $id));
+        $data = $query->fetchAll();
+        if ($query->rowCount() == 0) {
+            return null;
+        } else
+        {
+            foreach($data as $row){      
+                $operation_date = (string) $row["operation_date"];;
+                $created_at = (string) $row["created_at"];
+                $result = new Operation(
+                    $row["title"],
+                    $row["tricount"],
+                    $row["amount"],
+                    $operation_date,
+                    $row["initiator"],
+                    $created_at,
+                    $row["id"]
+                );
+            }
+        }
+        return $result;
     }
 
     public function insert()
@@ -96,7 +134,7 @@ class Operation extends Model{
         if (!is_null($this->id)) {
             $query = self::execute(
                 "UPDATE operations SET
-            `id`=:id,
+            
             `title`=:title,
             `tricount`=:tricount,
             `amount`=:amount,
@@ -104,7 +142,7 @@ class Operation extends Model{
             `initiator`=:initiator,
             `created_at`=:created_at WHERE ID = :ID",
                 array(
-                    "id" => $this->id,
+                    "ID" => $this->id,
                     "title" => $this->title,
                     "tricount" => $this->tricount,
                     "amount" => $this->amount,
@@ -116,23 +154,21 @@ class Operation extends Model{
         } else {
             self::execute(
                 "INSERT INTO operations(
-                 `id`,
                  `title`,
-                 tricount,
+                 `tricount`,
                  `amount`,
                  `operation_date`,
                  `initiator`,
                  `created_at`)
-            VALUES(:id,
+            VALUES(
                    :title,
-                   :Title,
                    :tricount,
                    :amount,
                    :operation_date,
                    :initiator,
                    :created_at)",
                 [
-                    "id" => $this->id,
+                    
                     "title" => $this->title,
                     "tricount" => $this->tricount,
                     "amount" => $this->amount,
@@ -303,6 +339,39 @@ class Operation extends Model{
       }
       return $operation;
     }
+
+
+    public function setTitle(string $title): void
+    {
+        $this->title = $title;
+    }
+
+    public function setTricount(int $tricount): void
+    {
+        $this->tricount = $tricount;
+    }
+
+    public function setAmount(float $amount): void
+    {
+        $this->amount = $amount;
+    }
+
+    public function setOperation_date(string $operation_date): void
+    {
+        $this->operation_date = $operation_date;
+    }
+
+    public function setInitiator(int $initiator): void
+    {
+        $this->initiator = $initiator;
+    }
+
+    public function setCreated_at(string $created_at): void
+    {
+        $this->created_at = $created_at;
+    }
+
+    
 
 
 }

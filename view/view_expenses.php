@@ -10,12 +10,19 @@
     <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
 </head>
 <style>
-
+            a{
+                color:yellow;
+            }
             .cont{
                 margin:25px;
             }
             .view_expenses{
                 justify-content: center;
+            }
+
+            .edit-btn{
+                float:right;
+                margin-right:55px;
             }
 
             .view-balance-button {
@@ -171,9 +178,13 @@
 <body>
     <?php include 'menu.html' ?>
     <div class="cont">
-        <div class="view_expenses">       
-                    <!-- <p><?php echo $tricount->get_title();?> > Exepenses</p> -->
-                    <a href="/prwb_2223_c03/Operation/balance/<?php echo $tricount->id?>">    
+        <div class="view_expenses">     
+        <button class="edit-btn">
+            <a href="https://www.example.com/edit" style="text-decoration: none; color: black;">Edit</a>
+        </button>
+                                    
+                    <p><?php echo $tricount->get_title();?> > Expenses</p>    
+                    <a href="/prwb_2223_c03/Operation/balance/<?php echo $tricount->get_id()?>">    
                         <button class="view-balance-button">
                             <i class="fas fa-dollar-sign"></i>View Balance
                         </button>
@@ -185,20 +196,30 @@
                                     foreach($amounts as $amount):
                                         echo '<li class="data-item">';
                                             foreach($amount as $am):
+                                            // echo '<pre>';
+                                            // print_r($am);
+                                            // echo '</pre>';
+                                            // die();
                                             $id=$am->initiator;
-                                            echo '<div class="data-card">
-                                                <h2 class="title">'.$am->title.'</h2>
-                                                <p class="amount">'.$am->amount.'$</p>
-                                                <p class="initiator">Paid by '.$am->getInitiator().'</p>
-                                                <p class="date">'.$am->created_at.'</p>
-                                            </div>';
+                                            $id_expense = $am->id;
+                                            // print_r($id_expense);
+                                            echo '<a href="Operation/detail_expense/'.$id_expense.'">
+                                                <div class="data-card">
+                                                        <h2 class="title">'.$am->title.'</h2>
+                                                        <input type="hidden" name="operationId" value="$id_expense">
+                                                        <p class="amount">'.$am->amount.'$</p>
+                                                        <p class="initiator">Paid by '.$am->getInitiator().'</p>
+                                                        <p class="date">'.$am->operation_date.'</p>
+                                                </div>
+                                            </a>';
                                             endforeach;
                                         echo '</li>';
                                     endforeach;
-                                    else: 
-                                        echo '<p>dommage</p>';
-                                    endif;?>
+                                else: 
+                                    echo '<p>dommage</p>';
+                                endif;?>
                             </ul>
+
                         </div>
                         </ul>
             </div>
@@ -207,7 +228,7 @@
                     <p>TOTAL EXPENSES <br> <?php echo round($totalExp["0"]) . "$"?></p>                    
                 </div>
                 <div class="add-btn">
-                <a href="/prwb_2223_c03/Operation/add/<?php echo $tricount->id?>">    
+                <a href="/prwb_2223_c03/Operation/add/<?php echo $tricount->get_id()?>">    
                         <button class="add-button">
                             
                         </button>
