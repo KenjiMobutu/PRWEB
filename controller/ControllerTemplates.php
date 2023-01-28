@@ -109,13 +109,15 @@ class ControllerTemplates extends Controller
                     $template->update_title($_POST["template_title"]);
                 }
 
+                echo "<pre>"; print_r($checkedUsers); print_r($weights);echo "</pre>"; 
+                die();
                 if(!is_null($template)){
                     Repartition_template_items::delete_by_repartition_template($template->get_id());
                     for($i = 0; $i <= count($checkedUsers)+2; $i++) {                               
                         if((isset($checkedUsers[$i]) && $checkedUsers[$i] !== null) && isset($weights[$i]) && $weights[$i] !== null ){
-                            if($weights[$i] ==="" || $weights[$i] == "0")
+                            if($weights[$i] ==="" || $weights[$i] === "0")
                                 $weights[$i] = 1;
-                           Repartition_template_items::addNewItems($checkedUsers[$i],
+                            Repartition_template_items::addNewItems($checkedUsers[$i],
                             $template->id,
                             $weights[$i]); 
                         }
@@ -141,7 +143,7 @@ class ControllerTemplates extends Controller
                                                  
                         if((isset($checkedUsers[$i]) && $checkedUsers[$i] !== null) && isset($weights[$i]) && $weights[$i] !== null ){
                            Repartition_template_items::addNewItems($checkedUsers[$i],
-                            $template->id,
+                            $template->get_id(),
                             $weights[$i]); 
                         }
                     }
@@ -153,7 +155,7 @@ class ControllerTemplates extends Controller
     public function delete_template(){
 
         $userlogged = $this->get_user_or_redirect();
-        $user = User::get_by_id($userlogged->id);
+        $user = User::get_by_id($userlogged->getUserId());
         if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
             $this->redirect('main', "error");
         }else{    

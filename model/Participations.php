@@ -10,6 +10,14 @@ require_once "framework/Model.php";
             $this->user = $user;
         }
 
+        public function get_tricount(){
+            return $this->tricount;
+        }
+
+        public function get_user(){
+            return $this->user;
+        }
+
 
         public static function get_by_tricount($tricount){
             $query = self::execute("SELECT s.*, t.creator from subscriptions s, tricounts t

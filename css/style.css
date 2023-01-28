@@ -718,6 +718,7 @@ select {
       float: right;
       color: #FFDB58;
   }
+  
 
 table.tab_templates {
   width: 100%;
@@ -745,6 +746,71 @@ table.tab_templates tr:hover {
   background-color: #ddd;
 }
 
+/* edit_template */
+form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: #2c3e50;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+p {
+  margin-right: 10px;
+}
+
+
+input[type="text"] {
+  padding: 10px;
+  margin: 10px;
+  border-radius: 5px;
+  border: none;
+  background-color: #34495e;
+  color: white;
+
+}
+input[type="number"] {
+  flex: 1;
+  padding: 10px;
+  margin: 1px;
+  border-radius: 15px;
+  border: none;
+  background-color: #34495e;
+  color: white;
+}
+
+
+input[type="submit"] {
+  margin: 20px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  background-color: #16a085;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+input[type="submit"]:hover {
+  background-color: #1abc9c;
+}
+#delete_template{
+  margin: 20px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  background-color: #16a085;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#delete_template:hover{
+  background-color: #1abc9c;
+}
 
 /* .......> */
 

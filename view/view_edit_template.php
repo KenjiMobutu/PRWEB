@@ -14,64 +14,15 @@
 </head>
 <body>
     <style>
-        form {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            background-color: #2c3e50;
-            color: white;
-            font-family: Arial, sans-serif;
-        }
-
-        p {
-            margin-right: 10px;
-        }
-
-         
-        input[type="text"] {
-            padding: 10px;
-            margin: 10px;
-            border-radius: 5px;
-            border: none;
-            background-color: #34495e;
-            color: white;
-
-        }
-        input[type="number"] {
-            flex: 1;
-            padding: 10px;
-            margin: 1px;
-            border-radius: 15px;
-            border: none;
-            background-color: #34495e;
-            color: white;
-        }
-       
-
-        input[type="submit"] {
-            margin: 20px;
-            padding: 10px 20px;
-            border-radius: 5px;
-            border: none;
-            background-color: #16a085;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #1abc9c;
-        }
-        @media screen and (min-width: 10px) and (max-width: 480px) {
+        
+        /* @media screen and (min-width: 10px) and (max-width: 480px) {
             input[type="text"], input[type="number"], input[type="checkbox"] {
                 width: 25%;
             }
             input[type="submit"] {
                 width: 100%;
             }
-        }
+        } */
 
     </style>
 <?php include 'menu.html' ?>
@@ -98,24 +49,26 @@
         <?php foreach($listUser as $listusr): ?>
 
            <!-- mettre c[User->id] ça fera un tableau avec des données -->              <!-- check si c'est un edit t'emplate et récupère les items liés-->
-            <input type="checkbox" name="c[<?= $listusr->user; ?>]" value="<?= $listusr->user; ?>" <?php if(isset($template)){
+            <input type="checkbox" name="c[<?= $listusr->get_user(); ?>]" value="<?= $listusr->get_user(); ?>" <?php if(isset($template)){
                                                                                                             if($listusr->is_in_Items($template->get_id())) {
                                                                                                                 echo "checked = 'checked'" ;} };?> >
-            <input type="text" name="user" value="<?php $listusr->user;?>" placeholder="<?php echo $listusr->getUserInfo(); ?>"  disabled="disabled">
+            <input type="text" name="user" value="<?php $listusr->get_user();?>" placeholder="<?php echo $listusr->getUserInfo(); ?>"  disabled="disabled">
             <fieldset>
                 <legend>Weight</legend>
-                <input type="number" name="w[<?= $listusr->user; ?>]"min="0"  <?php if(isset($template)){
+                <input type="number" name="w[<?= $listusr->get_user() ; ?>]"min="0"  <?php if(isset($template)){
                                                                                     if($listusr->is_in_Items($template->get_id())) {
                                                                                         echo "value=".$listusr->get_weight_by_user($template->get_id());}; }else echo "value=1";?>>
             </fieldset>
                             <?php // mettre w[User->id] ça fera un tableau avec des données?>
             <br><br>
-            <?php // récupérer les donnée grace a l'id user.?>
 
         <?php endforeach ; ?>
         <input type="submit" value="Save_template">
+        <?php if(isset($_GET["param2"])){
+            echo "<a href='templates/delete_template/$_GET[param2]'"; echo "id='delete_template'>DELETE</a>";
+        }?>
+        <!-- <a href="templates/delete_template/<?php if(isset($_GET["param2"])){echo$_GET["param2"];}?>" id="delete_template">DELETE</a> -->
     </form>
-
     
 </body>
 </html>

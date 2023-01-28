@@ -28,12 +28,13 @@ class ControllerProfile extends Controller
         }
         // $user= array_key_exists('param1', $_GET) && $user->isAdmin() ?
         //     User::get_by_id($_GET['param1']) : $user;
-
         if (isset($_GET['param1']) && is_numeric($_GET['param1'])) {
-            $user = User::get_by_id($loggedUser->getUserId());
+            if($_GET['param1'] === $loggedUser->getUserId())
+                $loggedUser = User::get_by_id($loggedUser->getUserId());
+            else
+                $this->redirect("main","error");
         }
-
-        (new View("profile"))->show(array("user" => $user, "user"=>$loggedUser)); //show may throw Exception
+        (new View("profile"))->show(array("user"=>$loggedUser)); //show may throw Exception
     }
 
     public function change_password()
