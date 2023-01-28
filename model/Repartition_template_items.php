@@ -106,6 +106,13 @@
       } else
         return $data;
     }
+    public static function delete_by_repartition_template($repartition_template_id){
+      $query=self::execute("DELETE from `repartition_template_items` where repartition_template=:repartition_template_id", array("repartition_template_id"=>$repartition_template_id));
+      if($query->rowCount()==0)
+          return false;
+      else
+          return $query;
+    }
 
   }
 
