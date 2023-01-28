@@ -71,6 +71,21 @@ class ControllerTricount extends Controller{
     (new View("edit_tricount"))->show(array("user" => $user,"tricount" => $tricount,"subscriptions" =>$subscriptions, "sub" => $sub,"users" => $users));
   }
 
+  public function delete(){
+    $user = $this->get_user_or_redirect();
+    if (isset($_GET['param1']) && is_numeric($_GET['param1']) && $_GET['param1'] != null ) {
+      $id = $_GET['param1'];
+      $tricount = Tricounts::get_by_id($id);
+      if($tricount->get_creator_id() === $user->getUserId()){
+        $tricount->delete($tricount->get_id());
+      }else {
+        $this->redirect('main', "error");
+      }
+      //var_dump($tricount);
+    }
+
+  }
+
 }
 
 ?>
