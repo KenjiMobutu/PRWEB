@@ -28,12 +28,6 @@
         <p>Paid by <?php echo $usr ?></p><p><?php echo $operation_data->operation_date ?></p>
         <p>For <?php echo $participants["0"] ?> participants, including me</p>    
         <?php echo $operation_data->title ?>
-           
-            
-            
-            
-            
-
         </div>
     </div>
     
