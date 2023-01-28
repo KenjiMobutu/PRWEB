@@ -130,7 +130,7 @@
         <!-- Operation/delete/<?php echo $operation_data->id ?> -->
         <input  type="submit" value="DELETE">
         <button class="delete-btn">
-            <a href="" style="text-decoration: none; background-color: red;">DELETE</a>
+            <a href="/prwb_2223_c03/Operation/delete_confirm/<?php echo $operation_data->id ?>" style="text-decoration: none; background-color: red;">DELETE</a>
         </button>
 </div>
 	

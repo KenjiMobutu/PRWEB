@@ -314,16 +314,47 @@ class ControllerOperation extends Controller{
     public function delete_confirm(){
         $user = $this->get_user_or_redirect();
         $errors     = [];
+        $operationId = $_GET['param1'];
+        $operation_data=Operation::getOperationByOperationId($operationId);
         if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
             $this->redirect('main', "error");
         }else{
             $userId = $user->getUserId();
         }
-        if(isset($_GET["param2"])){
-            $operationId = $_GET["param2"];
-            (new View("delete_operation"))->show(array("user" => $user, "operationId" => $operationId));
+        if(isset($_GET["param1"])){
+        
+            (new View("delete_operation"))->show(array("user" => $user, "operationId" => $operationId, "operation_data"=>$operation_data));
         }
     }
+
+    public function delete_operation(){
+        $user = $this->get_user_or_redirect();
+        $errors     = [];
+        $operationId = $_GET['param1'];
+        
+        if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
+            $this->redirect('main', "error");
+        }else{
+            $userId = $user->getUserId();
+            $operation=Operation::getOperationByOperationId($operationId);
+            if($operation === null){
+                $this->redirect("main","error");
+            }
+        }
+        if(isset($_POST['submitted'])){
+            if($_POST['submitted'] === "Cancel"){
+                $this->redirect("operation","edit_expense",$operationId);
+            }else if ($_POST['submitted'] === "Delete"){
+                $tricount = Tricounts::get_tricount_by_operation_id($operationId);
+                $tricountId = $tricount->get_id();
+                $operation = $operation->delete();
+                $this->redirect("operation","expenses", $tricountId);
+            }
+        }
+
+        (new View("edit_expense"))->show(array("user"=>$user, "users"=>$users, "tricount"=>$tricount ));
+
+    } 
 
 
 }

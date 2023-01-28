@@ -185,12 +185,10 @@ class Operation extends Model{
 
     public function delete()
     {
-        $query0 = self::execute("DELETE FROM `operations` WHERE initiator = :id", array("id" => $this->id));
-        $query1 = self::execute("DELETE FROM `tricounts` WHERE id = :id", array("id" => $this->id));
-        $query2 = self::execute("DELETE FROM `repartitions` WHERE operation=:id", array("id" => $this->id));
+        $query0 = self::execute("DELETE FROM `repartitions` WHERE operation = :id", array("id" => $this->id));
+        $query1 = self::execute("DELETE FROM `operations` WHERE id=:id", array("id" => $this->id));
         $data[] = $query0->fetchAll();
         $data[] = $query1->fetchAll();
-        $data[] = $query2->fetchAll();
         return $data;
     }
 
