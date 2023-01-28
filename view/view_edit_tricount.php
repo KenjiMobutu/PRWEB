@@ -52,21 +52,18 @@
             <h1>Subscriptions</h1>
             <?php foreach ($sub as $s):  ?>
                 <li>
-                    <input name='name' value='<?= $s->full_name == null ? "no Description" : $s->full_name ?>'>
+                    <input name='name' value='<?= $s->getFullName() == null ? "no Description" : $s->getFullName() ?>'>
                 </li>
             <?php endforeach; ?>
             <form id="addSubscriber" action="participation/add/<?= $tricount->get_id() ?>" method="post">
-                <div>
+                <div class="edit-selectSub">
                     <select class="selectSub" name="names" id="names">
                     <option value="">--Add a new subscriber--</option>
                         <?php foreach ($users as $u):  ?>
-                            <option name="subName" id="subName" value='<?= $u->id?>'><?= $u->full_name?></option>
-                            <?=var_dump($u->id)?>;
+                            <option name="subName" id="subName" value='<?= $u->getUserId()?>'><?= $u->getFullName()?></option>
                         <?php endforeach; ?>
                     </select>
-
                     <button>add</button>
-
                 </div>
 
             </form>
