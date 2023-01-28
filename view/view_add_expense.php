@@ -102,30 +102,26 @@
                 <?php endforeach;?>
             </select>
             <label for="who">For whom? (select at least one)</label>
-
-            <!-- <form action="" method="post"></form>    
+  
                 <?php foreach($users as $usr): ?>
-
                     <div class="checks">
-                        <input type="checkbox" name="<?php echo $usr->getFullName() ?>" id="<?php echo $usr->getUserId() ?>">
-                            <span><?php echo $usr->getFullName() ?></span>
+                        <input type="checkbox" name="c[<?= $usr->getUserId(); ?>]" value="<?php echo $usr->getUserId() ?>" id="userIdTemp">
+                            <span style="color: yellow; font-weight: bold;"><?php echo $usr->getFullName() ?></span>
                         <fieldset>
-                            <legend>Weight</legend>
-                            <input type="number" name="user_weight" id="<?php echo $usr->getUserId() ?>" value="1" min="0" max="50">
+                            <legend style="color: yellow; font-weight: bold;">Weight</legend>
+                            <input type="number" name="w[<?= $usr->getUserId(); ?>]" id="userWeight" value="1" min="0" max="50">
                         </fieldset>
                     </div>
                 <?php endforeach; ?>
                 <p>Add a new repartition template</p>
                 <div class="save-template">
-                <input type="checkbox" name="save_template" id="save" >Save this template 
+                <input type="checkbox" name="save_template" id="save" ><span style="color: yellow; font-weight: bold;">Save this template</span>
                     <fieldset>
-                        <legend>Name</legend>
-                        <input type="text" name="name_template" id="savename" placeholder="Name">    
+                        <legend style="color: yellow; font-weight: bold;">Name</legend>
+                        <input type="text" name="template_name" id="savename" placeholder="Name">    
                     </fieldset>
                 </div>
-            
-            </form> -->
-
+    
             <input type="submit" value="Submit">
         </form>
 </div>

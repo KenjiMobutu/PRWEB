@@ -115,14 +115,19 @@ class ControllerOperation extends Controller{
             $this->redirect('main', "error");
         }else{
             $userId = $user->getUserId();
-
-            if ($_SERVER['REQUEST_METHOD'] === 'POST'){
+            $save='';
+                    // echo '<pre>';
+                    // print_r($_POST);    
+                    // echo '</pre>';
+                    // die();
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST["save_template"])){
+                // die('1');
                 if(
                     array_key_exists("title",$_POST) &&
                     array_key_exists("tricId",$_POST) &&
                     array_key_exists("amount",$_POST) &&
                     array_key_exists("operation_date",$_POST) &&
-                    array_key_exists("initiator",$_POST)
+                    array_key_exists("initiator",$_POST) 
                 ){
                     
                     $title=$_POST["title"];
@@ -131,14 +136,7 @@ class ControllerOperation extends Controller{
                     $operation_date = $_POST["operation_date"];
                     $initiator = $_POST["initiator"];
                     $created_at = date('y-m-d h:i:s');
-
                   
-                    // echo '<pre>';
-                    // print_r($_POST["initiator"]);
-                    // echo '</pre>';
-                    // die();
-                    
-
                     if($user){
                         $operation = new Operation($title,$tricount,$amount,$operation_date,$initiator,$created_at);
                     }
@@ -155,6 +153,59 @@ class ControllerOperation extends Controller{
                         }
                     }
                  }
+                }else if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["c"]) && isset($_POST["w"])){
+                    // die('2');
+                  
+                   
+                    if(
+                        array_key_exists("title",$_POST) &&
+                        array_key_exists("tricId",$_POST) &&
+                        array_key_exists("amount",$_POST) &&
+                        array_key_exists("operation_date",$_POST) &&
+                        array_key_exists("initiator",$_POST)   
+                    ){
+                        
+                        $title=$_POST["title"];
+                        $tricount = $_POST["tricId"];
+                        $amount = floatval($_POST["amount"]);
+                        $operation_date = $_POST["operation_date"];
+                        $initiator = $_POST["initiator"];
+                        $created_at = date('y-m-d h:i:s');
+                        $checkedUsers = $_POST["c"];
+                        $weights = $_POST["w"];
+                      
+                        if($user){
+                            $operation = new Operation($title,$tricount,$amount,$operation_date,$initiator,$created_at);
+                            $template = new Repartition_templates(null,$_POST["template_name"], $_POST["tricId"] );
+                        }
+                        
+                        $errors=$operation->validate();
+    
+                        if(empty($errors)){
+                            $operation->insert();
+                            $template->newTemplate($_POST["template_name"], $_POST["tricId"]);
+                            if($template !== null){
+                                for($i = 0; $i <= count($checkedUsers)+1; $i++) {
+                                    if(isset($checkedUsers[$i]) && $checkedUsers[$i] !== null){
+                                        if($weights[$i] ==="" || $weights[$i] === "0")
+                                            $weights[$i] = 1;
+                                        Repartition_template_items::addNewItems($checkedUsers[$i],
+                                        $template->id,
+                                        $weights[$i]);
+                                    }
+            
+                                }
+                                $this->redirect("operation", "expenses", $_POST["tricId"]);
+                            }
+                           
+
+                        }else{
+                            echo "<b>Validation Failed:<b> <br>";
+                            foreach($errors as $error) {
+                                echo $error . "<br>";
+                            }
+                        }
+                     }
                 }
             }
     }
@@ -258,6 +309,20 @@ class ControllerOperation extends Controller{
                  }
                 }
             }
+    }
+
+    public function delete_confirm(){
+        $user = $this->get_user_or_redirect();
+        $errors     = [];
+        if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
+            $this->redirect('main', "error");
+        }else{
+            $userId = $user->getUserId();
+        }
+        if(isset($_GET["param2"])){
+            $operationId = $_GET["param2"];
+            (new View("delete_operation"))->show(array("user" => $user, "operationId" => $operationId));
+        }
     }
 
 

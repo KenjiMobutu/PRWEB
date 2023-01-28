@@ -25,16 +25,31 @@
       return $this->repartition_templates;
     }
 
-    public function insertVladRTi(){
+    public static function addNewItems($user,  $repartition_template , $weight){
+      $query = self::execute("INSERT INTO
+            repartition_template_items (`user`, `repartition_template`, `weight`)
+            VALUES(:user,
+            :repartition_template,
+            :weight)",
+          array(
+            "weight"=>$weight,
+            "user"=>$user,
+            "repartition_template" => $repartition_template
+          )
+        );
+      return $query;
+    }
+
+    public static function insertVladRTi(){
       $query = self::execute(
         "INSERT INTO `repartition_templates_items` (`weight`, `user`, `repartition_templates`)
                 VALUES (:title,
                         :tricount,
                         :repartition_templates)",
         array(
-            "weight" => $this->weight,
-            "user" => $this->user,
-            "repartition_templates" => $this->repartition_templates
+            "weight" =>weight,
+            "user" =>user,
+            "repartition_templates" =>repartition_templates
         )
     );
     $this->setRepartitionTemplateItemsId();
