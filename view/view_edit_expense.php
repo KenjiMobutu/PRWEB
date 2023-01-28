@@ -90,14 +90,8 @@
             <br>
             
             <label for="paid_by">Paid By</label>
-            <select value="<?php echo $usr ?>" id="initiator" name="initiator">
+            <select id="initiator" name="initiator">
             <option selected value="<?php echo $usr ?>"><?php echo $usr ?></option>
-            <?php 
-                    // echo '<pre>';
-                    // print_r($usr);
-                    // echo '</pre>';
-                    // die(); 
-                    ?>
             <?php foreach($users as $urss): ?>
                 <option value="<?php echo $urss->getFullName()?>"><?php echo $urss->getFullName()?></option>
                 <?php endforeach;?>
@@ -111,30 +105,25 @@
                 <?php endforeach;?>
             </select>
             <label for="who">For whom? (select at least one)</label>
-
-            <!-- <form action="" method="post"></form>    
                 <?php foreach($users as $usr): ?>
-
                     <div class="checks">
                         <input type="checkbox" name="<?php echo $usr->getFullName() ?>" id="<?php echo $usr->getUserId() ?>">
-                            <span><?php echo $usr->getFullName() ?></span>
+                            <span style="color: yellow; font-weight: bold;"><?php echo $usr->getFullName() ?></span>
                         <fieldset>
                             <legend>Weight</legend>
                             <input type="number" name="user_weight" id="<?php echo $usr->getUserId() ?>" value="1" min="0" max="50">
                         </fieldset>
                     </div>
-                <?php endforeach; ?>
+                <?php endforeach;?>
                 <p>Add a new repartition template</p>
                 <div class="save-template">
-                <input type="checkbox" name="save_template" id="save" >Save this template 
+                <input type="checkbox" name="save_template" id="save" > <span style="color: yellow; font-weight: bold;">Save this template</span>
                     <fieldset>
                         <legend>Name</legend>
                         <input type="text" name="name_template" id="savename" placeholder="Name">    
                     </fieldset>
                 </div>
             
-            </form> -->
-
             <input type="submit" value="Submit">
         </form>
 
