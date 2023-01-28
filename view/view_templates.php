@@ -53,7 +53,7 @@
                             
                         <?php endforeach; ?>
                         <?php else : ?>
-                            <p>no template for now.</p>
+                            <p> <strong>no template for now.</strong></p>
                     <?php endif;?>
             </table>
         </div>

@@ -20,25 +20,11 @@
     {
       return $this->weight;
     }
-
+    public function get_user(){
+      return $this->user;
+    }
     public function get_rt(){
       return $this->repartition_template;
-    }
-
-    public function insertVladRTi(){
-      $query = self::execute(
-        "INSERT INTO `repartition_templates_items` (`weight`, `user`, `repartition_templates`)
-                VALUES (:title,
-                        :tricount,
-                        :repartition_templates)",
-        array(
-            "weight" =>weight,
-            "user" =>user,
-            "repartition_templates" =>repartition_templates
-        )
-    );
-    $this->setRepartitionTemplateItemsId();
-    return $query->fetch();
     }
 
     public function setId($id)
@@ -46,9 +32,6 @@
       return $this->user;
     }
 
-    public function get_rt(){
-      return $this->repartition_template;
-    }
 
     // public static function insertVladRTi(){
     //   $query = self::execute(

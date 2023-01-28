@@ -109,8 +109,7 @@ class ControllerTemplates extends Controller
                     $template->update_title($_POST["template_title"]);
                 }
 
-                echo "<pre>"; print_r($checkedUsers); print_r($weights);echo "</pre>"; 
-                die();
+                
                 if(!is_null($template)){
                     Repartition_template_items::delete_by_repartition_template($template->get_id());
                     for($i = 0; $i <= count($checkedUsers)+2; $i++) {                               
@@ -149,7 +148,8 @@ class ControllerTemplates extends Controller
                     }
                     $this->redirect("templates", "templates",$_POST["tricountId"]);    
                 }
-            }
+            }else
+                $this->redirect("main","error");
         }
     }
     public function delete_template(){

@@ -31,8 +31,7 @@ class ControllerProfile extends Controller
         if (isset($_GET['param1']) && is_numeric($_GET['param1'])) {
             if($_GET['param1'] === $loggedUser->getUserId())
                 $loggedUser = User::get_by_id($loggedUser->getUserId());
-            else
-                $this->redirect("main","error");
+            
         }
         (new View("profile"))->show(array("user"=>$loggedUser)); //show may throw Exception
     }
@@ -40,12 +39,13 @@ class ControllerProfile extends Controller
     public function change_password()
     {
         $user = $this->get_user_or_redirect();
-        if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
-            $this->redirect('main', "error");
-        }
-        if (isset($_GET['param1']) && $_GET['param1'] !== $user->getUserId()) {
-            $this->redirect('main', 'error');
-        }
+        $user = User::get_by_id($user->getUserId());
+        // if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
+        //     $this->redirect('main', "error");
+        // }
+        // if (isset($_GET['param1']) && $_GET['param1'] !== $user->getUserId()) {
+        //     $this->redirect('main', 'error');
+        // }
         $errors = [];
         $success = array_key_exists('param2', $_GET) && $_GET['param2'] === 'ok' ?
             "Your password has been successfully changed." : '';
@@ -73,9 +73,7 @@ class ControllerProfile extends Controller
                     $user->update_password();
                     $this->redirect("profile", "change_password", $user->getUserId(), "ok");
                 }
-            } else {
-                $this->redirect('main', "error");
-            }
+            } 
         }
 
         (new View("change_password"))->show([
@@ -84,9 +82,6 @@ class ControllerProfile extends Controller
             "success" => $success
         ]);
     }
-
-
-
 
    public function edit_profile()
    {
@@ -115,7 +110,7 @@ class ControllerProfile extends Controller
             }
             if(empty($errors)){
                 $user->update_profile($_POST["fullName"],$_POST["mail"],  $_POST["iban"]);
-                $this->redirect("profile","profile",$user->getUserId(),"ok");
+                $this->redirect("user","profile",$user->getUserId(),"ok");
             }
         }
         (new View("edit_profile"))->show([
