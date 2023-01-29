@@ -707,13 +707,31 @@ select {
 .selectSub{
   width: 40%;
 }
+.delete-tricount{
+  margin-left: 2em !important;
+  width: 30% !important;
+}
+.confirm_delete_Tricount{
+  padding-top: 15em;
+  margin: auto;
+  width: 50%;
+  text-align: center;
+}
+.button_delete_confirm{
+  margin: auto;
+  width: 80%;
+  color: red !important;
+}
+.edit-tricount{
+  margin: auto;
+  width: 50%;
+}
 
 /* view_template*/
 .templates_container_1 {
   width: 80%;
   margin: 0 auto;
 }
-
   a{
       color: rgb(147,87,87);                
   }
@@ -763,6 +781,25 @@ form {
 
 p {
   margin-right: 10px;
+}
+.delete-tricount{
+  margin-left: 2em !important;
+  width: 30% !important;
+}
+.confirm_delete_Tricount{
+  padding-top: 15em;
+  margin: auto;
+  width: 50%;
+  text-align: center;
+}
+.button_delete_confirm{
+  margin: auto;
+  width: 80%;
+  color: red !important;
+}
+.edit-tricount{
+  margin: auto;
+  width: 50%;
 }
 
 
