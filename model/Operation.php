@@ -48,6 +48,12 @@ class Operation extends Model{
         return $this->id;
     }
 
+    public static function getNbOfOperations($id){
+        $query = self::execute("SELECT count(*) FROM operations  WHERE tricount =:id", array("id"=>$id));
+        $data=$query->fetch();
+        return $data;
+    }
+
     public function getUserFullName(){
         $query = self::execute("SELECT * FROM users  WHERE users.id =:id", array("id"=>$this->initiator));
         $data=$query->fetch();
@@ -109,6 +115,17 @@ class Operation extends Model{
         );
         $this->setOperationId();
         return $query->fetch();
+    }
+
+
+    public static function insertRepartition($id,$weight,$initiator){
+        
+        $query = self::execute("INSERT INTO repartitions (operation, weight, user) 
+                                VALUES (:operation_id, :weight, :user)", 
+                                array("operation_id"=>$id , 
+                                "weight"=>$weight, 
+                                "user"=>$initiator));
+        return $query;
     }
 
 
@@ -185,12 +202,10 @@ class Operation extends Model{
 
     public function delete()
     {
-        $query0 = self::execute("DELETE FROM `operations` WHERE initiator = :id", array("id" => $this->id));
-        $query1 = self::execute("DELETE FROM `tricounts` WHERE id = :id", array("id" => $this->id));
-        $query2 = self::execute("DELETE FROM `repartitions` WHERE operation=:id", array("id" => $this->id));
+        $query0 = self::execute("DELETE FROM `repartitions` WHERE operation = :id", array("id" => $this->id));
+        $query1 = self::execute("DELETE FROM `operations` WHERE id=:id", array("id" => $this->id));
         $data[] = $query0->fetchAll();
         $data[] = $query1->fetchAll();
-        $data[] = $query2->fetchAll();
         return $data;
     }
     public static function delete_by_tricount($id){
@@ -347,6 +362,74 @@ class Operation extends Model{
       return $operation;
     }
 
+    public function get_previous_operation_by_tricount($id, $tricount){
+        $query = self::execute("SELECT * 
+                                FROM `operations` o
+                                where o.id < :id 
+                                and o.tricount = :tricount
+                                ORDER BY o.id DESC
+                                LIMIT 1",
+                                array("id"=>$id,
+                                      "tricount"=>$tricount));
+        $data = $query->fetch();
+        if($query->rowCount() == 0 ){
+            return null;
+        }
+        $operation_date = (string) $data["operation_date"];;
+        $created_at = (string) $data["created_at"];
+        return new Operation(
+            $data["title"],
+            $data["tricount"],
+            $data["amount"],
+            $operation_date,
+            $data["initiator"],
+            $created_at,
+            $data["id"]
+        );
+    }
+
+
+    public function get_next_operation_by_tricount($id, $tricount){
+        $query = self::execute("SELECT o.* 
+                                FROM `operations` o
+                                WHERE o.tricount = :tricount
+                                AND o.id > :id
+                                ORDER BY o.id ASC
+                                LIMIT 1",
+                                array("id"=>$id,
+                                      "tricount"=>$tricount));
+        $data = $query->fetch();
+        if($query->rowCount() == 0 ){
+            return null;
+        }
+        $operation_date = (string) $data["operation_date"];;
+        $created_at = (string) $data["created_at"];
+        return new Operation(
+            $data["title"],
+            $data["tricount"],
+            $data["amount"],
+            $operation_date,
+            $data["initiator"],
+            $created_at,
+            $data["id"]
+        );
+    }
+    
+    public static function get_by_id($id){
+        $query = self::execute("SELECT * FROM operations where id =:id", array("id"=>$id));
+        $data = $query->fetch();
+        $operation_date = (string) $data["operation_date"];;
+        $created_at = (string) $data["created_at"];
+        return new Operation(
+            $data["title"],
+            $data["tricount"],
+            $data["amount"],
+            $operation_date,
+            $data["initiator"],
+            $created_at,
+            $data["id"]
+        );
+    }
 
     public function setTitle(string $title): void
     {

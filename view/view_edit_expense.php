@@ -74,6 +74,16 @@
     border-radius: 4px;
     box-sizing: border-box;
     }
+
+    .delete-btn{
+        width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    }
 </style>
 
 <div class="add-exp">
@@ -128,10 +138,10 @@
         </form>
 
         <!-- Operation/delete/<?php echo $operation_data->id ?> -->
-        <input  type="submit" value="DELETE">
-        <button class="delete-btn">
-            <a href="" style="text-decoration: none; background-color: red;">DELETE</a>
-        </button>
+        
+        <button class="delete-btn" style="background-color: blue; color: white;">
+            <a href="/prwb_2223_c03/Operation/delete_confirm/<?php echo $operation_data->id ?>" style="text-decoration: none; color: white;">DELETE</a>
+</button>
 </div>
 	
 </body>

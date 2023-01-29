@@ -274,6 +274,7 @@ class User extends Model
                         "mail"=>$mail,
                         "iban"=>$iban));
             }
+            return $this;
         }
 
 

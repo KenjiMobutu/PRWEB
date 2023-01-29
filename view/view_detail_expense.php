@@ -14,7 +14,7 @@
 <body>
     <?php include 'menu.html' ?>
     <div class="cont">
-    <p><?php echo $tricount->get_title();?> > <?php echo $operation_data->title ?>  <button class="edit-btn">
+        <p><?php echo $tricount->get_title();?> > <?php echo $operation_data->title ?>  <button class="edit-btn">
             <a href="Operation/edit/<?php echo $operation_data->id ?>" style="text-decoration: none; color: black;">Edit</a>
         </button>
         <?php
@@ -29,8 +29,19 @@
         <p>For <?php echo $participants["0"] ?> participants, including me</p>    
         <?php echo $operation_data->title ?>
         </div>
+        <form action="operation/next_expense" method="post">
+            <input type="hidden" name="tricount_id" value="<?php echo $tricount->get_id(); ?>" hidden>
+            <input type="hidden" name="operation" value="<?php echo $operation_data->get_id(); ?>" hidden>
+            <input type="submit" name="submit" value="Previous">
+        </form>
+        <form action="operation/next_expense" method="post">
+            <input type="hidden" name="tricount_id" value="<?php echo $tricount->get_id(); ?>" hidden>
+            <input type="hidden" name="operation" value="<?php echo $operation_data->get_id(); ?>" hidden>
+            <input type="submit" name="submit" value="Next">
+        </form>
+
     </div>
-    
+
 
 </body>
 </html>
