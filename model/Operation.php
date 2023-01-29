@@ -362,6 +362,74 @@ class Operation extends Model{
       return $operation;
     }
 
+    public function get_previous_operation_by_tricount($id, $tricount){
+        $query = self::execute("SELECT * 
+                                FROM `operations` o
+                                where o.id < :id 
+                                and o.tricount = :tricount
+                                ORDER BY o.id DESC
+                                LIMIT 1",
+                                array("id"=>$id,
+                                      "tricount"=>$tricount));
+        $data = $query->fetch();
+        if($query->rowCount() == 0 ){
+            return null;
+        }
+        $operation_date = (string) $data["operation_date"];;
+        $created_at = (string) $data["created_at"];
+        return new Operation(
+            $data["title"],
+            $data["tricount"],
+            $data["amount"],
+            $operation_date,
+            $data["initiator"],
+            $created_at,
+            $data["id"]
+        );
+    }
+
+
+    public function get_next_operation_by_tricount($id, $tricount){
+        $query = self::execute("SELECT o.* 
+                                FROM `operations` o
+                                WHERE o.tricount = :tricount
+                                AND o.id > :id
+                                ORDER BY o.id ASC
+                                LIMIT 1",
+                                array("id"=>$id,
+                                      "tricount"=>$tricount));
+        $data = $query->fetch();
+        if($query->rowCount() == 0 ){
+            return null;
+        }
+        $operation_date = (string) $data["operation_date"];;
+        $created_at = (string) $data["created_at"];
+        return new Operation(
+            $data["title"],
+            $data["tricount"],
+            $data["amount"],
+            $operation_date,
+            $data["initiator"],
+            $created_at,
+            $data["id"]
+        );
+    }
+    
+    public static function get_by_id($id){
+        $query = self::execute("SELECT * FROM operations where id =:id", array("id"=>$id));
+        $data = $query->fetch();
+        $operation_date = (string) $data["operation_date"];;
+        $created_at = (string) $data["created_at"];
+        return new Operation(
+            $data["title"],
+            $data["tricount"],
+            $data["amount"],
+            $operation_date,
+            $data["initiator"],
+            $created_at,
+            $data["id"]
+        );
+    }
 
     public function setTitle(string $title): void
     {

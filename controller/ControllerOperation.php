@@ -357,6 +357,45 @@ class ControllerOperation extends Controller{
     } 
 
 
+    public function next_expense(){
+        if(isset($_POST["tricount_id"])&& isset($_POST["operation"]) ){
+            $idTricount = $_POST["tricount_id"];
+            $tricount = Tricounts::get_by_id($idTricount);
+            $idOperation = $_POST["operation"];
+            $operation = Operation::get_by_id($idOperation);
+
+            if($_POST["submit"] === "Next")
+                $nextOperation = $operation->get_next_operation_by_tricount($idOperation,$tricount->get_id());
+            else if($_POST["submit"] === "Previous") {
+                $nextOperation = $operation->get_previous_operation_by_tricount($idOperation,$tricount->get_id());
+            }
+            if($nextOperation){
+                $this->redirect("operation", "detail_expense", $nextOperation->get_id());
+            }
+            else{
+                $this->redirect("operation", "detail_expense", $_POST["operation"]);
+            }
+        }
+    }
+    // /**      idée de fonction si on doit mettre une fonction a part pour previous_experience
+    //  * public function previous_experience(){
+    //     if(isset($_POST["tricount_id"])&& isset($_POST["operation"]) ){
+    //         $idTricount = $_POST["tricount_id"];
+    //         $tricount = Tricounts::get_by_id($idTricount);
+    //         $idOperation = $_POST["operation"];
+    //         $operation = Operation::get_by_id($idOperation);
+
+
+    //         $prevOperation = $operation->get_prev_operation_by_tricount($idOperation,$tricount->get_id());
+    //         if($prevOperation){
+    //             $this->redirect("operation", "detail_expense", $prevOperation->get_id());
+    //         }
+    //         else{
+    //             $this->redirect("operation", "detail_expense", $_POST["operation"]);
+    //         }
+    //     }
+    // } 
+    // */
 }
 
 ?>

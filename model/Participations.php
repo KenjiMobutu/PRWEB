@@ -10,9 +10,16 @@ require_once "framework/Model.php";
             $this->user = $user;
         }
 
+        public function get_tricount(){
+            return $this->tricount;
+        }
+
+        public function get_user(){
+            return $this->user;
+        }
+
 
         public static function get_by_tricount($tricount){
-        $query = self::execute("SELECT * from subscriptions where tricount =:tricount");
             $query = self::execute("SELECT s.*, t.creator from subscriptions s, tricounts t
                                             where s.tricount = t.id
                                             and s.tricount =:tricount
@@ -115,7 +122,34 @@ require_once "framework/Model.php";
     }
 
 
-
+    public function is_in_Items($templateID){
+        $query = self::execute("SELECT DISTINCT rti.* 
+                from repartition_template_items rti, operations o 
+                where o.tricount =:tricount 
+                and rti.repartition_template = :repartition_template 
+                and rti.user = :user",
+                array("tricount"=>$this->tricount,
+                        "user"=>$this->user,
+                        "repartition_template"=>$templateID));
+        if($query->rowCount()==0){
+            return false;
+        }
+        return $query;
+       
+    }
+    public function get_weight_by_user($repartition_template): int
+    {
+      $query = self::execute("SELECT * 
+                              FROM  `repartition_template_items` 
+                              where user=:user
+                              and repartition_template=:repartition_template ", 
+                              array("user" => $this->user,"repartition_template"=>$repartition_template));
+      $data = $query->fetch(); //un seul resultat max
+      if ($query->rowCount() == 0) {
+        return null;
+      } else
+        return ($data["weight"]);
+    }
 
     }
 
