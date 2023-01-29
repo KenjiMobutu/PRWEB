@@ -12,14 +12,14 @@
 body {
   font-family: "Roboto", sans-serif;
   width: auto;
-  background-color: #333;         /* j'ai modif ça*/
-  color: #d5d5d5;                 /* j'ai modif ça*/
+  background-color: #333;         
+  color: #d5d5d5;                 
 }
 
 .navbar {
   width: 100%;
   height: 50px;
-  background-color: #722f37;        /* j'ai modif ça*/
+  background-color: #722f37;        
 }
 
 .navbar-container {
@@ -75,10 +75,13 @@ body {
 /* LOGIN PAGE  */
 
 .form {
-  position: relative;
-  padding: 55px;
-  background-color: #f7f7f700;
-  box-shadow: 0px 0px 8px 5px rgba(26, 1, 248, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 45%;
+  left: 45%;
+  width: 90%;
+  transform: translate(-50%, -50%);
   /* animation: rotate 3.5s linear infinite; */
 }
 
