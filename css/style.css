@@ -9,6 +9,10 @@
   margin: 0;
 }
 
+a{
+  text-decoration: none;
+}
+
 body {
   font-family: "Roboto", sans-serif;
   width: auto;

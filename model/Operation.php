@@ -118,6 +118,17 @@ class Operation extends Model{
     }
 
 
+    public static function insertRepartition($id,$weight,$initiator){
+        
+        $query = self::execute("INSERT INTO repartitions (operation, weight, user) 
+                                VALUES (:operation_id, :weight, :user)", 
+                                array("operation_id"=>$id , 
+                                "weight"=>$weight, 
+                                "user"=>$initiator));
+        return $query;
+    }
+
+
     public function validate()
     {
         $errors = [];

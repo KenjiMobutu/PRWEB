@@ -33,11 +33,11 @@ class ControllerOperation extends Controller{
         $totalExp = Tricounts::get_total_amount_by_tric_id($tricountID);
         $mytot = Tricounts::get_my_total($userId);
             // echo '<pre>';
-            // print_r($amounts);
+            // print_r($participants);
             // echo '</pre>';
             // die();
         }
-        (new View("expenses"))->show(array("user"=>$user, "tricount"=>$tricount, "amounts"=>$amounts,"totalExp"=>$totalExp,"mytot"=>$mytot,"participants"=>$participants ));
+        (new View("expenses"))->show(array("user"=>$user, "tricount"=>$tricount, "amounts"=>$amounts,"totalExp"=>$totalExp,"mytot"=>$mytot,"participants"=>$participants, "nbOperations"=>$nbOperations ));
     }
 
     public function balance(){
@@ -117,10 +117,10 @@ class ControllerOperation extends Controller{
         }else{
             $userId = $user->getUserId();
             $save='';
-                    echo '<pre>';
-                    print_r($_POST);    
-                    echo '</pre>';
-                    die();
+                    // echo '<pre>';
+                    // print_r($_POST);    
+                    // echo '</pre>';
+                    // die();
             if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST["save_template"])){
                 // die('1');
                 if(
@@ -191,9 +191,9 @@ class ControllerOperation extends Controller{
                                         Repartition_template_items::addNewItems($checkedUsers[$i],
                                         $template->id,
                                         $weights[$i]);
-                                        Repartitions::create();
-                                    }
-            
+                                        Operation::insertRepartition($operation->get_id(),$weights[$i],$checkedUsers[$i]);
+                                    } //alberti goat
+        
                                 }
                                 $this->redirect("operation", "expenses", $_POST["tricId"]);
                             }

@@ -50,7 +50,7 @@ class Repartitions extends Model
         return $data;
     }
 
-    public function create()
+    public static function create()
     {
         $query = self::execute(
             "INSERT INTO `repartitions` (`operation`, `user`, `weight`)
