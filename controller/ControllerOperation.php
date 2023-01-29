@@ -26,9 +26,10 @@ class ControllerOperation extends Controller{
         }else{
         $userId = $user->getUserId();
         $tricount = Tricounts::get_by_id($_GET['param1']);
-
         $tricountID = $tricount->get_id();
+        $participants = Tricounts::number_of_friends($tricountID);
         $amounts[] = Operation::get_operations_by_tricount($tricountID);
+        $nbOperations = Operation::getNbOfOperations($tricountID);
         $totalExp = Tricounts::get_total_amount_by_tric_id($tricountID);
         $mytot = Tricounts::get_my_total($userId);
             // echo '<pre>';
@@ -36,7 +37,7 @@ class ControllerOperation extends Controller{
             // echo '</pre>';
             // die();
         }
-        (new View("expenses"))->show(array("user"=>$user, "tricount"=>$tricount, "amounts"=>$amounts,"totalExp"=>$totalExp,"mytot"=>$mytot ));
+        (new View("expenses"))->show(array("user"=>$user, "tricount"=>$tricount, "amounts"=>$amounts,"totalExp"=>$totalExp,"mytot"=>$mytot,"participants"=>$participants ));
     }
 
     public function balance(){
@@ -116,10 +117,10 @@ class ControllerOperation extends Controller{
         }else{
             $userId = $user->getUserId();
             $save='';
-                    // echo '<pre>';
-                    // print_r($_POST);    
-                    // echo '</pre>';
-                    // die();
+                    echo '<pre>';
+                    print_r($_POST);    
+                    echo '</pre>';
+                    die();
             if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST["save_template"])){
                 // die('1');
                 if(
@@ -155,8 +156,6 @@ class ControllerOperation extends Controller{
                  }
                 }else if($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["c"]) && isset($_POST["w"])){
                     // die('2');
-                  
-                   
                     if(
                         array_key_exists("title",$_POST) &&
                         array_key_exists("tricId",$_POST) &&
@@ -180,7 +179,7 @@ class ControllerOperation extends Controller{
                         }
                         
                         $errors=$operation->validate();
-    
+                        
                         if(empty($errors)){
                             $operation->insert();
                             $template->newTemplate($_POST["template_name"], $_POST["tricId"]);
@@ -192,6 +191,7 @@ class ControllerOperation extends Controller{
                                         Repartition_template_items::addNewItems($checkedUsers[$i],
                                         $template->id,
                                         $weights[$i]);
+                                        Repartitions::create();
                                     }
             
                                 }

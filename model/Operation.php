@@ -48,6 +48,12 @@ class Operation extends Model{
         return $this->id;
     }
 
+    public static function getNbOfOperations($id){
+        $query = self::execute("SELECT count(*) FROM operations  WHERE tricount =:id", array("id"=>$id));
+        $data=$query->fetch();
+        return $data;
+    }
+
     public function getUserFullName(){
         $query = self::execute("SELECT * FROM users  WHERE users.id =:id", array("id"=>$this->initiator));
         $data=$query->fetch();

@@ -179,23 +179,31 @@
     <?php include 'menu.html' ?>
     <div class="cont">
         <div class="view_expenses">     
-        <button class="edit-btn">
-            <a href="https://www.example.com/edit" style="text-decoration: none; color: black;">Edit</a>
-        </button>
-                                    
-                    <p><?php echo $tricount->get_title();?> > Expenses</p>    
-                    <a href="/prwb_2223_c03/Operation/balance/<?php echo $tricount->get_id()?>">    
+            <button class="edit-btn">
+                <a href="https://www.example.com/edit" style="text-decoration: none; color: black;">Edit</a>
+            </button>
+                <p><?php echo $tricount->get_title();?> > Expenses</p>  
+            
+                      
+                    <!-- <a href="/prwb_2223_c03/Operation/balance/<?php echo $tricount->get_id()?>">    
                         <button class="view-balance-button">
                             <i class="fas fa-dollar-sign"></i>View Balance
                         </button>
-                    </a>
+                    </a> -->
                         <ul>
                         <div class="container">
                             <ul class="data-list">
-                                <?php if(!is_null($amounts)):
+                            <?php
+                                if(!empty($amounts)){
                                     foreach($amounts as $amount):
-                                        echo '<li class="data-item">';
-                                            foreach($amount as $am):
+                                        if(!empty($amount)){
+                                            echo '<a href="/prwb_2223_c03/Operation/balance/'.$tricount->get_id().'">';
+                                                echo '<button class="view-balance-button">';
+                                                    echo '<i class="fas fa-dollar-sign"></i>View Balance';
+                                                echo '</button>';
+                                            echo '</a>';
+                                            echo '<li class="data-item">';
+                                        foreach($amount as $am):
                                             // echo '<pre>';
                                             // print_r($am);
                                             // echo '</pre>';
@@ -212,20 +220,76 @@
                                                         <p class="date">'.$am->operation_date.'</p>
                                                 </div>
                                             </a>';
-                                            endforeach;
+                                        endforeach;
                                         echo '</li>';
-                                    endforeach;
-                                else: 
-                                    echo '<p>dommage</p>';
-                                endif;?>
+                                        echo '<div class="totals">
+                                        <div class="exp">
+                                            <p>TOTAL EXPENSES <br> '.round($totalExp["0"]).'$</p>                    
+                                        </div>
+                                        <div class="add-btn">
+                                            <a href="/prwb_2223_c03/Operation/add/'.$tricount->get_id().'">    
+                                                <button class="add-button">
+                                                </button>
+                                            </a>
+                                        </div>
+                                        <div class="mytot">
+                                            <p>MY TOTAL <br> '.round($mytot["0"]).'$</p>                  
+                                        </div>
+                                    </div>';
+                                    } elseif(empty($amounts) && ($participants > 1) && ($nbOperation==0)) {
+                                        echo "<h1>this is empty => no operations => add operation</h1>";
+                                        echo '<a href="'.$tricount->get_id().'">';
+                                                echo '<button class="view-balance-button">';
+                                                    echo '<i class="fas fa-dollar-sign"></i>ADD AN EXPENSE';
+                                                echo '</button>';
+                                            echo '</a>';
+                                            echo '<div class="totals">
+                                            <div class="exp">
+                                                <p>TOTAL EXPENSES <br> '.round($totalExp["0"]).'$</p>                    
+                                            </div>
+                                            <div class="add-btn">
+                                                <a href="/prwb_2223_c03/Operation/add/'.$tricount->get_id().'">    
+                                                    <button class="add-button">
+                                                    </button>
+                                                </a>
+                                            </div>
+                                            <div class="mytot">
+                                                <p>MY TOTAL <br> '.round($mytot["0"]).'$</p>                  
+                                            </div>
+                                        </div>';
+                                    }elseif(empty($amounts) && ($participants == 0)) {
+                                        echo "<h1>you are alone loser :(</h1>";
+                                        echo '<a href="'.$tricount->get_id().'">';
+                                                echo '<button class="view-balance-button">';
+                                                    echo '<i class="fas fa-dollar-sign"></i>ADD FRIENDS';
+                                                echo '</button>';
+                                            echo '</a>';
+                                            echo '<div class="totals">
+                                            <div class="exp">
+                                                <p>TOTAL EXPENSES <br> '.round($totalExp["0"]).'$</p>                    
+                                            </div>
+                                            <div class="add-btn">
+                                                <a href="/prwb_2223_c03/Operation/add/'.$tricount->get_id().'">    
+                                                    <button class="add-button">
+                                                    </button>
+                                                </a>
+                                            </div>
+                                            <div class="mytot">
+                                                <p>MY TOTAL <br> '.round($mytot["0"]).'$</p>                  
+                                            </div>
+                                        </div>';
+                                    }
+                                       endforeach;
+                                    }
+                                ?>
+
                             </ul>
 
                         </div>
                         </ul>
-            </div>
-            <div class=totals>
+            <!-- <div class=totals>
                 <div class="exp">
-                    <p>TOTAL EXPENSES <br> <?php echo round($totalExp["0"]) . "$"?></p>                    
+                    <p>TOTAL EXPENSES <br> <?php if(round($totalExp["0"] == 0)) echo '0'  . "$"?></p>                    
                 </div>
                 <div class="add-btn">
                 <a href="/prwb_2223_c03/Operation/add/<?php echo $tricount->get_id()?>">    
@@ -237,9 +301,9 @@
                 <div class="mytot">
                     <p>MY TOTAL <br> <?php echo round($mytot["0"]) . "$"?></p>                  
                 </div>
-            </div>
+            </div> -->
            
-            </div>
+        </div>
     </div>
     
 
