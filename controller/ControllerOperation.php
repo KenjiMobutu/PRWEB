@@ -352,7 +352,7 @@ class ControllerOperation extends Controller{
             }
         }
 
-        (new View("edit_expense"))->show(array("user"=>$user, "users"=>$users, "tricount"=>$tricount ));
+        (new View("edit_expense"))->show(array("user"=>$user, "tricount"=>$tricount ));
 
     } 
 
