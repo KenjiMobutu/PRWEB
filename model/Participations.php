@@ -1,4 +1,6 @@
 <?php
+require_once "framework/Model.php";
+
     class Participations extends Model{
         public int $tricount;
         public int $user;
@@ -10,11 +12,44 @@
 
 
         public static function get_by_tricount($tricount){
-            $query = self::execute("SELECT * from subscriptions where tricount =:tricount",
+        $query = self::execute("SELECT * from subscriptions where tricount =:tricount");
+            $query = self::execute("SELECT s.*, t.creator from subscriptions s, tricounts t
+                                            where s.tricount = t.id
+                                            and s.tricount =:tricount
+                                            and t.id = :tricount",
             array("tricount"=>$tricount));
-
+            $participant = [];
+            $data = $query->fetchAll();
+            if($query->rowCount() == 0)
+                return null;
+            foreach($data as $row)
+                $participant[] = new Participations($row["tricount"], $row["user"]);
+            return $participant;
         }
 
+        public function getUserInfo(){
+            $query = self::execute("SELECT u.full_name
+                                    from `users` u, subscriptions s where u.id= s.user
+                                    and s.user = :id",array("id"=>$this->user));
+            $data = $query->fetch();
+            if($query->rowCount() == 0)
+                return null;
+            return $data["full_name"];
+        }
+
+        public static function get_by_tricount_and_creator($tricount){
+            $query = self::execute("SELECT DISTINCT u.full_name
+                        from subscriptions s, tricounts t, users u, repartition_template_items rti
+                        where s.tricount =:tricount
+                        and s.user = u.id
+                        and u.id = rti.user
+                        or u.id = t.creator;",
+                            array("tricount"=>$tricount));
+            $data = $query->fetchAll();
+            if($query->rowCount() == 0)
+                return null;
+            return $data;
+        }
         public static function get_by_user($user){
             $query = self::execute("SELECT * from subscriptions where user =:user",
             array("user"=>$user));
@@ -32,11 +67,11 @@
             else
                 return true;
         }
-        public static function delete_by_tricount_id($id): bool{
+        public static function delete_by_tricount_id($id){
             $query = self::execute("DELETE
                 FROM subscriptions
                 where tricount =:id",
-                array("tricount"=>$id));
+                array("id"=>$id));
             if($query->rowCount()==0)
                 return false;
             else

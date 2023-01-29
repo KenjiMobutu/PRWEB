@@ -9,10 +9,10 @@ class ControllerMain extends Controller
 
     //si l'utilisateur est connecté, redirige vers son profil.
     //sinon, produit la vue d'accueil.
-    public function index() :void
+    public function index(): void
     {
         if ($this->user_logged()) {
-            $this->redirect("user","profile");
+            $this->redirect("user", "profile");
         } else {
             (new View("index"))->show();
         }
@@ -21,11 +21,11 @@ class ControllerMain extends Controller
 
     public function error()
     {
-        /** @var User $loggedUser */
-        $loggedUser = $this->get_user_or_redirect();
+        /** @var User $userser */
+        $user = $this->get_user_or_redirect();
 
-        $error = "YOU CANNOT ACCESS THIS RESOURCE!";
-        (new View("error"))->show(["loggedUser" => $loggedUser, "error" => $error]);
+        $error = "Something went wrong. :)";
+        (new View("error"))->show(["error" => $error, "user" => $user]);
     }
 
 
@@ -51,7 +51,7 @@ class ControllerMain extends Controller
     {
         $mail = '';
         $full_name = '';
-        $iban='';
+        $iban = '';
         $password = '';
         $password_confirm = '';
         $errors = [];
@@ -73,7 +73,7 @@ class ControllerMain extends Controller
                 $full_name = $_POST['full_name'];
                 $iban = $_POST['iban'];
 
-                $newUser = new User($id = null,$mail,Tools::my_hash($password), $full_name,$role='user', $iban);
+                $newUser = new User($id = null, $mail, Tools::my_hash($password), $full_name, $role = 'user', $iban);
 
                 $errors = User::validate_passwords($password, $password_confirm);
                 $errors = array_merge($errors, $newUser->validate());
@@ -82,7 +82,7 @@ class ControllerMain extends Controller
                     $this->log_user($newUser, "profile");
                 }
             } else {
-                $errors[] ="All information are needed to complete your registration.";
+                $errors[] = "All information are needed to complete your registration.";
             }
         }
 

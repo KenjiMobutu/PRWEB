@@ -1,14 +1,14 @@
 <!-- //title,description,created_at,creator,id -->
 <?php
 
-require_once "framework/Model.php";
-  class Tricounts extends Model{
+  class Tricounts extends Model
+{
 
-    public $id;//(int)
-    public $title;//(varchar 256)
-    public $description;//(varchar 1024)
-    public $created_at;//(datetime)
-    public $creator;//(int)
+  private $title; //(varchar 256)
+  private $description; //(varchar 1024)
+  private $created_at; //(datetime)
+  private $creator; //(int)
+  private $id; //(int)
 
 
     public function __construct($id,$title, $description,$created_at, $creator){
@@ -35,10 +35,46 @@ require_once "framework/Model.php";
       return $this->created_at;
     }
 
-    //retourne l'id du créateur
-    public function get_creator_id():int{
-      return $this->creator;
+  //retourne l'id du créateur
+  public function get_creator_id(): int
+  {
+    return $this->creator;
+  }
+
+  public static function get_tricount_by_operation_id($id){
+    $query= self::execute("SELECT * FROM operations JOIN tricounts on operations.tricount = tricounts.id
+    WHERE operations.id=:id",array("id"=>$id));
+    $data = $query->fetch();
+    if ($query->rowCount() == 0) {
+        return false;
+    } else {
+        return new Tricounts($data["id"],$data["title"],$data["description"],$data["created_at"],$data["creator"]);
     }
+  }
+
+  public static function get_tricount_by_user_id($id){
+
+    $query= self::execute("SELECT * FROM tricounts WHERE creator=:id",array("creator"=>$id));
+    $data=$query->fetchAll();
+    $result=[];
+    foreach ($data as $row) {
+      $result[] = new Tricounts($row["id"],$row["title"],$row["description"],$row["created_at"],$row["creator"]);
+    }
+    return $result;
+
+  }
+
+  public static function get_my_total($id){
+    $query = self::execute("SELECT sum(amount) FROM operations WHERE initiator = :initiator", array("initiator"=>$id));
+    $data = $query->fetch();
+    return $data;
+}
+
+  public static function get_total_amount_by_tric_id($id){
+      $query = self::execute("SELECT sum(amount) FROM operations WHERE tricount = :tricount", array("tricount"=>$id));
+      $data = $query->fetch();
+      return $data;
+  }
 
     //retourne le tricount par son id
     public static function get_by_id($id){
@@ -51,33 +87,37 @@ require_once "framework/Model.php";
         }
     }
 
-    //retourne le tricount par son créateur
-    public static function get_by_creator($creator){
-      $query = self::execute("SELECT * FROM tricounts WHERE creator = :creator", array("creator"=>$creator));
-        $data = $query->fetch();
-        if ($query->rowCount() == 0) {
-            return false;
-        } else {
-            return new User($data["ID"],$data["title "],$data["description"],$data["created_at"],$data["creator"]);
-        }
+  //retourne le tricount par son créateur
+  public static function get_by_creator($creator)
+  {
+    $query = self::execute("SELECT * FROM tricounts WHERE creator = :creator", array("creator" => $creator));
+    $data = $query->fetch();
+    if ($query->rowCount() == 0) {
+      return false;
+    } else {
+      return new Tricounts($data["id"], $data["title"], $data["description"], $data["created_at"], $data["creator"]);
     }
+  }
 
-    public function update() {
-      if(!is_null($this->id)){
-          self::execute("UPDATE tricounts SET
+  public function update()
+  {
+    if (!is_null($this->id)) {
+      self::execute("UPDATE tricounts SET
           title=:title,
           description=:description,
           created_at=:created_at,
           creator=:creator
           WHERE id=:id ",
-                      array("id"=>$this->id,
-                      "title"=>$this->title,
-                      "description"=>$this->description,
-                      "created_at"=>$this->created_at,
-                      "creator"=>$this->creator,
-                      ));
-      }else{
-          self::execute("INSERT INTO
+        array(
+          "id" => $this->id,
+          "title" => $this->title,
+          "description" => $this->description,
+          "created_at" => $this->created_at,
+          "creator" => $this->creator,
+        )
+      );
+    } else {
+      self::execute("INSERT INTO
           tricounts (title,description,
           created_at,
           creator)
@@ -85,26 +125,44 @@ require_once "framework/Model.php";
           :description,
           :created_at,
           :creator)",
-          array("title"=>$this->title,
-                  "description"=>$this->description,
-                  "created_at"=>$this->created_at,
-                  "creator"=>$this->creator));
-      }
-      return $this;
+        array(
+          "title" => $this->title,
+          "description" => $this->description,
+          "created_at" => $this->created_at,
+          "creator" => $this->creator
+        )
+      );
     }
+    return $this;
+  }
 
     public function delete ($id){
-      Repartition_template::delete_by_tricount($id);
-      Operation::delete_by_tricount($id);
-      Participation::delete_by_tricount($id);
-      $query=self::execute("DELETE from `tricounts` where id=:id", array("id"=>$id));
-      if($query->rowCount()==0)
-          return false;
-      else
-          return $query;
+      //Supprimer les entrées de la table "repartition_template_items" associées au tricount
+      $query0 = self::execute("DELETE FROM repartitions WHERE operation IN (SELECT id FROM operations WHERE tricount = :id);", array("id"=>$id));
+      $query1 = self::execute("DELETE FROM repartition_template_items WHERE repartition_template IN (SELECT id FROM repartition_templates WHERE tricount=:id);" ,array("id"=>$id));
+      $query2 = self::execute("DELETE FROM repartition_templates WHERE tricount = :id;",array("id"=>$id));
+      //Supprimer les entrées de la table "repartition_templates" associées au tricount
+      $query3=self::execute("DELETE FROM operations WHERE tricount = :id", array("id"=>$id));
+
+      //Supprimer les entrées de la table "operations" associées au tricount
+      $query4=self::execute("DELETE FROM subscriptions WHERE tricount = :id;", array("id"=>$id));
+
+      //Supprimer les entrées de la table "participations" associées au tricount
+      //$query3=self::execute("DELETE FROM subscriptions where id=:id", array("id"=>$id));
+
+      //Supprimer l'entrée de la table "tricounts" associée au tricount
+      $query5=self::execute("DELETE from `tricounts` where id=:id", array("id"=>$id));
+
+      $data[] = $query0->fetchAll();
+      $data[] = $query1->fetchAll();
+      $data[] = $query2->fetchAll();
+      $data[] = $query3->fetchAll();
+      $data[] = $query4->fetchAll();
+      $data[] = $query5->fetchAll();
+    return $data;
     }
     public static function by_user($user){
-      $query = self::execute("SELECT t.* FROM `tricounts` t JOIN  subscriptions s ON t.id = s.tricount where t.creator=:user", array("user"=>$user));
+      $query = self::execute("SELECT t.title FROM `tricounts` t JOIN  subscriptions s ON t.id = s.tricount where user=:user", array("user"=>$user));
         $data = $query->fetchAll();
         $tricount  = [];
         foreach ($data as $row) {
@@ -147,7 +205,8 @@ require_once "framework/Model.php";
     }
 
 
-  }
+}
+
 
 
 ?>

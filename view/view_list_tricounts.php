@@ -39,24 +39,24 @@
                     <!-- tricount block -->
                 <?php foreach ($tricounts_list as $tl):  ?>
                     <div class="card-block mb-2">
-                        <form action="tricount/edit/<?= $tl->id?>" method="POST">
+                        <form action="tricount/edit/<?= $tl->get_id()?>" method="POST">
                         <button class="button-card" >
                         <div class="card-main">
                             <div class="balance">
-                                <span class="label"><?=$tl->title ?></span>
-                                <h1 class="title"><?= $tl->description  == null ? "No description" : $tl->description ?></h1>
+                                <span class="label"><?=$tl->get_title() ?></span>
+                                <h1 class="title"><?= $tl->get_description()  == null ? "No description" : $tl->get_description() ?></h1>
                             </div>
                             <div class="in">
                                 <div class="card-number">
-                                    <span class="label"><?php echo $tl->number_of_friends($tl->id) == 0 ? "you're alone!" :"with ". $tl->number_of_friends($tl->id)." friends" ?> </span>
+                                    <span class="label"><?php echo $tl->number_of_friends($tl->get_id()) == 0 ? "you're alone!" :"with ". $tl->number_of_friends($tl->get_id())." friends" ?> </span>
                                 </div>
                             </div>
-                            <input type='text' name="id" id="id" value="<?= $tl->id ?>" hidden >
+                            <input type='text' name="id" id="id" value="<?= $tl->get_id() ?>" hidden >
                         </div>
                         </button>
                         </form>
                     </div>
-                    <?php endforeach; ?>
+                <?php endforeach; ?>
                 </div>
         </div>
     <!-- * tricount block -->
