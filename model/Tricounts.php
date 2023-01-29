@@ -42,7 +42,7 @@
   }
 
   public static function get_tricount_by_operation_id($id){
-    $query= self::execute("SELECT * FROM operations JOIN tricounts on operations.tricount = tricounts.id 
+    $query= self::execute("SELECT * FROM operations JOIN tricounts on operations.tricount = tricounts.id
     WHERE operations.id=:id",array("id"=>$id));
     $data = $query->fetch();
     if ($query->rowCount() == 0) {
@@ -136,16 +136,30 @@
     return $this;
   }
 
-    public function delete ($id)
-    {
-      // Repartition_template::delete_by_tricount($id);
-      // Operation::delete_by_tricount($id);
-      // Participation::delete_by_tricount($id);
-      $query=self::execute("DELETE from `tricounts` where id=:id", array("id"=>$id));
-      if($query->rowCount()==0)
-          return false;
-      else
-          return $query;
+    public function delete ($id){
+      //Supprimer les entrées de la table "repartition_template_items" associées au tricount
+      $query0 = self::execute("DELETE FROM repartitions WHERE operation IN (SELECT id FROM operations WHERE tricount = :id);", array("id"=>$id));
+      $query1 = self::execute("DELETE FROM repartition_template_items WHERE repartition_template IN (SELECT id FROM repartition_templates WHERE tricount=:id);" ,array("id"=>$id));
+      $query2 = self::execute("DELETE FROM repartition_templates WHERE tricount = :id;",array("id"=>$id));
+      //Supprimer les entrées de la table "repartition_templates" associées au tricount
+      $query3=self::execute("DELETE FROM operations WHERE tricount = :id", array("id"=>$id));
+
+      //Supprimer les entrées de la table "operations" associées au tricount
+      $query4=self::execute("DELETE FROM subscriptions WHERE tricount = :id;", array("id"=>$id));
+
+      //Supprimer les entrées de la table "participations" associées au tricount
+      //$query3=self::execute("DELETE FROM subscriptions where id=:id", array("id"=>$id));
+
+      //Supprimer l'entrée de la table "tricounts" associée au tricount
+      $query5=self::execute("DELETE from `tricounts` where id=:id", array("id"=>$id));
+
+      $data[] = $query0->fetchAll();
+      $data[] = $query1->fetchAll();
+      $data[] = $query2->fetchAll();
+      $data[] = $query3->fetchAll();
+      $data[] = $query4->fetchAll();
+      $data[] = $query5->fetchAll();
+    return $data;
     }
     public static function by_user($user){
       $query = self::execute("SELECT t.title FROM `tricounts` t JOIN  subscriptions s ON t.id = s.tricount where user=:user", array("user"=>$user));

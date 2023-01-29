@@ -145,7 +145,7 @@ class ControllerTemplates extends Controller
     public function delete_template(){
 
         $userlogged = $this->get_user_or_redirect();
-        $user = User::get_by_id($userlogged->id);
+        $user = User::get_by_id($userlogged->getUserId());
         if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
             $this->redirect('main', "error");
         }else{
