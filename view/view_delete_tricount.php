@@ -36,13 +36,13 @@
         </div>
         <div class="confirm_delete_Tricount">
           <div class="confirmation-box">
-            <h2>Etes-vous sûr de vouloir supprimer ce tricount ?</h2>
+            <h2>Etes-vous sûr de vouloir supprimer ce tricount " <?= $tricount->get_title()?> " ?</h2>
             <p>Cette action est irréversible et supprimera
               toutes les données associées au tricount.</p>
             <div class="button_delete_confirm">
               <form action="tricount/delete_confirm/<?= $tricount->get_id()?>" method="POST" method="post">
-                <button class="delete-tricount" type="submit">Supprimer</button>
-                <a href="tricount/index" class="cancel-btn">Annuler</a>
+                <button class="delete-tricount-confirm" type="submit">Supprimer</button>
+                <a href="tricount/index" class="cancel-tricount-confirm">Annuler</a>
               </form>
             </div>
           </div>
