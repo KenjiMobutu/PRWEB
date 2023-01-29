@@ -69,9 +69,10 @@
                 </form>
             </div>
             <div class="button-manage-repartition-template">
-                <form action="templates/templates/<?= $tricount->get_id()?>">
+                <a href="templates/templates/<?= $tricount->get_id()?>" class="delete-tricount">Manage template</a>
+                <!-- <form action="templates/templates/<?= $tricount->get_id()?>">
                     <button class="delete-tricount" type="submit">Manage template</button>
-                </form>
+                </form> -->
             </div>
             <div class="button-delete-tricount">
                 <form action="tricount/delete/<?= $tricount->get_id()?>" method="POST" >

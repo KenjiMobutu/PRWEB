@@ -121,11 +121,17 @@ require_once "framework/Model.php";
         return $subscription;
     }
 
+    /**SELECT * 
+        from repartition_template_items rti 
+        join repartition_templates rt on rt.id = rti.repartition_template
+        join tricounts t on rt.tricount = t.id
+        join subscriptions s on t.id = s.tricount
+        ORDER by rti.repartition_template*/
 
     public function is_in_Items($templateID){
         $query = self::execute("SELECT DISTINCT rti.* 
-                from repartition_template_items rti, operations o 
-                where o.tricount =:tricount 
+                from repartition_template_items rti, subscriptions o 
+                where o.tricount =:tricount
                 and rti.repartition_template = :repartition_template 
                 and rti.user = :user",
                 array("tricount"=>$this->tricount,

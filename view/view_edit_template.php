@@ -26,9 +26,6 @@
 
     </style>
 <?php include 'menu.html' ?>
-
-
-<h1></h1>
     <form action="templates/editTemplate" method="post">
         <p>Title :</p>
         <input type="text" name="template_title" id="template_title" 
@@ -38,15 +35,15 @@
         ?>" required>
         <p>
 
-        <!-- <?php //echo '<pre>'; print_r($listItems); echo '</pre>';?> -->
         Template items :
         </p><br>
 
 
-<!-- pour récupérer l'id du tricount & template si reçu dans le submit du form -->
+        <!-- pour récupérer l'id du tricount & template si reçu dans le submit du form -->
         <input type="text" name="tricountId" value="<?php echo $tricount->get_id(); ?>" hidden>
         <input type="text" name="templateID" value="<?php if(isset($_GET["param2"])){ echo $_GET["param2"];}  ?>" hidden>
         <?php foreach($listUser as $listusr): ?>
+
 
            <!-- mettre c[User->id] ça fera un tableau avec des données -->              <!-- check si c'est un edit t'emplate et récupère les items liés-->
             <input type="checkbox" name="c[<?= $listusr->get_user(); ?>]" value="<?= $listusr->get_user(); ?>" <?php if(isset($template)){
@@ -55,7 +52,7 @@
             <input type="text" name="user" value="<?php $listusr->get_user();?>" placeholder="<?php echo $listusr->getUserInfo(); ?>"  disabled="disabled">
             <fieldset>
                 <legend>Weight</legend>
-                <input type="number" name="w[<?= $listusr->get_user() ; ?>]"min="0"  <?php if(isset($template)){
+                <input type="number" name="w[<?= $listusr->get_user() ; ?>]"min="0" placeholder="1"  <?php if(isset($template)){
                                                                                     if($listusr->is_in_Items($template->get_id())) {
                                                                                         echo "value=".$listusr->get_weight_by_user($template->get_id());}; }else echo "value=1";?>>
             </fieldset>
