@@ -34,7 +34,7 @@ class ControllerTricount extends Controller{
       $description = '';
       $tricount = '';
       $created_at = date('Y-m-d H:i:s');
-      if ((isset($_POST["title"]) && $_POST["title"]!="")&&(isset($_POST["description"])&& $_POST["description"]!="")){
+      if ((isset($_POST["title"]) && $_POST["title"]!="")&&(isset($_POST["description"])|| $_POST["description"]=="")){
         $title = $_POST["title"];
         $description = $_POST["description"];
         $creator = $user->getUserId();
