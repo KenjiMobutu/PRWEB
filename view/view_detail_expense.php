@@ -129,16 +129,21 @@
                 </tr>
             </thead>
             <tbody>
-                <?php foreach($operationUsers as $user): ?>
-                <tr>
-                    <?php
-                        $username = User::get_by_id($user['user']);
-                        $debt = Operation::get_dette_by_operation($_GET['param1'],$user['user']);
-                    ?>
-                    <td><?php echo $username->getFullName() ?></td>
-                    <td><?php echo number_format($debt['result'], 2) ?></td>
-                </tr>
-                <?php endforeach; ?>
+            <?php 
+                foreach ($operationUsers as $user) {
+                    $username = User::get_by_id($user['user']);
+                    $debt = Operation::get_dette_by_operation($_GET['param1'], $user['user']);
+                    echo '<tr>';
+                    if ($user['user'] == $operation_data->getInitiatorId()) {
+                        echo '<td style="color:yellow"><b>' . $username->getFullName() . '</b></td>';
+                        echo '<td style="color:yellow"><b>' . number_format($debt['result'], 2) . '</b></td>';
+                    } else {
+                        echo '<td>' . $username->getFullName() . '</td>';
+                        echo '<td>' . number_format($debt['result'], 2) . '</td>';
+                    }
+                    echo '</tr>';
+                }
+            ?>
             </tbody>
         </table>
         </div>

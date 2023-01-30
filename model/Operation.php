@@ -455,6 +455,11 @@ class Operation extends Model{
         return $this->getUserFullName();
     }
 
+    public function getInitiatorId(){
+
+        return $this->initiator;
+    }
+
     public function getCreatedAt(){
         return $this->created_at;
     }
