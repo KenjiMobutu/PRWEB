@@ -93,16 +93,18 @@ class ControllerOperation extends Controller{
         $operationId = $_GET['param1'];
         // $t=Operation::get_tricount_by_operation_id($operationId);
         $tricount = Tricounts::get_tricount_by_operation_id($operationId);
+        $operationUsers = Operation::get_users_from_operation($operationId);
+        $debt = Operation::get_dette_by_operation($operationId, $userId);
         $participants = Operation::getNumberParticipantsByOperationId($operationId);
         $operation_data=Operation::getOperationByOperationId($operationId);
         $usr = $operation_data->getInitiator();
             // echo '<pre>';
-            // var_dump($usr);
+            // var_dump($debt);
             // echo '</pre>';
             // die();
         }
 
-        (new View("detail_expense"))->show(array("user"=>$user, "operation_data"=>$operation_data, "participants" => $participants,"tricount"=>$tricount, "usr" => $usr ));
+        (new View("detail_expense"))->show(array("user"=>$user, "operationUsers"=>$operationUsers, "debt"=>$debt, "operation_data"=>$operation_data, "participants" => $participants,"tricount"=>$tricount, "usr" => $usr ));
 
     }
 
