@@ -101,18 +101,20 @@ require_once "framework/Model.php";
             }
             return $this;
         }
-    public static function by_tricount($tricount){
-        $query = self::execute("SELECT s.*
-                              FROM subscriptions s, tricounts t
-                              where s.tricount = t.id
-                              And s.tricount = :tricount", array("tricount"=>$tricount));
-        $data = $query->fetchAll();
-        $subscription  = [];
-        foreach ($data as $row) {
-          $subscription[] = new Participations($row["tricount"],$row["user"]);
+        public static function by_tricount($tricount){
+            $query = self::execute("SELECT s.*
+                                  FROM subscriptions s, tricounts t
+                                  where s.tricount = t.id
+                                  And s.tricount = :tricount
+                                  And s.user != t.creator", array("tricount"=>$tricount));
+            $data = $query->fetchAll();
+            $subscription  = [];
+            foreach ($data as $row) {
+              $subscription[] = new Participations($row["tricount"],$row["user"]);
+            }
+            return $subscription;
         }
-        return $subscription;
-    }
+
 
 
 
