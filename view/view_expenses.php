@@ -164,7 +164,7 @@
     <div class="cont">
         <div class="view_expenses">
             <button class="edit-btn">
-                <a href="https://www.example.com/edit" style="text-decoration: none; color: black;">Edit</a>
+                <a href="tricount/edit/<?= $tricount->get_id()?>" style="text-decoration: none; color: black;">Edit</a>
             </button>
                 <p><?php echo $tricount->get_title();?> > Expenses</p>
 
