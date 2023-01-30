@@ -114,8 +114,8 @@ class ControllerTemplates extends Controller
                     Repartition_template_items::delete_by_repartition_template($template->get_id());
                     for($i = 0; $i <= count($checkedUsers)+2; $i++) {                               
                         if((isset($checkedUsers[$i]) && $checkedUsers[$i] !== null) && isset($weights[$i]) && $weights[$i] !== null ){
-                            if($weights[$i] ==="" || $weights[$i] === "0")
-                                $weights[$i] = 1;
+                            if($weights[$i] ==="" )
+                                $weights[$i] = 0;
                             Repartition_template_items::addNewItems($checkedUsers[$i],
                             $template->id,
                             $weights[$i]); 
@@ -163,17 +163,17 @@ class ControllerTemplates extends Controller
             if($template === null){
                 $this->redirect("user","profile");
             }
-        }
-        if(isset($_POST['submitted'])){
-            if($_POST['submitted'] === "Cancel"){
-                $this->redirect("templates","templates",$template->get_tricount()); // recuperer l'id du tricount lié au template
-            }else if ($_POST['submitted'] === "Delete"){
-                $tricount = $template->get_tricount();
-                $template = $template->delete_by_id();
-                $this->redirect("templates","templates", $tricount);
+        
+            if(isset($_POST['submitted'])){
+                if($_POST['submitted'] === "Cancel"){
+                    $this->redirect("templates","templates",$template->get_tricount()); // recuperer l'id du tricount lié au template
+                }else if ($_POST['submitted'] === "Delete"){
+                    $tricount = $template->get_tricount();
+                    $template = $template->delete_by_id();
+                    $this->redirect("templates","templates", $tricount);
+                }
             }
         }
-
         (new View("delete_template"))->show(array("user"=>$user,
                                             "template"=>$template));
     }

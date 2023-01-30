@@ -12,7 +12,7 @@ class ControllerMain extends Controller
     public function index(): void
     {
         if ($this->user_logged()) {
-            $this->redirect("user", "profile");
+            $this->redirect("profile", "profile");
         } else {
             (new View("index"))->show();
         }

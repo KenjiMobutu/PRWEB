@@ -26,14 +26,14 @@
 
     </style>
 <?php include 'menu.html' ?>
-    <form action="templates/editTemplate" method="post">
-        <p>Title :</p>
+    <form action="templates/editTemplate" method="post" id="edit_template_form">
+        <p class="edit_template_p">Title :</p>
         <input type="text" name="template_title" id="template_title" 
         value="<?php 
         if(isset($template))
             echo $template->get_title();
         ?>" required>
-        <p>
+        <p class="edit_template_p">
 
         Template items :
         </p><br>

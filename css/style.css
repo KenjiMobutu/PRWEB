@@ -772,8 +772,8 @@ table.tab_templates tr:hover {
 }
 
 /* edit_template */
-form {
-  display: flex;
+#edit_template_form {
+  display:block;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
@@ -783,7 +783,7 @@ form {
   font-family: Arial, sans-serif;
 }
 
-p {
+.edit_template_p {
   margin-right: 10px;
 }
 .delete-tricount{
