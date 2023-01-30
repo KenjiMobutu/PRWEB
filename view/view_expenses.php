@@ -196,20 +196,20 @@
                                         echo '</li>';
                                         echo '<div class="totals">
                                         <div class="mytot">
-                                            <p>MY TOTAL <br> '.number_format($totalExp["0"], 2).' €</p>                  
+                                            <p>MY TOTAL <br> '.number_format($totalExp["0"], 2).' €</p>
                                             </div>
                                             <div class="add-btn">
-                                                <a href="/prwb_2223_c03/Operation/add/'.$tricount->get_id().'">   
+                                                <a href="/prwb_2223_c03/Operation/add/'.$tricount->get_id().'">
                                                     <button class="add-button">+
                                                     </button>
                                                 </a>
                                             </div>
                                             <div class="exp">
-                                                <p>TOTAL EXPENSES <br> '.number_format($totalExp["0"], 2).' €</p>                    
+                                                <p>TOTAL EXPENSES <br> '.number_format($totalExp["0"], 2).' €</p>
                                             </div>
                                         </div>';
-                                } 
-                            
+                                }
+
                                 if(empty($amount) && ($participants >0) && $totalExp["0"] === null) {
                                     $totalExp["0"] = 0;
                                     echo "<h1 style='text-align:center;'>this is empty :(</h1>";
@@ -220,7 +220,7 @@
                                             echo '</a>';
                                             echo '<div class="totals">
                                             <div class="mytot">
-                                            <p>MY TOTAL <br> '.number_format($totalExp["0"], 2).'  €</p>                  
+                                            <p>MY TOTAL <br> '.number_format($totalExp["0"], 2).'  €</p>
                                         </div>
                                             <div class="exp">';
                                             echo '<p>TOTAL EXPENSES <br> '.number_format($totalExp["0"], 2).'  €</p>';
@@ -229,23 +229,23 @@
                                     }if(empty($amount) && ($participants == 0) && $totalExp["0"] === null) {
                                         $totalExp["0"] = 0;
                                         echo "<h1 style='text-align:center;'>you are alone loser :(</h1>";
-                                    echo '<a href="'.$tricount->get_id().'">';
+                                    echo '<a href="tricount/edit/'.$tricount->get_id().'">';
                                                 echo '<button class="view-balance-button">';
                                                     echo 'ADD FRIENDS';
                                                 echo '</button>';
                                             echo '</a>';
                                             echo '<div class="totals">
                                             <div class="mytot">
-                                                <p>MY TOTAL <br>'.number_format($totalExp["0"], 2).' €</p>                  
+                                                <p>MY TOTAL <br>'.number_format($totalExp["0"], 2).' €</p>
                                             </div>
                                             <div class="add-btn">
-                                                <a href="/prwb_2223_c03/Operation/add/'.$tricount->get_id().'">    
+                                                <a href="/prwb_2223_c03/Operation/add/'.$tricount->get_id().'">
                                                     <button class="add-button">+
                                                     </button>
                                                 </a>
                                             </div>
                                             <div class="exp">
-                                            echo <p>TOTAL EXPENSES <br> '.number_format($totalExp["0"], 2).' €</p>;              
+                                            echo <p>TOTAL EXPENSES <br> '.number_format($totalExp["0"], 2).' €</p>;
                                         </div>
                                         </div>';
                                         }endforeach;
