@@ -74,23 +74,36 @@
     border-radius: 4px;
     box-sizing: border-box;
     }
+
+    .delete-btn{
+        width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    }
 </style>
 
 <div class="add-exp">
-<p><?php echo $tricount->get_title();?> > New expense</p>
-    <form action="operation/add_expense" method="post">
-            <input class="addExp" placeholder="Title" type="text" id="title" name="title">
-            <br>
+<p><?php echo $tricount->get_title();?> > Edit expense</p>
+    <form action="operation/edit_expense/<?php echo $operation_data->id ?>" method="post">
+    <input type="hidden" id="operationId" name="operationId" value="<?php echo $operation_data->id?>">        
+    <input class="addExp" placeholder="Title" type="text" id="title" value="<?php echo $operation_data->title ?>" name="title">
             <input type="hidden" id="tricId" name="tricId" value="<?php echo $tricount->get_id()?>">
-            <input class="addExp" placeholder="Amount (EUR)" type="number" id="amount" name="amount" required>
+            <br>
+            <input class="addExp" placeholder="Amount (EUR)" value="<?php echo $operation_data->amount ?>" type="number" id="amount" name="amount">
             <br>
             <label  for="operation_date">Date</label>
-            <input class="addExp" type="date" id="operation_date" name="operation_date" required>
+            <input class="addExp" type="date" id="operation_date" value="<?php echo $operation_data->operation_date?>" name="operation_date">
             <br>
+            
             <label for="paid_by">Paid By</label>
             <select id="initiator" name="initiator">
+            <option selected value="<?php echo $usr ?>"><?php echo $usr ?></option>
             <?php foreach($users as $urss): ?>
-                <option value="<?php echo $urss->getUserId()?>"><?php echo $urss->getFullName()?></option>
+                <option value="<?php echo $urss->getFullName()?>"><?php echo $urss->getFullName()?></option>
                 <?php endforeach;?>
             </select>
             <br>
@@ -102,38 +115,33 @@
                 <?php endforeach;?>
             </select>
             <label for="who">For whom? (select at least one)</label>
-  
                 <?php foreach($users as $usr): ?>
                     <div class="checks">
-                        <input type="checkbox" name="c[<?= $usr->getUserId(); ?>]" value="<?php echo $usr->getUserId() ?>" id="userIdTemp">
+                        <input type="checkbox" name="<?php echo $usr->getFullName() ?>" id="<?php echo $usr->getUserId() ?>">
                             <span style="color: yellow; font-weight: bold;"><?php echo $usr->getFullName() ?></span>
                         <fieldset>
-                            <legend style="color: yellow; font-weight: bold;">Weight</legend>
-                            <input type="number" name="w[<?= $usr->getUserId(); ?>]" id="userWeight" value="1" min="0" max="50">
+                            <legend>Weight</legend>
+                            <input type="number" name="user_weight" id="<?php echo $usr->getUserId() ?>" value="1" min="0" max="50">
                         </fieldset>
                     </div>
-                <?php endforeach; ?>
+                <?php endforeach;?>
                 <p>Add a new repartition template</p>
                 <div class="save-template">
-                <input type="checkbox" name="save_template" id="save" ><span style="color: yellow; font-weight: bold;">Save this template</span>
+                <input type="checkbox" name="save_template" id="save" > <span style="color: yellow; font-weight: bold;">Save this template</span>
                     <fieldset>
-                        <legend style="color: yellow; font-weight: bold;">Name</legend>
-                        <input type="text" name="template_name" id="savename" placeholder="Name">    
+                        <legend>Name</legend>
+                        <input type="text" name="name_template" id="savename" placeholder="Name">    
                     </fieldset>
                 </div>
-    
+            
             <input type="submit" value="Submit">
         </form>
-        <!-- <?php if (count($errors) != 0) : ?>
-                <div class='errors'>
-                    <p>Please correct the following error(s) :</p>
-                    <ul>
-                        <?php foreach ($errors as $error) : ?>
-                            <li><?= $error ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-            <?php endif; ?> -->
+
+        <!-- Operation/delete/<?php echo $operation_data->id ?> -->
+        
+        <button class="delete-btn" style="background-color: blue; color: white;">
+            <a href="/prwb_2223_c03/Operation/delete_confirm/<?php echo $operation_data->id ?>" style="text-decoration: none; color: white;">DELETE</a>
+</button>
 </div>
 	
 </body>

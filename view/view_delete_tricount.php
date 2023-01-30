@@ -26,7 +26,7 @@
                 </a>
             </div>
             <div class="pageTitle">
-                <?= $tricount->get_title() ?> Edit
+                Delete your tricount ?
             </div>
             <div class="right">
                 <a href="tricount/add" class="headerButton goBack" >
@@ -34,50 +34,18 @@
                 </a>
             </div>
         </div>
-        <div>
-
-        </div>
-
-    <!-- * tricount block -->
-        <div class="edit-tricount">
-            <div class="edit-settingsTitle">
-                <h1>Settings</h1>
+        <div class="confirm_delete_Tricount">
+          <div class="confirmation-box">
+            <h2>Etes-vous sûr de vouloir supprimer ce tricount ?</h2>
+            <p>Cette action est irréversible et supprimera
+              toutes les données associées au tricount.</p>
+            <div class="button_delete_confirm">
+              <form action="tricount/delete_confirm/<?= $tricount->get_id()?>" method="POST" method="post">
+                <button class="delete-tricount" type="submit">Supprimer</button>
+                <a href="tricount/index" class="cancel-btn">Annuler</a>
+              </form>
             </div>
-            <div class="edit-settingsInput">
-                <h2>Title :</h2>
-                <input name='title' value='<?= $tricount->get_title() ?>'>
-                <h2>Description (optional) :</h2>
-                <input name='description' value='<?= $tricount->get_description() == null ? "no Description" : $tricount->get_description()?>'>
-            </div>
-            <div class="edit-settingsTitle">
-                <h1>Subscriptions</h1>
-                <?php foreach ($sub as $s):  ?>
-                    <li>
-                        <input name='name' value='<?= $s->getFullName() == null ? "no Description" : $s->getFullName() ?>'>
-                    </li>
-                <?php endforeach; ?>
-                <form id="addSubscriber" action="participation/add/<?= $tricount->get_id() ?>" method="post">
-                    <div class="edit-selectSub">
-                        <select class="selectSub" name="names" id="names">
-                        <option value="">--Add a new subscriber--</option>
-                            <?php foreach ($users as $u):  ?>
-                                <option name="subName" id="subName" value='<?= $u->getUserId()?>'><?= $u->getFullName()?></option>
-                            <?php endforeach; ?>
-                        </select>
-                        <button>add</button>
-                    </div>
-                </form>
-            </div>
-            <div class="button-manage-repartition-template">
-                <form action="https://www.w3docs.com/">
-                    <button class="delete-tricount" type="submit">Manage template</button>
-                </form>
-            </div>
-            <div class="button-delete-tricount">
-                <form action="tricount/delete/<?= $tricount->get_id()?>" method="POST" >
-                    <button class="delete-tricount" type="submit">Delete this tricount</button>
-                </form>
-            </div>
+          </div>
         </div>
         <!-- JavaScript Bundle with Popper -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
