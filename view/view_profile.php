@@ -24,7 +24,7 @@
             </div>
             <div class="profile">
                 <div class="name">
-                    <h1>PROFILEEEEEEEEEEEEEE</h1>
+                    <h1>PROFILE</h1>
                     <div>
                         <p>Hey
                             <?php echo $user->getFullName(); ?> !

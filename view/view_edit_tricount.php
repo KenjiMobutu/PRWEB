@@ -72,15 +72,17 @@
                     </div>
                 </form>
             </div>
+            <div class="buttons_edit_tricount">
             <div class="button-manage-repartition-template">
                 <form action="templates/templates/<?= $tricount->get_id()?>">
-                    <button class="delete-tricount" type="submit">Manage template</button>
+                    <button class="manage-tricount" type="submit">Manage template</button>
                 </form>
             </div>
             <div class="button-delete-tricount">
                 <form action="tricount/delete/<?= $tricount->get_id()?>" method="POST" >
                     <button class="delete-tricount" type="submit">Delete this tricount</button>
                 </form>
+            </div>
             </div>
         </div>
         <!-- JavaScript Bundle with Popper -->
