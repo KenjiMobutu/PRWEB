@@ -27,7 +27,7 @@
                 </a>
             </div>
             <div class="pageTitle">
-                <?= $tricount->get_title() ?> Edit
+                <?= $tricount->get_title() ?> <i class="bi bi-caret-right-fill" style="font-size: 1em;"></i> Edit
             </div>
         <form id="updateTricount" action="tricount/update/<?= $tricount->get_id() ?>" method="post">
             <div class="right">
