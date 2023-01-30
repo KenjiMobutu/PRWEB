@@ -117,6 +117,26 @@
       );
     } else {
       self::execute("INSERT INTO
+          tricounts (id,title,description,
+          created_at,
+          creator)
+          VALUES(:id,:title,
+          :description,
+          :created_at,
+          :creator)",
+        array(
+          "id"=>$this->id,
+          "title" => $this->title,
+          "description" => $this->description,
+          "created_at" => $this->created_at,
+          "creator" => $this->creator
+        )
+      );
+    }
+    return $this;
+  }
+  public function addTricount(){
+    self::execute("INSERT INTO
           tricounts (title,description,
           created_at,
           creator)
@@ -131,9 +151,9 @@
           "creator" => $this->creator
         )
       );
-    }
-    return $this;
+    $this->id = self::lastInsertId();
   }
+
     public function updateTricount($title,$description){
       self::execute("UPDATE tricounts set title=:title,description=:description where id=:id",
                   array("id"=>$this->id,"title"=>$title,"description"=>$description));
@@ -188,11 +208,14 @@
         return new Tricounts($data["id"],$data["title"],$data["description"],$data["created_at"],$data["creator"]);
       }
     }
-    public static function number_of_friends($tricountId){
+
+
+    public static function number_of_friends($tricountId){//recupère le nb d'amis sans le créateur du tricount
       $query = self::execute("SELECT count(*)
-                              FROM subscriptions s, tricounts t
-                              where s.tricount = t.id
-                              and t.id=:tricountId",
+                              FROM subscriptions s
+                              where s.tricount =:tricountId
+                              AND s.user NOT IN (SELECT creator FROM tricounts WHERE id = :tricountId)
+                              ",
                               array("tricountId"=>$tricountId));
         $data = $query->fetch();
         return $data[0];
