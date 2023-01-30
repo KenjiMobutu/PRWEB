@@ -23,6 +23,24 @@ class Operation extends Model{
         $this->id = $id; //tricount id
     }
 
+    public static function get_users_from_operation($operationId){
+        $query = self::execute("SELECT user FROM repartitions WHERE operation = :operationId", array("operationId"=>$operationId));
+        $data = $query->fetchAll();
+        return $data;
+    }
+
+    public static function get_dette_by_operation($operationId, $userId){
+        $query = self::execute("SELECT (SELECT o.amount/SUM(r.weight)
+                                    FROM repartitions r, operations o 
+                                    where r.operation = o.id 
+                                    and o.id =:operation GROUP BY o.amount) *  
+                                    (SELECT weight FROM repartitions 
+                                    WHERE user = :user AND operation = :operation) 
+                                    AS result LIMIT 1", array("operation"=>$operationId,"user"=>$userId));
+        $data = $query->fetch();
+        return $data;
+    }
+
     public static function exists($id){
         $query = self::execute("SELECT id FROM operations WHERE id=:id LIMIT 1", array("id"=>$id));
         $data = $query->fetch();
@@ -435,6 +453,11 @@ class Operation extends Model{
     public function getInitiator(){
 
         return $this->getUserFullName();
+    }
+
+    public function getInitiatorId(){
+
+        return $this->initiator;
     }
 
     public function getCreatedAt(){
