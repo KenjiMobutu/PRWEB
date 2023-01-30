@@ -73,7 +73,7 @@
                 </form>
             </div>
             <div class="button-manage-repartition-template">
-                <form action="https://www.w3docs.com/">
+                <form action="templates/templates/<?= $tricount->get_id()?>">
                     <button class="delete-tricount" type="submit">Manage template</button>
                 </form>
             </div>

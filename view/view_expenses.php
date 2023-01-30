@@ -53,7 +53,7 @@
                     box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.2);
                 }
 
-            
+
 
                 .container {
                 width: 90%;
@@ -88,7 +88,7 @@
             .data-card {
                 margin-bottom: 20px;
                 border-bottom: 2px solid grey;
-                
+
             }
 
             .title {
@@ -128,21 +128,21 @@
 
 
         .add-btn {
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
+            display: flex;
+            align-items: center;
+            justify-content: center;
             margin-left:20%;
         }
 
 
         .add-button {
-            background-color: blue; 
-            color: white; 
-            border-radius: 50%; 
-            width: 40px; 
-            height: 40px; 
-            font-size: 20px; 
-            cursor: pointer; 
+            background-color: blue;
+            color: white;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            font-size: 20px;
+            cursor: pointer;
         }
 
 
@@ -155,7 +155,7 @@
 
     @media screen and (min-width: 320px) and (max-width: 480px) {
         .view-balance-button {
-            
+
             background-color: green;
             color: white;
             padding: 10px 20px;
@@ -178,13 +178,13 @@
 <body>
     <?php include 'menu.html' ?>
     <div class="cont">
-        <div class="view_expenses">     
+        <div class="view_expenses">
         <button class="edit-btn">
-            <a href="https://www.example.com/edit" style="text-decoration: none; color: black;">Edit</a>
+            <a href="tricount/edit/<?= $tricount->get_id()?>" style="text-decoration: none; color: black;">Edit</a>
         </button>
-                                    
-                    <p><?php echo $tricount->get_title();?> > Expenses</p>    
-                    <a href="/prwb_2223_c03/Operation/balance/<?php echo $tricount->get_id()?>">    
+
+                    <p><?php echo $tricount->get_title();?> > Expenses</p>
+                    <a href="/prwb_2223_c03/Operation/balance/<?php echo $tricount->get_id()?>">
                         <button class="view-balance-button">
                             <i class="fas fa-dollar-sign"></i>View Balance
                         </button>
@@ -215,7 +215,7 @@
                                             endforeach;
                                         echo '</li>';
                                     endforeach;
-                                else: 
+                                else:
                                     echo '<p>dommage</p>';
                                 endif;?>
                             </ul>
@@ -225,23 +225,23 @@
             </div>
             <div class=totals>
                 <div class="exp">
-                    <p>TOTAL EXPENSES <br> <?php echo round($totalExp["0"]) . "$"?></p>                    
+                    <p>TOTAL EXPENSES <br> <?php echo round($totalExp["0"]) . "$"?></p>
                 </div>
                 <div class="add-btn">
-                <a href="/prwb_2223_c03/Operation/add/<?php echo $tricount->get_id()?>">    
+                <a href="/prwb_2223_c03/Operation/add/<?php echo $tricount->get_id()?>">
                         <button class="add-button">
-                            
+
                         </button>
                     </a>
                 </div>
                 <div class="mytot">
-                    <p>MY TOTAL <br> <?php echo round($mytot["0"]) . "$"?></p>                  
+                    <p>MY TOTAL <br> <?php echo round($mytot["0"]) . "$"?></p>
                 </div>
             </div>
-           
+
             </div>
     </div>
-    
+
 
 </body>
 </html>
