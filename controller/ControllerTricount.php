@@ -28,7 +28,7 @@ class ControllerTricount extends Controller{
   public function add(){
     $user = $this->get_user_or_redirect();
     if (!is_null($user)) {
-      $id = NULL;
+      $id = null;
       $errors = [];
       $title = '';
       $description = '';
@@ -40,7 +40,10 @@ class ControllerTricount extends Controller{
         $creator = $user->getUserId();
         $tricount = new Tricounts($id,$title,$description,$created_at,$creator);
         if (count($errors) == 0) {
-          $tricount->update();
+          $tricount->addTricount();
+          $idT = $tricount->get_id();
+          $newSubscriber = new Participations($idT ,$tricount->get_creator_id());
+          $newSubscriber->add();
           $this->redirect("tricount", "index");
         }
       }
@@ -99,8 +102,31 @@ class ControllerTricount extends Controller{
     }
   }
   public function update(){
+    $user = $this->get_user_or_redirect();
 
+    if (!is_null($user)) {
+      if (isset($_GET['param1']) && is_numeric($_GET['param1']) && $_GET['param1'] != null
+          && isset($_POST["title"]) && !empty($_POST["title"])
+          && isset($_POST["description"])|| ($_POST["description"]=="")){
+
+        $id = $_GET['param1'];
+        $title = $_POST["title"];
+        $description = $_POST["description"];
+        $tricount = Tricounts::get_by_id($id);
+
+        if ($tricount) {
+          $tricount->updateTricount($title,$description);
+          $this->redirect("tricount", "index");
+        } else {
+          // Handle error for invalid tricount id
+          $this->redirect("user","profile");
+        }
+      }
+    } else {
+      $this->redirect("user","profile");
+    }
   }
+
 
 }
 

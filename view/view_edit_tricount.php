@@ -7,6 +7,7 @@
         <title>
             <?= $user->getFullName() ?>'s Tricount!
         </title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -22,16 +23,17 @@
         <div class="appHeader">
             <div class="left">
                 <a href="#" class="headerButton goBack">
-                    <ion-icon name="chevron-back-outline"></ion-icon>
+                <i class="bi bi-arrow-left"></i>
                 </a>
             </div>
             <div class="pageTitle">
                 <?= $tricount->get_title() ?> Edit
             </div>
+        <form id="updateTricount" action="tricount/update/<?= $tricount->get_id() ?>" method="post">
             <div class="right">
-                <a href="tricount/add" class="headerButton goBack" >
-                    <ion-icon name="add-outline"></ion-icon>
-                </a>
+                <button type="submit" value="add" class="addTricount_btn">
+                    <i class="bi bi-save"></i>
+                </button>
             </div>
         </div>
         <div>
@@ -45,15 +47,17 @@
             </div>
             <div class="edit-settingsInput">
                 <h2>Title :</h2>
-                <input name='title' value='<?= $tricount->get_title() ?>'>
+                <input type="text" name='title' value='<?= $tricount->get_title() ?>'>
                 <h2>Description (optional) :</h2>
-                <input name='description' value='<?= $tricount->get_description() == null ? "no Description" : $tricount->get_description()?>'>
+                <input type="text" name='description' value='<?= $tricount->get_description() == null ? "No description" : $tricount->get_description()?>'>
             </div>
+        </form>
             <div class="edit-settingsTitle">
                 <h1>Subscriptions</h1>
+
                 <?php foreach ($sub as $s):  ?>
                     <li>
-                        <input name='name' value='<?= $s->getFullName() == null ? "no Description" : $s->getFullName() ?>'>
+                        <input name='name'  disabled="disabled" value='<?= $s->getFullName() == null ? "no Description" : $s->getFullName() ?>'>
                     </li>
                 <?php endforeach; ?>
                 <form id="addSubscriber" action="participation/add/<?= $tricount->get_id() ?>" method="post">
@@ -69,7 +73,7 @@
                 </form>
             </div>
             <div class="button-manage-repartition-template">
-                <form action="https://www.w3docs.com/">
+                <form action="templates/templates/<?= $tricount->get_id()?>">
                     <button class="delete-tricount" type="submit">Manage template</button>
                 </form>
             </div>

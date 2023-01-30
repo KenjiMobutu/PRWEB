@@ -40,7 +40,7 @@
                     <!-- tricount block -->
                 <?php foreach ($tricounts_list as $tl):  ?>
                     <div class="card-block mb-2">
-                        <form action="tricount/edit/<?= $tl->get_id()?>" method="POST">
+                        <form action="operation/expenses/<?= $tl->get_id()?>" method="POST">
                         <button class="button-card" >
                         <div class="card-main">
                             <div class="balance">

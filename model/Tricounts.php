@@ -53,7 +53,6 @@
   }
 
   public static function get_tricount_by_user_id($id){
-
     $query= self::execute("SELECT * FROM tricounts WHERE creator=:id",array("creator"=>$id));
     $data=$query->fetchAll();
     $result=[];
@@ -118,6 +117,26 @@
       );
     } else {
       self::execute("INSERT INTO
+          tricounts (id,title,description,
+          created_at,
+          creator)
+          VALUES(:id,:title,
+          :description,
+          :created_at,
+          :creator)",
+        array(
+          "id"=>$this->id,
+          "title" => $this->title,
+          "description" => $this->description,
+          "created_at" => $this->created_at,
+          "creator" => $this->creator
+        )
+      );
+    }
+    return $this;
+  }
+  public function addTricount(){
+    self::execute("INSERT INTO
           tricounts (title,description,
           created_at,
           creator)
@@ -132,25 +151,20 @@
           "creator" => $this->creator
         )
       );
-    }
-    return $this;
+    $this->id = self::lastInsertId();
   }
 
+    public function updateTricount($title,$description){
+      self::execute("UPDATE tricounts set title=:title,description=:description where id=:id",
+                  array("id"=>$this->id,"title"=>$title,"description"=>$description));
+    }
     public function delete ($id){
-      //Supprimer les entrées de la table "repartition_template_items" associées au tricount
+
       $query0 = self::execute("DELETE FROM repartitions WHERE operation IN (SELECT id FROM operations WHERE tricount = :id);", array("id"=>$id));
       $query1 = self::execute("DELETE FROM repartition_template_items WHERE repartition_template IN (SELECT id FROM repartition_templates WHERE tricount=:id);" ,array("id"=>$id));
       $query2 = self::execute("DELETE FROM repartition_templates WHERE tricount = :id;",array("id"=>$id));
-      //Supprimer les entrées de la table "repartition_templates" associées au tricount
       $query3=self::execute("DELETE FROM operations WHERE tricount = :id", array("id"=>$id));
-
-      //Supprimer les entrées de la table "operations" associées au tricount
       $query4=self::execute("DELETE FROM subscriptions WHERE tricount = :id;", array("id"=>$id));
-
-      //Supprimer les entrées de la table "participations" associées au tricount
-      //$query3=self::execute("DELETE FROM subscriptions where id=:id", array("id"=>$id));
-
-      //Supprimer l'entrée de la table "tricounts" associée au tricount
       $query5=self::execute("DELETE from `tricounts` where id=:id", array("id"=>$id));
 
       $data[] = $query0->fetchAll();
@@ -194,15 +208,19 @@
         return new Tricounts($data["id"],$data["title"],$data["description"],$data["created_at"],$data["creator"]);
       }
     }
-    public static function number_of_friends($tricountId){
+
+
+    public static function number_of_friends($tricountId){//recupère le nb d'amis sans le créateur du tricount
       $query = self::execute("SELECT count(*)
-                              FROM subscriptions s, tricounts t
-                              where s.tricount = t.id
-                              and t.id=:tricountId",
+                              FROM subscriptions s
+                              where s.tricount =:tricountId
+                              AND s.user NOT IN (SELECT creator FROM tricounts WHERE id = :tricountId)
+                              ",
                               array("tricountId"=>$tricountId));
         $data = $query->fetch();
         return $data[0];
     }
+
 
 
 }

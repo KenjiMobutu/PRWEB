@@ -33,12 +33,12 @@ class User extends Model
         $result=[];
         $query = self::execute("SELECT * FROM  `users`",array());
         $data = $query->fetchAll();
-        
+
             foreach($data as $row){
                 $result[]= new User($row["id"], $row["mail"], $row["hashed_password"], $row["full_name"], $row["role"], $row["iban"]);
             }
             return $result;
-            
+
     }
 
     //retourne l'id de l'utilisateur
@@ -230,7 +230,7 @@ class User extends Model
             }
             return $results;
         }
-        public static function get_by_mail($mail){//récup l'user par son id
+        public static function get_by_mail($mail){//récup l'user par son mail
             $query = self::execute("SELECT * FROM  `users` where mail=:mail", array("mail"=>$mail));
             $data = $query->fetch();//un seul resultat max
             if($query->rowCount() == 0){

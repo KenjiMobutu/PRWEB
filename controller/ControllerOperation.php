@@ -118,7 +118,7 @@ class ControllerOperation extends Controller{
             $userId = $user->getUserId();
             $save='';
                     // echo '<pre>';
-                    // print_r($_POST);    
+                    // print_r($_POST);
                     // echo '</pre>';
                     // die();
             if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST["save_template"])){
@@ -128,16 +128,16 @@ class ControllerOperation extends Controller{
                     array_key_exists("tricId",$_POST) &&
                     array_key_exists("amount",$_POST) &&
                     array_key_exists("operation_date",$_POST) &&
-                    array_key_exists("initiator",$_POST) 
+                    array_key_exists("initiator",$_POST)
                 ){
-                    
+
                     $title=$_POST["title"];
                     $tricount = $_POST["tricId"];
                     $amount = floatval($_POST["amount"]);
                     $operation_date = $_POST["operation_date"];
                     $initiator = $_POST["initiator"];
                     $created_at = date('y-m-d h:i:s');
-                  
+
                     if($user){
                         $operation = new Operation($title,$tricount,$amount,$operation_date,$initiator,$created_at);
                     }
@@ -161,9 +161,9 @@ class ControllerOperation extends Controller{
                         array_key_exists("tricId",$_POST) &&
                         array_key_exists("amount",$_POST) &&
                         array_key_exists("operation_date",$_POST) &&
-                        array_key_exists("initiator",$_POST)   
+                        array_key_exists("initiator",$_POST)
                     ){
-                        
+
                         $title=$_POST["title"];
                         $tricount = $_POST["tricId"];
                         $amount = floatval($_POST["amount"]);
@@ -172,14 +172,14 @@ class ControllerOperation extends Controller{
                         $created_at = date('y-m-d h:i:s');
                         $checkedUsers = $_POST["c"];
                         $weights = $_POST["w"];
-                      
+
                         if($user){
                             $operation = new Operation($title,$tricount,$amount,$operation_date,$initiator,$created_at);
                             $template = new Repartition_templates(null,$_POST["template_name"], $_POST["tricId"] );
                         }
-                        
+
                         $errors=$operation->validate();
-                        
+
                         if(empty($errors)){
                             $operation->insert();
                             $template->newTemplate($_POST["template_name"], $_POST["tricId"]);
@@ -193,11 +193,11 @@ class ControllerOperation extends Controller{
                                         $weights[$i]);
                                         Operation::insertRepartition($operation->get_id(),$weights[$i],$checkedUsers[$i]);
                                     } //alberti goat
-        
+
                                 }
                                 $this->redirect("operation", "expenses", $_POST["tricId"]);
                             }
-                           
+
 
                         }else{
                             echo "<b>Validation Failed:<b> <br>";
@@ -228,7 +228,7 @@ class ControllerOperation extends Controller{
         // print_r($rti);
         // echo '</pre>';
         // die();
-        
+
         }
 
         (new View("edit_expense"))->show(array("user"=>$user, "operation_data"=>$operation_data, "users"=>$users,"rti"=>$rti, "tricount"=>$tricount, "usr" => $usr ));
@@ -259,7 +259,7 @@ class ControllerOperation extends Controller{
                 ){
 
                     $operation = Operation::getOperationByOperationId($_POST["operationId"]);
-                    
+
                     if($operation !== null){
 
                         $title=$_POST["title"];
@@ -289,12 +289,12 @@ class ControllerOperation extends Controller{
                             $operation->setCreated_at($created_at);
                         }
                     }
-                  
+
                     // echo '<pre>';
                     // print_r($operation);
                     // echo '</pre>';
                     // die();
-                  
+
                     $errors=$operation->validate();
 
                     if(empty($errors)){
@@ -322,7 +322,7 @@ class ControllerOperation extends Controller{
             $userId = $user->getUserId();
         }
         if(isset($_GET["param1"])){
-        
+
             (new View("delete_operation"))->show(array("user" => $user, "operationId" => $operationId, "operation_data"=>$operation_data));
         }
     }
@@ -331,7 +331,7 @@ class ControllerOperation extends Controller{
         $user = $this->get_user_or_redirect();
         $errors     = [];
         $operationId = $_GET['param1'];
-        
+
         if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
             $this->redirect('main', "error");
         }else{
@@ -352,9 +352,9 @@ class ControllerOperation extends Controller{
             }
         }
 
-        (new View("edit_expense"))->show(array("user"=>$user, "users"=>$users, "tricount"=>$tricount ));
+        (new View("edit_expense"))->show(array("user"=>$user, "tricount"=>$tricount ));
 
-    } 
+    }
 
 
     public function next_expense(){
@@ -363,7 +363,6 @@ class ControllerOperation extends Controller{
             $tricount = Tricounts::get_by_id($idTricount);
             $idOperation = $_POST["operation"];
             $operation = Operation::get_by_id($idOperation);
-
             if($_POST["submit"] === "Next")
                 $nextOperation = $operation->get_next_operation_by_tricount($idOperation,$tricount->get_id());
             else if($_POST["submit"] === "Previous") {
@@ -394,7 +393,7 @@ class ControllerOperation extends Controller{
     //             $this->redirect("operation", "detail_expense", $_POST["operation"]);
     //         }
     //     }
-    // } 
+    // }
     // */
 }
 
