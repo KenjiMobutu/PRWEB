@@ -49,14 +49,15 @@
                 <h2>Title :</h2>
                 <input type="text" name='title' value='<?= $tricount->get_title() ?>'>
                 <h2>Description (optional) :</h2>
-                <input type="text" name='description' value='<?= $tricount->get_description() == null ? "no Description" : $tricount->get_description()?>'>
+                <input type="text" name='description' value='<?= $tricount->get_description() == null ? "No description" : $tricount->get_description()?>'>
             </div>
         </form>
             <div class="edit-settingsTitle">
                 <h1>Subscriptions</h1>
+
                 <?php foreach ($sub as $s):  ?>
                     <li>
-                        <input name='name' value='<?= $s->getFullName() == null ? "no Description" : $s->getFullName() ?>'>
+                        <input name='name'  disabled="disabled" value='<?= $s->getFullName() == null ? "no Description" : $s->getFullName() ?>'>
                     </li>
                 <?php endforeach; ?>
                 <form id="addSubscriber" action="participation/add/<?= $tricount->get_id() ?>" method="post">
