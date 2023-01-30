@@ -41,6 +41,12 @@
     return $this->creator;
   }
 
+  public static function exists($id){
+    $query = self::execute("SELECT * FROM tricounts WHERE id = :id", array("id"=>$id));
+    $data = $query->fetch();
+    return $data;
+  }
+
   public static function get_tricount_by_operation_id($id){
     $query= self::execute("SELECT * FROM operations JOIN tricounts on operations.tricount = tricounts.id
     WHERE operations.id=:id",array("id"=>$id));
