@@ -82,10 +82,10 @@
             <input class="addExp" placeholder="Title" type="text" id="title" name="title">
             <br>
             <input type="hidden" id="tricId" name="tricId" value="<?php echo $tricount->get_id()?>">
-            <input class="addExp" placeholder="Amount (EUR)" type="number" id="amount" name="amount">
+            <input class="addExp" placeholder="Amount (EUR)" type="number" id="amount" name="amount" required>
             <br>
             <label  for="operation_date">Date</label>
-            <input class="addExp" type="date" id="operation_date" name="operation_date">
+            <input class="addExp" type="date" id="operation_date" name="operation_date" required>
             <br>
             <label for="paid_by">Paid By</label>
             <select id="initiator" name="initiator">
