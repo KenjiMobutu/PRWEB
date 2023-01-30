@@ -28,7 +28,7 @@ class ControllerTricount extends Controller{
   public function add(){
     $user = $this->get_user_or_redirect();
     if (!is_null($user)) {
-      $id = NULL;
+      $id = null;
       $errors = [];
       $title = '';
       $description = '';
@@ -40,7 +40,10 @@ class ControllerTricount extends Controller{
         $creator = $user->getUserId();
         $tricount = new Tricounts($id,$title,$description,$created_at,$creator);
         if (count($errors) == 0) {
-          $tricount->update();
+          $tricount->addTricount();
+          $idT = $tricount->get_id();
+          $newSubscriber = new Participations($idT ,$tricount->get_creator_id());
+          $newSubscriber->add();
           $this->redirect("tricount", "index");
         }
       }
