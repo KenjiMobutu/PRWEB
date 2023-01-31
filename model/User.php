@@ -459,5 +459,30 @@ class User extends Model
         }
 
     }
+    public function can_be_delete($tricount): bool
+    {
+        $query = self::execute("SELECT count(*)
+        FROM subscriptions
+        WHERE tricount = :tricount
+        AND user = :user
+        AND user NOT IN (
+        SELECT initiator
+        FROM operations
+        WHERE tricount = :tricount
+        )
+        AND user NOT IN (
+        SELECT user
+        FROM repartitions
+        JOIN operations
+        ON repartitions.operation = operations.id
+        WHERE tricount = :tricount
+        );", array("tricount"=>$tricount,"user" =>$this->getUserId()));
+        if ($query->fetchColumn() == 0) {
+            return false;
+        } else {
+            return true;
+        }
+
+    }
 }
 ?>
