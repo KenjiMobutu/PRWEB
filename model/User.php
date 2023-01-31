@@ -420,15 +420,37 @@ class User extends Model
         return $hash === Tools::my_hash($clear_password);
     }
 
-        public function list_by_user() {
-            $query = self::execute("SELECT * FROM `tricounts` t JOIN  subscriptions s ON t.id = s.tricount where user=:user", array("user"=>$this->id));
-            $data = $query->fetchAll();
-            if ($query->rowCount() == 0) {
-                return false;
-            } else {
-                return new Tricounts($data["ID"],$data["title "],$data["description"],$data["created_at"],$data["creator"]);
-            }
+    public function list_by_user() {
+        $query = self::execute("SELECT * FROM `tricounts` t JOIN  subscriptions s ON t.id = s.tricount where user=:user", array("user"=>$this->id));
+        $data = $query->fetchAll();
+        if ($query->rowCount() == 0) {
+            return false;
+        } else {
+            return new Tricounts($data["ID"],$data["title "],$data["description"],$data["created_at"],$data["creator"]);
         }
+    }
+
+    public function is_in_tricount($idTricount){
+        $query = self::execute("SELECT * from subscriptions s where s.user = :user and s.tricount =:id  ",array("user"=>$this->id,"id"=>$idTricount));
+        $data = $query->fetch();
+        if($query->rowCount()== 0)
+            return false;
+        return $data;
+    }
+    public function is_creator($idTricount){
+        $query = self::execute("SELECT * FROM tricounts t where t.creator =:user and t.id=:id ",array("user"=>$this->id,"id"=>$idTricount));
+        $data = $query->fetch();
+        if($query->rowCount()== 0)
+            return false;
+        return $data;
+    }
+    public function is_in_items($idTemplate){
+        $query = self::execute("SELECT * FROM repartition_template_items rti where rti.user =:user and rti.repartition_template=:id ",array("user"=>$this->id,"id"=>$idTemplate));
+        $data = $query->fetch();
+        if($query->rowCount()== 0)
+            return false;
+        return $data;
+    }
 
 }
 ?>
