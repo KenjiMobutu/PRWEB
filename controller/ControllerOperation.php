@@ -129,17 +129,59 @@ class ControllerOperation extends Controller{
         $user = $this->get_user_or_redirect();
         if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
             $this->redirect('main', "error");
-        }else{
+        }
+       
+        if(isset($_POST["refreshBtn"])){ 
+            if(
+                array_key_exists("title",$_POST) &&
+                array_key_exists("tricId",$_POST) &&
+                array_key_exists("amount",$_POST) &&
+                array_key_exists("operation_date",$_POST) &&
+                array_key_exists("initiator",$_POST) &&
+                array_key_exists("rti",$_POST)
+            ){
+                $userId = $user->getUserId();
+                $title=$_POST["title"];
+                $tricId = $_POST["tricId"];
+                $tricount = Tricounts::get_by_id($tricId);
+                $amount = floatval($_POST["amount"]);
+                $operation_date = $_POST["operation_date"];
+                $initiator = $_POST["initiator"];
+                $users = User::getUsers();
+                $init = User::get_by_id( $initiator);
+                $rti = Repartition_template_items::get_by_user($userId);
+                $template = Repartition_templates::get_by_id($_POST['rti']);
+                // var_dump($template); die();
+                if($template === null){
+                    $this->redirect("operation","expenses/".$tricount->get_id());
+                }
+                $ListUsers = Participations::get_by_tricount($tricId);
+                $listItems = Repartition_template_items::get_user_by_repartition($template->get_id());
+            }
+            (new View("add_expense"))->show(array("user"=>$user,
+                                                    "title"=>$title,
+                                                    "amount"=>$amount,
+                                                    "operation_date"=>$operation_date,
+                                                    "init"=>$init,
+                                                    "rti"=>$rti,
+                                                    "users"=>$users, 
+                                                    "tricount"=>$tricount,
+                                                    "template"=>$template,
+                                                    "ListUsers"=>$ListUsers,
+                                                    "listItems"=>$listItems));
+        }
+        else{
+            // die('2');
             $userId = $user->getUserId();
             $save='';
             if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST["save_template"])){
                 // die('1');
                 if(
-            array_key_exists("title",$_POST) &&
-            array_key_exists("tricId",$_POST) &&
-            array_key_exists("amount",$_POST) &&
-            array_key_exists("operation_date",$_POST) &&
-            array_key_exists("initiator",$_POST)
+                    array_key_exists("title",$_POST) &&
+                    array_key_exists("tricId",$_POST) &&
+                    array_key_exists("amount",$_POST) &&
+                    array_key_exists("operation_date",$_POST) &&
+                    array_key_exists("initiator",$_POST)
                 ){
 
                     $title=$_POST["title"];

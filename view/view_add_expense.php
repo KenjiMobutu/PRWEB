@@ -79,36 +79,50 @@
 <div class="add-exp">
 <p><?php echo $tricount->get_title();?> > New expense</p>
     <form action="operation/add_expense" method="post">
-            <input class="addExp" placeholder="Title" type="text" id="title" name="title">
+            <input class="addExp" placeholder="Title" type="text" id="title" name="title" <?php if(isset($_POST["title"])) echo 'value=' . $title ?>>
             <br>
             <input type="hidden" id="tricId" name="tricId" value="<?php echo $tricount->get_id()?>">
-            <input class="addExp" placeholder="Amount (EUR)" type="number" id="amount" name="amount" required>
+            <input class="addExp" placeholder="Amount (EUR)" type="number" id="amount" name="amount" required <?php if(isset($_POST["amount"])) echo 'value=' . $amount ?>>
             <br>
             <label  for="operation_date">Date</label>
-            <input class="addExp" type="date" id="operation_date" name="operation_date" required>
+            <input class="addExp" type="date" id="operation_date" name="operation_date" required <?php if(isset($_POST["operation_date"])) echo 'value=' . $operation_date ?>>
             <br>
             <label for="paid_by">Paid By</label>
             <select id="initiator" name="initiator">
+            <?php if(isset($_POST["initiator"])): echo '<option value=' . $init->getUserId() . ">" . $init->getFullName() . "</option>"; endif; ?>
+            
             <?php foreach($users as $urss): ?>
                 <option value="<?php echo $urss->getUserId()?>"><?php echo $urss->getFullName()?></option>
                 <?php endforeach;?>
             </select>
             <br>
             <label for="repartition_template">Use repartition template (optional)</label>
+            <button name="refreshBtn" id="refreshBtn">Refresh</button>
             <select id="rti" name="rti">
+            <?php if(isset($_POST["rti"])): echo '<option value=' . $template->get_id() . ">" . $template->get_title() . "</option>"; endif; ?>
             <option value="option-default">No,I'll use custom repartition</option>
-            <?php foreach($rti as $rt):  $title = $rt["title"];?>
-                <option value="<?php echo $title?>"><?php echo $title?></option>
+            <?php foreach($rti as $rt):  $title = $rt["title"]; $templateId=$rt["id"]?>
+                <option name="option_template" value="<?php echo $templateId?>"><?php echo $title?></option>
                 <?php endforeach;?>
             <label for="who">For whom? (select at least one)</label>
-  
-                <?php foreach($users as $usr): ?>
+            <?php 
+            if(isset($_POST["refreshBtn"])){
+                
+            }
+            ?>
+                <?php foreach($ListUsers as $usr): ?>
                     <div class="checks">
-                        <input type="checkbox" name="c[<?= $usr->getUserId(); ?>]" value="<?php echo $usr->getUserId() ?>" id="userIdTemp">
-                            <span style="color: yellow; font-weight: bold;"><?php echo $usr->getFullName() ?></span>
+                        <input type="checkbox" name="c[<?= $usr->get_user(); ?>]" value="<?php echo $usr->get_user() ?>" id="userIdTemp" <?php if(isset($template)){
+                                                                                                            if($usr->is_in_Items($template->get_id())) {
+                                                                                                                echo "checked = 'checked'" ;} };?> >
+                                                                                                                
+                            <span style="color: yellow; font-weight: bold;"><?php echo $usr->getUserInfo() ?></span>
                         <fieldset>
                             <legend style="color: yellow; font-weight: bold;">Weight</legend>
-                            <input type="number" name="w[<?= $usr->getUserId(); ?>]" id="userWeight" value="1" min="0" max="50">
+                            <input type="number" name="w[<?= $usr->get_user(); ?>]" id="userWeight" min="0" max="50" <?php if(isset($template)){
+                                                                                    if($usr->is_in_Items($template->get_id())) {
+                                                                                        echo "value=".$usr->get_weight_by_user($template->get_id());}; }else echo "value=0";?>>
+                            
                         </fieldset>
                     </div>
                 <?php endforeach; ?>
@@ -123,16 +137,6 @@
     
             <input type="submit" value="Submit">
         </form>
-        <!-- <?php if (count($errors) != 0) : ?>
-                <div class='errors'>
-                    <p>Please correct the following error(s) :</p>
-                    <ul>
-                        <?php foreach ($errors as $error) : ?>
-                            <li><?= $error ?></li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-            <?php endif; ?> -->
 </div>
 	
 </body>
