@@ -79,7 +79,8 @@ class ControllerMain extends Controller
                 $errors = array_merge($errors, $newUser->validate());
                 if (empty($errors)) {
                     $newUser->update();
-                    $this->log_user($newUser, "profile");
+                    $user = User::get_by_mail($newUser->getMail());
+                    $this->log_user($user, "profile");
                 }
             } else {
                 $errors[] = "All information are needed to complete your registration.";

@@ -28,21 +28,23 @@ class ControllerTricount extends Controller{
   public function add(){
     $user = $this->get_user_or_redirect();
     if (!is_null($user)) {
-      $id = NULL;
+      $id = null;
       $errors = [];
       $title = '';
       $description = '';
       $tricount = '';
       $created_at = date('Y-m-d H:i:s');
-      if ((isset($_POST["title"]) && $_POST["title"]!="")&&(isset($_POST["description"])&& $_POST["description"]!="")){
+      if ((isset($_POST["title"]) && $_POST["title"]!="")&&(isset($_POST["description"])|| $_POST["description"]=="")){
         $title = $_POST["title"];
         $description = $_POST["description"];
         $creator = $user->getUserId();
         $tricount = new Tricounts($id,$title,$description,$created_at,$creator);
         if (count($errors) == 0) {
-          $tricount->update();
-          $tricount->get_by_id($id);
-          $this->redirect("tricount", "viewById",$tricount->get_id());
+          $tricount->addTricount();
+          $idT = $tricount->get_id();
+          $newSubscriber = new Participations($idT ,$tricount->get_creator_id());
+          $newSubscriber->add();
+          $this->redirect("tricount", "index");
         }
       }
 
@@ -56,7 +58,6 @@ class ControllerTricount extends Controller{
     $user = $this->get_user_or_redirect();
     $id = null;
     $sub = [];
-
     if (isset($_GET['param1']) || isset($_POST['param1'])) {
       $id = isset($_POST['param1']) ? $_POST['param1'] : $_GET['param1'];
       $tricount = Tricounts::get_by_id($id);
@@ -100,6 +101,32 @@ class ControllerTricount extends Controller{
       //var_dump($tricount);
     }
   }
+  public function update(){
+    $user = $this->get_user_or_redirect();
+
+    if (!is_null($user)) {
+      if (isset($_GET['param1']) && is_numeric($_GET['param1']) && $_GET['param1'] != null
+          && isset($_POST["title"]) && !empty($_POST["title"])
+          && isset($_POST["description"])|| ($_POST["description"]=="")){
+
+        $id = $_GET['param1'];
+        $title = $_POST["title"];
+        $description = $_POST["description"];
+        $tricount = Tricounts::get_by_id($id);
+
+        if ($tricount) {
+          $tricount->updateTricount($title,$description);
+          $this->redirect("tricount", "index");
+        } else {
+          // Handle error for invalid tricount id
+          $this->redirect("user","profile");
+        }
+      }
+    } else {
+      $this->redirect("user","profile");
+    }
+  }
+
 
 }
 

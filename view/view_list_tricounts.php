@@ -7,6 +7,7 @@
         <title>
             <?= $user->getFullName() ?>'s Tricount!
         </title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -22,7 +23,7 @@
         <div class="appHeader">
             <div class="left">
                 <a href="#" class="headerButton goBack">
-                    <ion-icon name="chevron-back-outline"></ion-icon>
+                    <i class="bi bi-arrow-left"></i>
                 </a>
             </div>
             <div class="pageTitle">
@@ -30,7 +31,7 @@
             </div>
             <div class="right">
                 <a href="tricount/add" class="headerButton goBack" >
-                    <ion-icon name="add-outline"></ion-icon>
+                    <i class="bi bi-plus-lg"></i>
                 </a>
             </div>
         </div>
@@ -39,7 +40,7 @@
                     <!-- tricount block -->
                 <?php foreach ($tricounts_list as $tl):  ?>
                     <div class="card-block mb-2">
-                        <form action="tricount/edit/<?= $tl->get_id()?>" method="POST">
+                        <form action="operation/expenses/<?= $tl->get_id()?>" method="POST">
                         <button class="button-card" >
                         <div class="card-main">
                             <div class="balance">

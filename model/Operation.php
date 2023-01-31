@@ -23,31 +23,30 @@ class Operation extends Model{
         $this->id = $id; //tricount id
     }
 
-    public function getTitle(){
-        return $this->title;
+    public static function get_users_from_operation($operationId){
+        $query = self::execute("SELECT user FROM repartitions WHERE operation = :operationId", array("operationId"=>$operationId));
+        $data = $query->fetchAll();
+        return $data;
     }
 
-    public function getTricount(){
-        return $this->tricount;
+    public static function get_dette_by_operation($operationId, $userId){
+        $query = self::execute("SELECT (SELECT o.amount/SUM(r.weight)
+                                    FROM repartitions r, operations o 
+                                    where r.operation = o.id 
+                                    and o.id =:operation GROUP BY o.amount) *  
+                                    (SELECT weight FROM repartitions 
+                                    WHERE user = :user AND operation = :operation) 
+                                    AS result LIMIT 1", array("operation"=>$operationId,"user"=>$userId));
+        $data = $query->fetch();
+        return $data;
     }
 
-    public function getAmount(){
-        return $this->amount;
+    public static function exists($id){
+        $query = self::execute("SELECT id FROM operations WHERE id=:id LIMIT 1", array("id"=>$id));
+        $data = $query->fetch();
+        return $data;
     }
-
-    public function getInitiator(){
-
-        return $this->getUserFullName();
-    }
-
-    public function getCreatedAt(){
-        return $this->created_at;
-    }
-
-    public function get_id(){
-        return $this->id;
-    }
-
+   
     public static function getNbOfOperations($id){
         $query = self::execute("SELECT count(*) FROM operations  WHERE tricount =:id", array("id"=>$id));
         $data=$query->fetch();
@@ -271,6 +270,14 @@ class Operation extends Model{
     //     return $result;
     // }
 
+        public static function getUsersFromTricount($tricountId){
+            $query = self::execute("SELECT user FROM subscriptions JOIN tricounts t on t.id = subscriptions.tricount
+            WHERE tricount = :tricountId", array("tricountId"=>$tricountId));
+            $data = $query->fetch();
+            return $data;
+        }
+
+
     public static function getOperationId($tricountId){
         $query = self::execute("SELECT * FROM operations where tricount = :tricountId", array("tricountId"=>$tricountId));
         $data = $query->fetch();
@@ -430,6 +437,37 @@ class Operation extends Model{
             $data["id"]
         );
     }
+
+    public function getTitle(){
+        return $this->title;
+    }
+
+    public function getTricount(){
+        return $this->tricount;
+    }
+
+    public function getAmount(){
+        return $this->amount;
+    }
+
+    public function getInitiator(){
+
+        return $this->getUserFullName();
+    }
+
+    public function getInitiatorId(){
+
+        return $this->initiator;
+    }
+
+    public function getCreatedAt(){
+        return $this->created_at;
+    }
+
+    public function get_id(){
+        return $this->id;
+    }
+
 
     public function setTitle(string $title): void
     {
