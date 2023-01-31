@@ -117,24 +117,32 @@
         </button>
         <div class="view_expenses">   
         <h2><?php echo number_format($operation_data->amount, 2) ?></h2>
+        <?php
+        if($participants["0"] === 0){
+            echo "<p>For me</p>";
+        }else{
+            echo "<p>For ".$participants["0"]." participants, including me</p>";
+        }
+        ?>
         <p>Paid by <?php echo $usr ?></p><p><?php echo $operation_data->operation_date ?></p>
-        <p>For <?php echo $participants["0"] ?> participants, including me</p>    
         <?php echo $operation_data->title ?>
-        
-        <table>
-            <thead>
-                <tr>
-                <th>User</th>
-                <th>Debt</th>
-                </tr>
-            </thead>
-            <tbody>
-            <?php 
+        <?php if(($participants["0"] === 0)){echo ' ';} else
+            echo '<table>
+                <thead>
+                    <tr>
+                    <th>User</th>
+                    <th>Debt</th>
+                    </tr>
+                </thead>
+                <tbody>';
                 foreach ($operationUsers as $user) {
                     $username = User::get_by_id($user['user']);
                     $debt = Operation::get_dette_by_operation($_GET['param1'], $user['user']);
                     echo '<tr>';
-                    if ($user['user'] == $operation_data->getInitiatorId()) {
+                    if($participants["0"] === 0){
+                        echo 'solo';
+                    }
+                    else if ($user['user'] == $operation_data->getInitiatorId()) {
                         echo '<td style="color:yellow"><b>' . $username->getFullName() . '</b></td>';
                         echo '<td style="color:yellow"><b>' . number_format($debt['result'], 2) . '</b></td>';
                     } else {

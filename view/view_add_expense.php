@@ -100,7 +100,6 @@
             <?php foreach($rti as $rt):  $title = $rt["title"];?>
                 <option value="<?php echo $title?>"><?php echo $title?></option>
                 <?php endforeach;?>
-            </select>
             <label for="who">For whom? (select at least one)</label>
   
                 <?php foreach($users as $usr): ?>
