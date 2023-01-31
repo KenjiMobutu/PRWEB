@@ -37,11 +37,12 @@ class ControllerTricount extends Controller{
       if ((isset($_POST["title"]) && $_POST["title"]!="")&&(isset($_POST["description"])&& $_POST["description"]!="")){
         $title = $_POST["title"];
         $description = $_POST["description"];
-        $creator = $user->id;
+        $creator = $user->getUserId();
         $tricount = new Tricounts($id,$title,$description,$created_at,$creator);
         if (count($errors) == 0) {
           $tricount->update();
-          $this->redirect("tricount", "viewById",$tricount->id);
+          $tricount->get_by_id($id);
+          $this->redirect("tricount", "viewById",$tricount->get_id());
         }
       }
 

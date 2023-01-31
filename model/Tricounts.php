@@ -19,7 +19,7 @@
       $this->creator = $creator;
     }
     //retourne l'id du tricount
-    public function get_id():int{
+    public function get_id(){
       return $this->id;
     }
     //retourne le titre du tricount

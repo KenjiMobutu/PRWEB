@@ -175,31 +175,6 @@ class User extends Model
             return $this->role=="admin";
         }
 
-
-        // public function delete ($id){
-        //     if(Repartition_template_items::delete_by_user_id($id)){
-        //         if(Repartition::delete_by_user_id($id)){
-        //             if(Operation::delete_by_user_id($id)){
-        //                 if(Participation::delete_by_user_id($id)){
-        //                     if(Tricount::delete_by_user_id($id)){
-        //                         $query=self::execute("DELETE from `user` where id=:id", array("id"=>$id));
-        //                         if($query->rowCount()==0)
-        //                             return false;
-        //                         else
-        //                             return $query;
-        //                     }else{
-        //                         echo "problème avec la fonction delete_by_user_id du modele tricount";
-        //                     }
-        //                 }else
-        //                 echo "problème avec la fonction delete_by_user_id du modele Participation";
-        //             }else
-        //             echo "problème avec la fonction delete_by_user_id du modele operation";
-        //         }
-        //         echo "problème avec la fonction delete_by_user_id du modele repartition";
-        //     }else
-        //     echo "problème avec la fonction delete_by_user_id du modele Repartition_template_items";
-        // }
-
         public static function get_by_id($id){//récup l'user par son id
             $query = self::execute("SELECT * FROM  `users` where id=:id", array("id"=>$id));
             $data = $query->fetch();//un seul resultat max
@@ -420,15 +395,30 @@ class User extends Model
         return $hash === Tools::my_hash($clear_password);
     }
 
-        public function list_by_user() {
-            $query = self::execute("SELECT * FROM `tricounts` t JOIN  subscriptions s ON t.id = s.tricount where user=:user", array("user"=>$this->id));
-            $data = $query->fetchAll();
-            if ($query->rowCount() == 0) {
-                return false;
-            } else {
-                return new Tricounts($data["ID"],$data["title "],$data["description"],$data["created_at"],$data["creator"]);
-            }
+    public function list_by_user() {
+        $query = self::execute("SELECT * FROM `tricounts` t JOIN  subscriptions s ON t.id = s.tricount where user=:user", array("user"=>$this->id));
+        $data = $query->fetchAll();
+        if ($query->rowCount() == 0) {
+            return false;
+        } else {
+            return new Tricounts($data["ID"],$data["title "],$data["description"],$data["created_at"],$data["creator"]);
         }
+    }
+
+    public function is_in_tricount($idTricount){
+        $query = self::execute("SELECT * from subscriptions s where s.user = :user and s.tricount =:id  ",array("user"=>$this->id,"id"=>$idTricount));
+        $data = $query->fetch();
+        if($query->rowCount()== 0)
+            return false;
+        return $data;
+    }
+    public function is_creator($idTricount){
+        $query = self::execute("SELECT * FROM tricounts t where t.creator =:user and t.id=:id ",array("user"=>$this->id,"id"=>$idTricount));
+        $data = $query->fetch();
+        if($query->rowCount()== 0)
+            return false;
+        return $data;
+    }
 
 }
 ?>
