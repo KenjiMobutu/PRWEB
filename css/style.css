@@ -9,17 +9,21 @@
   margin: 0;
 }
 
+a{
+  text-decoration: none;
+}
+
 body {
   font-family: "Roboto", sans-serif;
   width: auto;
-  background-color: #333;         /* j'ai modif ça*/
-  color: #d5d5d5;                 /* j'ai modif ça*/
+  background-color: #333;
+  color: #d5d5d5;
 }
 
 .navbar {
   width: 100%;
   height: 50px;
-  background-color: #722f37;        /* j'ai modif ça*/
+  background-color: #722f37;
 }
 
 .navbar-container {
@@ -75,10 +79,13 @@ body {
 /* LOGIN PAGE  */
 
 .form {
-  position: relative;
-  padding: 55px;
-  background-color: #f7f7f700;
-  box-shadow: 0px 0px 8px 5px rgba(26, 1, 248, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 45%;
+  left: 45%;
+  width: 90%;
+  transform: translate(-50%, -50%);
   /* animation: rotate 3.5s linear infinite; */
 }
 
@@ -679,23 +686,23 @@ select {
 .edit-settingsInput h2 {
   font-size: large;
 }
-.selectSub{
-  width: 40%;
-}
-.delete-tricount{
-  margin-left: 2em !important;
-  width: 30% !important;
-}
+
+
 .confirm_delete_Tricount{
-  padding-top: 15em;
+  padding-top: 4em;
   margin: auto;
-  width: 50%;
+  width: 90%;
   text-align: center;
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  transition: 0.3s;
+  border-radius: 5px;
+  padding-bottom: 5em;
+
 }
 .delete-tricount-confirm{
   color: #fff;
   background-color: #ff0000 !important;
-  padding: 10px 20px;
+  padding: 5px 20px;
   border: none;
   text-decoration: none;
   margin-right: 10px;
@@ -710,17 +717,13 @@ select {
 }
 
 .edit-tricount{
-  margin: auto;
-  width: 50%;
-  padding: 10px;
-  width: 50%;
+  margin-top: 80px !important;
   box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
   transition: 0.3s;
   border-radius: 5px;
   text-align: center;
-  margin-top: 6em;
-
   padding-bottom: 1em;
+
 
 }
 select {
@@ -738,8 +741,132 @@ select {
   font-size: 1.5em;
   color: black;
 }
+.trash_confirm_delete_Tricount .bi{
+
+  font-size: 7em;
+  color: red !important;
+}
+hr{
+  width:50%;
+  margin-left:25% !important;
+  margin-right:25% !important;
+}
+
+/* view_template*/
+.templates_container_1 {
+  width: 80%;
+  margin: 0 auto;
+}
+  a{
+      color: rgb(147,87,87);
+  }
+  #addNewTemplate{
+      float: right;
+      color: #FFDB58;
+  }
 
 
+table.tab_templates {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table.tab_templates th {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  background-color: #333;
+  color: #fff;
+}
+
+table.tab_templates td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #ddd;
+}
+
+table.tab_templates tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+table.tab_templates tr:hover {
+  background-color: #ddd;
+}
+
+/* edit_template */
+form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: flex-start;
+  padding: 20px;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+
+p {
+  margin-right: 10px;
+}
+
+
+.button_delete_confirm{
+  margin: auto;
+  width: 80%;
+  color: red !important;
+}
+.edit-tricount{
+  margin: auto;
+  width: 80%;
+  margin-bottom: 80px !important;
+}
+
+
+input[type="text"] {
+  padding: 10px;
+  margin: 10px;
+  border-radius: 5px;
+  border: none;
+
+
+}
+input[type="number"] {
+  flex: 1;
+  padding: 10px;
+  margin: 1px;
+  border-radius: 15px;
+  border: none;
+  background-color: #34495e;
+  color: white;
+}
+
+
+input[type="submit"] {
+  margin: 20px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  background-color: #16a085;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+input[type="submit"]:hover {
+  background-color: #1abc9c;
+}
+#delete_template{
+  margin: 20px;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  background-color: #16a085;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#delete_template:hover{
+  background-color: #1abc9c;
+}
 
 /* .......> */
 

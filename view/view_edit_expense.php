@@ -74,12 +74,22 @@
     border-radius: 4px;
     box-sizing: border-box;
     }
+
+    .delete-btn{
+        width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    }
 </style>
 
 <div class="add-exp">
 <p><?php echo $tricount->get_title();?> > Edit expense</p>
     <form action="operation/edit_expense/<?php echo $operation_data->id ?>" method="post">
-    <input type="hidden" id="operationId" name="operationId" value="<?php echo $operation_data->id?>">        
+    <input type="hidden" id="operationId" name="operationId" value="<?php echo $operation_data->id?>">
     <input class="addExp" placeholder="Title" type="text" id="title" value="<?php echo $operation_data->title ?>" name="title">
             <input type="hidden" id="tricId" name="tricId" value="<?php echo $tricount->get_id()?>">
             <br>
@@ -88,7 +98,7 @@
             <label  for="operation_date">Date</label>
             <input class="addExp" type="date" id="operation_date" value="<?php echo $operation_data->operation_date?>" name="operation_date">
             <br>
-            
+
             <label for="paid_by">Paid By</label>
             <select id="initiator" name="initiator">
             <option selected value="<?php echo $usr ?>"><?php echo $usr ?></option>
@@ -102,12 +112,12 @@
             <option value="option-default">No,I'll use custom repartition</option>
             <?php foreach($rti as $rt):  $title = $rt["title"];?>
                 <option value="<?php echo $title?>"><?php echo $title?></option>
-                <?php endforeach;?>
+            <?php endforeach;?>
             </select>
             <label for="who">For whom? (select at least one)</label>
                 <?php foreach($users as $usr): ?>
                     <div class="checks">
-                        <input type="checkbox" name="<?php echo $usr->getFullName() ?>" id="<?php echo $usr->getUserId() ?>">
+                        <input type="checkbox" name="<?php echo $usr->getFullName() ?>" id="<?php echo $usr->getUserId() ?>" <?php if ($usr->participates_in_tricount()) {echo "checked";} ?>>
                             <span style="color: yellow; font-weight: bold;"><?php echo $usr->getFullName() ?></span>
                         <fieldset>
                             <legend>Weight</legend>
@@ -120,19 +130,19 @@
                 <input type="checkbox" name="save_template" id="save" > <span style="color: yellow; font-weight: bold;">Save this template</span>
                     <fieldset>
                         <legend>Name</legend>
-                        <input type="text" name="name_template" id="savename" placeholder="Name">    
+                        <input type="text" name="name_template" id="savename" placeholder="Name">
                     </fieldset>
                 </div>
-            
+
             <input type="submit" value="Submit">
         </form>
 
         <!-- Operation/delete/<?php echo $operation_data->id ?> -->
-        <input  type="submit" value="DELETE">
-        <button class="delete-btn">
-            <a href="" style="text-decoration: none; background-color: red;">DELETE</a>
-        </button>
+
+        <button class="delete-btn" style="background-color: blue; color: white;">
+            <a href="/prwb_2223_c03/Operation/delete_confirm/<?php echo $operation_data->id ?>" style="text-decoration: none; color: white;">DELETE</a>
+</button>
 </div>
-	
+
 </body>
 </html>
