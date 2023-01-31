@@ -61,6 +61,7 @@
             <?php foreach ($sub as $s): ?>
                 <li>
                     <!-- Nom de l'utilisateur -->
+
                     <input type="text" name="name" value="<?= $s->getFullName() ?>" disabled />
                     <!-- Indication que l'utilisateur est le créateur -->
                     <?php if ($s->getUserId() == $tricount->get_creator_id()): ?>
@@ -68,7 +69,10 @@
                     <?php endif; ?>
                     <!-- Bouton de suppression (si autorisé) -->
                     <?php if ($s->can_be_delete($tricount->get_id())): ?>
-                        <button type="button"><i class="bi bi-trash3"></i></button>
+                        <form action="participation/delete/<?= $s->getUserId()  ?>" method="POST">
+                            <input  name="userId" value="<?=  $s->getUserId() ?>" hidden/>
+                            <button type="submit" style="width:2em; background-color:transparent;"><i type="submit" class="bi bi-trash3"></i></button>
+                        </form>
                     <?php endif; ?>
                 </li>
             <?php endforeach; ?>
@@ -76,7 +80,7 @@
             <!-- Formulaire d'ajout de souscripteur -->
             <form id="addSubscriber" action="participation/add/<?= $tricount->get_id() ?>" method="post">
                 <div class="edit-selectSub">
-                    <select class="selectSub" name="subName" id="names">
+                    <select class="selectSub" name="names" id="names">
                         <option value="">--Add a new subscriber--</option>
                         <?php foreach ($users as $u): ?>
                             <option value='<?= $u->getUserId() ?>'><?= $u->getFullName() ?></option>
