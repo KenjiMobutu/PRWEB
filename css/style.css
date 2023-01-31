@@ -751,6 +751,21 @@ hr{
   margin-left:25% !important;
   margin-right:25% !important;
 }
+.infos_tricount_edit {
+  display: flex;
+  align-items: center;
+}
+
+.name_tricount_edit {
+  flex: 1;
+  margin-right: 10px;
+}
+
+.trash_edit_tricount {
+  display: flex;
+  align-items: center;
+}
+
 
 /* view_template*/
 .templates_container_1 {

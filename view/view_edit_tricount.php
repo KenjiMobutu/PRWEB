@@ -38,7 +38,7 @@
                     <i class="bi bi-save"></i>
                 </button>
             </div>
-        </form>
+
     </div>
 
     <!-- Bloc de modification du Tricount -->
@@ -48,33 +48,38 @@
         </div>
         <div class="edit-settingsInput">
             <h2>Title :</h2>
-            <input type="text" name='title' value='<?= $tricount->get_title() ?>'>
+            <input type="text" name="title" value='<?= $tricount->get_title() ?>'>
             <h2>Description (optional) :</h2>
-            <input type="text" name='description'
+            <input type="text" name="description"
                 value='<?= $tricount->get_description() == null ? "No description" : $tricount->get_description() ?>'>
         </div>
-
+</form>
         <!-- Souscriptions au Tricount -->
         <div class="edit-settingsTitle">
             <h1>Subscriptions</h1>
             <!-- Boucle sur les souscriptions -->
             <?php foreach ($sub as $s): ?>
                 <li>
-                    <!-- Nom de l'utilisateur -->
-
-                    <input type="text" name="name" value="<?= $s->getFullName() ?>" disabled />
-                    <!-- Indication que l'utilisateur est le créateur -->
-                    <?php if ($s->getUserId() == $tricount->get_creator_id()): ?>
-                        <span>(creator)</span>
-                    <?php endif; ?>
-                    <!-- Bouton de suppression (si autorisé) -->
-                    <?php if ($s->can_be_delete($tricount->get_id())): ?>
-                        <form action="participation/delete/<?= $s->getUserId()  ?>" method="POST">
-                            <input  name="userId" value="<?=  $s->getUserId() ?>" hidden/>
-                            <button type="submit" style="width:2em; background-color:transparent;"><i type="submit" class="bi bi-trash3"></i></button>
-                        </form>
-                    <?php endif; ?>
+                    <div class="infos_tricount_edit">
+                        <!-- Nom de l'utilisateur -->
+                        <div class="name_tricount_edit">
+                            <!-- Indication que l'utilisateur est le créateur -->
+                            <input type="text" name="name" value="<?=($s->getUserId() == $tricount->get_creator_id() ? $s->getFullName()." (créateur)" : $s->getFullName())?>"  disabled/>
+                            <!-- Indication que l'utilisateur est le créateur -->
+                        </div>
+                        <!-- Bouton de suppression (si autorisé) -->
+                        <?php if ($s->can_be_delete($tricount->get_id())): ?>
+                            <div class="trash_edit_tricount">
+                                <form action="participation/delete/<?= $s->getUserId() ?>" method="POST">
+                                    <input name="userId" value="<?= $s->getUserId() ?>" hidden />
+                                    <button type="submit" style="width:2em; background-color:transparent;"><i type="submit"
+                                            class="bi bi-trash3"></i></button>
+                                </form>
+                            </div>
+                        <?php endif; ?>
+                    </div>
                 </li>
+
             <?php endforeach; ?>
 
             <!-- Formulaire d'ajout de souscripteur -->
