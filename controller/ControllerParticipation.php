@@ -39,4 +39,20 @@ class ControllerParticipation extends Controller{
 
   }
 
+  public function delete(){
+    $user = $this->get_user_or_redirect();
+    if (isset($_POST["userId" ]) && is_numeric($_POST["userId" ]) && $_POST["userId" ] != null && (isset($_GET["param1"]) && $_GET["param1"]!="")) {
+      $id = $_POST["userId" ];
+      $idT = $_GET["param1"];
+      var_dump($id);
+      var_dump($idT);
+      $tricount = Tricounts::get_by_id($idT);
+      Participations::delete_by_user_id_and_tricount($id,$tricount->get_id());
+
+        $this->redirect('tricount', "edit",$tricount->get_id());
+
+      //var_dump($tricount);
+    }
+  }
+
 }
