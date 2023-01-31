@@ -113,7 +113,7 @@ require_once "framework/Model.php";
                                   FROM subscriptions s, tricounts t
                                   where s.tricount = t.id
                                   And s.tricount = :tricount
-                                  And s.user != t.creator", array("tricount"=>$tricount));
+                                  ", array("tricount"=>$tricount));
             $data = $query->fetchAll();
             $subscription  = [];
             foreach ($data as $row) {
@@ -125,10 +125,10 @@ require_once "framework/Model.php";
 
 
     public function is_in_Items($templateID){
-        $query = self::execute("SELECT DISTINCT rti.* 
-                from repartition_template_items rti, operations o 
-                where o.tricount =:tricount 
-                and rti.repartition_template = :repartition_template 
+        $query = self::execute("SELECT DISTINCT rti.*
+                from repartition_template_items rti, operations o
+                where o.tricount =:tricount
+                and rti.repartition_template = :repartition_template
                 and rti.user = :user",
                 array("tricount"=>$this->tricount,
                         "user"=>$this->user,
@@ -137,14 +137,14 @@ require_once "framework/Model.php";
             return false;
         }
         return $query;
-       
+
     }
     public function get_weight_by_user($repartition_template): int
     {
-      $query = self::execute("SELECT * 
-                              FROM  `repartition_template_items` 
+      $query = self::execute("SELECT *
+                              FROM  `repartition_template_items`
                               where user=:user
-                              and repartition_template=:repartition_template ", 
+                              and repartition_template=:repartition_template ",
                               array("user" => $this->user,"repartition_template"=>$repartition_template));
       $data = $query->fetch(); //un seul resultat max
       if ($query->rowCount() == 0) {
