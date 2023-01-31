@@ -31,7 +31,7 @@ class ControllerOperation extends Controller{
         }
         $tricount = Tricounts::get_by_id($_GET['param1']);
         $tricountID = $tricount->get_id();
-       
+
         // echo '<pre>';
         // var_dump($tricount);
         // var_dump($tricountID);
@@ -41,7 +41,7 @@ class ControllerOperation extends Controller{
         // if(!in_array($userId,$tricountParticipants)){ //TODO y a que boris qui peut les voir idk
         //     $this->redirect('main', "error");    //si l'user ne participe pas dans un tric il peux pas voir les operations
         // }
-        
+
         $participants = Tricounts::number_of_friends($tricountID);
         $amounts[] = Operation::get_operations_by_tricount($tricountID);
         $nbOperations = Operation::getNbOfOperations($tricountID);
@@ -181,7 +181,7 @@ class ControllerOperation extends Controller{
                     array_key_exists("tricId",$_POST) &&
                     array_key_exists("amount",$_POST) &&
                     array_key_exists("operation_date",$_POST) &&
-                    array_key_exists("initiator",$_POST) 
+                    array_key_exists("initiator",$_POST)
                 ){
 
                     $title=$_POST["title"];
@@ -288,7 +288,7 @@ class ControllerOperation extends Controller{
 
         }
 
-        (new View("edit_expense"))->show(array("user"=>$user, "operation_data"=>$operation_data, "users"=>$users,"rti"=>$rti, "tricount"=>$tricount, "usr" => $usr ));
+        (new View("edit_expense"))->show(array("user"=>$user, "operation_data"=>$operation_data, "users"=>$users,"rti"=>$rti, "tricount"=>$tricount, "usr" => $usr));
 
     }
 
