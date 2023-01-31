@@ -61,7 +61,17 @@ require_once "framework/Model.php";
             $query = self::execute("SELECT * from subscriptions where user =:user",
             array("user"=>$user));
         }
-
+        public static function delete_by_user_id_and_tricount($id,$tricount): bool{
+            $query = self::execute("DELETE
+                from subscriptions
+                where user=:user
+                And tricount=:tricount",
+                array("user"=>$id, "tricount"=>$tricount));
+            if($query->rowCount()==0)
+                return false;
+            else
+                return true;
+        }
 
 
         public static function delete_by_user_id($id): bool{
