@@ -448,5 +448,12 @@ class User extends Model
             return false;
         return $data;
     }
+    public function is_in_items($idTemplate){
+        $query = self::execute("SELECT * FROM repartition_template_items rti where rti.user =:user and rti.repartition_template=:id ",array("user"=>$this->id,"id"=>$idTemplate));
+        $data = $query->fetch();
+        if($query->rowCount()== 0)
+            return false;
+        return $data;
+    }
 }
 ?>

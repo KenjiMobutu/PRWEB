@@ -152,7 +152,8 @@ class ControllerTemplates extends Controller
     public function delete_template(){
         $userlogged = $this->get_user_or_redirect();
         $user = User::get_by_id($userlogged->getUserId());
-        if($user->is_in_tricount($_GET['param1']) || $user->is_creator($_GET['param1'])){
+
+        if($user->is_in_items($_GET['param1'])){
             $userlogged = $this->get_user_or_redirect();
             $user = User::get_by_id($userlogged->getUserId());
             if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
