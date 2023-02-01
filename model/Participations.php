@@ -19,6 +19,16 @@ require_once "framework/Model.php";
         }
 
 
+        public function is_in_operation($operationId){
+            $query = self::execute("SELECT user FROM repartitions WHERE operation = :id ",
+                                    array("id"=>$operationId));
+            if($query->rowCount()==0){
+                return false;
+            }
+            return $query;
+        }
+
+
         public static function get_by_tricount($tricount){
             $query = self::execute("SELECT s.*, t.creator from subscriptions s, tricounts t
                                             where s.tricount = t.id

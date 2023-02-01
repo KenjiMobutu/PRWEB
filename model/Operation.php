@@ -23,6 +23,46 @@ class Operation extends Model{
         $this->id = $id; //tricount id
     }
 
+
+    public function is_in_operation($operationId){
+        $query = self::execute("SELECT user FROM repartitions WHERE operation = :id ",
+                                array("id"=>$this->id));
+        if($query->rowCount()==0){
+            return false;
+        }
+        return $query;
+    }
+
+    // SELECT (SELECT o.amount/SUM(r.weight)
+    //                               FROM repartitions r, operations o 
+    //                               where r.operation = o.id 
+    //                               GROUP BY o.amount LIMIT 1) *  
+    //                               (SELECT weight FROM repartitions 
+    //                               WHERE user = 1 LIMIT 1) 
+    //                               AS result
+
+
+    //                               SELECT (SELECT o.amount/SUM(r.weight)
+    //                             FROM repartitions r, operations o 
+    //                             where r.operation = o.id AND id=:id and (o.initiator=:user or
+    //                             r.user =:user)
+    //                             GROUP BY o.amount LIMIT 1) *  
+    //                             (SELECT weight FROM repartitions 
+    //                             WHERE user = :user LIMIT 1) 
+    //                             AS result
+
+    public static function total_by_user($userId,$operationId){
+        $query = self::execute("SELECT (SELECT o.amount/SUM(r.weight)
+                                                FROM repartitions r, operations o 
+                                                where r.operation = o.id 
+                                                and o.id =:id GROUP BY o.amount) *  
+                                                (SELECT weight FROM repartitions 
+                                                WHERE user = :user AND operation = :id) 
+                                                AS result LIMIT 1", array("id" => $operationId, "user"=>$userId));
+        $data = $query->fetch();
+        return $data["result"];
+    }
+
     public static function get_users_from_operation($operationId){
         $query = self::execute("SELECT user FROM repartitions WHERE operation = :operationId", array("operationId"=>$operationId));
         $data = $query->fetchAll();
@@ -440,6 +480,10 @@ class Operation extends Model{
 
     public function getTitle(){
         return $this->title;
+    }
+
+    public function getOperarionDate(){
+        return $this->operation_date;
     }
 
     public function getTricount(){

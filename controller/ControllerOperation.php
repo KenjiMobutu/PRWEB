@@ -41,14 +41,14 @@ class ControllerOperation extends Controller{
         // if(!in_array($userId,$tricountParticipants)){ //TODO y a que boris qui peut les voir idk
         //     $this->redirect('main', "error");    //si l'user ne participe pas dans un tric il peux pas voir les operations
         // }
-
+        $operations_of_tricount=Operation::get_operations_by_tricount($tricountID);
         $participants = Tricounts::number_of_friends($tricountID);
         $amounts[] = Operation::get_operations_by_tricount($tricountID);
         $nbOperations = Operation::getNbOfOperations($tricountID);
         $totalExp = Tricounts::get_total_amount_by_tric_id($tricountID);
         $mytot = Tricounts::get_my_total($userId);
         }
-        (new View("expenses"))->show(array("user"=>$user, "tricount"=>$tricount, "amounts"=>$amounts,"totalExp"=>$totalExp,"mytot"=>$mytot,"participants"=>$participants, "nbOperations"=>$nbOperations ));
+        (new View("expenses"))->show(array( "operations_of_tricount"=>$operations_of_tricount, "user"=>$user, "tricount"=>$tricount, "amounts"=>$amounts,"totalExp"=>$totalExp,"mytot"=>$mytot,"participants"=>$participants, "nbOperations"=>$nbOperations ));
     }
 
     public function balance(){
@@ -62,20 +62,18 @@ class ControllerOperation extends Controller{
             $this->redirect('main', "error");
         }
         else{
-
-        $operation = Operation::getOperationId($_GET['param1']);
-
+       
+        // $total_by_user = Operation::total_by_user($user->getUserId(),);
+        // var_dump($total_by_user); die();
         $tricount = Tricounts::get_by_id($_GET['param1']);
         $tricountID = $tricount->get_id();
+        // var_dump($tricount);
+        $users = Participations::get_by_tricount($tricountID);
+        $operations_of_tricount=Operation::get_operations_by_tricount($tricountID);
         $weights = Repartitions::get_user_and_weight_by_operation_id($tricount->get_id());
         $total = Tricounts::get_total_amount_by_tric_id($tricountID);
-        // $debt = ;
-            // echo '<pre>';
-            // print_r($total);
-            // echo '</pre>';
-            // die();
         }
-        (new View("tricount_balance"))->show(array("user"=>$user, "tricount"=>$tricount, "weights"=>$weights));
+        (new View("tricount_balance"))->show(array( "total"=>$total, "users"=>$users, "operations_of_tricount"=> $operations_of_tricount, "user"=>$user, "tricount"=>$tricount, "weights"=>$weights));
     }
 
     public function detail_expense(){

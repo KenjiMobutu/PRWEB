@@ -16,24 +16,24 @@
         
         <div class="balance_container">
              <ul>
-            <!-- on doit récupérer les noms des user et leur solde / dette --> -->
-           
-                <?php foreach($weights as $weight): ?>
-                    <li>
-                    <?php
-                    $id = $weight["user"];
-                    $users = User::get_by_id($id);
-                   
-                    if($weight["user"] == $tricount->get_creator_id()){
-                        echo "<b>user  ". $users->getFullName() . " avec une  weight de " .  $weight["weight"] . "</b>";
-                    } 
-                    else
-                    echo "user  ".  $users->getFullName() . " avec une  weight de " .  $weight["weight"];
-                    
-                    ?>
-                    </li>
-                    
-                <?php endforeach;?>
+                
+                   <?php
+                   $total_usr = 0;
+                   $tot = intval($total["sum(amount)"]);
+                        foreach($users as $user):  
+                            $total_usr = 0;
+                            foreach($operations_of_tricount as $operation):
+                                // print_r($operation); die();
+                                if($user->is_in_operation($operation->get_id()) || $user->getUserInfo() === $operation->getInitiator())
+                                    $total_usr+=Operation::total_by_user($user->get_user(),$operation->get_id());
+
+                            endforeach;
+                            //le total c'est faux mais mieux que rien
+                            echo '<p>' . $user->getUserInfo() . '  ' . $tot-$total_usr . '</p>';
+                        endforeach;
+                       
+                   ?>
+
                 <br>
             </ul>
         </div>

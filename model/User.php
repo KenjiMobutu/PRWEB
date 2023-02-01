@@ -100,6 +100,15 @@ class User extends Model
     // }
 
 
+    public function is_in_operation($operationId){
+        $query = self::execute("SELECT user FROM repartitions WHERE operation = :id ",
+                                array("id"=>$operationId));
+        if($query->rowCount()==0){
+            return false;
+        }
+        return $query;
+    }
+
     public static function get_user_id_by_name($full_name)
     {
         $query = self::execute("SELECT id FROM  `users` where full_name=':fullname'", array("fullname" => $full_name));

@@ -112,20 +112,21 @@
     <div class="cont">
             <input type="hidden" name="tricount_id" value="<?php echo $tricount->get_id(); ?>" hidden>
             <input type="hidden" name="operation" value="<?php echo $operation_data->get_id(); ?>" hidden>
-        <p><?php echo $tricount->get_title();?> > <?php echo $operation_data->title ?>  <button class="edit-btn">
-            <a href="Operation/edit/<?php echo $operation_data->id ?>" style="text-decoration: none; color: black;">Edit</a>
+        <p><?php echo $tricount->get_title();?> > <?php echo $operation_data->getTitle() ?>  <button class="edit-btn">
+            <a href="Operation/edit/<?php echo $operation_data->get_id() ?>" style="text-decoration: none; color: black;">Edit</a>
         </button>
         <div class="view_expenses">   
-        <h2><?php echo number_format($operation_data->amount, 2) ?></h2>
+        <h2><?php echo number_format($operation_data->getAmount(), 2) ?></h2>
         <?php
+        // var_dump($participants); die();
         if($participants["0"] === 0){
             echo "<p>For me</p>";
         }else{
             echo "<p>For ".$participants["0"]." participants, including me</p>";
         }
         ?>
-        <p>Paid by <?php echo $usr ?></p><p><?php echo $operation_data->operation_date ?></p>
-        <?php echo $operation_data->title ?>
+        <p>Paid by <?php echo $usr ?></p><p><?php echo $operation_data->getOperarionDate() ?></p>
+        <?php echo $operation_data->getTitle() ?>
         <?php if(($participants["0"] === 0)){echo ' ';} else
             echo '<table>
                 <thead>

@@ -166,7 +166,14 @@
                 <a href="tricount/edit/<?= $tricount->get_id()?>" style="text-decoration: none; color: black;">Edit</a>
             </button>
                 <p><?php echo $tricount->get_title();?> > Expenses</p>
-
+                    <?php
+                        $total_usr = 0;
+                        foreach($operations_of_tricount as $operation):
+                            // print_r($operation); die();
+                            if($user->is_in_operation($operation->get_id()) || $user=== $operation->getInitiator())
+                                $total_usr+=Operation::total_by_user($user->getUserId(),$operation->get_id());
+                                
+                        endforeach;?>
                         <ul>
                         <div class="container">
                             <ul class="data-list">
@@ -196,7 +203,7 @@
                                         echo '</li>';
                                         echo '<div class="totals">
                                         <div class="mytot">
-                                            <p>MY TOTAL <br> '.number_format($totalExp["0"], 2).' €</p>
+                                            <p>MY TOTAL <br> '.number_format($total_usr, 2).' €</p>
                                             </div>
                                             <div class="add-btn">
                                                 <a href="/prwb_2223_c03/Operation/add/'.$tricount->get_id().'">
@@ -220,7 +227,7 @@
                                             echo '</a>';
                                             echo '<div class="totals">
                                             <div class="mytot">
-                                            <p>MY TOTAL <br> '.number_format($totalExp["0"], 2).'  €</p>
+                                            <p>MY TOTAL <br> '.number_format($total_usr, 2).'  €</p>
                                         </div>
                                             <div class="exp">';
                                             echo '<p>TOTAL EXPENSES <br> '.number_format($totalExp["0"], 2).'  €</p>';
@@ -236,7 +243,7 @@
                                             echo '</a>';
                                             echo '<div class="totals">
                                             <div class="mytot">
-                                                <p>MY TOTAL <br>'.number_format($totalExp["0"], 2).' €</p>
+                                                <p>MY TOTAL <br>'.number_format($total_usr, 2).' €</p>
                                             </div>
                                             <div class="add-btn">
                                                 <a href="/prwb_2223_c03/Operation/add/'.$tricount->get_id().'">
