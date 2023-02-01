@@ -53,7 +53,6 @@
                         <option name="option_template" style="color: black;" value="<?php echo $templateId ?>"><?php echo $title ?></option>
                     <?php endforeach; ?>
                 </select>
-                    
                     <label for="who">For whom? (select at least one)</label>
                     <?php
                     if (isset($_POST["refreshBtn"])) {
@@ -83,41 +82,41 @@
                                         echo "value=0"; ?>>
                                 </fieldset>
                             </div>
-
+                            
                             <?php
                             }
+                        echo '<input type="submit" value="Submit">';
                     }
-                    
                     else {
-                                foreach ($users as $usr) {
-                                    ?>
-                                        <div class="check-input">
-                                            <input type="checkbox" name="c[<?= $usr->getUserId(); ?>]" value="<?php echo $usr->getUserId() ?>"
-                                                id="userIdTemp">
-                                            <span class="text-input" style="color: yellow; font-weight: bold;">
-                                                <?php echo $usr->getFullName() ?>
-                                            </span>
-                                            
-                                            <fieldset>
-                                                <legend class="legend" style="color: yellow; font-weight: bold;">Weight</legend>
-                                                <input type="number" name="w[<?= $usr->getUserId(); ?>]" id="userWeight" value="1" min="0"
-                                                    max="50">
-                                            </fieldset>
-                                        </div>
-                                    <?php
-                                }?>
+                        foreach ($users as $usr) {
+                            ?>
+                                <div class="check-input">
+                                    <input type="checkbox" name="c[<?= $usr->getUserId(); ?>]" value="<?php echo $usr->getUserId() ?>"
+                                        id="userIdTemp">
+                                    <span class="text-input" style="color: yellow; font-weight: bold;">
+                                        <?php echo $usr->getFullName() ?>
+                                    </span>
+                                    
+                                    <fieldset>
+                                        <legend class="legend" style="color: yellow; font-weight: bold;">Weight</legend>
+                                        <input type="number" name="w[<?= $usr->getUserId(); ?>]" id="userWeight" value="1" min="0"
+                                            max="50">
+                                    </fieldset>
+                                </div>
+                            <?php
+                        }?>
                             
-                                <p>Add a new repartition template</p>
-                            <div class="save-template">
-                                <input type="checkbox" name="save_template" id="save"><span
-                                    style="color: yellow; font-weight: bold;">Save this template</span>
-                                <fieldset>
-                                    <legend style="color: yellow; font-weight: bold;">Name</legend>
-                                    <input type="text" name="template_name" id="savename" placeholder="Name">
-                                </fieldset>
-                            </div>
-                            <input type="submit" value="Submit">
-                                <?php 
+                        <p>Add a new repartition template</p>
+                    <div class="save-template">
+                        <input type="checkbox" name="save_template" id="save"><span
+                            style="color: yellow; font-weight: bold;">Save this template</span>
+                        <fieldset>
+                            <legend style="color: yellow; font-weight: bold;">Name</legend>
+                            <input type="text" name="template_name" id="savename" placeholder="Name">
+                        </fieldset>
+                    </div>
+                    <input type="submit" value="Submit">
+                        <?php 
                     }
                     ?>
                 <br>
