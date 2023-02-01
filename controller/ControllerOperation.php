@@ -102,10 +102,9 @@ class ControllerOperation extends Controller
             $this->redirect('main', "error");
         } else {
             $userId = $user->getUserId();
-            $users = User::getUsers();
-
-            $rti = Repartition_template_items::get_by_user($userId);
             $tricount = Tricounts::get_by_id($_GET['param1']);
+            $users = Participations::get_by_tricount($_GET['param1']);
+            $rti = Repartition_template_items::get_by_user($userId);
         }
 
         (new View("add_expense"))->show(array("user" => $user, "tricount" => $tricount, "rti" => $rti, "users" => $users));

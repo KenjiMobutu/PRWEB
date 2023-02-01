@@ -34,10 +34,10 @@
                     <label for="paid_by">Paid By</label>
                     <select id="initiator" name="initiator">
                     <?php if (isset($_POST["initiator"])):
-                    echo '<option value=' . $init->getUserId() . ">" . $init->getFullName() . "</option>"; endif; ?>
+                    echo '<option value=' . $init->get_user() . ">" . $init->getUserInfo() . "</option>"; endif; ?>
 
                     <?php foreach ($users as $urss): ?>
-                        <option style="color: black;" value="<?php echo $urss->getUserId() ?>"><?php echo $urss->getFullName() ?></option>
+                        <option style="color: black;" value="<?php echo $urss->getUserInfo() ?>"><?php echo $urss->getUserInfo() ?></option>
                     <?php endforeach; ?>
                 </select>
                 <br>
@@ -82,6 +82,8 @@
                                     } else
                                         echo "value=0"; ?>>
                                 </fieldset>
+                                <input type="submit" value="Submit">
+
                             </div>
 
                             <?php
@@ -92,15 +94,15 @@
                                 foreach ($users as $usr) {
                                     ?>
                                         <div class="check-input">
-                                            <input type="checkbox" name="c[<?= $usr->getUserId(); ?>]" value="<?php echo $usr->getUserId() ?>"
+                                            <input type="checkbox" name="c[<?= $usr->get_user(); ?>]" value="<?php echo $usr->get_user() ?>"
                                                 id="userIdTemp">
                                             <span class="text-input" style="color: yellow; font-weight: bold;">
-                                                <?php echo $usr->getFullName() ?>
+                                                <?php echo $usr->getUserInfo() ?>
                                             </span>
                                             
                                             <fieldset>
                                                 <legend class="legend" style="color: yellow; font-weight: bold;">Weight</legend>
-                                                <input type="number" name="w[<?= $usr->getUserId(); ?>]" id="userWeight" value="1" min="0"
+                                                <input type="number" name="w[<?= $usr->get_user(); ?>]" id="userWeight" value="1" min="0"
                                                     max="50">
                                             </fieldset>
                                         </div>
