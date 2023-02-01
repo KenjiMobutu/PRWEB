@@ -27,11 +27,8 @@
                 echo $template->get_title();
             ?>" required>
             <p class="edit_template_p">
-
             Template items :
             </p><br>
-
-
             <!-- pour récupérer l'id du tricount & template si reçu dans le submit du form -->
             <input type="text" name="tricountId" value="<?php echo $tricount->get_id(); ?>" hidden>
             <input type="text" name="templateID" value="<?php if(isset($_GET["param2"])){ echo $_GET["param2"];}  ?>" hidden>
@@ -45,13 +42,13 @@
                     <input  type="text" name="user" value="<?php $listusr->get_user();?>" placeholder="<?php echo $listusr->getUserInfo(); ?>"  disabled="disabled">
                     <fieldset>
                         <legend>Weight</legend>
-                        <input  type="number" name="w[<?= $listusr->get_user() ; ?>]"min="0" placeholder="1"  <?php if(isset($template)){
+                        <input  type="number" name="w[<?= $listusr->get_user() ; ?>]"min="0" placeholder="0"  <?php if(isset($template)){
                                                                                             if($listusr->is_in_Items($template->get_id())) {
                                                                                                 echo "value=".$listusr->get_weight_by_user($template->get_id());}; }else echo "value="."0";?>>
                     </fieldset>
                                     <?php // mettre w[User->id] ça fera un tableau avec des données?>
                 </div>
-                    <br><br>
+                <br><br>
 
             <?php endforeach ; ?>
 
@@ -61,12 +58,13 @@
             <?php endif;?>
             
             <?php if(isset($_GET["param2"])){
-                echo "<a href='templates/delete_template/$_GET[param2]'"; echo "id='delete_template'>DELETE</a>";
+                echo "<a href='templates/delete_template/$_GET[param2]'"; echo " id='delete_template'>DELETE</a>";
             }?>
+            
         </div>
 
-        <!-- <a href="templates/delete_template/<?php if(isset($_GET["param2"])){echo$_GET["param2"];}?>" id="delete_template">DELETE</a> -->
     </form>
+    
     
 </body>
 </html>

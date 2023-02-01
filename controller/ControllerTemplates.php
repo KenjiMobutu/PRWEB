@@ -103,12 +103,15 @@ class ControllerTemplates extends Controller
     public function editTemplate(){
         $userlogged = $this->get_user_or_redirect();
         $user = User::get_by_id($userlogged->getUserId());
-        $errors = [];
+        // $errors = [];
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if($_POST["templateID"] !== "" && isset($_POST["template_title"]) && isset($_POST["c"]) && isset($_POST["w"])){
                 $checkedUsers = $_POST["c"];
                 $weights = $_POST["w"];                    
                 $template = Repartition_templates::get_by_id($_POST["templateID"]);
+                if(strlen( $_POST["template_title"]) <3){
+                    $errors = "Bad title. Too short.";
+                }
                 if($_POST["template_title"] !== $template->get_title()){
                     $template->update_title($_POST["template_title"]);
                 }

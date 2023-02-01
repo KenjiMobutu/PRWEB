@@ -176,7 +176,7 @@ class Repartition_templates extends Model
 
   public static function validatetitle($full_name) : bool
   {
-      if(strlen($full_name) <= 3 ){
+      if(strlen($full_name) < 3 ){
           return false;
       }
       return true;
