@@ -19,6 +19,16 @@ require_once "framework/Model.php";
         }
 
 
+        public function is_in_operation($operationId){
+            $query = self::execute("SELECT user FROM repartitions WHERE operation = :id ",
+                                    array("id"=>$operationId));
+            if($query->rowCount()==0){
+                return false;
+            }
+            return $query;
+        }
+
+
         public static function get_by_tricount($tricount){
             $query = self::execute("SELECT s.*, t.creator from subscriptions s, tricounts t
                                             where s.tricount = t.id
@@ -133,12 +143,18 @@ require_once "framework/Model.php";
         }
 
 
+    /**SELECT * 
+        from repartition_template_items rti 
+        join repartition_templates rt on rt.id = rti.repartition_template
+        join tricounts t on rt.tricount = t.id
+        join subscriptions s on t.id = s.tricount
+        ORDER by rti.repartition_template*/
 
     public function is_in_Items($templateID){
-        $query = self::execute("SELECT DISTINCT rti.*
-                from repartition_template_items rti, operations o
+        $query = self::execute("SELECT DISTINCT rti.* 
+                from repartition_template_items rti, subscriptions o 
                 where o.tricount =:tricount
-                and rti.repartition_template = :repartition_template
+                and rti.repartition_template = :repartition_template 
                 and rti.user = :user",
                 array("tricount"=>$this->tricount,
                         "user"=>$this->user,

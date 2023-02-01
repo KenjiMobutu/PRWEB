@@ -100,6 +100,15 @@ class User extends Model
     // }
 
 
+    public function is_in_operation($operationId){
+        $query = self::execute("SELECT user FROM repartitions WHERE operation = :id ",
+                                array("id"=>$operationId));
+        if($query->rowCount()==0){
+            return false;
+        }
+        return $query;
+    }
+
     public static function get_user_id_by_name($full_name)
     {
         $query = self::execute("SELECT id FROM  `users` where full_name=':fullname'", array("fullname" => $full_name));
@@ -177,31 +186,6 @@ class User extends Model
     {
         return $this->role == "admin";
     }
-
-
-    // public function delete ($id){
-    //     if(Repartition_template_items::delete_by_user_id($id)){
-    //         if(Repartition::delete_by_user_id($id)){
-    //             if(Operation::delete_by_user_id($id)){
-    //                 if(Participation::delete_by_user_id($id)){
-    //                     if(Tricount::delete_by_user_id($id)){
-    //                         $query=self::execute("DELETE from `user` where id=:id", array("id"=>$id));
-    //                         if($query->rowCount()==0)
-    //                             return false;
-    //                         else
-    //                             return $query;
-    //                     }else{
-    //                         echo "problème avec la fonction delete_by_user_id du modele tricount";
-    //                     }
-    //                 }else
-    //                 echo "problème avec la fonction delete_by_user_id du modele Participation";
-    //             }else
-    //             echo "problème avec la fonction delete_by_user_id du modele operation";
-    //         }
-    //         echo "problème avec la fonction delete_by_user_id du modele repartition";
-    //     }else
-    //     echo "problème avec la fonction delete_by_user_id du modele Repartition_template_items";
-    // }
 
     public static function get_by_id($id)
     { //récup l'user par son id
@@ -459,6 +443,7 @@ class User extends Model
         }
 
     }
+    
     public function can_be_delete($tricount): bool
     {
         $query = self::execute("SELECT count(*)
@@ -483,6 +468,28 @@ class User extends Model
             return true;
         }
 
+    }
+    
+    public function is_in_tricount($idTricount){
+        $query = self::execute("SELECT * from subscriptions s where s.user = :user and s.tricount =:id  ",array("user"=>$this->id,"id"=>$idTricount));
+        $data = $query->fetch();
+        if($query->rowCount()== 0)
+            return false;
+        return $data;
+    }
+    public function is_creator($idTricount){
+        $query = self::execute("SELECT * FROM tricounts t where t.creator =:user and t.id=:id ",array("user"=>$this->id,"id"=>$idTricount));
+        $data = $query->fetch();
+        if($query->rowCount()== 0)
+            return false;
+        return $data;
+    }
+    public function is_in_items($idTemplate){
+        $query = self::execute("SELECT * FROM repartition_template_items rti where rti.user =:user and rti.repartition_template=:id ",array("user"=>$this->id,"id"=>$idTemplate));
+        $data = $query->fetch();
+        if($query->rowCount()== 0)
+            return false;
+        return $data;
     }
 }
 ?>

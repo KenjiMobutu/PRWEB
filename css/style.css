@@ -808,17 +808,27 @@ table.tab_templates tr:hover {
 }
 
 /* edit_template */
-form {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: flex-start;
+.edit_template_container {
+  display:flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: #2c3e50;
+  color: white;
+  font-family: Arial, sans-serif;
+}
+.edit_template_items{
+  display:flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
   padding: 20px;
   color: white;
   font-family: Arial, sans-serif;
 }
 
-p {
+.edit_template_p {
   margin-right: 10px;
 }
 
@@ -833,15 +843,19 @@ p {
   width: 80%;
   margin-bottom: 80px !important;
 }
-
+fieldset, legend{
+  width: fit-content;
+  color: gray;
+  font-family: serif;
+}
 
 input[type="text"] {
   padding: 10px;
   margin: 10px;
   border-radius: 5px;
   border: none;
-
-
+  background-color: #34495e;
+  color: white;
 }
 input[type="number"] {
   flex: 1;
@@ -852,7 +866,6 @@ input[type="number"] {
   background-color: #34495e;
   color: white;
 }
-
 
 input[type="submit"] {
   margin: 20px;
@@ -868,6 +881,7 @@ input[type="submit"] {
 input[type="submit"]:hover {
   background-color: #1abc9c;
 }
+
 #delete_template{
   margin: 20px;
   padding: 10px 20px;
@@ -883,6 +897,21 @@ input[type="submit"]:hover {
   background-color: #1abc9c;
 }
 
+.delete-tricount{
+  margin-left: 2em !important;
+  width: 30% !important;
+}
+.confirm_delete_Tricount{
+  padding-top: 15em;
+  margin: auto;
+  width: 50%;
+  text-align: center;
+}
+.button_delete_confirm{
+  margin: auto;
+  width: 80%;
+  color: red !important;
+}
 /* .......> */
 
 /* media queries */
@@ -920,9 +949,20 @@ input[type="submit"]:hover {
     bottom: 0px;
     width: 100%;
   }
+  .edit-tricount {
+    width: 100%;
+  }
+  input[type="text"],
+  input[type="number"] {
+    width: 100%;
+  }
+  input[type="submit"] {
+    width: 100%;
+  }
 
 }
 
 /* tablet and large mobiles */
 @media screen and (min-width: 575px) and (max-width: 767.98px) {
+ 
 }

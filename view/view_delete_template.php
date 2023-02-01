@@ -21,7 +21,7 @@
                 <input type="submit" value="Cancel" name="submitted">
                 <input id="<?= $template->id?>" type="submit" value="Delete" name="submitted">
             </form>
-        </div>
+        </div> 
     </div>
 </body>
 </html>
