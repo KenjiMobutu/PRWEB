@@ -59,12 +59,10 @@
             
             <?php if(isset($_GET["param2"])){
                 echo "<a href='templates/delete_template/$_GET[param2]'"; echo " id='delete_template'>DELETE</a>";
-            }?>
-            
+            }?>            
         </div>
 
-    </form>
-    
+    </form>    
     
 </body>
 </html>

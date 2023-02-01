@@ -109,9 +109,7 @@ class ControllerTemplates extends Controller
                 $checkedUsers = $_POST["c"];
                 $weights = $_POST["w"];                    
                 $template = Repartition_templates::get_by_id($_POST["templateID"]);
-                if(strlen( $_POST["template_title"]) <3){
-                    $errors = "Bad title. Too short.";
-                }
+    
                 if($_POST["template_title"] !== $template->get_title()){
                     $template->update_title($_POST["template_title"]);
                 }
