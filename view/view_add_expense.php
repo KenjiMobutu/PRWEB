@@ -106,26 +106,38 @@
                 <?php endforeach;?>
             <label for="who">For whom? (select at least one)</label>
             <?php 
-            if(isset($_POST["refreshBtn"])){
-                
-            }
-            ?>
-                <?php foreach($ListUsers as $usr): ?>
-                    <div class="checks">
-                        <input type="checkbox" name="c[<?= $usr->get_user(); ?>]" value="<?php echo $usr->get_user() ?>" id="userIdTemp" <?php if(isset($template)){
+                if(isset($_POST["refreshBtn"])) {
+                    foreach($ListUsers as $usr) { 
+                ?>
+                <div class="checks">
+                    <input type="checkbox" name="c[<?= $usr->get_user(); ?>]" value="<?php echo $usr->get_user() ?>" id="userIdTemp" <?php if(isset($template)){
                                                                                                             if($usr->is_in_Items($template->get_id())) {
                                                                                                                 echo "checked = 'checked'" ;} };?> >
-                                                                                                                
-                            <span style="color: yellow; font-weight: bold;"><?php echo $usr->getUserInfo() ?></span>
-                        <fieldset>
-                            <legend style="color: yellow; font-weight: bold;">Weight</legend>
-                            <input type="number" name="w[<?= $usr->get_user(); ?>]" id="userWeight" min="0" max="50" <?php if(isset($template)){
-                                                                                    if($usr->is_in_Items($template->get_id())) {
-                                                                                        echo "value=".$usr->get_weight_by_user($template->get_id());}; }else echo "value=0";?>>
-                            
-                        </fieldset>
-                    </div>
-                <?php endforeach; ?>
+                        <span style="color: yellow; font-weight: bold;"><?php echo $usr->getUserInfo() ?></span>
+                    <fieldset>
+                        <legend style="color: yellow; font-weight: bold;">Weight</legend>
+                        <input type="number" name="w[<?= $usr->get_user(); ?>]" id="userWeight" min="0" max="50" <?php if(isset($template)){
+                                                                                if($usr->is_in_Items($template->get_id())) {
+                                                                                    echo "value=".$usr->get_weight_by_user($template->get_id());}; }else echo "value=0";?>>
+                    </fieldset>
+                </div>
+                <?php 
+                    }
+                } else {
+                    foreach($users as $usr) { 
+                ?>
+                            <div class="checks">
+                    <input type="checkbox" name="c[<?= $usr->getUserId(); ?>]" value="<?php echo $usr->getUserId() ?>" id="userIdTemp">
+                        <span style="color: yellow; font-weight: bold;"><?php echo $usr->getFullName() ?></span>
+                    <fieldset>
+                        <legend style="color: yellow; font-weight: bold;">Weight</legend>
+                        <input type="number" name="w[<?= $usr->getUserId(); ?>]" id="userWeight" value="1" min="0" max="50">
+                    </fieldset>
+                </div>
+                <?php 
+                    }
+                }
+            ?>
                 <p>Add a new repartition template</p>
                 <div class="save-template">
                 <input type="checkbox" name="save_template" id="save" ><span style="color: yellow; font-weight: bold;">Save this template</span>
