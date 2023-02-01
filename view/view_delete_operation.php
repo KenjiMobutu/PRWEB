@@ -14,12 +14,12 @@
     <div class="delete_template">
         <div class="delete_template_container">
             <h1>Are you sure ?</h1>
-            <p>Do you really want to delete operation <b> "<?php echo $operation_data->title ?>" </b> and all of its dependencies ? </p>
+            <p>Do you really want to delete operation <b> "<?php echo $operation_data->getTitle() ?>" </b> and all of its dependencies ? </p>
 
             <p>this process cannot be undone.</p>
-            <form action="operation/delete_operation/<?= $operation_data->id ?>" class="delete_confirm" method="POST">
+            <form action="operation/delete_operation/<?= $operation_data->get_id() ?>" class="delete_confirm" method="POST">
                 <input type="submit" value="Cancel" name="submitted">
-                <input id="<?= $operation_data->id?>" type="submit" value="Delete" name="submitted">
+                <input id="<?= $operation_data->get_id()?>" type="submit" value="Delete" name="submitted">
             </form>
         </div>
     </div>

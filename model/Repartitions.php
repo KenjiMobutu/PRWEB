@@ -49,21 +49,21 @@ class Repartitions extends Model
         $data = $query->fetchAll();
         return $data;
     }
+    
+    // public static function create()
+    // {
+    //     $query = self::execute(
+    //         "INSERT INTO `repartitions` (`operation`, `user`, `weight`)
+    //         VALUES (':operation', ':user', ':weight');",
+    //         array(
+    //             "operation" => $this->operation,
+    //             "user" => $this->user,
+    //             "weight" => $this->weight
+    //         )
+    //     );
 
-    public static function create()
-    {
-        $query = self::execute(
-            "INSERT INTO `repartitions` (`operation`, `user`, `weight`)
-            VALUES (':operation', ':user', ':weight');",
-            array(
-                "operation" => $this->operation,
-                "user" => $this->user,
-                "weight" => $this->weight
-            )
-        );
-
-        return $query->fetch();
-    }
+    //     return $query->fetch();
+    // }
 
 }
 
