@@ -70,7 +70,7 @@
                         <!-- Bouton de suppression (si autorisé) -->
                         <?php if ($s->can_be_delete($tricount->get_id())): ?>
                             <div class="trash_edit_tricount">
-                                <form action="participation/delete/<?= $s->getUserId() ?>" method="POST">
+                                <form action="participation/delete/<?=  $tricount->get_id() ?>" method="POST">
                                     <input name="userId" value="<?= $s->getUserId() ?>" hidden />
                                     <button type="submit" style="width:2em; background-color:transparent;"><i type="submit"
                                             class="bi bi-trash3"></i></button>
