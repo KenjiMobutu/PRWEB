@@ -100,6 +100,15 @@ class User extends Model
     // }
 
 
+    public function is_in_operation($operationId){
+        $query = self::execute("SELECT user FROM repartitions WHERE operation = :id ",
+                                array("id"=>$operationId));
+        if($query->rowCount()==0){
+            return false;
+        }
+        return $query;
+    }
+
     public static function get_user_id_by_name($full_name)
     {
         $query = self::execute("SELECT id FROM  `users` where full_name=':fullname'", array("fullname" => $full_name));
@@ -434,6 +443,33 @@ class User extends Model
         }
 
     }
+    
+    public function can_be_delete($tricount): bool
+    {
+        $query = self::execute("SELECT count(*)
+        FROM subscriptions
+        WHERE tricount = :tricount
+        AND user = :user
+        AND user NOT IN (
+        SELECT initiator
+        FROM operations
+        WHERE tricount = :tricount
+        )
+        AND user NOT IN (
+        SELECT user
+        FROM repartitions
+        JOIN operations
+        ON repartitions.operation = operations.id
+        WHERE tricount = :tricount
+        );", array("tricount"=>$tricount,"user" =>$this->getUserId()));
+        if ($query->fetchColumn() == 0) {
+            return false;
+        } else {
+            return true;
+        }
+
+    }
+    
     public function is_in_tricount($idTricount){
         $query = self::execute("SELECT * from subscriptions s where s.user = :user and s.tricount =:id  ",array("user"=>$this->id,"id"=>$idTricount));
         $data = $query->fetch();

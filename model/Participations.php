@@ -19,6 +19,16 @@ require_once "framework/Model.php";
         }
 
 
+        public function is_in_operation($operationId){
+            $query = self::execute("SELECT user FROM repartitions WHERE operation = :id ",
+                                    array("id"=>$operationId));
+            if($query->rowCount()==0){
+                return false;
+            }
+            return $query;
+        }
+
+
         public static function get_by_tricount($tricount){
             $query = self::execute("SELECT s.*, t.creator from subscriptions s, tricounts t
                                             where s.tricount = t.id
@@ -61,7 +71,17 @@ require_once "framework/Model.php";
             $query = self::execute("SELECT * from subscriptions where user =:user",
             array("user"=>$user));
         }
-
+        public static function delete_by_user_id_and_tricount($id,$tricount): bool{
+            $query = self::execute("DELETE
+                from subscriptions
+                where user=:user
+                And tricount=:tricount",
+                array("user"=>$id, "tricount"=>$tricount));
+            if($query->rowCount()==0)
+                return false;
+            else
+                return true;
+        }
 
 
         public static function delete_by_user_id($id): bool{
@@ -113,7 +133,7 @@ require_once "framework/Model.php";
                                   FROM subscriptions s, tricounts t
                                   where s.tricount = t.id
                                   And s.tricount = :tricount
-                                  And s.user != t.creator", array("tricount"=>$tricount));
+                                  ", array("tricount"=>$tricount));
             $data = $query->fetchAll();
             $subscription  = [];
             foreach ($data as $row) {
@@ -143,14 +163,14 @@ require_once "framework/Model.php";
             return false;
         }
         return $query;
-       
+
     }
     public function get_weight_by_user($repartition_template): int
     {
-      $query = self::execute("SELECT * 
-                              FROM  `repartition_template_items` 
+      $query = self::execute("SELECT *
+                              FROM  `repartition_template_items`
                               where user=:user
-                              and repartition_template=:repartition_template ", 
+                              and repartition_template=:repartition_template ",
                               array("user" => $this->user,"repartition_template"=>$repartition_template));
       $data = $query->fetch(); //un seul resultat max
       if ($query->rowCount() == 0) {
