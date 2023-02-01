@@ -73,7 +73,7 @@ class ControllerTemplates extends Controller
                 $tricount = Tricounts::get_by_id($_GET["param1"]);
                 $template = Repartition_templates::get_by_id($_GET['param2']);
                 if($template === null){
-                    $this->redirect("templates","edit_template".$tricount->get_id());
+                    $this->redirect("templates","edit_template/".$tricount->get_id());
                 }
                 $listUser = Participations::get_by_tricount($tricount->get_id());
 
@@ -154,14 +154,14 @@ class ControllerTemplates extends Controller
         $userlogged = $this->get_user_or_redirect();
         $user = User::get_by_id($userlogged->getUserId());
 
-        if($user->is_in_items($_GET['param1']) || $user->is_in_tricount($_GET['param1'])){
+        if($user->is_in_tricount($_GET['param1'] || $user->is_in_items($_GET['param1'])  )){
             $userlogged = $this->get_user_or_redirect();
             $user = User::get_by_id($userlogged->getUserId());
             if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
                 $this->redirect('main', "error");
             }else{    
                 $template = Repartition_templates::get_by_id($_GET['param1']);
-                if($template === null){
+                if(is_null($template)){
                     $this->redirect("user","profile");
                 }
                 if(isset($_POST['submitted'])){
@@ -176,6 +176,9 @@ class ControllerTemplates extends Controller
             }
             (new View("delete_template"))->show(array("user"=>$user,
                                                 "template"=>$template));
+        }else{
+            $this->redirect("user","profile");
+
         }
     }
 
