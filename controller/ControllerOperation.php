@@ -140,10 +140,11 @@ class ControllerOperation extends Controller
                 $amount = floatval($_POST["amount"]);
                 $operation_date = $_POST["operation_date"];
                 $initiator = $_POST["initiator"];
-                $users = User::getUsers();
+                $users = Participations::get_by_tricount($tricId);;
                 $init = User::get_by_id($initiator);
                 $rti = Repartition_template_items::get_by_user($userId);
                 $template = Repartition_templates::get_by_id($_POST['rti']);
+
                 // var_dump($template); die();
                 if ($template === null) {
                     $this->redirect("operation", "expenses/" . $tricount->get_id());

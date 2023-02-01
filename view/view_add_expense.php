@@ -34,10 +34,10 @@
                     <label for="paid_by">Paid By</label>
                     <select id="initiator" name="initiator">
                     <?php if (isset($_POST["initiator"])):
-                    echo '<option value=' . $init->get_user() . ">" . $init->getUserInfo() . "</option>"; endif; ?>
+                    echo '<option value=' . $init->getUserId() . ">" . $init->getFullName() . "</option>"; endif; ?>
 
                     <?php foreach ($users as $urss): ?>
-                        <option style="color: black;" value="<?php echo $urss->getUserInfo() ?>"><?php echo $urss->getUserInfo() ?></option>
+                        <option style="color: black;" value="<?php echo $urss->get_user() ?>"><?php echo $urss->getUserInfo() ?></option>
                     <?php endforeach; ?>
                 </select>
                 <br>
@@ -82,7 +82,6 @@
                                     } else
                                         echo "value=0"; ?>>
                                 </fieldset>
-                                <input type="submit" value="Submit">
 
                             </div>
 
