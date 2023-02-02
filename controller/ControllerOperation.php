@@ -138,7 +138,7 @@ class ControllerOperation extends Controller
                 $title =  Tools::sanitize($_POST["title"]);
                 $tricId = $_POST["tricId"];
                 $tricount = Tricounts::get_by_id($tricId);
-                $amount =   Tools::sanitize(number_format($_POST["amount"], 2));
+                $amount =   Tools::sanitize(floatval($_POST["amount"]));
                 $operation_date = $_POST["operation_date"];
                 $initiator = $_POST["initiator"];
                 $users = User::getUsers();
@@ -185,7 +185,7 @@ class ControllerOperation extends Controller
 
                     $title = Tools::sanitize($_POST["title"]);
                     $tricount = $_POST["tricId"];
-                    $amount =   Tools::sanitize(number_format($_POST["amount"], 2));
+                    $amount =   Tools::sanitize(floatval($_POST["amount"]));
                     $operation_date = $_POST["operation_date"];
                     $initiator = $_POST["initiator"];
                     $created_at = date('y-m-d h:i:s');
@@ -222,7 +222,7 @@ class ControllerOperation extends Controller
 
                     $title =  Tools::sanitize($_POST["title"]);
                     $tricount = $_POST["tricId"];
-                    $amount =   Tools::sanitize(number_format($_POST["amount"], 2));
+                    $amount =   Tools::sanitize(floatval($_POST["amount"]));
                     $operation_date = $_POST["operation_date"];
                     $initiator = $_POST["initiator"];
                     $created_at = date('y-m-d h:i:s');
@@ -329,7 +329,7 @@ class ControllerOperation extends Controller
 
                         $title =  Tools::sanitize($_POST["title"]);
                         $tricount = $_POST["tricId"];
-                        $amount =   Tools::sanitize(number_format($_POST["amount"], 2));
+                        $amount =   Tools::sanitize(floatval($_POST["amount"]));
                         $operation_date = $_POST["operation_date"];
                         $init = User::get_by_name($_POST["initiator"]);
                         $initiator = $init->getUserId();
