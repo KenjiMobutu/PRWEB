@@ -31,18 +31,20 @@
 
             <label for="paid_by">Paid By</label>
             <select id="initiator" name="initiator">
-                <option selected value="<?php echo $usr ?>"><?php echo $usr ?></option>
+                <option style="color: black;" selected value="<?php echo $usr ?>"><?php echo $usr ?></option>
                 <?php foreach ($users as $urss): ?>
-                    <option value="<?php echo $urss->getFullName() ?>"><?php echo $urss->getFullName() ?></option>
+                    <option style="color: black;" value="<?php echo $urss->getFullName() ?>"><?php echo $urss->getFullName() ?></option>
                 <?php endforeach; ?>
             </select>
             <br>
             <label for="repartition_template">Use repartition template (optional)</label>
+            <button name="refreshBtn" id="refreshBtn">Refresh</button>
             <select id="rti" name="rti">
-                <option value="option-default">No,I'll use custom repartition</option>
+                <option style="color: black;" value="option-default">No,I'll use custom repartition</option>
                 <?php foreach ($rti as $rt):
-                    $title = $rt["title"]; ?>
-                    <option value="<?php echo $title ?>"><?php echo $title ?></option>
+                    $title = $rt["title"];
+                    $templateId = $rt["id"] ?>
+                    <option name="option_template" style="color: black;" value="<?php echo $templateId ?>"><?php echo $title ?></option>
                 <?php endforeach; ?>
             </select>
             <label for="who">For whom? (select at least one)</label>
