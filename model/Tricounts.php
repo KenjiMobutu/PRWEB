@@ -92,6 +92,27 @@
         }
     }
 
+    public static function get_by_title($title){
+      $query = self::execute("SELECT * FROM tricounts WHERE title = :title", array("title"=>$title));
+        $data = $query->fetch();
+        if ($query->rowCount() == 0) {
+            return false;
+        } else {
+            return new Tricounts($data["id"],$data["title"],$data["description"],$data["created_at"],$data["creator"]);
+        }
+    }
+
+    public static function validate_title($title){
+      $errors = [];
+      $title = Tools::sanitize($title);
+      if(!(isset($title) && is_string($title) && strlen($title)>2)){
+          $errors[] = "Min. 3 characters for the Title is required";
+      } if(!(isset($title) && is_string($title) && strlen($title) <= 256)){
+          $errors[] = "Title can only contain letters, spaces and dashes and a maximum length of 256";
+      }
+      return $errors;
+    }
+
   //retourne le tricount par son créateur
   public static function get_by_creator($creator)
   {
