@@ -45,9 +45,7 @@ class ControllerParticipation extends Controller{
       $id = $_POST["userId" ];
       $idT = $_GET["param1"];
       $tricount = Tricounts::get_by_id($idT);
-      var_dump($tricount);
       $result = Participations::delete_by_user_id_and_tricount($id,$tricount->get_id());
-
       if ($result) {
         $this->redirect('tricount', "edit",$tricount->get_id());
       } else {
@@ -56,6 +54,4 @@ class ControllerParticipation extends Controller{
       }
     }
   }
-
-
 }

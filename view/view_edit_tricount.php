@@ -52,6 +52,17 @@
             <h2>Description (optional) :</h2>
             <input type="text" name="description"
                 value='<?= $tricount->get_description() == null ? "No description" : $tricount->get_description() ?>'>
+
+                <?php if (count($errors) != 0): ?>
+                            <div class='errors'>
+                                <br><br><p>Please correct the following error(s) :</p>
+                                <ul>
+                                    <?php foreach ($errors as $error): ?>
+                                        <li><?= $error ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        <?php endif; ?>
         </div>
 </form>
         <!-- Souscriptions au Tricount -->

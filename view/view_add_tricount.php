@@ -38,7 +38,7 @@
 
     <!-- * tricount block -->
 
-    <div class="section mt-2 mb-2">
+        <div class="section mt-2 mb-2">
             <div class="card">
                 <div class="card-body">
                         <div class="form-group boxed">
@@ -54,7 +54,17 @@
                                 <textarea id="textarea4b" name="description" rows="2" class="form-control" placeholder="Your description here!"></textarea>
                             </div>
                         </div>
-                    </form>
+                        <?php if (count($errors) != 0): ?>
+                            <div class='errors'>
+                                <br><br><p>Please correct the following error(s) :</p>
+                                <ul>
+                                    <?php foreach ($errors as $error): ?>
+                                        <li><?= $error ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        <?php endif; ?>
+    </form>
                 </div>
             </div>
         </div>
