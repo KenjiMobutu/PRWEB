@@ -73,7 +73,7 @@ class ControllerTemplates extends Controller
                 $tricount = Tricounts::get_by_id($_GET["param1"]);
                 $template = Repartition_templates::get_by_id($_GET['param2']);
                 if($template === null){
-                    $this->redirect("templates","edit_template/".$tricount->get_id());
+                    $this->redirect("templates","edit_template".$tricount->get_id());
                 }
                 $listUser = Participations::get_by_tricount($tricount->get_id());
 
@@ -103,19 +103,20 @@ class ControllerTemplates extends Controller
     public function editTemplate(){
         $userlogged = $this->get_user_or_redirect();
         $user = User::get_by_id($userlogged->getUserId());
-        // $errors = [];
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if($_POST["templateID"] !== "" && isset($_POST["template_title"]) && isset($_POST["c"]) && isset($_POST["w"])){
                 $checkedUsers = $_POST["c"];
-                $weights = $_POST["w"];                    
-                $template = Repartition_templates::get_by_id($_POST["templateID"]);
-    
+                $weights = $_POST["w"];
+                $template_title = Tools::sanitize($_POST["template_title"]);
+                $errors = Repartition_templates::validatetitle($template_title);
+                $template = Repartition_templates::get_by_id($_POST["templateID"]);    
                 if($_POST["template_title"] !== $template->get_title()){
-                    $template->update_title($_POST["template_title"]);
+                    $template->update_title($template_title);
                 }
+                
                 if(!is_null($template)){
                     Repartition_template_items::delete_by_repartition_template($template->get_id());
-                    for($i = 0; $i <= count($checkedUsers)+2; $i++) {                               
+                    for($i = 0; $i <= count($checkedUsers)+2; $i++) {
                         if((isset($checkedUsers[$i]) && $checkedUsers[$i] !== null) && isset($weights[$i]) && $weights[$i] !== null ){
                             if($weights[$i] ==="" )
                                 $weights[$i] = 0;
@@ -126,24 +127,25 @@ class ControllerTemplates extends Controller
                         
                     };
                 }
-                $this->redirect("templates", "templates",$_POST["tricountId"]);    
+                $this->redirect("templates", "templates",$_POST["tricountId"]);
 
             }else if(isset($_POST["template_title"]) && isset($_POST["c"]) && isset($_POST["w"]) && $_POST["templateID"] === ""){
                 // Récupère les valeurs des inputs
                 $checkedUsers = $_POST["c"];
-                $weights = $_POST["w"];    
+                $weights = $_POST["w"];
                 // Utilise les valeurs pour ajouter à la base de données ou pour d'autres traitements
+                $template_title = Tools::sanitize($_POST["template_title"]);
                 $template = new Repartition_templates(null,$_POST["template_title"], $_POST["tricountId"] );
-                $template->newTemplate($_POST["template_title"], $_POST["tricountId"]);
+                $template->newTemplate($template_title, $_POST["tricountId"]);
                 if($template !== null){                
-                    for($i = 0; $i <= count($checkedUsers)+2; $i++) {                                                
+                    for($i = 0; $i <= count($checkedUsers)+2; $i++) {
                         if((isset($checkedUsers[$i]) && $checkedUsers[$i] !== null) && isset($weights[$i]) && $weights[$i] !== null ){
                         Repartition_template_items::addNewItems($checkedUsers[$i],
                             $template->get_id(),
                             $weights[$i]); 
                         }
                     }
-                    $this->redirect("templates", "templates",$_POST["tricountId"]);    
+                    $this->redirect("templates", "templates",$_POST["tricountId"]);
                 }
             }else
                 $this->redirect("main","error");

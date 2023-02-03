@@ -133,15 +133,15 @@ class Repartition_templates extends Model
 
 
   public function update_title($title){
-    self::execute("UPDATE `repartition_templates` SET
+      self::execute("UPDATE `repartition_templates` SET
       title=:title,
       tricount=:tricount
       WHERE id=:id ",
-    array(
-      "id" => $this->id,
-      "title" => $title,
-      "tricount" => $this->tricount
-    ));
+      array(
+        "id" => $this->id,
+        "title" => $title,
+        "tricount" => $this->tricount
+      ));
     return $this;
   }
 
@@ -174,12 +174,13 @@ class Repartition_templates extends Model
 
 
 
-  public static function validatetitle($full_name) : bool
+  public static function validatetitle($title) 
   {
-      if(strlen($full_name) < 3 ){
-          return false;
+    $errors =[];
+      if(strlen($title) < 3 ){
+          $errors = "Bad title. Must be at least 3 characters";
       }
-      return true;
+      return $errors;
   }
 
 }
