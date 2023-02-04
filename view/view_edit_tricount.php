@@ -38,7 +38,7 @@
                     <i class="bi bi-save"></i>
                 </button>
             </div>
-        </form>
+
     </div>
 
     <!-- Bloc de modification du Tricount -->
@@ -48,35 +48,56 @@
         </div>
         <div class="edit-settingsInput">
             <h2>Title :</h2>
-            <input type="text" name='title' value='<?= $tricount->get_title() ?>'>
+            <input type="text" name="title" value='<?= $tricount->get_title() ?>'>
             <h2>Description (optional) :</h2>
-            <input type="text" name='description'
+            <input type="text" name="description"
                 value='<?= $tricount->get_description() == null ? "No description" : $tricount->get_description() ?>'>
-        </div>
 
+                <?php if (count($errors) != 0): ?>
+                            <div class='errors'>
+                                <br><br><p>Please correct the following error(s) :</p>
+                                <ul>
+                                    <?php foreach ($errors as $error): ?>
+                                        <li><?= $error ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        <?php endif; ?>
+        </div>
+</form>
         <!-- Souscriptions au Tricount -->
         <div class="edit-settingsTitle">
             <h1>Subscriptions</h1>
+        </div>
+        <div class="edit-subscriberInput">
             <!-- Boucle sur les souscriptions -->
             <?php foreach ($sub as $s): ?>
                 <li>
-                    <!-- Nom de l'utilisateur -->
-                    <input type="text" name="name" value="<?= $s->getFullName() ?>" disabled />
-                    <!-- Indication que l'utilisateur est le créateur -->
-                    <?php if ($s->getUserId() == $tricount->get_creator_id()): ?>
-                        <span>(creator)</span>
-                    <?php endif; ?>
-                    <!-- Bouton de suppression (si autorisé) -->
-                    <?php if ($s->can_be_delete($tricount->get_id())): ?>
-                        <button type="button"><i class="bi bi-trash3"></i></button>
-                    <?php endif; ?>
+                    <div class="infos_tricount_edit">
+                        <!-- Nom de l'utilisateur -->
+                        <div class="name_tricount_edit">
+                            <!-- Indication que l'utilisateur est le créateur -->
+                            <input type="text" name="name" value="<?=($s->getUserId() == $tricount->get_creator_id() ? $s->getFullName()." (créateur)" : $s->getFullName())?>"  disabled/>
+                        <!-- Bouton de suppression (si autorisé) -->
+                        <div class="trash_edit_tricount">
+                            <?php if ($s->can_be_delete($tricount->get_id()) && $s->getUserId() != $tricount->get_creator_id()): ?>
+                                <form action="participation/delete/<?=  $tricount->get_id() ?>" method="POST">
+                                    <input name="userId" value="<?= $s->getUserId() ?>" hidden />
+                                    <button type="submit" style="background-color:transparent;">
+                                        <i type="submit"class="bi bi-trash3"></i>
+                                    </button>
+                                </form>
+                            <?php endif; ?>
+                        </div>
+                        </div>
+                    </div>
                 </li>
             <?php endforeach; ?>
-
+        </div>
             <!-- Formulaire d'ajout de souscripteur -->
             <form id="addSubscriber" action="participation/add/<?= $tricount->get_id() ?>" method="post">
                 <div class="edit-selectSub">
-                    <select class="selectSub" name="subName" id="names">
+                    <select class="selectSub" name="names" id="names">
                         <option value="">--Add a new subscriber--</option>
                         <?php foreach ($users as $u): ?>
                             <option value='<?= $u->getUserId() ?>'><?= $u->getFullName() ?></option>
