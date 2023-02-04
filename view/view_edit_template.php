@@ -39,7 +39,7 @@
                     <input  type="checkbox" name="c[<?= $listusr->get_user(); ?>]" value="<?= $listusr->get_user(); ?>" <?php if(isset($template)){
                                                                                                                     if($listusr->is_in_Items($template->get_id())) {
                                                                                                                         echo "checked = 'checked'" ;} };?> >
-                    <input  type="text" name="user" value="<?=$listusr->get_user();?>" placeholder="<?=$listusr->getUserInfo(); ?>"  disabled="disabled">
+                    <input  type="text" name="user" placeholder="<?php echo $listusr->getUserInfo(); ?>"  disabled="disabled">
                     <fieldset>
                         <legend>Weight</legend>
                         <input  type="number" name="w[<?= $listusr->get_user() ; ?>]"min="0" placeholder="0"  <?php if(isset($template)){if($listusr->is_in_Items($template->get_id())){echo "value=".$listusr->get_weight_by_user($template->get_id());}; }else echo "value="."0";?>>

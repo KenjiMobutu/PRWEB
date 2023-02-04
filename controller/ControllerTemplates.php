@@ -104,11 +104,14 @@ class ControllerTemplates extends Controller
         $userlogged = $this->get_user_or_redirect();
         $user = User::get_by_id($userlogged->getUserId());
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            if(empty($_POST["c"])){
+                $this->redirect("templates","templates",$_POST["tricountId"]);
+            }
             if($_POST["templateID"] !== "" && isset($_POST["template_title"]) && isset($_POST["c"]) && isset($_POST["w"])){
                 $checkedUsers = $_POST["c"];
                 $weights = $_POST["w"];
+                
                 $template_title = Tools::sanitize($_POST["template_title"]);
-                $errors = Repartition_templates::validatetitle($template_title);
                 $template = Repartition_templates::get_by_id($_POST["templateID"]);    
                 if($_POST["template_title"] !== $template->get_title()){
                     $template->update_title($template_title);
