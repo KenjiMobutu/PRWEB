@@ -85,6 +85,16 @@ class Repartition_templates extends Model
       return $items;
     }
     
+
+    public static function template_exist_in_tricount($id, $tricountid){
+      $query = self::execute("SELECT * FROM  `repartition_templates` where id=:id AND tricount =:tricount", array("id" => $id, "tricount"=>$tricountid));
+      $data = $query->fetch(); //un seul resultat max
+      if ($query->rowCount() == 0) {
+        return null;
+      } else {
+      return $data;
+    }
+    }
   
 
     public static function delete_by_tricount($tricount){

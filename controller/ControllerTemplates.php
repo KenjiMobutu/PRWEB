@@ -69,9 +69,13 @@ class ControllerTemplates extends Controller
         $user = User::get_by_id($userlogged->getUserId());
         if($user->is_in_tricount($_GET['param1']) || $user->is_creator($_GET['param1'])){  
             if($_GET['param1'] !==null && (isset($_GET['param2']) && $_GET['param2'] !== null)){
-                $listUser = [];
                 $tricount = Tricounts::get_by_id($_GET["param1"]);
                 $template = Repartition_templates::get_by_id($_GET['param2']);
+                if(empty(Repartition_templates::template_exist_in_tricount($template->get_id(),$tricount->get_id()))){
+                    $this->redirect("user","profile");
+                } 
+                $listUser = [];
+                
                 if($template === null){
                     $this->redirect("templates","edit_template".$tricount->get_id());
                 }
@@ -108,6 +112,9 @@ class ControllerTemplates extends Controller
                 $this->redirect("templates","templates",$_POST["tricountId"]);
             }
             if($_POST["templateID"] !== "" && isset($_POST["template_title"]) && isset($_POST["c"]) && isset($_POST["w"])){
+                if(is_null(Repartition_templates::template_exist_in_tricount($_POST["templateID"],$_POST["tricountId"]))){
+                    $this->redirect("user","profile");
+                }      // TODO doit check si le template id fait bien parti du tricount
                 $checkedUsers = $_POST["c"];
                 $weights = $_POST["w"];
                 
