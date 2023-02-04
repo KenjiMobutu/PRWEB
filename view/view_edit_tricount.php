@@ -52,11 +52,24 @@
             <h2>Description (optional) :</h2>
             <input type="text" name="description"
                 value='<?= $tricount->get_description() == null ? "No description" : $tricount->get_description() ?>'>
+
+                <?php if (count($errors) != 0): ?>
+                            <div class='errors'>
+                                <br><br><p>Please correct the following error(s) :</p>
+                                <ul>
+                                    <?php foreach ($errors as $error): ?>
+                                        <li><?= $error ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        <?php endif; ?>
         </div>
 </form>
         <!-- Souscriptions au Tricount -->
         <div class="edit-settingsTitle">
             <h1>Subscriptions</h1>
+        </div>
+        <div class="edit-subscriberInput">
             <!-- Boucle sur les souscriptions -->
             <?php foreach ($sub as $s): ?>
                 <li>
@@ -65,23 +78,22 @@
                         <div class="name_tricount_edit">
                             <!-- Indication que l'utilisateur est le créateur -->
                             <input type="text" name="name" value="<?=($s->getUserId() == $tricount->get_creator_id() ? $s->getFullName()." (créateur)" : $s->getFullName())?>"  disabled/>
-                            <!-- Indication que l'utilisateur est le créateur -->
-                        </div>
                         <!-- Bouton de suppression (si autorisé) -->
-                        <?php if ($s->can_be_delete($tricount->get_id())): ?>
-                            <div class="trash_edit_tricount">
-                                <form action="participation/delete/<?= $s->getUserId() ?>" method="POST">
+                        <div class="trash_edit_tricount">
+                            <?php if ($s->can_be_delete($tricount->get_id()) && $s->getUserId() != $tricount->get_creator_id()): ?>
+                                <form action="participation/delete/<?=  $tricount->get_id() ?>" method="POST">
                                     <input name="userId" value="<?= $s->getUserId() ?>" hidden />
-                                    <button type="submit" style="width:2em; background-color:transparent;"><i type="submit"
-                                            class="bi bi-trash3"></i></button>
+                                    <button type="submit" style="background-color:transparent;">
+                                        <i type="submit"class="bi bi-trash3"></i>
+                                    </button>
                                 </form>
-                            </div>
-                        <?php endif; ?>
+                            <?php endif; ?>
+                        </div>
+                        </div>
                     </div>
                 </li>
-
             <?php endforeach; ?>
-
+        </div>
             <!-- Formulaire d'ajout de souscripteur -->
             <form id="addSubscriber" action="participation/add/<?= $tricount->get_id() ?>" method="post">
                 <div class="edit-selectSub">

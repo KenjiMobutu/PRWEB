@@ -26,7 +26,7 @@
     <div class="appHeader">
         <!-- Back Button -->
         <div class="left">
-            <a href="#" class="headerButton goBack">
+            <a href="user/profile" class="headerButton goBack">
                 <i class="bi bi-arrow-left"></i>
             </a>
         </div>
@@ -50,8 +50,8 @@
             <!-- Tricount Block -->
             <?php foreach ($tricounts_list as $tl): ?>
                 <div class="card-block mb-2">
-                    <form action="operation/expenses/<?= $tl->get_id() ?>" method="POST">
-                        <button class="button-card">
+
+                        <a href="operation/expenses/<?= $tl->get_id()?>" class="button-card">
                             <div class="card-main">
                                 <!-- Tricount Title and Description -->
                                 <div class="balance">
@@ -78,7 +78,7 @@
                                 <input type='text' name="id" id="id" value="<?= $tl->get_id() ?>" hidden>
                             </div>
                         </button>
-                    </form>
+            </a>
                 </div>
             <?php endforeach; ?>
         </div>
