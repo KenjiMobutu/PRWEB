@@ -26,7 +26,7 @@
     <div class="appHeader">
         <!-- Back Button -->
         <div class="left">
-            <a href="#" class="headerButton goBack">
+            <a href="user/profile" class="headerButton goBack">
                 <i class="bi bi-arrow-left"></i>
             </a>
         </div>
