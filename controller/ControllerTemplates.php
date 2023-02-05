@@ -95,7 +95,7 @@ class ControllerTemplates extends Controller
                 $weights = $_POST["w"];
                 $template_title = Tools::sanitize($_POST["template_title"]);
                 $template = Repartition_templates::get_by_id($_POST["templateID"]);
-                if(Repartition_templates::is_title_already_exist($template_title, $template->get_tricount())){
+                if($template_title !== $template->get_title() && Repartition_templates::is_title_already_exist($template_title, $template->get_tricount())){
                     $this->redirect("main","error","Title_already_exist");
                 }
                 if($_POST["template_title"] !== $template->get_title()){
