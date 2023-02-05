@@ -95,7 +95,7 @@ class ControllerTemplates extends Controller
                 $weights = $_POST["w"];
                 $template_title = Tools::sanitize($_POST["template_title"]);
                 $template = Repartition_templates::get_by_id($_POST["templateID"]);
-                if(Repartition_templates::is_title_already_exist($template_title, $template->get_id())){
+                if(Repartition_templates::is_title_already_exist($template_title, $template->get_tricount())){
                     $this->redirect("main","error","Title_already_exist");
                 }
                 if($_POST["template_title"] !== $template->get_title()){
@@ -121,8 +121,12 @@ class ControllerTemplates extends Controller
                 $weights = $_POST["w"];
                 // Utilise les valeurs pour ajouter à la base de données ou pour d'autres traitements
                 $template_title = Tools::sanitize($_POST["template_title"]);
+                if(Repartition_templates::is_title_already_exist($template_title, $_POST['tricountId'])){
+                    $this->redirect("main","error","Title_already_exist");
+                }
                 $template = new Repartition_templates(null,$_POST["template_title"], $_POST["tricountId"] );
                 $template->newTemplate($template_title, $_POST["tricountId"]);
+                
                 if($template !== null){
                     for($i = 0; $i <= count($checkedUsers)+50; $i++) {
                         if((isset($checkedUsers[$i]) && $checkedUsers[$i] !== null) && isset($weights[$i]) && $weights[$i] !== null ){
