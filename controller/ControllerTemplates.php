@@ -17,24 +17,6 @@ class ControllerTemplates extends Controller
         $this->templates();
     }
     
-    /**
-     *                      que doit faire templates?
-     * recevoir l'id du tricount pour afficher le nom dans la vue       ($get param 1 )
-     * récupérer les repartition_templates pour afficher le nom de la répartition
-     * récupérer les items des templates et le nom des utilisateurs concerné
-     */
-
-    /**
-     *              Que doit faire la vue templates
-     * afficher le nom du tricount
-     * faire un foreach des templates reçu
-     * afficher le nom du template
-     * faire un foreach pour récupérer les données du templates
-     * faire appel a une fonction qui permet de récup le full name du user par son id
-     * récupérer le poid lié au user 
-     * récupérer la fonction qui fait la somme du poid du template 
-     */
-
     public function templates()
     {
         $userlogged = $this->get_user_or_redirect();
@@ -59,9 +41,7 @@ class ControllerTemplates extends Controller
                                                 "items"=>$items,));
         }
         else
-            $this->redirect('main', "error");
-
-        
+            $this->redirect('main', "error");        
     }
 
     public function edit_template(){
@@ -72,8 +52,9 @@ class ControllerTemplates extends Controller
                 $tricount = Tricounts::get_by_id($_GET["param1"]);
                 $template = Repartition_templates::get_by_id($_GET['param2']);
                 if(empty(Repartition_templates::template_exist_in_tricount($template->get_id(),$tricount->get_id()))){
+                    //dans le cas si l'utilisateur modifie l'url
                     $this->redirect("user","profile");
-                } 
+                }
                 $listUser = [];
                 
                 if($template === null){
@@ -81,8 +62,7 @@ class ControllerTemplates extends Controller
                 }
                 $listUser = Participations::get_by_tricount($tricount->get_id());
 
-                $listItems = Repartition_template_items::get_user_by_repartition($template->get_id());
-            
+                $listItems = Repartition_template_items::get_user_by_repartition($template->get_id());            
                 (new View("edit_template"))->show(array("user"=>$user, 
                                                         "tricount"=>$tricount,
                                                         "template"=>$template,
@@ -96,7 +76,6 @@ class ControllerTemplates extends Controller
                 (new View("edit_template"))->show(array("user"=>$user,
                                                         "tricount"=>$tricount,
                                                         "listUser"=>$listUser));
-                        
             }
         }else{
             $this->redirect("main","error");
@@ -112,33 +91,27 @@ class ControllerTemplates extends Controller
                 $this->redirect("templates","templates",$_POST["tricountId"]);
             }
             if($_POST["templateID"] !== "" && isset($_POST["template_title"]) && isset($_POST["c"]) && isset($_POST["w"])){
-                if(is_null(Repartition_templates::template_exist_in_tricount($_POST["templateID"],$_POST["tricountId"]))){
-                    $this->redirect("user","profile");
-                }      // TODO doit check si le template id fait bien parti du tricount
                 $checkedUsers = $_POST["c"];
                 $weights = $_POST["w"];
-                
                 $template_title = Tools::sanitize($_POST["template_title"]);
-                $template = Repartition_templates::get_by_id($_POST["templateID"]);    
+                $template = Repartition_templates::get_by_id($_POST["templateID"]);
                 if($_POST["template_title"] !== $template->get_title()){
                     $template->update_title($template_title);
-                }
-                
+                }                
                 if(!is_null($template)){
                     Repartition_template_items::delete_by_repartition_template($template->get_id());
-                    for($i = 0; $i <= count($checkedUsers)+2; $i++) {
-                        if((isset($checkedUsers[$i]) && $checkedUsers[$i] !== null) && isset($weights[$i]) && $weights[$i] !== null ){
+                    for($i = 0; $i <= count($weights)+50; $i++) {
+                        if((isset($checkedUsers[$i]) && $checkedUsers[$i] !=="") && (isset($weights[$i]) && $weights[$i] !=="")){
+
                             if($weights[$i] ==="" )
                                 $weights[$i] = 0;
                             Repartition_template_items::addNewItems($checkedUsers[$i],
                             $template->id,
                             $weights[$i]); 
                         }
-                        
                     };
                 }
-                $this->redirect("templates", "templates",$_POST["tricountId"]);
-
+                $this->redirect("templates", "templates",$_POST["tricountId"]);                
             }else if(isset($_POST["template_title"]) && isset($_POST["c"]) && isset($_POST["w"]) && $_POST["templateID"] === ""){
                 // Récupère les valeurs des inputs
                 $checkedUsers = $_POST["c"];
@@ -147,8 +120,8 @@ class ControllerTemplates extends Controller
                 $template_title = Tools::sanitize($_POST["template_title"]);
                 $template = new Repartition_templates(null,$_POST["template_title"], $_POST["tricountId"] );
                 $template->newTemplate($template_title, $_POST["tricountId"]);
-                if($template !== null){                
-                    for($i = 0; $i <= count($checkedUsers)+2; $i++) {
+                if($template !== null){
+                    for($i = 0; $i <= count($checkedUsers)+50; $i++) {
                         if((isset($checkedUsers[$i]) && $checkedUsers[$i] !== null) && isset($weights[$i]) && $weights[$i] !== null ){
                         Repartition_template_items::addNewItems($checkedUsers[$i],
                             $template->get_id(),
