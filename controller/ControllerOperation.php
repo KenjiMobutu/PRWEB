@@ -276,13 +276,13 @@ class ControllerOperation extends Controller
                         $operation->insert();
                         $template->newTemplate($template_name, $_POST["tricId"]);
                         if ($template !== null) {
-                            for ($i = 0; $i <= count($checkedUsers) + 1; $i++) {
+                            for ($i = 0; $i <= count($checkedUsers) + 50; $i++) {
                                 if (isset($checkedUsers[$i]) && $checkedUsers[$i] !== null) {
                                     if ($weights[$i] === "" || $weights[$i] === "0")
                                         $weights[$i] = 1;
                                     Repartition_template_items::addNewItems(
                                         $checkedUsers[$i],
-                                        $template->id,
+                                        $template->get_id(),
                                         $weights[$i]
                                     );
                                     Operation::insertRepartition($operation->get_id(), $weights[$i], $checkedUsers[$i]);
@@ -320,13 +320,10 @@ class ControllerOperation extends Controller
             $operationId = $_GET['param1'];
             $operation_data = Operation::getOperationByOperationId($operationId);
             $usr = $operation_data->getInitiator();
-            $users = User::getUsers();
-            $rti = Repartition_template_items::get_by_user($userId);
-            // echo '<pre>';
-            // print_r($rti);
-            // echo '</pre>';
-            // die();
+            $users = Participations::get_by_tricount($tricount->get_id());
 
+            // $users = User::getUsers();
+            $rti = Repartition_template_items::get_by_user($userId);          
         }
 
         (new View("edit_expense"))->show(array("user" => $user, "operation_data" => $operation_data, "users" => $users, "rti" => $rti, "tricount" => $tricount, "usr" => $usr));
@@ -371,7 +368,6 @@ class ControllerOperation extends Controller
                 ) {
 
                     $operation = Operation::getOperationByOperationId($_POST["operationId"]);
-
                     if ($operation !== null) {
 
                         $title = Tools::sanitize($_POST["title"]);
@@ -403,8 +399,34 @@ class ControllerOperation extends Controller
                     }
                     $errors = $operation->validate();
 
+                    if(empty($_POST['name_template'])){
+                        $this->redirect('main', "error","title_cannot_be_empty");
+                    }
+                    
                     if (empty($errors)) {
                         $operation->update();
+                        $checkedUsers = $_POST['c'];
+                        $weights = $_POST['w'];
+                        $template_name = $_POST["name_template"];
+                        $template = new Repartition_templates(null, $template_name, $_POST["tricId"]);
+                        $template->newTemplate($template_name, $_POST["tricId"]);
+                        if ($template !== null) {
+                            for ($i = 0; $i <= count($checkedUsers) + 50; $i++) {
+                                if (isset($checkedUsers[$i]) && $checkedUsers[$i] !== null) {
+                                    if ($weights[$i] === "" || $weights[$i] === "0")
+                                        $weights[$i] = 1;
+                                    Repartition_template_items::addNewItems(
+                                        $checkedUsers[$i],
+                                        $template->get_id(),
+                                        $weights[$i]
+                                    );
+                                    Operation::deleteRepartition($operation->get_id());
+                                    Operation::insertRepartition($operation->get_id(), $weights[$i], $checkedUsers[$i]);
+                                } //alberti goat
+
+                            }
+                            $this->redirect("operation", "expenses", $_POST["tricId"]);
+                        }
                         $this->redirect("operation", "expenses", $_POST["tricId"]);
                     } else {
                         echo "<b>Validation Failed:<b> <br>";

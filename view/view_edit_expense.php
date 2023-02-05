@@ -33,7 +33,9 @@
             <select id="initiator" name="initiator">
                 <option style="color: black;" selected value="<?php echo $usr ?>"><?php echo $usr ?></option>
                 <?php foreach ($users as $urss): ?>
-                    <option style="color: black;" value="<?php echo $urss->getFullName() ?>"><?php echo $urss->getFullName() ?></option>
+                    <?php if($urss->getUserInfo() !== $usr): ?>
+                        <option style="color: black;" value="<?php echo $urss->getUserInfo() ?>"><?php echo $urss->getUserInfo() ?></option>
+                    <?php endif; ?>
                 <?php endforeach; ?>
             </select>
             <br>
@@ -50,16 +52,16 @@
             <label for="who">For whom? (select at least one)</label>
             <?php foreach ($users as $usr): ?>
                 <div class="checks">
-                    <input type="checkbox" name="<?php echo $usr->getFullName() ?>" id="<?php echo $usr->getUserId() ?>"
-                        <?php if ($usr->participates_in_tricount()) {
+                    <input type="checkbox" name="c[<?= $usr->get_user() ?>]" value="<?= $usr->get_user(); ?>" id="<?php echo $usr->getUserInfo() ?>"
+                        <?php if ($usr->is_in_tricount($tricount->get_id())) {
                             echo "checked";
                         } ?>>
                     <span style="color: yellow; font-weight: bold;">
-                        <?php echo $usr->getFullName() ?>
+                        <?php echo $usr->getUserInfo() ?>
                     </span>
                     <fieldset>
                         <legend>Weight</legend>
-                        <input type="number" name="user_weight" id="<?php echo $usr->getUserId() ?>" value="1" min="0"
+                        <input type="number" name="w[<?= $usr->get_user() ?>]" id="<?php echo $usr->get_user() ?>" value="1" min="0"
                             max="50">
                     </fieldset>
                 </div>

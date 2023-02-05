@@ -332,6 +332,20 @@ class Operation extends Model
         return $query;
     }
 
+    public static function deleteRepartition($idOperation){
+    //     DELETE
+    // FROM repartition_template_items
+    // where repartition_template=:repartition_template",
+    // array("repartition_template"=>$repartition_template)
+        $query = self::execute("DELETE
+                        FROM repartitions where operation =:operation",
+            array(
+                "operation" =>$idOperation
+            )
+        );
+        return $query;
+    }
+
 
     public function validate()
     {

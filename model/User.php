@@ -472,24 +472,27 @@ class User extends Model
     
     public function is_in_tricount($idTricount){
         $query = self::execute("SELECT * from subscriptions s where s.user = :user and s.tricount =:id  ",array("user"=>$this->id,"id"=>$idTricount));
-        $data = $query->fetch();
         if($query->rowCount()== 0)
             return false;
-        return $data;
+        return true;
+    }
+    public function is_in_tricount_by_template($idTemplate, $idTricount){
+        $query = self::execute("SELECT * FROM repartition_templates rt where rt.id =:id and rt.tricount =:tricount ",array("tricount"=>$idTricount,"id"=>$idTemplate));
+        if($query->rowCount()== 0)
+            return false;
+        return true;
     }
     public function is_creator($idTricount){
         $query = self::execute("SELECT * FROM tricounts t where t.creator =:user and t.id=:id ",array("user"=>$this->id,"id"=>$idTricount));
-        $data = $query->fetch();
         if($query->rowCount()== 0)
             return false;
-        return $data;
+        return true;
     }
     public function is_in_items($idTemplate){
         $query = self::execute("SELECT * FROM repartition_template_items rti where rti.user =:user and rti.repartition_template=:id ",array("user"=>$this->id,"id"=>$idTemplate));
-        $data = $query->fetch();
         if($query->rowCount()== 0)
             return false;
-        return $data;
+        return true;
     }
 }
 ?>

@@ -40,7 +40,7 @@
                 <input  type="text" name="user"  value="<?php echo $listusr->getUserInfo(); ?>"  disabled="disabled">
                 <fieldset>
                     <legend>Weight</legend>
-                    <input  type="number" name="w[<?= $listusr->get_user() ; ?>]"min="0" placeholder="0"  <?php if(isset($template)){if($listusr->is_in_Items($template->get_id())){echo "value=".$listusr->get_weight_by_user($template->get_id());}; }?> value="0">
+                    <input  type="number" name="w[<?= $listusr->get_user() ; ?>]"min="0" placeholder="0"  <?php if(isset($template)){if($listusr->is_in_Items($template->get_id())){echo "value=".$listusr->get_weight_by_user($template->get_id());}; }?> value="1">
                 </fieldset>
             </div>
             <br><br>

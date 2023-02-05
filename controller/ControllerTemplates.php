@@ -142,11 +142,13 @@ class ControllerTemplates extends Controller
         }else
             $this->redirect("main","error");
     }
+
     public function delete_template(){
         $userlogged = $this->get_user_or_redirect();
         $user = User::get_by_id($userlogged->getUserId());
-
-        if($user->is_in_tricount($_GET['param1'] || $user->is_in_items($_GET['param1'])  )){
+        // var_dump(!is_numeric($_GET['param1'])); die();
+        $template = Repartition_templates::get_by_id($_GET['param1']);
+        if($user->is_in_items($_GET['param1']) || $user->is_in_tricount_by_template($template->get_id(), $template->get_tricount())){
             $userlogged = $this->get_user_or_redirect();
             $user = User::get_by_id($userlogged->getUserId());
             if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
@@ -169,7 +171,7 @@ class ControllerTemplates extends Controller
             (new View("delete_template"))->show(array("user"=>$user,
                                                 "template"=>$template));
         }else{
-            $this->redirect("user","profile");
+            $this->redirect("user","profile","oeoeoeoe");
 
         }
     }

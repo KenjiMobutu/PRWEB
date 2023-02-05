@@ -24,7 +24,7 @@ class ControllerMain extends Controller
         /** @var User $userser */
         $user = $this->get_user_or_redirect();
 
-        if($_GET['param1'] !== null && !is_numeric($_GET['param1'])){
+        if(isset($_GET['param1']) && $_GET['param1'] !== null && !is_numeric($_GET['param1'])){
             $error = $_GET['param1'];
         }else
             $error = "Something went wrong. :)";
