@@ -151,14 +151,14 @@ require_once "framework/Model.php";
         ORDER by rti.repartition_template*/
 
     public function is_in_tricount($idTricount){
-        $query = self::execute("SELECT * from subscriptions s where s.user = :user and s.tricount =:id  ",array("user"=>$this->id,"id"=>$idTricount));
+        $query = self::execute("SELECT * from subscriptions s where s.user = :user and s.tricount =:id  ",array("user"=>$this->user,"id"=>$idTricount));
         $data = $query->fetch();
         if($query->rowCount()== 0)
             return false;
         return $data;
     }
     public function is_creator($idTricount){
-        $query = self::execute("SELECT * FROM tricounts t where t.creator =:user and t.id=:id ",array("user"=>$this->id,"id"=>$idTricount));
+        $query = self::execute("SELECT * FROM tricounts t where t.creator =:user and t.id=:id ",array("user"=>$this->user,"id"=>$idTricount));
         $data = $query->fetch();
         if($query->rowCount()== 0)
             return false;
