@@ -135,6 +135,9 @@ class ControllerTemplates extends Controller
         }else
             $this->redirect("main","error");
     }
+
+
+
     public function delete_template(){
         $userlogged = $this->get_user_or_redirect();
         $user = User::get_by_id($userlogged->getUserId());
@@ -163,7 +166,6 @@ class ControllerTemplates extends Controller
                                                 "template"=>$template));
         }else{
             $this->redirect("user","profile");
-
         }
     }
 
