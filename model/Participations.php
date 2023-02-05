@@ -142,14 +142,6 @@ require_once "framework/Model.php";
             return $subscription;
         }
 
-
-    /**SELECT * 
-        from repartition_template_items rti 
-        join repartition_templates rt on rt.id = rti.repartition_template
-        join tricounts t on rt.tricount = t.id
-        join subscriptions s on t.id = s.tricount
-        ORDER by rti.repartition_template*/
-
     public function is_in_tricount($idTricount){
         $query = self::execute("SELECT * from subscriptions s where s.user = :user and s.tricount =:id  ",array("user"=>$this->id,"id"=>$idTricount));
         $data = $query->fetch();

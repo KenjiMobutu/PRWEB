@@ -44,6 +44,8 @@
   public static function exists($id){
     $query = self::execute("SELECT * FROM tricounts WHERE id = :id", array("id"=>$id));
     $data = $query->fetch();
+    if($query->rowCount() == 0)
+      return null;
     return $data;
   }
 
