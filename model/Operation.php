@@ -1,6 +1,7 @@
 <?php
 require_once "framework/Model.php";
 require_once 'model/Operation.php';
+require_once 'framework/Tools.php';
 class Operation extends Model
 {
 
@@ -350,7 +351,7 @@ class Operation extends Model
     {
 
         if (!is_null($this->id)) {
-            $query = self::execute(
+            self::execute(
                 "UPDATE operations SET
 
             `title`=:title,

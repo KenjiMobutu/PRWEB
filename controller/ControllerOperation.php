@@ -32,7 +32,7 @@ class ControllerOperation extends Controller
             }
             $tricount = Tricounts::get_by_id($_GET['param1']);
             $tricountID = $tricount->get_id();
-            
+
             $tricountParticipants = Operation::getUsersFromTricount($tricountID);
             // if(!in_array($userId,$tricountParticipants)){ //TODO y a que boris qui peut les voir idk
             //     $this->redirect('main', "error");    //si l'user ne participe pas dans un tric il peux pas voir les operations
@@ -120,24 +120,36 @@ class ControllerOperation extends Controller
 
         if (isset($_POST["refreshBtn"])) {
             if (
-                array_key_exists("title",
-                    $_POST) &&
-                array_key_exists("tricId",
-                    $_POST) &&
-                array_key_exists("amount",
-                    $_POST) &&
-                array_key_exists("operation_date",
-                    $_POST) &&
-                array_key_exists("initiator",
-                    $_POST) &&
-                array_key_exists("rti",
-                    $_POST)
+                array_key_exists(
+                    "title",
+                    $_POST
+                ) &&
+                array_key_exists(
+                    "tricId",
+                    $_POST
+                ) &&
+                array_key_exists(
+                    "amount",
+                    $_POST
+                ) &&
+                array_key_exists(
+                    "operation_date",
+                    $_POST
+                ) &&
+                array_key_exists(
+                    "initiator",
+                    $_POST
+                ) &&
+                array_key_exists(
+                    "rti",
+                    $_POST
+                )
             ) {
                 $userId = $user->getUserId();
-                $title = $_POST["title"];
+                $title = Tools::sanitize($_POST["title"]);
                 $tricId = $_POST["tricId"];
                 $tricount = Tricounts::get_by_id($tricId);
-                $amount = floatval($_POST["amount"]);
+                $amount = Tools::sanitize(floatval($_POST["amount"]));
                 $operation_date = $_POST["operation_date"];
                 $initiator = $_POST["initiator"];
                 $users = Participations::get_by_tricount($tricId);;
@@ -171,21 +183,31 @@ class ControllerOperation extends Controller
             $userId = $user->getUserId();
             if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST["save_template"])) {
                 if (
-                    array_key_exists("title",
-                        $_POST) &&
-                    array_key_exists("tricId",
-                        $_POST) &&
-                    array_key_exists("amount",
-                        $_POST) &&
-                    array_key_exists("operation_date",
-                        $_POST) &&
-                    array_key_exists("initiator",
-                        $_POST)
+                    array_key_exists(
+                        "title",
+                        $_POST
+                    ) &&
+                    array_key_exists(
+                        "tricId",
+                        $_POST
+                    ) &&
+                    array_key_exists(
+                        "amount",
+                        $_POST
+                    ) &&
+                    array_key_exists(
+                        "operation_date",
+                        $_POST
+                    ) &&
+                    array_key_exists(
+                        "initiator",
+                        $_POST
+                    )
                 ) {
 
-                    $title = $_POST["title"];
+                    $title = Tools::sanitize($_POST["title"]);
                     $tricount = $_POST["tricId"];
-                    $amount = floatval($_POST["amount"]);
+                    $amount = Tools::sanitize(floatval($_POST["amount"]));
                     $operation_date = $_POST["operation_date"];
                     $initiator = $_POST["initiator"];
                     $created_at = date('y-m-d h:i:s');
@@ -208,37 +230,48 @@ class ControllerOperation extends Controller
                 }
             } else if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["c"]) && isset($_POST["w"])) {
                 if (
-                    array_key_exists("title",
-                        $_POST) &&
-                    array_key_exists("tricId",
-                        $_POST) &&
-                    array_key_exists("amount",
-                        $_POST) &&
-                    array_key_exists("operation_date",
-                        $_POST) &&
-                    array_key_exists("initiator",
-                        $_POST)
+                    array_key_exists(
+                        "title",
+                        $_POST
+                    ) &&
+                    array_key_exists(
+                        "tricId",
+                        $_POST
+                    ) &&
+                    array_key_exists(
+                        "amount",
+                        $_POST
+                    ) &&
+                    array_key_exists(
+                        "operation_date",
+                        $_POST
+                    ) &&
+                    array_key_exists(
+                        "initiator",
+                        $_POST
+                    )
                 ) {
 
-                    $title = $_POST["title"];
+                    $title = Tools::sanitize($_POST["title"]);
                     $tricount = $_POST["tricId"];
-                    $amount = floatval($_POST["amount"]);
+                    $amount = Tools::sanitize(floatval($_POST["amount"]));
                     $operation_date = $_POST["operation_date"];
                     $initiator = $_POST["initiator"];
                     $created_at = date('y-m-d h:i:s');
                     $checkedUsers = $_POST["c"];
                     $weights = $_POST["w"];
+                    $template_name = Tools::sanitize($_POST["template_name"]);
 
                     if ($user) {
                         $operation = new Operation($title, $tricount, $amount, $operation_date, $initiator, $created_at);
-                        $template = new Repartition_templates(null, $_POST["template_name"], $_POST["tricId"]);
+                        $template = new Repartition_templates(null, $template_name, $_POST["tricId"]);
                     }
 
                     $errors = $operation->validate();
 
                     if (empty($errors)) {
                         $operation->insert();
-                        $template->newTemplate($_POST["template_name"], $_POST["tricId"]);
+                        $template->newTemplate($template_name, $_POST["tricId"]);
                         if ($template !== null) {
                             for ($i = 0; $i <= count($checkedUsers) + 1; $i++) {
                                 if (isset($checkedUsers[$i]) && $checkedUsers[$i] !== null) {
@@ -308,27 +341,39 @@ class ControllerOperation extends Controller
 
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 if (
-                    array_key_exists("operationId",
-                        $_POST) &&
-                    array_key_exists("title",
-                        $_POST) &&
-                    array_key_exists("tricId",
-                        $_POST) &&
-                    array_key_exists("amount",
-                        $_POST) &&
-                    array_key_exists("operation_date",
-                        $_POST) &&
-                    array_key_exists("initiator",
-                        $_POST)
+                    array_key_exists(
+                        "operationId",
+                        $_POST
+                    ) &&
+                    array_key_exists(
+                        "title",
+                        $_POST
+                    ) &&
+                    array_key_exists(
+                        "tricId",
+                        $_POST
+                    ) &&
+                    array_key_exists(
+                        "amount",
+                        $_POST
+                    ) &&
+                    array_key_exists(
+                        "operation_date",
+                        $_POST
+                    ) &&
+                    array_key_exists(
+                        "initiator",
+                        $_POST
+                    )
                 ) {
 
                     $operation = Operation::getOperationByOperationId($_POST["operationId"]);
 
                     if ($operation !== null) {
 
-                        $title = $_POST["title"];
+                        $title = Tools::sanitize($_POST["title"]);
                         $tricount = $_POST["tricId"];
-                        $amount = floatval($_POST["amount"]);
+                        $amount = Tools::sanitize(floatval($_POST["amount"]));
                         $operation_date = $_POST["operation_date"];
                         $init = User::get_by_name($_POST["initiator"]);
                         $initiator = $init->getUserId();
