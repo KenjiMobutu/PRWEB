@@ -22,7 +22,7 @@
     <form id="addTricount" action="tricount/add" method="post">
         <div class="appHeader">
             <div class="left">
-                <a href="#" class="headerButton goBack">
+                <a href="tricount/index" class="headerButton goBack">
                 <i class="bi bi-arrow-left"></i>
                 </a>
             </div>
