@@ -143,6 +143,9 @@ class ControllerTemplates extends Controller
             $this->redirect("main","error");
     }
 
+
+
+
     public function delete_template(){
         $userlogged = $this->get_user_or_redirect();
         $user = User::get_by_id($userlogged->getUserId());
@@ -171,8 +174,7 @@ class ControllerTemplates extends Controller
             (new View("delete_template"))->show(array("user"=>$user,
                                                 "template"=>$template));
         }else{
-            $this->redirect("user","profile","oeoeoeoe");
-
+            $this->redirect("user","profile");
         }
     }
 
