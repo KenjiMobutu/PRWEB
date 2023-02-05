@@ -14,7 +14,7 @@ class ControllerOperation extends Controller
     public function index(): void
     {
         if (isset($_GET["param1"])) {
-            $this->redirect('expenses');
+            $this->redirect("operation",'expenses', $_GET['param1']);
         }
     }
 
@@ -61,8 +61,11 @@ class ControllerOperation extends Controller
 
             $tricount = Tricounts::get_by_id($_GET['param1']);
             $tricountID = $tricount->get_id();
-            $users = Participations::get_by_tricount($tricountID);
+            $users = Participations::get_by_tricount($tricountID);            
             $operations_of_tricount = Operation::get_operations_by_tricount($tricountID);
+            if(is_null($operations_of_tricount)){
+                $this->redirect('operation', "index", $tricountID);
+            }
             $weights = Repartitions::get_user_and_weight_by_operation_id($tricount->get_id());
             $total = Tricounts::get_total_amount_by_tric_id($tricountID);
         }
