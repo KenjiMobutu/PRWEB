@@ -193,6 +193,15 @@ class Repartition_templates extends Model
       return $errors;
   }
 
+  public static function is_title_already_exist($title, $tricountid){
+    $query = self::execute("SELECT * FROM  `repartition_templates` where title=:title AND tricount =:tricount", array("title" => $title, "tricount"=>$tricountid));
+      if ($query->rowCount() == 0) {
+        return false;
+      }else {
+        return true;
+      }
+  }
+
 }
 
 

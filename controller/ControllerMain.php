@@ -24,7 +24,10 @@ class ControllerMain extends Controller
         /** @var User $userser */
         $user = $this->get_user_or_redirect();
 
-        $error = "Something went wrong. :)";
+        if($_GET['param1'] !== null && !is_numeric($_GET['param1'])){
+            $error = $_GET['param1'];
+        }else
+            $error = "Something went wrong. :)";
         (new View("error"))->show(["error" => $error, "user" => $user]);
     }
 
