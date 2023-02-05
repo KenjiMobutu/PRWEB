@@ -30,19 +30,24 @@ class ControllerOperation extends Controller
             if ($checkTricount <= 0) {
                 $this->redirect('main', "error");
             }
-            $tricount = Tricounts::get_by_id($_GET['param1']);
-            $tricountID = $tricount->get_id();
+            if($user->is_in_tricount($_GET['param1'])){
+                $tricount = Tricounts::get_by_id($_GET['param1']);
+                $tricountID = $tricount->get_id();
 
-            $tricountParticipants = Operation::getUsersFromTricount($tricountID);
-            // if(!in_array($userId,$tricountParticipants)){ //TODO y a que boris qui peut les voir idk
-            //     $this->redirect('main', "error");    //si l'user ne participe pas dans un tric il peux pas voir les operations
-            // }
-            $operations_of_tricount = Operation::get_operations_by_tricount($tricountID);
-            $participants = Tricounts::number_of_friends($tricountID);
-            $amounts[] = Operation::get_operations_by_tricount($tricountID);
-            $nbOperations = Operation::getNbOfOperations($tricountID);
-            $totalExp = Tricounts::get_total_amount_by_tric_id($tricountID);
-            $mytot = Tricounts::get_my_total($userId);
+                $tricountParticipants = Operation::getUsersFromTricount($tricountID);
+                // if(!in_array($userId,$tricountParticipants)){ //TODO y a que boris qui peut les voir idk
+                //     $this->redirect('main', "error");    //si l'user ne participe pas dans un tric il peux pas voir les operations
+                // }
+                $operations_of_tricount = Operation::get_operations_by_tricount($tricountID);
+                $participants = Tricounts::number_of_friends($tricountID);
+                $amounts[] = Operation::get_operations_by_tricount($tricountID);
+                $nbOperations = Operation::getNbOfOperations($tricountID);
+                $totalExp = Tricounts::get_total_amount_by_tric_id($tricountID);
+                $mytot = Tricounts::get_my_total($userId);
+            }else{
+                $this->redirect('main', "error","nononono");
+            }
+            
         }
         (new View("expenses"))->show(array("operations_of_tricount" => $operations_of_tricount, "user" => $user, "tricount" => $tricount, "amounts" => $amounts, "totalExp" => $totalExp, "mytot" => $mytot, "participants" => $participants, "nbOperations" => $nbOperations));
     }
