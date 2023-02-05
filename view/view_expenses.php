@@ -96,7 +96,7 @@
                                 }
                                 if (empty($amount) && ($participants == 0) && $totalExp["0"] === null) {
                                     $totalExp["0"] = 0;
-                                    echo "<h1 style='text-align:center;'>you are alone loser :(</h1>";
+                                    echo "<h1 style='text-align:center;'>you are alone :(</h1>";
                                     echo '<a href="tricount/edit/' . $tricount->get_id() . '">';
                                     echo '<button class="view-balance-button">';
                                     echo 'ADD FRIENDS';
