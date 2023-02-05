@@ -240,7 +240,6 @@ class Operation extends Model
         $query = self::execute("SELECT * FROM operations where id =:id", array("id" => $id));
         $data = $query->fetch();
         $operation_date = (string) $data["operation_date"];
-        ;
         $created_at = (string) $data["created_at"];
         return new Operation(
             $data["title"],
@@ -280,6 +279,9 @@ class Operation extends Model
                                 WHERE t.id = :id AND o.initiator =:user
                                 GROUP BY o.initiator;", array("id" => $tricId, "user" => $userId));
         $data = $query->fetch();
+        if($query->rowCount()==0){
+            return false;
+        }
         return $data["balance"];
     }
 
