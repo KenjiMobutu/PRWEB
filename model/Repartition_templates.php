@@ -85,6 +85,16 @@ class Repartition_templates extends Model
       return $items;
     }
     
+
+    public static function template_exist_in_tricount($id, $tricountid){
+      $query = self::execute("SELECT * FROM  `repartition_templates` where id=:id AND tricount =:tricount", array("id" => $id, "tricount"=>$tricountid));
+      $data = $query->fetch(); //un seul resultat max
+      if ($query->rowCount() == 0) {
+        return null;
+      } else {
+      return $data;
+    }
+    }
   
 
     public static function delete_by_tricount($tricount){
@@ -133,15 +143,15 @@ class Repartition_templates extends Model
 
 
   public function update_title($title){
-    self::execute("UPDATE `repartition_templates` SET
+      self::execute("UPDATE `repartition_templates` SET
       title=:title,
       tricount=:tricount
       WHERE id=:id ",
-    array(
-      "id" => $this->id,
-      "title" => $title,
-      "tricount" => $this->tricount
-    ));
+      array(
+        "id" => $this->id,
+        "title" => $title,
+        "tricount" => $this->tricount
+      ));
     return $this;
   }
 
@@ -174,12 +184,22 @@ class Repartition_templates extends Model
 
 
 
-  public static function validatetitle($full_name) : bool
+  public static function validatetitle($title) 
   {
-      if(strlen($full_name) < 3 ){
-          return false;
+    $errors =[];
+      if(strlen($title) < 3 ){
+          $errors = "Bad title. Must be at least 3 characters";
       }
-      return true;
+      return $errors;
+  }
+
+  public static function is_title_already_exist($title, $tricountid){
+    $query = self::execute("SELECT * FROM  `repartition_templates` where title=:title AND tricount =:tricount", array("title" => $title, "tricount"=>$tricountid));
+      if ($query->rowCount() == 0) {
+        return false;
+      }else {
+        return true;
+      }
   }
 
 }

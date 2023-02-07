@@ -26,7 +26,7 @@
                 <?php
                 $total_usr = 0;
                 $tot = intval($total["sum(amount)"]);
-                $max_balance = 0;
+                $max_balance = 1;
                 foreach ($users as $user):
                     $alb = Operation::total_alberti($tricount->get_id(), $user->get_user());
                     $total_usr = 0; foreach ($operations_of_tricount as $operation):
@@ -45,7 +45,7 @@
                             $total_usr += Operation::total_by_user($user->get_user(), $operation->get_id());
                     endforeach;
                     $balance = $alb - $total_usr;
-                    if ($balance >= 0) {
+                    if ($balance >= 0  ) {
                         $bar_width = ($balance / $max_balance) * 50 . "%";
                         echo '<li>' . $user->getUserInfo() . '<div style="width: ' . $bar_width . '; background-color: green; color: white; display: inline-block;">' . number_format($balance, 2) . '</div></li>';
                     } else {

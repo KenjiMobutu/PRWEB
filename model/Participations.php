@@ -142,14 +142,20 @@ require_once "framework/Model.php";
             return $subscription;
         }
 
-
-    /**SELECT * 
-        from repartition_template_items rti 
-        join repartition_templates rt on rt.id = rti.repartition_template
-        join tricounts t on rt.tricount = t.id
-        join subscriptions s on t.id = s.tricount
-        ORDER by rti.repartition_template*/
-
+    public function is_in_tricount($idTricount){
+        $query = self::execute("SELECT * from subscriptions s where s.user = :user and s.tricount =:id  ",array("user"=>$this->user,"id"=>$idTricount));
+        $data = $query->fetch();
+        if($query->rowCount()== 0)
+            return false;
+        return $data;
+    }
+    public function is_creator($idTricount){
+        $query = self::execute("SELECT * FROM tricounts t where t.creator =:user and t.id=:id ",array("user"=>$this->user,"id"=>$idTricount));
+        $data = $query->fetch();
+        if($query->rowCount()== 0)
+            return false;
+        return $data;
+    }
     public function is_in_Items($templateID){
         $query = self::execute("SELECT DISTINCT rti.* 
                 from repartition_template_items rti, subscriptions o 
@@ -165,6 +171,7 @@ require_once "framework/Model.php";
         return $query;
 
     }
+
     public function get_weight_by_user($repartition_template): int
     {
       $query = self::execute("SELECT *

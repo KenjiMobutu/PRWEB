@@ -37,7 +37,7 @@
                     echo '<option value=' . $init->getUserId() . ">" . $init->getFullName() . "</option>"; endif; ?>
 
                     <?php foreach ($users as $urss): ?>
-                        <option style="color: black;" value="<?php echo $urss->getUserId() ?>"><?php echo $urss->getFullName() ?></option>
+                        <option style="color: black;" value="<?php echo $urss->get_user() ?>"><?php echo $urss->getUserInfo() ?></option>
                     <?php endforeach; ?>
                 </select>
                 <br>
@@ -81,6 +81,7 @@
                                     } else
                                         echo "value=0"; ?>>
                                 </fieldset>
+
                             </div>
                             
                             <?php
@@ -88,23 +89,23 @@
                         echo '<input type="submit" value="Submit">';
                     }
                     else {
-                        foreach ($users as $usr) {
-                            ?>
-                                <div class="check-input">
-                                    <input type="checkbox" name="c[<?= $usr->getUserId(); ?>]" value="<?php echo $usr->getUserId() ?>"
-                                        id="userIdTemp">
-                                    <span class="text-input" style="color: yellow; font-weight: bold;">
-                                        <?php echo $usr->getFullName() ?>
-                                    </span>
-                                    
-                                    <fieldset>
-                                        <legend class="legend" style="color: yellow; font-weight: bold;">Weight</legend>
-                                        <input type="number" name="w[<?= $usr->getUserId(); ?>]" id="userWeight" value="1" min="0"
-                                            max="50">
-                                    </fieldset>
-                                </div>
-                            <?php
-                        }?>
+                                foreach ($users as $usr) {
+                                    ?>
+                                        <div class="check-input">
+                                            <input type="checkbox" name="c[<?= $usr->get_user(); ?>]" value="<?php echo $usr->get_user() ?>"
+                                                id="userIdTemp">
+                                            <span class="text-input" style="color: yellow; font-weight: bold;">
+                                                <?php echo $usr->getUserInfo() ?>
+                                            </span>
+                                            
+                                            <fieldset>
+                                                <legend class="legend" style="color: yellow; font-weight: bold;">Weight</legend>
+                                                <input type="number" name="w[<?= $usr->get_user(); ?>]" id="userWeight" value="1" min="0"
+                                                    max="50">
+                                            </fieldset>
+                                        </div>
+                                    <?php
+                                }?>
                             
                         <p>Add a new repartition template</p>
                     <div class="save-template">
