@@ -59,18 +59,20 @@ class ControllerProfile extends Controller
                 array_key_exists('newPassword', $_POST)
                 && array_key_exists('confirmPassword', $_POST)
             ) {
-
-                $errors = User::validate_passwords($_POST["newPassword"], $_POST["confirmPassword"]);
+                $newPass = Tools::sanitize($_POST["newPassword"]);
+                $confirmPass = Tools::sanitize($_POST["confirmPassword"]);
+                $errors = User::validate_passwords($newPass, $confirmPass);
 
                 // If the connected user is updated, also verify the current password
                 if (array_key_exists('currentPassword', $_POST)) {
-                    if (!User::check_password($_POST["currentPassword"], $user->getPassword())) {
+                    $currPass = Tools::sanitize($_POST["currentPassword"]);
+                    if (!User::check_password($currPass, $user->getPassword())) {
                         $errors[] = "The current password is not correct.";
                     }
                 }
                 // If passwords are valid, update user
                 if (empty($errors)) {
-                    $user->setPassword(Tools::my_hash($_POST["newPassword"]));
+                    $user->setPassword(Tools::my_hash($newPass));
                     $user->update_password();
                     $this->redirect("profile", "change_password", $user->getUserId(), "ok");
                 }
@@ -99,18 +101,21 @@ class ControllerProfile extends Controller
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (isset($_POST["mail"]) || isset($_POST["fullName"]) || isset($_POST["iban"])) {
                 if (isset($_POST["mail"])) {
-                    if (!User::validateEmail($_POST["mail"])) {
+                    $mail = Tools::sanitize($_POST["mail"]);
+                    $fullname = Tools::sanitize($_POST["fullName"]);
+                    $iban = Tools::sanitize($_POST["iban"]);
+                    if (!User::validateEmail( $mail)) {
                         $errors[] = "Wrong mail";
                     }
                 }
                 if (isset($_POST["fullName"])) {
-                    if (!User::validateFullName($_POST["fullName"])) {
+                    if (!User::validateFullName( $fullname)) {
                         $errors[] = "Bad name. Too short.";
                     }
                 }
             }
             if(empty($errors)){
-                $user->update_profile($_POST["fullName"],$_POST["mail"],  $_POST["iban"]);
+                $user->update_profile($fullname, $mail, $iban);
                 $this->redirect("user","profile",$user->getUserId(),"ok");
             }
         }

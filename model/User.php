@@ -29,16 +29,17 @@ class User extends Model
         $this->iban = $iban;
     }
 
-    public static function getUsers(){
-        $result=[];
-        $query = self::execute("SELECT * FROM  `users`",array());
+    public static function getUsers()
+    {
+        $result = [];
+        $query = self::execute("SELECT * FROM  `users`", array());
         $data = $query->fetchAll();
-        
-            foreach($data as $row){
-                $result[]= new User($row["id"], $row["mail"], $row["hashed_password"], $row["full_name"], $row["role"], $row["iban"]);
-            }
-            return $result;
-            
+
+        foreach ($data as $row) {
+            $result[] = new User($row["id"], $row["mail"], $row["hashed_password"], $row["full_name"], $row["role"], $row["iban"]);
+        }
+        return $result;
+
     }
 
     //retourne l'id de l'utilisateur
@@ -99,7 +100,17 @@ class User extends Model
     // }
 
 
-    public static function get_user_id_by_name($full_name){
+    public function is_in_operation($operationId){
+        $query = self::execute("SELECT user FROM repartitions WHERE operation = :id ",
+                                array("id"=>$operationId));
+        if($query->rowCount()==0){
+            return false;
+        }
+        return $query;
+    }
+
+    public static function get_user_id_by_name($full_name)
+    {
         $query = self::execute("SELECT id FROM  `users` where full_name=':fullname'", array("fullname" => $full_name));
         $data = $query->fetch(); //un seul resultat max
         if ($query->rowCount() == 0) {
@@ -120,15 +131,15 @@ class User extends Model
         }
     }
 
-    public function getIban(): string | null
+    public function getIban(): string|null
     {
         return $this->iban;
     }
 
     public function setFullName(string $fullname): string
-        {
-            return $this->full_name = $fullname;
-        }
+    {
+        return $this->full_name = $fullname;
+    }
 
 
     public function setIban(string $iban): void
@@ -152,130 +163,114 @@ class User extends Model
 
 
 
-        public function setRole(string $role): void
-        {
-            $this->role = $role;
-        }
+    public function setRole(string $role): void
+    {
+        $this->role = $role;
+    }
 
-        public function getRole(): string
-        {
-            return $this->role;
-        }
+    public function getRole(): string
+    {
+        return $this->role;
+    }
 
-        public function getMail(): String
-        {
-            return $this->mail;
-        }
-        public function setMail(string $mail): String
-        {
-            return $this->mail = $mail;
-        }
+    public function getMail(): string
+    {
+        return $this->mail;
+    }
+    public function setMail(string $mail): string
+    {
+        return $this->mail = $mail;
+    }
 
-        public function isAdmin(): String{
-            return $this->role=="admin";
-        }
+    public function isAdmin(): string
+    {
+        return $this->role == "admin";
+    }
 
-
-        // public function delete ($id){
-        //     if(Repartition_template_items::delete_by_user_id($id)){
-        //         if(Repartition::delete_by_user_id($id)){
-        //             if(Operation::delete_by_user_id($id)){
-        //                 if(Participation::delete_by_user_id($id)){
-        //                     if(Tricount::delete_by_user_id($id)){
-        //                         $query=self::execute("DELETE from `user` where id=:id", array("id"=>$id));
-        //                         if($query->rowCount()==0)
-        //                             return false;
-        //                         else
-        //                             return $query;
-        //                     }else{
-        //                         echo "problème avec la fonction delete_by_user_id du modele tricount";
-        //                     }
-        //                 }else
-        //                 echo "problème avec la fonction delete_by_user_id du modele Participation";
-        //             }else
-        //             echo "problème avec la fonction delete_by_user_id du modele operation";
-        //         }
-        //         echo "problème avec la fonction delete_by_user_id du modele repartition";
-        //     }else
-        //     echo "problème avec la fonction delete_by_user_id du modele Repartition_template_items";
-        // }
-
-        public static function get_by_id($id){//récup l'user par son id
-            $query = self::execute("SELECT * FROM  `users` where id=:id", array("id"=>$id));
-            $data = $query->fetch();//un seul resultat max
-            if ($query->rowCount() == 0){
-                return null;
-            } else{
-                return new User($data["id"],$data["mail"],$data["hashed_password"],$data["full_name"],$data["role"],$data["iban"]);
-            }
+    public static function get_by_id($id)
+    { //récup l'user par son id
+        $query = self::execute("SELECT * FROM  `users` where id=:id", array("id" => $id));
+        $data = $query->fetch(); //un seul resultat max
+        if ($query->rowCount() == 0) {
+            return null;
+        } else {
+            return new User($data["id"], $data["mail"], $data["hashed_password"], $data["full_name"], $data["role"], $data["iban"]);
         }
-        public static function get_all(){//récup tous les users
-            $query = self::execute("SELECT * FROM  `users` ", array());
-            $data = $query->fetchAll();
-            $results = [];
-            foreach ($data as $row) {
-                $results[] = new User($row["id"],$row["mail"],$row["hashed_password"],$row["full_name"],$row["role"],$row["iban"]);
-            }
-            return $results;
+    }
+    public static function get_all()
+    { //récup tous les users
+        $query = self::execute("SELECT * FROM  `users` ", array());
+        $data = $query->fetchAll();
+        $results = [];
+        foreach ($data as $row) {
+            $results[] = new User($row["id"], $row["mail"], $row["hashed_password"], $row["full_name"], $row["role"], $row["iban"]);
         }
-        public static function not_participate($tricountId){//récup tous les users
-            $query = self::execute("SELECT *
+        return $results;
+    }
+    public static function not_participate($tricountId)
+    { //récup tous les users
+        $query = self::execute("SELECT *
             FROM users
             WHERE id
-            NOT IN (SELECT user FROM subscriptions WHERE tricount =:tricountId)", array("tricountId"=>$tricountId));
-            $data = $query->fetchAll();
-            $results = [];
-            foreach ($data as $row) {
-                $results[] = new User($row["id"],$row["mail"],$row["hashed_password"],$row["full_name"],$row["role"],$row["iban"]);
-            }
-            return $results;
+            NOT IN (SELECT user FROM subscriptions WHERE tricount =:tricountId)", array("tricountId" => $tricountId));
+        $data = $query->fetchAll();
+        $results = [];
+        foreach ($data as $row) {
+            $results[] = new User($row["id"], $row["mail"], $row["hashed_password"], $row["full_name"], $row["role"], $row["iban"]);
         }
-        public static function get_by_mail($mail){//récup l'user par son id
-            $query = self::execute("SELECT * FROM  `users` where mail=:mail", array("mail"=>$mail));
-            $data = $query->fetch();//un seul resultat max
-            if($query->rowCount() == 0){
-                return false;
-            } else{
-                return new User($data["id"],$data["mail"],$data["hashed_password"],$data["full_name"],$data["role"],$data["iban"]);
-            }
+        return $results;
+    }
+    public static function get_by_mail($mail)
+    { //récup l'user par son mail
+        $query = self::execute("SELECT * FROM  `users` where mail=:mail", array("mail" => $mail));
+        $data = $query->fetch(); //un seul resultat max
+        if ($query->rowCount() == 0) {
+            return false;
+        } else {
+            return new User($data["id"], $data["mail"], $data["hashed_password"], $data["full_name"], $data["role"], $data["iban"]);
         }
+    }
 
-        public static function get_user_by_name($full_name){ //récup l'user par son full_name
-            $query = self::execute("SELECT * FROM  `users` where full_name=:fullname", array("fullname"=>$full_name));
-            $data = $query->fetch();//un seul resultat max
-            if($query->rowCount() == 0){
-                return false;
-            } else{
-                return new User($data["id"],$data["mail"],$data["hashed_password"],$data["full_name"],$data["role"],$data["iban"]);
-            }
+    public static function get_user_by_name($full_name)
+    { //récup l'user par son full_name
+        $query = self::execute("SELECT * FROM  `users` where full_name=:fullname", array("fullname" => $full_name));
+        $data = $query->fetch(); //un seul resultat max
+        if ($query->rowCount() == 0) {
+            return false;
+        } else {
+            return new User($data["id"], $data["mail"], $data["hashed_password"], $data["full_name"], $data["role"], $data["iban"]);
         }
+    }
 
-        public static function get_by_iban($iban)
-        {//récup l'user par son iban
-            $query = self::execute("SELECT * FROM  `users` where iban=:iban", array("iban"=>$iban));
-            $data = $query->fetch();//un seul resultat max
-            if($query->rowCount() == 0){
-                return false;
-            } else{
-                return new User($data["id"],$data["mail"],$data["hashed_password"],$data["full_name"],$data["role"],$data["iban"]);
-            }
+    public static function get_by_iban($iban)
+    { //récup l'user par son iban
+        $query = self::execute("SELECT * FROM  `users` where iban=:iban", array("iban" => $iban));
+        $data = $query->fetch(); //un seul resultat max
+        if ($query->rowCount() == 0) {
+            return false;
+        } else {
+            return new User($data["id"], $data["mail"], $data["hashed_password"], $data["full_name"], $data["role"], $data["iban"]);
         }
+    }
 
-        public function update_profile($full_name, $mail,$iban)
-        {
-            if(self::get_by_id($this->id) != null){
-                self::execute("UPDATE users
+    public function update_profile($full_name, $mail, $iban)
+    {
+        if (self::get_by_id($this->id) != null) {
+            self::execute("UPDATE users
                     SET full_name=:full_name,
                     mail=:mail,
                     iban=:iban
                     where id=:id",
-                        array("id"=>$this->id,
-                        "full_name"=>$full_name,
-                        "mail"=>$mail,
-                        "iban"=>$iban));
-            }
-            return $this;
+                array(
+                    "id" => $this->id,
+                    "full_name" => $full_name,
+                    "mail" => $mail,
+                    "iban" => $iban
+                )
+            );
         }
+        return $this;
+    }
 
 
     public function update()
@@ -288,14 +283,16 @@ class User extends Model
                 role=:role,
                 iban=:iban,
                 WHERE id=:id ",
-                            array(
-                            "mail"=>$this->mail,
-                            "hashed_password"=>$this->hashed_password,
-                            "full_name"=>$this->full_name,
-                            "role"=>$this->role,
-                            "iban"=>$this->iban,
-                            "id"=>$this->id));
-            } else {
+                array(
+                    "mail" => $this->mail,
+                    "hashed_password" => $this->hashed_password,
+                    "full_name" => $this->full_name,
+                    "role" => $this->role,
+                    "iban" => $this->iban,
+                    "id" => $this->id
+                )
+            );
+        } else {
             self::execute("INSERT INTO
                  `users`(mail,
                  hashed_password,
@@ -339,7 +336,7 @@ class User extends Model
         $errors = [];
         if (isset($this->mail) && self::validateEmail($this->mail)) {
             $user = self::get_by_mail($this->mail);
-            if (!is_null($user) && self::validate_unicity($this->mail)){
+            if (!is_null($user) && self::validate_unicity($this->mail)) {
                 $errors[] = "This email is already used.";
             }
 
@@ -352,9 +349,9 @@ class User extends Model
         return $errors;
     }
 
-    public static function validateFullName($full_name) : bool
+    public static function validateFullName($full_name): bool
     {
-        if(strlen($full_name) <= 3 ){
+        if (strlen($full_name) <= 3) {
             return false;
         }
         return true;
@@ -390,18 +387,18 @@ class User extends Model
         return $errors;
     }
 
-        // public static function validate_iban($iban):bool{
-        //     $pattern = '^[a-zA-Z]+[0-9]+(\s+([0-9]+\s+)+)[0-9]+$';
-        //     str_replace(' ','',$iban);
-        //     //si il n'est pas vide
-        //     if(!is_null($iban)){
-        //         if (!preg_match($pattern, $iban)) {
-        //             return false;
-        //         }
-        //         return true;
-        //     }
-        //     return true;
-        // }
+    // public static function validate_iban($iban):bool{
+    //     $pattern = '^[a-zA-Z]+[0-9]+(\s+([0-9]+\s+)+)[0-9]+$';
+    //     str_replace(' ','',$iban);
+    //     //si il n'est pas vide
+    //     if(!is_null($iban)){
+    //         if (!preg_match($pattern, $iban)) {
+    //             return false;
+    //         }
+    //         return true;
+    //     }
+    //     return true;
+    // }
 
 
     public static function validate_unicity($email): array
@@ -420,15 +417,79 @@ class User extends Model
         return $hash === Tools::my_hash($clear_password);
     }
 
-        public function list_by_user() {
-            $query = self::execute("SELECT * FROM `tricounts` t JOIN  subscriptions s ON t.id = s.tricount where user=:user", array("user"=>$this->id));
-            $data = $query->fetchAll();
-            if ($query->rowCount() == 0) {
-                return false;
-            } else {
-                return new Tricounts($data["ID"],$data["title "],$data["description"],$data["created_at"],$data["creator"]);
-            }
+    public function list_by_user()
+    {
+        $query = self::execute("SELECT * FROM `tricounts` t JOIN  subscriptions s ON t.id = s.tricount where user=:user", array("user" => $this->id));
+        $data = $query->fetchAll();
+        if ($query->rowCount() == 0) {
+            return false;
+        } else {
+            return new Tricounts($data["ID"], $data["title "], $data["description"], $data["created_at"], $data["creator"]);
+        }
+    }
+
+    public function participates_in_tricount(): bool
+    {
+        $query = self::execute("SELECT *
+                                FROM repartition_template_items
+                                WHERE user = :user
+                                LIMIT 1;
+                                ", array("user" =>$this->getUserId()));
+        $data = $query->fetch();
+        if ($query->rowCount() == 0) {
+            return false;
+        } else {
+            return true;
         }
 
+    }
+    
+    public function can_be_delete($tricount): bool
+    {
+        $query = self::execute("SELECT count(*)
+        FROM subscriptions
+        WHERE tricount = :tricount
+        AND user = :user
+        AND user NOT IN (
+        SELECT initiator
+        FROM operations
+        WHERE tricount = :tricount
+        )
+        AND user NOT IN (
+        SELECT user
+        FROM repartitions
+        JOIN operations
+        ON repartitions.operation = operations.id
+        WHERE tricount = :tricount
+        );", array("tricount"=>$tricount,"user" =>$this->getUserId()));
+        if ($query->fetchColumn() == 0) {
+            return false;
+        } else {
+            return true;
+        }
+
+    }
+    
+    public function is_in_tricount($idTricount){
+        $query = self::execute("SELECT * from subscriptions s where s.user = :user and s.tricount =:id  ",array("user"=>$this->id,"id"=>$idTricount));
+        $data = $query->fetch();
+        if($query->rowCount()== 0)
+            return false;
+        return $data;
+    }
+    public function is_creator($idTricount){
+        $query = self::execute("SELECT * FROM tricounts t where t.creator =:user and t.id=:id ",array("user"=>$this->id,"id"=>$idTricount));
+        $data = $query->fetch();
+        if($query->rowCount()== 0)
+            return false;
+        return $data;
+    }
+    public function is_in_items($idTemplate){
+        $query = self::execute("SELECT * FROM repartition_template_items rti where rti.user =:user and rti.repartition_template=:id ",array("user"=>$this->id,"id"=>$idTemplate));
+        $data = $query->fetch();
+        if($query->rowCount()== 0)
+            return false;
+        return $data;
+    }
 }
 ?>

@@ -111,7 +111,7 @@ class Repartition_templates extends Model
     }
 
     public function newTemplate($titre, $tricount){
-      if($titre === null || $tricount === null)
+      if(($titre === null || strlen($titre < 3 ) ) || $tricount === null)
         return null;
       else{
         $query = self::execute("INSERT INTO
@@ -171,7 +171,19 @@ class Repartition_templates extends Model
     }
     return $this;
   }
+
+
+
+  public static function validatetitle($full_name) : bool
+  {
+      if(strlen($full_name) < 3 ){
+          return false;
+      }
+      return true;
+  }
+
 }
+
 
 
 

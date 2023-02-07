@@ -12,7 +12,7 @@ class ControllerMain extends Controller
     public function index(): void
     {
         if ($this->user_logged()) {
-            $this->redirect("user", "profile");
+            $this->redirect("profile", "profile");
         } else {
             (new View("index"))->show();
         }
@@ -35,8 +35,8 @@ class ControllerMain extends Controller
         $password = '';
         $errors = [];
         if (isset($_POST['mail']) && isset($_POST['password'])) { //note : pourraient contenir des chaînes vides
-            $mail = $_POST['mail'];
-            $password = $_POST['password'];
+            $mail = Tools::sanitize($_POST['mail']);
+            $password = Tools::sanitize($_POST['password']);
 
             $errors = User::validate_login($mail, $password);
             if (empty($errors)) {
@@ -67,11 +67,11 @@ class ControllerMain extends Controller
 
             ) {
 
-                $mail = $_POST['mail'];
-                $password = $_POST['password'];
-                $password_confirm = $_POST['password_confirm'];
-                $full_name = $_POST['full_name'];
-                $iban = $_POST['iban'];
+                $mail = Tools::sanitize($_POST['mail']);
+                $password = Tools::sanitize($_POST['password']);
+                $password_confirm = Tools::sanitize($_POST['password_confirm']);
+                $full_name = Tools::sanitize($_POST['full_name']);
+                $iban = Tools::sanitize($_POST['iban']);
 
                 $newUser = new User($id = null, $mail, Tools::my_hash($password), $full_name, $role = 'user', $iban);
 
@@ -79,7 +79,8 @@ class ControllerMain extends Controller
                 $errors = array_merge($errors, $newUser->validate());
                 if (empty($errors)) {
                     $newUser->update();
-                    $this->log_user($newUser, "profile");
+                    $user = User::get_by_mail($newUser->getMail());
+                    $this->log_user($user, "profile");
                 }
             } else {
                 $errors[] = "All information are needed to complete your registration.";

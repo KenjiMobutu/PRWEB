@@ -7,6 +7,7 @@
         <title>
             <?= $user->getFullName() ?>'s Tricount!
         </title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -36,13 +37,17 @@
         </div>
         <div class="confirm_delete_Tricount">
           <div class="confirmation-box">
-            <h2>Etes-vous sûr de vouloir supprimer ce tricount ?</h2>
+            <div class="trash_confirm_delete_Tricount">
+              <i class="bi bi-trash3"></i>
+            </div>
+          <hr>
+            <h2>Etes-vous sûr de vouloir supprimer ce tricount " <?= $tricount->get_title()?> " ?</h2>
             <p>Cette action est irréversible et supprimera
               toutes les données associées au tricount.</p>
             <div class="button_delete_confirm">
               <form action="tricount/delete_confirm/<?= $tricount->get_id()?>" method="POST" method="post">
-                <button class="delete-tricount" type="submit">Supprimer</button>
-                <a href="tricount/index" class="cancel-btn">Annuler</a>
+                <button class="delete-tricount-confirm" type="submit">Supprimer</button>
+                <a href="tricount/index" class="cancel-tricount-confirm">Annuler</a>
               </form>
             </div>
           </div>

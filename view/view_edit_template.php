@@ -15,60 +15,54 @@
 <body>
     <style>
         
-        /* @media screen and (min-width: 10px) and (max-width: 480px) {
-            input[type="text"], input[type="number"], input[type="checkbox"] {
-                width: 25%;
-            }
-            input[type="submit"] {
-                width: 100%;
-            }
-        } */
 
     </style>
 <?php include 'menu.html' ?>
+    <form action="templates/editTemplate" method="post" id="edit_template_form">
+        <div class="edit_template_container">
+            <p class="edit_template_p">Title :</p>
+            <input type="text" name="template_title" id="template_title" 
+            value="<?php 
+            if(isset($template))
+                echo $template->get_title();
+            ?>" required>
+            <p class="edit_template_p">
+            Template items :
+            </p><br>
+            <!-- pour récupérer l'id du tricount & template si reçu dans le submit du form -->
+            <input type="text" name="tricountId" value="<?php echo $tricount->get_id(); ?>" hidden>
+            <input type="text" name="templateID" value="<?php if(isset($_GET["param2"])){ echo $_GET["param2"];}  ?>" hidden>
+            <?php if ($listUser !== null) : ?>
+                <?php foreach($listUser as $listusr): ?>
+                <!-- mettre c[User->id] ça fera un tableau avec des données -->              <!-- check si c'est un edit t'emplate et récupère les items liés-->
+                <div class="edit_template_items">
+                    <input  type="checkbox" name="c[<?= $listusr->get_user(); ?>]" value="<?= $listusr->get_user(); ?>" <?php if(isset($template)){
+                                                                                                                    if($listusr->is_in_Items($template->get_id())) {
+                                                                                                                        echo "checked = 'checked'" ;} };?> >
+                    <input  type="text" name="user" value="<?php $listusr->get_user();?>" placeholder="<?php echo $listusr->getUserInfo(); ?>"  disabled="disabled">
+                    <fieldset>
+                        <legend>Weight</legend>
+                        <input  type="number" name="w[<?= $listusr->get_user() ; ?>]"min="0" placeholder="0"  <?php if(isset($template)){
+                                                                                            if($listusr->is_in_Items($template->get_id())) {
+                                                                                                echo "value=".$listusr->get_weight_by_user($template->get_id());}; }else echo "value="."0";?>>
+                    </fieldset>
+                                    <?php // mettre w[User->id] ça fera un tableau avec des données?>
+                </div>
+                <br><br>
 
+            <?php endforeach ; ?>
 
-<h1></h1>
-    <form action="templates/editTemplate" method="post">
-        <p>Title :</p>
-        <input type="text" name="template_title" id="template_title" 
-        value="<?php 
-        if(isset($template))
-            echo $template->get_title();
-        ?>" required>
-        <p>
+                <input type="submit" value="Save_template">
+            <?php else : ?>
+                <p>you're alone </p>   
+            <?php endif;?>
+            
+            <?php if(isset($_GET["param2"])){
+                echo "<a href='templates/delete_template/$_GET[param2]'"; echo " id='delete_template'>DELETE</a>";
+            }?>            
+        </div>
 
-        <!-- <?php //echo '<pre>'; print_r($listItems); echo '</pre>';?> -->
-        Template items :
-        </p><br>
-
-
-<!-- pour récupérer l'id du tricount & template si reçu dans le submit du form -->
-        <input type="text" name="tricountId" value="<?php echo $tricount->get_id(); ?>" hidden>
-        <input type="text" name="templateID" value="<?php if(isset($_GET["param2"])){ echo $_GET["param2"];}  ?>" hidden>
-        <?php foreach($listUser as $listusr): ?>
-
-           <!-- mettre c[User->id] ça fera un tableau avec des données -->              <!-- check si c'est un edit t'emplate et récupère les items liés-->
-            <input type="checkbox" name="c[<?= $listusr->get_user(); ?>]" value="<?= $listusr->get_user(); ?>" <?php if(isset($template)){
-                                                                                                            if($listusr->is_in_Items($template->get_id())) {
-                                                                                                                echo "checked = 'checked'" ;} };?> >
-            <input type="text" name="user" value="<?php $listusr->get_user();?>" placeholder="<?php echo $listusr->getUserInfo(); ?>"  disabled="disabled">
-            <fieldset>
-                <legend>Weight</legend>
-                <input type="number" name="w[<?= $listusr->get_user() ; ?>]"min="0"  <?php if(isset($template)){
-                                                                                    if($listusr->is_in_Items($template->get_id())) {
-                                                                                        echo "value=".$listusr->get_weight_by_user($template->get_id());}; }else echo "value=1";?>>
-            </fieldset>
-                            <?php // mettre w[User->id] ça fera un tableau avec des données?>
-            <br><br>
-
-        <?php endforeach ; ?>
-        <input type="submit" value="Save_template">
-        <?php if(isset($_GET["param2"])){
-            echo "<a href='templates/delete_template/$_GET[param2]'"; echo "id='delete_template'>DELETE</a>";
-        }?>
-        <!-- <a href="templates/delete_template/<?php if(isset($_GET["param2"])){echo$_GET["param2"];}?>" id="delete_template">DELETE</a> -->
-    </form>
+    </form>    
     
 </body>
 </html>

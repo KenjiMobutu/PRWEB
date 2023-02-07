@@ -1,12 +1,12 @@
 <!doctype html>
 <html lang="en">
-
     <head>
         <base href="<?= $web_root ?>" />
         <meta charset="UTF-8">
         <title>
             <?= $user->getFullName() ?>'s Tricount!
         </title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -19,34 +19,28 @@
     </head>
 
     <body>
-        <!-- loader -->
-        <div id="loader">
-            <img src="css/img/loading-icon.png" alt="icon" class="loading-icon">
-        </div>
-        <!-- * loader -->
-
+    <form id="addTricount" action="tricount/add" method="post">
         <div class="appHeader">
             <div class="left">
                 <a href="#" class="headerButton goBack">
-                    <ion-icon name="chevron-back-outline"></ion-icon>CANCEL
+                <i class="bi bi-arrow-left"></i>
                 </a>
             </div>
             <div class="pageTitle">
                 Add new Tricount
             </div>
             <div class="right">
-                <a href="tricount/add" class="headerButton goBack"  >
-                    <ion-icon name="save-outline"></ion-icon>
-                </a>
+                <button type="submit" value="add" class="addTricount_btn">
+                    <i class="bi bi-save"></i>
+                </button>
             </div>
         </div>
 
     <!-- * tricount block -->
 
-    <div class="section mt-2 mb-2">
+        <div class="section mt-2 mb-2">
             <div class="card">
                 <div class="card-body">
-                    <form id="addTricount" action="tricount/add" method="post">
                         <div class="form-group boxed">
                             <div class="input-wrapper">
                                 <label class="label" for="text4b">Title</label>
@@ -60,8 +54,17 @@
                                 <textarea id="textarea4b" name="description" rows="2" class="form-control" placeholder="Your description here!"></textarea>
                             </div>
                         </div>
-                        <button type="submit" value="add" class="btn">Add</button>
-                    </form>
+                        <?php if (count($errors) != 0): ?>
+                            <div class='errors'>
+                                <br><br><p>Please correct the following error(s) :</p>
+                                <ul>
+                                    <?php foreach ($errors as $error): ?>
+                                        <li><?= $error ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        <?php endif; ?>
+    </form>
                 </div>
             </div>
         </div>
