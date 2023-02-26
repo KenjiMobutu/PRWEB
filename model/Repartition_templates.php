@@ -186,7 +186,7 @@ class Repartition_templates extends Model
 
   public static function validatetitle($title) 
   {
-    $errors =[];
+    $errors = [];
       if(strlen($title) < 3 ){
           $errors = "Bad title. Must be at least 3 characters";
       }

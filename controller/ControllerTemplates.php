@@ -97,7 +97,23 @@ class ControllerTemplates extends Controller
                 $template = Repartition_templates::get_by_id($_POST["templateID"]);
                 if($_POST["template_title"] !== $template->get_title()){
                     $template->update_title($template_title);
-                }                
+                }
+                $listUser = Participations::get_by_tricount($_POST["tricountId"]);
+
+                // foreach($checkedUsers as $c){
+                //     foreach ($listUser as $u){
+                //      echo "<pre>";
+                //     print_r($c);print_r($u);
+                //     echo "</pre>";
+                    
+                //     }
+                // }
+               
+                // echo "\n";
+                // foreach($weights as $i) {
+                //     echo $i . "-----";
+                // }   
+                //die();
                 if(!is_null($template)){
                     Repartition_template_items::delete_by_repartition_template($template->get_id());
                     for($i = 0; $i <= count($weights)+50; $i++) {
@@ -116,7 +132,7 @@ class ControllerTemplates extends Controller
                 // Récupère les valeurs des inputs
                 $checkedUsers = $_POST["c"];
                 $weights = $_POST["w"];
-                // Utilise les valeurs pour ajouter à la base de données ou pour d'autres traitements
+                // Utilise les valeurs pour ajouter à la base de données
                 $template_title = Tools::sanitize($_POST["template_title"]);
                 $template = new Repartition_templates(null,$_POST["template_title"], $_POST["tricountId"] );
                 $template->newTemplate($template_title, $_POST["tricountId"]);

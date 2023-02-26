@@ -10,9 +10,34 @@
             href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400&family=Sen:wght@400;700;800&display=swap"
             rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+        <script src="lib/jquery-3.6.3.min.js" type="text/javascript"></script>
+
         <title>Edit Template</title>
 </head>
 <body>
+<script>
+    $(function() {
+        let title = $("#template_title");
+        let errTitle = $("#errTitle");
+        let btn = $("#btnSubmit");
+        let errorTitleShow = false;
+        
+        title.on("input", function() {
+            if (title.val().length < 3) {
+                errTitle.html("Title must have at least 3 characters.");
+                errTitle.css({"color": "red"});
+                errorTitleShow = true;
+                btn.prop("disabled", true);
+               // btn.css({"color": "grey", "background-color": "#707070"});//#615063
+            } else {
+                errTitle.html("");
+                errorTitleShow = false;
+                btn.prop("disabled", false);
+            }
+        });
+    });
+</script>
+
 <?php include 'menu.html' ?>
     <form action="templates/editTemplate" method="post" id="edit_template_form">
         <div class="edit_template_container">
@@ -20,10 +45,11 @@
 
             <p class="edit_template_p">Title :</p>
             <input type="text" name="template_title" id="template_title" 
-            value="<?php 
-            if(isset($template))
-                echo $template->get_title();
-            ?>" required>
+                    value="<?php 
+                    if(isset($template))
+                        echo $template->get_title();
+                    ?>" required>
+            <div class="errTitle" id="errTitle"></div>
             <p class="edit_template_p">
             Template items :
             </p><br>
@@ -48,7 +74,7 @@
 
 
         <?php endforeach ; ?>
-            <input type="submit" value="Save_template">
+            <input type="submit" value="Save_template" id="btnSubmit">
         <?php else : ?>
                 <p>You're alone. Don't be shy -> <a href="tricount/edit/<?php echo $tricount->get_id(); ?>"> ADD FRIENDS</a> ☻</p>
         <?php endif;?>
