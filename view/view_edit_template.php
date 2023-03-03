@@ -48,6 +48,8 @@
                     value="<?php 
                     if(isset($template))
                         echo $template->get_title();
+                    if(isset($template_title))
+                        echo $template_title;
                     ?>" required>
             <div class="errTitle" id="errTitle"></div>
             <p class="edit_template_p">
@@ -60,20 +62,32 @@
             <?php foreach($listUser as $listusr): ?>
             <!-- mettre c[User->id] ça fera un tableau avec des données -->              <!-- check si c'est un edit t'emplate et récupère les items liés-->
             <div class="edit_template_items">
-                <input  type="checkbox" name="c[<?= $listusr->get_user(); ?>]" value="<?= $listusr->get_user(); ?>" <?php if(isset($template)){
+                <input  type="checkbox" name="checkedUser[<?= $listusr->get_user(); ?>]" value="<?= $listusr->get_user(); ?>" <?php if(isset($template)){
                                                                                                                 if($listusr->is_in_Items($template->get_id())) {
                                                                                                                     echo "checked = 'checked'" ;} };?> >
                 <input  type="text" name="user"  value="<?php echo $listusr->getUserInfo(); ?>"  disabled="disabled">
                 <fieldset>
                     <legend>Weight</legend>
-                    <input  type="number" name="w[<?= $listusr->get_user() ; ?>]"min="0" placeholder="0"  <?php if(isset($template)){if($listusr->is_in_Items($template->get_id())){echo "value=".$listusr->get_weight_by_user($template->get_id());}; }?> value="0">
+                    <input  type="number" name="weight[<?= $listusr->get_user() ; ?>]"min="0" placeholder="0"  <?php if(isset($template)){if($listusr->is_in_Items($template->get_id())){echo "value=".$listusr->get_weight_by_user($template->get_id());}; }?> value="0">
                 </fieldset>
             </div>
             <br><br>
-            <?php if(isset($_POST['errors'])): echo $error; endif; ?>
+            <?php endforeach ; ?>
 
+            <?php if (!empty($errors)): ?>
+                <div class='errors'>
+                    <p>Please correct the following error(s) :</p>
+                    <ul>
 
-        <?php endforeach ; ?>
+                        <?php foreach ($errors as $error): ?>
+                        <li>
+                            <?= $error ?>
+                        </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php endif; ?>
+
             <input type="submit" value="Save_template" id="btnSubmit">
         <?php else : ?>
                 <p>You're alone. Don't be shy -> <a href="tricount/edit/<?php echo $tricount->get_id(); ?>"> ADD FRIENDS</a> ☻</p>
