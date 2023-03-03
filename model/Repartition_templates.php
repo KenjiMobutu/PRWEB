@@ -92,8 +92,8 @@ class Repartition_templates extends Model
       if ($query->rowCount() == 0) {
         return null;
       } else {
-      return $data;
-    }
+        return $data;
+      }
     }
   
 
@@ -184,13 +184,13 @@ class Repartition_templates extends Model
 
 
 
-  public static function validatetitle($title) 
+  public static function validatetitle($title) :bool
   {
-    $errors = [];
-      if(strlen($title) < 3 ){
-          $errors = "Bad title. Must be at least 3 characters";
+    $valid = false;
+      if(strlen($title) >= 3 ){
+          $valid = true;
       }
-      return $errors;
+      return $valid;
   }
 
 }
