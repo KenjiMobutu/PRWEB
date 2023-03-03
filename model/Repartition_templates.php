@@ -14,7 +14,7 @@ class Repartition_templates extends Model
     $this->tricount = $tricount;
   }
 
-  public function get_id(): int
+  public function get_id(): ?int
   {
     return $this->id;
   }

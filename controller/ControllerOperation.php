@@ -337,110 +337,93 @@ class ControllerOperation extends Controller
 
     public function edit_expense()
     {
-        $user = $this->get_user_or_redirect();
-        $errors = [];
         if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
-            $this->redirect('main', "error");
+            $this->redirect('main', 'error');
+        }
+
+        $operation = Operation::getOperationByOperationId($_POST['operationId']);
+        if (!$operation) {
+            $this->redirect('main', 'error');
+        }
+
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+            return;
+        }
+
+        $title = Tools::sanitize($_POST['title']);
+        $tricount = $_POST['tricId'];
+        $amount = Tools::sanitize(floatval($_POST['amount']));
+        $operation_date = $_POST['operation_date'];
+        $init = User::get_by_name($_POST['initiator']);
+        $initiator = $init->getUserId();
+        $created_at = date('y-m-d h:i:s');
+
+        $operation->setTitle($title);
+        $operation->setTricount($tricount);
+        $operation->setAmount($amount);
+        $operation->setOperation_date($operation_date);
+        $operation->setInitiator($initiator);
+        $operation->setCreated_at($created_at);
+
+        $errors = $operation->validate();
+
+        if (isset($_POST['save_template'])) {
+            $save_template = $_POST['save_template'] === 'on';
         } else {
-            $userId = $user->getUserId();
+            $save_template = false;
+        }
 
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                if (
-                    array_key_exists(
-                        "operationId",
-                        $_POST
-                    ) &&
-                    array_key_exists(
-                        "title",
-                        $_POST
-                    ) &&
-                    array_key_exists(
-                        "tricId",
-                        $_POST
-                    ) &&
-                    array_key_exists(
-                        "amount",
-                        $_POST
-                    ) &&
-                    array_key_exists(
-                        "operation_date",
-                        $_POST
-                    ) &&
-                    array_key_exists(
-                        "initiator",
-                        $_POST
-                    )
-                ) {
+        if ($save_template && empty($_POST['template_name'])) {
+            $this->redirect('main', 'error', 'title_cannot_be_empty');
+        }
 
-                    $operation = Operation::getOperationByOperationId($_POST["operationId"]);
-                    if ($operation !== null) {
+        if (!$save_template && empty($_POST['template_name'])) {
+            $operation->update();
+            $this->redirect('operation', 'expenses', $_POST['tricId']);
+        }
 
-                        $title = Tools::sanitize($_POST["title"]);
-                        $tricount = $_POST["tricId"];
-                        $amount = Tools::sanitize(floatval($_POST["amount"]));
-                        $operation_date = $_POST["operation_date"];
-                        $init = User::get_by_name($_POST["initiator"]);
-                        $initiator = $init->getUserId();
-                        $created_at = date('y-m-d h:i:s');
+        if ($save_template && !empty($_POST['template_name'])) {
+            $template_name = $_POST['template_name'];
+            $checkedUsers = $_POST['c'];
+            $weights = $_POST['w'];
+            $template = new Repartition_templates(null, $template_name, $_POST['tricId']);
+            $template->newTemplate($template_name, $_POST['tricId']);
 
-                        if ($title) {
-                            $operation->setTitle($title);
-                        }
-                        if ($tricount) {
-                            $operation->setTricount($tricount);
-                        }
-                        if ($amount) {
-                            $operation->setAmount($amount);
-                        }
-                        if ($operation_date) {
-                            $operation->setOperation_date($operation_date);
-                        }
-                        if ($initiator) {
-                            $operation->setInitiator($initiator);
-                        }
-                        if ($created_at) {
-                            $operation->setCreated_at($created_at);
-                        }
+            if ($template) {
+                for ($i = 0; $i < count($checkedUsers); $i++) {
+                    if (!isset($checkedUsers[$i])) {
+                        continue;
                     }
-                    $errors = $operation->validate();
-
-                    if(empty($_POST['name_template'])){
-                        $this->redirect('main', "error","title_cannot_be_empty");
+                    //the continue statement is used in an if block to check if the $checkedUsers[$i]
+                    //is not set. If it's not set, the continue statement will skip the current
+                    //iteration of the loop and move on to the next iteration without executing
+                    //the remaining code inside the loop block.
+                    if ($weights[$i] === '' || $weights[$i] === '0') {
+                        $weights[$i] = 1;
                     }
-                    
-                    if (empty($errors)) {
-                        $operation->update();
-                        $checkedUsers = $_POST['c'];
-                        $weights = $_POST['w'];
-                        $template_name = $_POST["name_template"];
-                        $template = new Repartition_templates(null, $template_name, $_POST["tricId"]);
-                        $template->newTemplate($template_name, $_POST["tricId"]);
-                        if ($template !== null) {
-                            for ($i = 0; $i <= count($checkedUsers) + 50; $i++) {
-                                if (isset($checkedUsers[$i]) && $checkedUsers[$i] !== null) {
-                                    if ($weights[$i] === "" || $weights[$i] === "0")
-                                        $weights[$i] = 1;
-                                    Repartition_template_items::addNewItems(
-                                        $checkedUsers[$i],
-                                        $template->get_id(),
-                                        $weights[$i]
-                                    );
-                                    Operation::deleteRepartition($operation->get_id());
-                                    Operation::insertRepartition($operation->get_id(), $weights[$i], $checkedUsers[$i]);
-                                } //alberti goat
 
-                            }
-                            $this->redirect("operation", "expenses", $_POST["tricId"]);
-                        }
-                        $this->redirect("operation", "expenses", $_POST["tricId"]);
-                    } else {
-                        echo "<b>Validation Failed:<b> <br>";
-                        foreach ($errors as $error) {
-                            echo $error . "<br>";
-                        }
-                    }
+                    Repartition_template_items::addNewItems(
+                        $checkedUsers[$i],
+                        $template->get_id() ?: '',
+                        $weights[$i]
+                    );
+
+                    Operation::deleteRepartition($operation->get_id());
+                    Operation::insertRepartition($operation->get_id(), $weights[$i], $checkedUsers[$i]);
                 }
+
+                $this->redirect('operation', 'expenses', $_POST['tricId']);
             }
+        }
+
+        if (!empty($errors)) {
+            echo '<b>Validation Failed:</b> <br>';
+            foreach ($errors as $error) {
+                echo $error . '<br>';
+            }
+        } else {
+            $operation->update();
+            $this->redirect('operation', 'expenses', $_POST['tricId']);
         }
     }
 

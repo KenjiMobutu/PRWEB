@@ -27,7 +27,7 @@
                     echo 'value=' . $amount ?>>
                     <br>
                     <label for="operation_date">Date</label>
-                    <input class="addExp" type="date" id="operation_date" name="operation_date" required <?php
+                    <input class="addExp" type="date" id="operation_date" name="operation_date" value="<?php echo date('Y-m-d'); ?>" required <?php
                 if (isset($_POST["operation_date"]))
                     echo 'value=' . $operation_date ?>>
                     <br>
