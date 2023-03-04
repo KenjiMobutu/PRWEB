@@ -52,6 +52,7 @@ class ControllerTemplates extends Controller
             if($_GET['param1'] !==null && (isset($_GET['param2']) && $_GET['param2'] !== null)){
                 $tricount = Tricounts::get_by_id($_GET["param1"]);
                 $template = Repartition_templates::get_by_id($_GET['param2']);
+                $templateID = $_GET['param2'];
                 if(empty(Repartition_templates::template_exist_in_tricount($template->get_id(),$tricount->get_id()))){
                     //Si l'utilisateur modifie l'url
                     $this->redirect("user","profile");
@@ -66,7 +67,8 @@ class ControllerTemplates extends Controller
                                                         "tricount"=>$tricount,
                                                         "template"=>$template,
                                                         "listUser"=>$listUser,
-                                                        "listItems"=>$listItems));
+                                                        "listItems"=>$listItems,
+                                                        "templateID"=>$templateID));
             }else{
                 if($_GET['param1'] !== null ){
                     $tricount = Tricounts::get_by_id($_GET["param1"]);
@@ -90,6 +92,8 @@ class ControllerTemplates extends Controller
             $tricount = Tricounts::get_by_id( $_POST["tricountId"]);
             $listUser = Participations::get_by_tricount($_POST["tricountId"]);
 
+            if(isset($_POST["templateID"]))
+                $templateID = $_POST["templateID"];
             if(isset($_POST["checkedUser"])){
                 $checkedUsers = $_POST["checkedUser"];
             }
@@ -107,7 +111,7 @@ class ControllerTemplates extends Controller
             //si c'est un update
             if($_POST["templateID"] !== "" && empty($errors)){
                 $template = Repartition_templates::get_by_id($_POST["templateID"]);
-                if($_POST["template_title"] !== $template->get_title() && Repartition_templates::validatetitle($template_title)){
+                if($_POST["template_title"] !== $template->get_title()){
                     $template->update_title($template_title);
                 }
                 if(!is_null($template) ){
@@ -123,7 +127,7 @@ class ControllerTemplates extends Controller
                         }
                     };
                 }
-                $this->redirect("templates","templates", $tricount);
+                $this->redirect("templates","templates", $tricount->get_id());
             }
             //sinon c'est un nouveau template
             else{
@@ -141,14 +145,17 @@ class ControllerTemplates extends Controller
                     }
                     $this->redirect("templates","templates", $tricount->get_id());
                 }
-            }                
-            
+            }
+            if(empty($checkedUsers))
+                $checkedUsers = [];            
             (new View("edit_template"))->show(array(
                 "user"=>$user,
                 "tricount"=>$tricount,
                 "template_title"=>$template_title,
-                "listUser"=>$listUser, 
-                "errors"=>$errors));
+                "listUser"=>$listUser,
+                "checkedUser"=>$checkedUsers,
+                "errors"=>$errors,
+                "templateID" => $templateID));
         }
         
     }
