@@ -16,26 +16,49 @@
 </head>
 <body>
 <script>
-    $(function() {
-        let title = $("#template_title");
-        let errTitle = $("#errTitle");
-        let btn = $("#btnSubmit");
-        let errorTitleShow = false;
-        
-        title.on("input", function() {
-            if (title.val().length < 3) {
-                errTitle.html("Title must have at least 3 characters.");
-                errTitle.css({"color": "red"});
-                errorTitleShow = true;
-                btn.prop("disabled", true);
-               // btn.css({"color": "grey", "background-color": "#707070"});//#615063
-            } else {
-                errTitle.html("");
-                errorTitleShow = false;
+       $(function() {
+            let title = $("#template_title");
+            let errTitle = $("#errTitle");
+            let btn = $("#btnSubmit");
+            let checkedUser = $(".check");
+            let errItems = $("#errItems");
+            let errorTitleShow = false;
+
+            title.on("input", function() {
+                if (title.val().length < 3) {
+                    errTitle.html("Title must have at least 3 characters.");
+                    errTitle.css({"color": "red"});
+                    errorTitleShow = true;
+                    btn.prop("disabled", true);
+                } else {
+                    errTitle.html("");
+                    errorTitleShow = false;
+                    btn.prop("disabled", false);
+                }
+            });
+
+            console.log(checkedUser.is(":checked"));
+            if(checkedUser.is(":checked") == false){
+                errItems.html("You must check at least one user");
+                    errItems.css({"color": "red"});
+                    btn.prop("disabled", true);
+            }else{
+                errItems.html("");
                 btn.prop("disabled", false);
             }
+            checkedUser.on("change", function() {
+                console.log(checkedUser.is(":checked"));
+                if ($(".check:checked").length === 0) {
+                    errItems.html("You must check at least one user");
+                    errItems.css({"color": "red"});
+                    btn.prop("disabled", true);
+                } else {
+                    errItems.html("");
+                    btn.prop("disabled", false);
+                }
+            });
         });
-    });
+
 </script>
 
 <?php include 'menu.html' ?>
@@ -51,24 +74,38 @@
                     if(isset($template_title))
                         echo $template_title;
                     ?>" required>
-            <div class="errTitle" id="errTitle"></div>
+            <span class="errTitle" id="errTitle"></span>
             <p class="edit_template_p">
             Template items :
             </p><br>
             <!-- pour récupérer l'id du tricount & template si reçu dans le submit du form -->
             <input type="text" name="tricountId" value="<?php echo $tricount->get_id(); ?>" hidden>
-            <input type="text" name="templateID" value="<?php if(isset($_GET["param2"])){ echo $_GET["param2"];}  ?>" hidden>
-            
+            <input type="text" name="templateID" value="<?php if(isset($templateID)){ echo $templateID;}  ?>" hidden>
+            <span class="errItems" id="errItems"></span>
+
             <?php foreach($listUser as $listusr): ?>
             <!-- mettre c[User->id] ça fera un tableau avec des données -->              <!-- check si c'est un edit t'emplate et récupère les items liés-->
             <div class="edit_template_items">
-                <input  type="checkbox" name="checkedUser[<?= $listusr->get_user(); ?>]" value="<?= $listusr->get_user(); ?>" <?php if(isset($template)){
-                                                                                                                if($listusr->is_in_Items($template->get_id())) {
-                                                                                                                    echo "checked = 'checked'" ;} };?> >
+                <?php if (!isset($checkedUser)): ?>
+                    <input  type="checkbox" class="check" name="checkedUser[<?= $listusr->get_user(); ?>]" value="<?= $listusr->get_user(); ?>" 
+                                                                                                                <?php if(isset($template)){
+                                                                                                                    if($listusr->is_in_Items($template->get_id())) {
+                                                                                                                        echo "checked = 'checked'" ;
+                                                                                                                    }
+                                                                                                                };
+                                                                                                                ?> >
+                <?php else : ?>
+                   <input  type="checkbox" class="check" name="checkedUser[<?= $listusr->get_user(); ?>]" value="<?= $listusr->get_user(); ?>" 
+                        <?php if(in_array($listusr->get_user(), array_keys($checkedUser) ))
+                            echo "checked= 'checked'";
+                        ?> >
+                        
+                
+                <?php endif;?>
                 <input  type="text" name="user"  value="<?php echo $listusr->getUserInfo(); ?>"  disabled="disabled">
                 <fieldset>
                     <legend>Weight</legend>
-                    <input  type="number" name="weight[<?= $listusr->get_user() ; ?>]"min="0" placeholder="0"  <?php if(isset($template)){if($listusr->is_in_Items($template->get_id())){echo "value=".$listusr->get_weight_by_user($template->get_id());}; }?> value="0">
+                    <input  type="number" name="weight[<?= $listusr->get_user() ; ?>]"min="0" placeholder="0"  <?php if(isset($template)){if($listusr->is_in_Items($template->get_id())){echo "value=".$listusr->get_weight_by_user($template->get_id());}; }?> value="1">
                 </fieldset>
             </div>
             <br><br>
@@ -78,7 +115,6 @@
                 <div class='errors'>
                     <p>Please correct the following error(s) :</p>
                     <ul>
-
                         <?php foreach ($errors as $error): ?>
                         <li>
                             <?= $error ?>
@@ -93,8 +129,8 @@
                 <p>You're alone. Don't be shy -> <a href="tricount/edit/<?php echo $tricount->get_id(); ?>"> ADD FRIENDS</a> ☻</p>
         <?php endif;?>
             
-            <?php if(isset($_GET["param2"])){
-                echo "<a href='templates/delete_template/$_GET[param2]'"; echo " id='delete_template'>DELETE</a>";
+            <?php if(isset($templateID)){
+                echo "<a href='templates/delete_template/$templateID'"; echo " id='delete_template'>DELETE</a>";
             }?>
 
         </div>
