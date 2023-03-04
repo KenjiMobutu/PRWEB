@@ -33,7 +33,8 @@ require_once "framework/Model.php";
             $query = self::execute("SELECT s.*, t.creator from subscriptions s, tricounts t
                                             where s.tricount = t.id
                                             and s.tricount =:tricount
-                                            and t.id = :tricount",
+                                            and t.id = :tricount
+                                            order by s.user ASC",
             array("tricount"=>$tricount));
             $participant = [];
             $data = $query->fetchAll();
