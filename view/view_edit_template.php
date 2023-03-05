@@ -95,7 +95,7 @@
                                                                                                                 };
                                                                                                                 ?> >
                 <?php else : ?>
-                   <input  type="checkbox" class="check" name="checkedUser[<?= $listusr->get_user(); ?>]" value="<?= $listusr->get_user(); ?>" 
+                <input  type="checkbox" class="check" name="checkedUser[<?= $listusr->get_user(); ?>]" value="<?= $listusr->get_user(); ?>" 
                         <?php if(in_array($listusr->get_user(), array_keys($checkedUser) ))
                             echo "checked= 'checked'";
                         ?> >
@@ -105,7 +105,12 @@
                 <input  type="text" name="user"  value="<?php echo $listusr->getUserInfo(); ?>"  disabled="disabled">
                 <fieldset>
                     <legend>Weight</legend>
-                    <input  type="number" name="weight[<?= $listusr->get_user() ; ?>]"min="0" placeholder="0"  <?php if(isset($template)){if($listusr->is_in_Items($template->get_id())){echo "value=".$listusr->get_weight_by_user($template->get_id());}; }?> value="1">
+                    <input  type="number" name="weight[<?= $listusr->get_user() ; ?>]"min="0" placeholder="0"  <?php if(isset($template))
+                            {
+                                if($listusr->is_in_Items($template->get_id())){
+                                    echo "value=".$listusr->get_weight_by_user($template->get_id());
+                                    }; 
+                            }?> value="1">
                 </fieldset>
             </div>
             <br><br>
