@@ -144,10 +144,7 @@ class ControllerTemplates extends Controller
 
                 }
             }
-            foreach($combined_array as $key => $value)
-                echo $key . " : " . $value . "<br>";
-           
-    
+            
             (new View("edit_template"))->show(array(
                 "user"=>$user,
                 "tricount"=>$tricount,
