@@ -100,10 +100,9 @@ class ControllerTemplates extends Controller
             $weights = $_POST["weight"];
             $template_title = Tools::sanitize($_POST["template_title"]);
     
-            
             if(empty($checkedUsers))
                 $checkedUsers = [];     
-                
+
             //combine array est une fonction qui va combiner les deux arrays
             $combined_array = $this->combine_array($checkedUsers, $weights);
     
@@ -112,7 +111,7 @@ class ControllerTemplates extends Controller
                 $errors[] = "You must check at least 1 user ";
             }
             // si le title est incorrect
-            if(!Repartition_templates::validatetitle($template_title)){
+            else if(!Repartition_templates::validatetitle($template_title)){
                 $errors[] = "Title must be 3 characters minimum.";
             }
     
@@ -141,8 +140,9 @@ class ControllerTemplates extends Controller
                             Repartition_template_items::addNewItems($user_id, $template->get_id(), $weight); 
                         }
                     }
+                    $this->redirect("templates","templates", $tricount->get_id());
+
                 }
-               // $this->redirect("templates","templates", $tricount->get_id());
             }
            
     

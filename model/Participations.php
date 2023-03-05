@@ -30,11 +30,11 @@ require_once "framework/Model.php";
 
 
         public static function get_by_tricount($tricount){
-            $query = self::execute("SELECT s.*, t.creator from subscriptions s, tricounts t
-                                            where s.tricount = t.id
-                                            and s.tricount =:tricount
-                                            and t.id = :tricount
-                                            order by s.user ASC",
+            $query = self::execute("SELECT DISTINCT u.full_name, s.*, t.creator 
+                                        from users u JOIN subscriptions s on s.user = u.id
+                                        JOIN tricounts t on s.tricount = t.id
+                                        where t.id =:tricount
+                                        ORDER BY u.full_name ASC",
             array("tricount"=>$tricount));
             $participant = [];
             $data = $query->fetchAll();
