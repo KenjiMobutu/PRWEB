@@ -10,11 +10,11 @@ require_once "framework/Model.php";
             $this->user = $user;
         }
 
-        public function get_tricount(){
+        public function get_tricount() : int{
             return $this->tricount;
         }
 
-        public function get_user(){
+        public function get_user() : int{
             return $this->user;
         }
 

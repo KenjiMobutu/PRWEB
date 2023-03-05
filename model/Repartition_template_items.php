@@ -20,10 +20,12 @@
     {
       return $this->weight;
     }
-    public function get_user(){
+    public function get_user() :int 
+    {
       return $this->user;
     }
-    public function get_rt(){
+    public function get_rt() : int
+    {
       return $this->repartition_template;
     }
 
@@ -32,22 +34,6 @@
       return $this->user;
     }
 
-
-    // public static function insertVladRTi(){
-    //   $query = self::execute(
-    //     "INSERT INTO `repartition_templates_items` (`weight`, `user`, `repartition_templates`)
-    //             VALUES (:title,
-    //                     :tricount,
-    //                     :repartition_templates)",
-    //     // array(
-    //     //     "weight" =>weight,
-    //     //     "user" =>user,
-    //     //     "repartition_templates" =>repartition_templates
-    //     )
-    // );
-    // // $this->setRepartitionTemplatesItemsId();
-    // return $query->fetch();
-    // }
     public static function get_weight_by_user($user, $repartition_template): int
     {
       $query = self::execute("SELECT *
@@ -63,7 +49,8 @@
     }
 
 
-    public function get_Sum_Weight(){
+    public function get_Sum_Weight() : int
+    {
       $query = self::execute("SELECT SUM(weight)
                                   FROM `repartition_template_items`
                                   WHERE repartition_template =:repartition_template;",
@@ -87,7 +74,8 @@
       return $data;
     }
 
-    public static function get_by_user($user){ //à refaire
+    public static function get_by_user($user)
+    { //à refaire
       $query = self::execute("SELECT * FROM  repartition_template_items rti, repartition_templates rt
                               where rti.repartition_template = rt.id
                               and rti.user=:user",
@@ -98,7 +86,8 @@
       } else
         return $data;
     }
-    public static function by_user($user){
+    public static function by_user($user)
+    {
       $query = self::execute("SELECT *
                               FROM  repartition_template_items rti, repartition_templates rt
                               where rti.repartition_template = rt.id
@@ -163,7 +152,8 @@
         }
     }
 
-    public function get_user_info(){  // on récupère les noms des utilisateurs lié a un template_items
+    public function get_user_info() : string
+    {  // on récupère les noms des utilisateurs lié a un template_items
       $query = self::execute("SELECT *
                               from users u, repartition_template_items rti
                               where rti.user = u.id
