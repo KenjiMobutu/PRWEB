@@ -85,35 +85,38 @@
 
             <?php foreach($listUser as $listusr): ?>
             <!-- mettre c[User->id] ça fera un tableau avec des données -->              <!-- check si c'est un edit t'emplate et récupère les items liés-->
-            <div class="edit_template_items">
-                <?php if (!isset($checkedUser)): ?>
+                <div class="edit_template_items">
+                    <?php if (!isset($checkedUser)): ?>
+                        <input  type="checkbox" class="check" name="checkedUser[<?= $listusr->get_user(); ?>]" value="<?= $listusr->get_user(); ?>" 
+                                                                                                                    <?php if(isset($template)){
+                                                                                                                        if($listusr->is_in_Items($template->get_id())) {
+                                                                                                                            echo "checked = 'checked'" ;
+                                                                                                                        }
+                                                                                                                    };
+                                                                                                                    ?> >
+                    <?php else : ?>
                     <input  type="checkbox" class="check" name="checkedUser[<?= $listusr->get_user(); ?>]" value="<?= $listusr->get_user(); ?>" 
-                                                                                                                <?php if(isset($template)){
-                                                                                                                    if($listusr->is_in_Items($template->get_id())) {
-                                                                                                                        echo "checked = 'checked'" ;
-                                                                                                                    }
-                                                                                                                };
-                                                                                                                ?> >
-                <?php else : ?>
-                <input  type="checkbox" class="check" name="checkedUser[<?= $listusr->get_user(); ?>]" value="<?= $listusr->get_user(); ?>" 
-                        <?php if(in_array($listusr->get_user(), array_keys($checkedUser) ))
-                            echo "checked= 'checked'";
-                        ?> >
-                        
-                
-                <?php endif;?>
-                <input  type="text" name="user"  value="<?php echo $listusr->getUserInfo(); ?>"  disabled="disabled">
-                <fieldset>
-                    <legend>Weight</legend>
-                    <input  type="number" name="weight[<?= $listusr->get_user() ; ?>]"min="0" placeholder="0"  <?php if(isset($template))
-                            {
-                                if($listusr->is_in_Items($template->get_id())){
-                                    echo "value=".$listusr->get_weight_by_user($template->get_id());
-                                    }; 
-                            }?> value="1">
-                </fieldset>
-            </div>
-            <br><br>
+                            <?php if(in_array($listusr->get_user(), array_keys($checkedUser) ))
+                                echo "checked= 'checked'";
+                            ?> >
+                            
+                    
+                    <?php endif;?>
+                    <input  type="text" name="user"  value="<?php echo $listusr->getUserInfo(); ?>"  disabled="disabled">
+                    <fieldset>
+                        <legend>Weight</legend>
+                        <input  type="number" name="weight[<?= $listusr->get_user() ; ?>]"min="0" placeholder="0"  
+                            <?php  if (isset($template) && $listusr->is_in_Items($template->get_id())) {
+                                        $weight = $listusr->get_weight_by_user($template->get_id());
+                                        echo "value=".($weight ?? 1);
+                                    } else if (isset($combined_array[$listusr->get_user()])) {
+                                        $weight = $combined_array[$listusr->get_user()];
+                                        echo "value=".($weight ?? 1);
+                                    }
+                                ?> value="1">
+                    </fieldset>
+                </div>
+                <br><br>
             <?php endforeach ; ?>
 
             <?php if (!empty($errors)): ?>
