@@ -125,7 +125,7 @@ class ControllerTemplates extends Controller
                     Repartition_template_items::delete_by_repartition_template($template->get_id());
                     foreach($combined_array as $user_id => $weight) {
                         if($weight ==="" )
-                            $weight = 0;
+                            $weight = 1;
                         Repartition_template_items::addNewItems($user_id, $template->id, $weight); 
                     };
                 }
@@ -144,6 +144,8 @@ class ControllerTemplates extends Controller
 
                 }
             }
+            foreach($combined_array as $key => $value)
+                echo $key . " : " . $value . "<br>";
            
     
             (new View("edit_template"))->show(array(
@@ -152,6 +154,8 @@ class ControllerTemplates extends Controller
                 "template_title"=>$template_title,
                 "listUser"=>$listUser,
                 "checkedUser"=>$checkedUsers,
+                "combined_array"=>$combined_array,
+                "weights"=> $weights,
                 "errors"=>$errors,
                 "templateID" => $templateID));
         }
