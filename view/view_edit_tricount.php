@@ -114,6 +114,7 @@
                 </div>
                 <div class="button-delete-tricount">
                     <form action="tricount/delete/<?= $tricount->get_id() ?>" method="post">
+                    <input name="tricountId" value="<?= $tricount->get_id() ?>" />
                         <button class="delete-tricount" type="submit">Delete This Tricount</button>
                     </form>
                 </div>
