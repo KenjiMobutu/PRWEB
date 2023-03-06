@@ -10,91 +10,140 @@
             href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400&family=Sen:wght@400;700;800&display=swap"
             rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-    <title>Edit Template</title>
+        <script src="lib/jquery-3.6.3.min.js" type="text/javascript"></script>
+
+        <title>Edit Template</title>
 </head>
 <body>
-    <style>
-        form {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            background-color: #2c3e50;
-            color: white;
-            font-family: Arial, sans-serif;
-        }
+<script>
+       $(function() {
+            let title = $("#template_title");
+            let errTitle = $("#errTitle");
+            let btn = $("#btnSubmit");
+            let checkedUser = $(".check");
+            let errItems = $("#errItems");
+            let errorTitleShow = false;
 
-        p {
-            margin-right: 10px;
-        }
+            title.on("input", function() {
+                if (title.val().length < 3) {
+                    errTitle.html("Title must have at least 3 characters.");
+                    errTitle.css({"color": "red"});
+                    errorTitleShow = true;
+                    btn.prop("disabled", true);
+                } else {
+                    errTitle.html("");
+                    errorTitleShow = false;
+                    btn.prop("disabled", false);
+                }
+            });
 
-         
-        input[type="text"], input[type="number"] {
-            padding: 10px;
-            margin: 10px;
-            border-radius: 5px;
-            border: none;
-            background-color: #34495e;
-            color: white;
-
-        }
-
-        input[type="submit"] {
-            margin: 20px;
-            padding: 10px 20px;
-            border-radius: 5px;
-            border: none;
-            background-color: #16a085;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        input[type="submit"]:hover {
-            background-color: #1abc9c;
-        }
-        @media screen and (min-width: 10px) and (max-width: 480px) {
-            input[type="text"], input[type="number"], input[type="checkbox"] {
-                width: 25%;
+            console.log(checkedUser.is(":checked"));
+            if(checkedUser.is(":checked") == false){
+                errItems.html("You must check at least one user");
+                    errItems.css({"color": "red"});
+                    btn.prop("disabled", true);
+            }else{
+                errItems.html("");
+                btn.prop("disabled", false);
             }
-            input[type="submit"] {
-                width: 100%;
-            }
-        }
+            checkedUser.on("change", function() {
+                console.log(checkedUser.is(":checked"));
+                if ($(".check:checked").length === 0) {
+                    errItems.html("You must check at least one user");
+                    errItems.css({"color": "red"});
+                    btn.prop("disabled", true);
+                } else {
+                    errItems.html("");
+                    btn.prop("disabled", false);
+                }
+            });
+        });
 
-    </style>
+</script>
+
 <?php include 'menu.html' ?>
+    <form action="templates/editTemplate" method="post" id="edit_template_form">
+        <div class="edit_template_container">
+        <?php if (count($listUser) > 1) : ?>
 
-
-<h1></h1>
-    <form action="templates/editTemplate" method="post">
-        <p>Title :</p>
-        <input type="text" name="template_title" id="template_title" value="<?php 
-        if(isset($template))
-            $template->get_titles() ?>" required>
-        <p>
+            <p class="edit_template_p">Title :</p>
+            <input type="text" name="template_title" id="template_title" 
+                    value="<?php 
+                    if(isset($template))
+                        echo $template->get_title();
+                    if(isset($template_title))
+                        echo $template_title;
+                    ?>" required>
+            <span class="errTitle" id="errTitle"></span>
+            <p class="edit_template_p">
             Template items :
-        </p><br>
-        <!-- <?php echo '<pre>'; print_r($listUser); echo '</pre>';?> -->
+            </p><br>
+            <!-- pour récupérer l'id du tricount & template si reçu dans le submit du form -->
+            <input type="text" name="tricountId" value="<?php echo $tricount->get_id(); ?>" hidden>
+            <input type="text" name="templateID" value="<?php if(isset($templateID)){ echo $templateID;}  ?>" hidden>
+            <span class="errItems" id="errItems"></span>
 
+            <?php foreach($listUser as $listusr): ?>
+            <!-- mettre c[User->id] ça fera un tableau avec des données -->              <!-- check si c'est un edit t'emplate et récupère les items liés-->
+                <div class="edit_template_items">
+                    <?php if (!isset($checkedUser)): ?>
+                        <input  type="checkbox" class="check" name="checkedUser[<?= $listusr->get_user(); ?>]" value="<?= $listusr->get_user(); ?>" 
+                                                                                                                    <?php if(isset($template)){
+                                                                                                                        if($listusr->is_in_Items($template->get_id())) {
+                                                                                                                            echo "checked = 'checked'" ;
+                                                                                                                        }
+                                                                                                                    };
+                                                                                                                    ?> >
+                    <?php else : ?>
+                    <input  type="checkbox" class="check" name="checkedUser[<?= $listusr->get_user(); ?>]" value="<?= $listusr->get_user(); ?>" 
+                            <?php if(in_array($listusr->get_user(), array_keys($checkedUser) ))
+                                echo "checked= 'checked'";
+                            ?> >
+                            
+                    
+                    <?php endif;?>
+                    <input  type="text" name="user"  value="<?php echo $listusr->getUserInfo(); ?>"  disabled="disabled">
+                    <fieldset>
+                        <legend>Weight</legend>
+                        <input  type="number" name="weight[<?= $listusr->get_user() ; ?>]"min="0" placeholder="0"  
+                            <?php  if (isset($template) && $listusr->is_in_Items($template->get_id())) {
+                                        $weight = $listusr->get_weight_by_user($template->get_id());
+                                        echo "value=".($weight ?? 1);
+                                    } else if (isset($combined_array[$listusr->get_user()])) {
+                                        $weight = $combined_array[$listusr->get_user()];
+                                        echo "value=".($weight ?? 1);
+                                    }
+                                ?> value="1">
+                    </fieldset>
+                </div>
+                <br><br>
+            <?php endforeach ; ?>
 
-        <input type="text" name="tricountId" value="<?php echo $tricount->get_id() ?>" hidden>
-        <?php foreach($listUser as $listusr): ?>
-            <input type="checkbox" name="c[<?= $listusr->user; ?>]" value="<?= $listusr->user; ?>" checked ="checked">
-                                <?php // mettre c[User->id] ça fera un tableau avec des données?>
+            <?php if (!empty($errors)): ?>
+                <div class='errors'>
+                    <p>Please correct the following error(s) :</p>
+                    <ul>
+                        <?php foreach ($errors as $error): ?>
+                        <li>
+                            <?= $error ?>
+                        </li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>
+            <?php endif; ?>
 
-            <input type="text" name="user" value="<?php $listusr->user;?>" placeholder="<?php echo $listusr->getUserInfo(); ?>"  disabled="disabled">
+            <input type="submit" value="Save_template" id="btnSubmit">
+        <?php else : ?>
+                <p>You're alone. Don't be shy -> <a href="tricount/edit/<?php echo $tricount->get_id(); ?>"> ADD FRIENDS</a> ☻</p>
+        <?php endif;?>
+            
+            <?php if(isset($templateID)){
+                echo "<a href='templates/delete_template/$templateID'"; echo " id='delete_template'>DELETE</a>";
+            }?>
 
-            <input type="number" name="w[<?= $listusr->user; ?>]" value="1"  min="0" max="100" weight>
-                                    <?php // mettre w[User->id] ça fera un tableau avec des données?>
-            <br><br>
-            <?php // récupérer les donnée grace a l'id user.?>
+        </div>
 
-        <?php endforeach ; ?>
-        <input type="submit" value="Save_template">
     </form>
-
     
 </body>
 </html>

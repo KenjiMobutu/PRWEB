@@ -54,7 +54,7 @@ class Repartition_templates extends Model
   }
     public static function get_by_tricount($tricount) 
     {
-      $query = self::execute("SELECT * FROM  `repartition_templates` where tricount=:tricount", array("tricount"=>$tricount));
+      $query = self::execute("SELECT * FROM `repartition_templates` where tricount=:tricount", array("tricount"=>$tricount));
             $data = $query->fetchAll();                 //c'était un fetch avant
             $templates = [];
             if ($query->rowCount() == 0){
@@ -85,15 +85,25 @@ class Repartition_templates extends Model
       return $items;
     }
     
+
+    public static function template_exist_in_tricount($id, $tricountid){
+      $query = self::execute("SELECT * FROM  `repartition_templates` where id=:id AND tricount =:tricount", array("id" => $id, "tricount"=>$tricountid));
+      $data = $query->fetch(); //un seul resultat max
+      if ($query->rowCount() == 0) {
+        return null;
+      } else {
+        return $data;
+      }
+    }
   
 
-    public function delete_by_tricount($tricount){
+    public static function delete_by_tricount($tricount){
       // Repartition_template_items::delete_by_user_id($id);
       // Repartition::delete_by_user_id($id);
       // Operation::delete_by_user_id($id);
       // Participation::delete_by_user_id($id);
       // Tricount::delete_by_user_id($id);
-      Repartition_template_items::delete_by_repartition_template($this->id);
+      Repartition_template_items::delete_by_repartition_template($tricount);
       $query=self::execute("DELETE from `repartition_templates` where tricount=:tricount", array("tricount"=>$tricount));
       if($query->rowCount()==0)
           return false;
@@ -111,7 +121,7 @@ class Repartition_templates extends Model
     }
 
     public function newTemplate($titre, $tricount){
-      if($titre === null || $tricount === null)
+      if(($titre === null || strlen($titre < 3 ) ) || $tricount === null)
         return null;
       else{
         $query = self::execute("INSERT INTO
@@ -131,6 +141,19 @@ class Repartition_templates extends Model
         
     }
 
+
+  public function update_title($title){
+      self::execute("UPDATE `repartition_templates` SET
+      title=:title,
+      tricount=:tricount
+      WHERE id=:id ",
+      array(
+        "id" => $this->id,
+        "title" => $title,
+        "tricount" => $this->tricount
+      ));
+    return $this;
+  }
 
   public function update()
   {
@@ -152,13 +175,26 @@ class Repartition_templates extends Model
           :tricount)",
         array(
           "title" => $this->title,
-          "tricountn" => $this->tricount
+          "tricount" => $this->tricount
         )
       );
     }
     return $this;
   }
+
+
+
+  public static function validatetitle($title) :bool
+  {
+    $valid = false;
+      if(strlen($title) >= 3 ){
+          $valid = true;
+      }
+      return $valid;
+  }
+
 }
+
 
 
 

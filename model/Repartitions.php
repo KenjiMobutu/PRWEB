@@ -5,13 +5,13 @@ require_once 'model/Operation.php';
 
 class Repartitions extends Model
 {
-    private int $weight;
+    private ?int $weight;
 
-    private int $operation;
+    public ?int $operation;
 
-    private int $user;
+    public ?int $user;
 
-    public function __construct(int $weight, int $operation, int $user)
+    public function __construct(int $weight=NULL, int $operation, int $user)
     {
         $this->weight = $weight;
         $this->operation = $operation;
@@ -44,40 +44,26 @@ class Repartitions extends Model
         }
     }
 
-    public function get_weight_par_user($operation)
-    {
-        $query = self::execute("SELECT weight, user FROM repartitions WHERE operation=:operation", array("operation" => $operation));
-        $data = $query->fetch();
-        return new Repartitions($data["weight"], $data["operation"], $data["user"]);
+    public static function get_user_and_weight_by_operation_id($operation){
+        $query = self::execute("SELECT user, weight FROM repartitions WHERE operation=:id", array("id"=>$operation));
+        $data = $query->fetchAll();
+        return $data;
     }
+    
+    // public static function create()
+    // {
+    //     $query = self::execute(
+    //         "INSERT INTO `repartitions` (`operation`, `user`, `weight`)
+    //         VALUES (':operation', ':user', ':weight');",
+    //         array(
+    //             "operation" => $this->operation,
+    //             "user" => $this->user,
+    //             "weight" => $this->weight
+    //         )
+    //     );
 
-
-    public static function get_full_weight($operation)
-    {
-        //poids / total poids
-        $query = self::execute("SELECT SUM(weight) FROM repartitions WHERE operation=:operation", array("operation" => $operation));
-        $data = $query->fetch();
-        if ($query->rowCount() == 0) {
-            return false;
-        } else {
-            return $data;
-        }
-    }
-
-    public function create()
-    {
-        $query = self::execute(
-            "INSERT INTO `repartitions` (`operation`, `user`, `weight`) 
-            VALUES (':operation', ':user', ':weight');",
-            array(
-                "operation" => $this->operation,
-                "user" => $this->user,
-                "weight" => $this->weight
-            )
-        );
-
-        return $query->fetch();
-    }
+    //     return $query->fetch();
+    // }
 
 }
 
