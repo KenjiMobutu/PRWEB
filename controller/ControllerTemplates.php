@@ -113,6 +113,8 @@ class ControllerTemplates extends Controller
                 "errors" => $errors,
                 "templateID" => $templateId
             ));
+        }else{
+            $this->redirect("user", "profile", $user->getUserId());
         }
         
     }
