@@ -98,7 +98,7 @@ class ControllerTemplates extends Controller
             $checkedUsers = isset($_POST["checkedUser"]) ? $_POST["checkedUser"] : [];
             $weights = $_POST["weight"];
         
-            $errors = $this->validate($checkedUsers, $templateTitle, $tricount->get_id());
+            $errors = $this->validate($checkedUsers, $templateTitle, $tricount->get_id(), $templateId);
             if (empty($errors) && $this->updateOrCreateTemplate($templateId, $templateTitle, $tricount->get_id(), $this->combine_array($checkedUsers, $weights))) {
                 $this->redirect("templates","templates", $tricount->get_id());
             }
@@ -164,19 +164,30 @@ class ControllerTemplates extends Controller
         }
         return $combined_array;
     }
-    private function validate($checkedUsers, $template_title, $tricount) : array{
+    private function validate($checkedUsers, $template_title, $tricount, $templateId) : array{
         $errors = [];
-         // si le tableau est vide
-         if(empty($checkedUsers)){
+        
+        // si le tableau est vide
+        if(empty($checkedUsers)){
             $errors[] = "You must check at least 1 user ";
         }
-        // si le title est incorrect
-        if(!Repartition_templates::validatetitle($template_title) || Repartition_templates::title_already_exist_in_tricount($template_title, $tricount)){
-            $errors[] = "Title already exist or it's not long enough. It must be 3 characters minimum.";
+        
+        if(!is_null($templateId)){
+            $currentRepartition = Repartition_templates::get_by_id($templateId);
+            if($currentRepartition->get_title() !== $template_title){
+                if(Repartition_templates::title_already_exist_in_tricount($template_title, $tricount)){
+                    $errors[] = "this title already exist for this tricount";
+                }
+            }
         }
+        // si le title est incorrect
+        if(!Repartition_templates::validatetitle($template_title)){
+            $errors[] = "Title is not long enough. It must be 3 characters minimum.";
+        }
+        
         return $errors;
     }
-
+    
 
     public function delete_template(){
         $userlogged = $this->get_user_or_redirect();
