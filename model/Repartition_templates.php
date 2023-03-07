@@ -86,6 +86,12 @@ class Repartition_templates extends Model
     }
     
 
+    public static function title_already_exist_in_tricount($title,$tricountid) : bool{
+      $query = self::execute("SELECT title FROM `repartition_templates` where title=:title and tricount =:id",array("title"=>$title,"id"=>$tricountid));
+      if($query->rowCount() === 0 )
+        return false;
+      return true;
+    } 
     public static function template_exist_in_tricount($id, $tricountid){
       $query = self::execute("SELECT * FROM  `repartition_templates` where id=:id AND tricount =:tricount", array("id" => $id, "tricount"=>$tricountid));
       $data = $query->fetch(); //un seul resultat max

@@ -87,6 +87,7 @@ class ControllerTemplates extends Controller
     public function editTemplate() {
         $userlogged = $this->get_user_or_redirect();
         $user = User::get_by_id($userlogged->getUserId());
+        $errors = [];
     
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $tricount = Tricounts::get_by_id($_POST["tricountId"]);
@@ -97,7 +98,8 @@ class ControllerTemplates extends Controller
             $checkedUsers = isset($_POST["checkedUser"]) ? $_POST["checkedUser"] : [];
             $weights = $_POST["weight"];
         
-            if ($this->updateOrCreateTemplate($templateId, $templateTitle, $tricount->get_id(), $this->combine_array($checkedUsers, $weights))) {
+            $errors = $this->validate($checkedUsers, $templateTitle, $tricount->get_id());
+            if (empty($errors) && $this->updateOrCreateTemplate($templateId, $templateTitle, $tricount->get_id(), $this->combine_array($checkedUsers, $weights))) {
                 $this->redirect("templates","templates", $tricount->get_id());
             }
         
@@ -116,7 +118,6 @@ class ControllerTemplates extends Controller
         }else{
             $this->redirect("user", "profile", $user->getUserId());
         }
-        
     }
     
     
@@ -163,15 +164,15 @@ class ControllerTemplates extends Controller
         }
         return $combined_array;
     }
-    private function validate($checkedUsers, $template_title) : array{
+    private function validate($checkedUsers, $template_title, $tricount) : array{
         $errors = [];
          // si le tableau est vide
          if(empty($checkedUsers)){
             $errors[] = "You must check at least 1 user ";
         }
         // si le title est incorrect
-        if(!Repartition_templates::validatetitle($template_title)){
-            $errors[] = "Title must be 3 characters minimum.";
+        if(!Repartition_templates::validatetitle($template_title) || Repartition_templates::title_already_exist_in_tricount($template_title, $tricount)){
+            $errors[] = "Title already exist or it's not long enough. It must be 3 characters minimum.";
         }
         return $errors;
     }
