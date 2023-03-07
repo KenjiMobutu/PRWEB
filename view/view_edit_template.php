@@ -37,7 +37,6 @@
                 }
             });
 
-            console.log(checkedUser.is(":checked"));
             if(checkedUser.is(":checked") == false){
                 errItems.html("You must check at least one user");
                     errItems.css({"color": "red"});

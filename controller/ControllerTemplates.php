@@ -33,7 +33,6 @@ class ControllerTemplates extends Controller
             if($templates !== null){
                 foreach($templates as $template){
                     $items[] = $template->get_items();
-                
                 }
             }
             (new View("templates"))->show(array("user"=>$user,
@@ -152,11 +151,7 @@ class ControllerTemplates extends Controller
         }
         return $result;
     }
-
     private function combine_array($ids, $weight) : array{
-        $userlogged = $this->get_user_or_redirect();
-        $user = User::get_by_id($userlogged->getUserId());
-        
         $combined_array = array();
         foreach ($ids as $i => $id) {
             if (isset($weight[$i])) {

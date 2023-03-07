@@ -69,9 +69,11 @@ class Repartition_templates extends Model
     }
 
     public function get_items(){
-      $query =self::execute("select rti.* from repartition_template_items rti, repartition_templates rt 
+      $query =self::execute("select rti.* from repartition_template_items rti, repartition_templates rt, users u
                             where rt.id = rti.repartition_template 
-                            and rt.id=:id", array("id"=>$this->id));
+                            and rt.id=:id 
+                            and rti.user =u.id
+                            ORDER BY u.full_name ASC", array("id"=>$this->id));
       $data = $query->fetchAll();
       $items=[];
       if ($query->rowCount() == 0){
