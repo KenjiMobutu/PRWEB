@@ -166,25 +166,27 @@ class ControllerTemplates extends Controller
     }
     private function validate($checkedUsers, $template_title, $tricount, $templateId) : array{
         $errors = [];
-        
         // si le tableau est vide
         if(empty($checkedUsers)){
             $errors[] = "You must check at least 1 user ";
         }
         
-        if(!is_null($templateId)){
+        // si le title est incorrect
+        if(!Repartition_templates::validatetitle($template_title)){
+            $errors[] = "Title is not long enough. It must be 3 characters minimum.";
+        }
+        if($templateId !== ""){
             $currentRepartition = Repartition_templates::get_by_id($templateId);
             if($currentRepartition->get_title() !== $template_title){
                 if(Repartition_templates::title_already_exist_in_tricount($template_title, $tricount)){
                     $errors[] = "this title already exist for this tricount";
                 }
             }
+        }else{
+            if(Repartition_templates::title_already_exist_in_tricount($template_title, $tricount)){
+                $errors[] = "this title already exist for this tricount";
+            }
         }
-        // si le title est incorrect
-        if(!Repartition_templates::validatetitle($template_title)){
-            $errors[] = "Title is not long enough. It must be 3 characters minimum.";
-        }
-        
         return $errors;
     }
     
