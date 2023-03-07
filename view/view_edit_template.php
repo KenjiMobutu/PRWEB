@@ -86,7 +86,8 @@
             <?php foreach($listUser as $listusr): ?>
             <!-- mettre c[User->id] ça fera un tableau avec des données -->              <!-- check si c'est un edit t'emplate et récupère les items liés-->
                 <div class="edit_template_items">
-                    <?php if (!isset($checkedUser)): ?>
+                <!-- // par défaut on check si l'utilisateur est dans les items si c'est un update -->
+                    <?php if (!isset($checkedUser)): ?> 
                         <input  type="checkbox" class="check" name="checkedUser[<?= $listusr->get_user(); ?>]" value="<?= $listusr->get_user(); ?>" 
                                                                                                                     <?php if(isset($template)){
                                                                                                                         if($listusr->is_in_Items($template->get_id())) {
@@ -94,7 +95,8 @@
                                                                                                                         }
                                                                                                                     };
                                                                                                                     ?> >
-                    <?php else : ?>
+                    <?php else : ?> 
+                        <!-- // sinon  s'il y a un message d'erreur on reçoit un array différent -->
                     <input  type="checkbox" class="check" name="checkedUser[<?= $listusr->get_user(); ?>]" value="<?= $listusr->get_user(); ?>" 
                             <?php if(in_array($listusr->get_user(), array_keys($checkedUser) ))
                                 echo "checked= 'checked'";
@@ -106,10 +108,10 @@
                     <fieldset>
                         <legend>Weight</legend>
                         <input  type="number" name="weight[<?= $listusr->get_user() ; ?>]"min="0" placeholder="0"  
-                            <?php  if (isset($template) && $listusr->is_in_Items($template->get_id())) {
+                            <?php  if (isset($template) && $listusr->is_in_Items($template->get_id())) { // si c'est un update et si l'utilisateur est dans les items
                                         $weight = $listusr->get_weight_by_user($template->get_id());
                                         echo "value=".($weight ?? 1);
-                                    } else if (isset($combined_array[$listusr->get_user()])) {
+                                    } else if (isset($combined_array[$listusr->get_user()])) {          // dans le cas s'il y a un message d'erreur alors on reçoit un array différent
                                         $weight = $combined_array[$listusr->get_user()];
                                         echo "value=".($weight ?? 1);
                                     }

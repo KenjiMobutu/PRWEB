@@ -53,7 +53,7 @@ class ControllerTemplates extends Controller
                 $tricount = Tricounts::get_by_id($_GET["param1"]);
                 $template = Repartition_templates::get_by_id($_GET['param2']);
                 $templateID = $_GET['param2'];
-                if(empty(Repartition_templates::template_exist_in_tricount($template->get_id(),$tricount->get_id()))){
+                if( is_null($template) || empty(Repartition_templates::template_exist_in_tricount($template->get_id(),$tricount->get_id()))){
                     //Si l'utilisateur modifie l'url
                     $this->redirect("user","profile");
                 }
@@ -79,85 +79,76 @@ class ControllerTemplates extends Controller
                                     "listUser"=>$listUser));
             }     
         }else{
-            $this->redirect("main","error");
+            $this->redirect("user","profile");
         }
     }
 
 
-    public function editTemplate(){
+    public function editTemplate() {
         $userlogged = $this->get_user_or_redirect();
         $user = User::get_by_id($userlogged->getUserId());
-        $errors = [];
+    
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $tricount = Tricounts::get_by_id( $_POST["tricountId"]);
+            $tricount = Tricounts::get_by_id($_POST["tricountId"]);
             $listUser = Participations::get_by_tricount($_POST["tricountId"]);
-    
-            if(isset($_POST["templateID"]))
-                $templateID = $_POST["templateID"];
-            if(isset($_POST["checkedUser"])){
-                $checkedUsers = $_POST["checkedUser"];
-            }
+        
+            $templateId = $_POST["templateID"];
+            $templateTitle = Tools::sanitize($_POST["template_title"]);
+            $checkedUsers = isset($_POST["checkedUser"]) ? $_POST["checkedUser"] : [];
             $weights = $_POST["weight"];
-            $template_title = Tools::sanitize($_POST["template_title"]);
-    
-            if(empty($checkedUsers))
-                $checkedUsers = [];     
-
-            //combine array est une fonction qui va combiner les deux arrays
-            $combined_array = $this->combine_array($checkedUsers, $weights);
-    
-            // si le tableau est vide
-            if(empty($checkedUsers)){
-                $errors[] = "You must check at least 1 user ";
+        
+            if ($this->updateOrCreateTemplate($templateId, $templateTitle, $tricount->get_id(), $this->combine_array($checkedUsers, $weights))) {
+                $this->redirect("templates","templates", $tricount->get_id());
             }
-            // si le title est incorrect
-            else if(!Repartition_templates::validatetitle($template_title)){
-                $errors[] = "Title must be 3 characters minimum.";
-            }
+        
+            // render the view
+            (new View("edit_template"))->show(array(
+                "user" => $user,
+                "tricount" => $tricount,
+                "template_title" => $templateTitle,
+                "listUser" => $listUser,
+                "checkedUser" => $checkedUsers,
+                "combined_array" => $this->combine_array($checkedUsers, $weights),
+                "weights" => $weights,
+                "errors" => $errors,
+                "templateID" => $templateId
+            ));
+        }
+        
+    }
     
-            // si le template est pas null alors c'est un update sinon c'est un nouveau template
-            if($_POST["templateID"] !== "" && empty($errors)){
-                $template = Repartition_templates::get_by_id($_POST["templateID"]);
-                if($_POST["template_title"] !== $template->get_title()){
+    
+    private function updateOrCreateTemplate($templateID, $template_title, $tricountId, $combined_array) : bool{
+        $errors = [];
+        $result = false;
+        if(empty($errors)){
+            if($templateID !== ""){
+                $template = Repartition_templates::get_by_id($templateID);
+                if($template_title !== $template->get_title()){
                     $template->update_title($template_title);
                 }
-                if(!is_null($template) ){
+                if(!is_null($template)){
                     Repartition_template_items::delete_by_repartition_template($template->get_id());
-                    foreach($combined_array as $user_id => $weight) {
+                    foreach($combined_array as $user_id => $weight) {                        
                         if($weight ==="" )
                             $weight = 1;
                         Repartition_template_items::addNewItems($user_id, $template->id, $weight); 
                     };
                 }
-                $this->redirect("templates","templates", $tricount->get_id());
             }
             else{
-                if(empty($errors)){
-                    $template = new Repartition_templates(null,$_POST["template_title"], $_POST["tricountId"] );
-                    $template->newTemplate($template_title, $_POST["tricountId"]);
-                    if($template !== null){
-                        foreach($combined_array as $user_id => $weight) {
-                            Repartition_template_items::addNewItems($user_id, $template->get_id(), $weight); 
-                        }
+                $template = new Repartition_templates(null, $template_title, $tricountId);
+                $template->newTemplate($template_title, $tricountId);
+                if($template !== null){
+                    foreach($combined_array as $user_id => $weight) {
+                        Repartition_template_items::addNewItems($user_id, $template->get_id(), $weight); 
                     }
-                    $this->redirect("templates","templates", $tricount->get_id());
-
                 }
             }
-            
-            (new View("edit_template"))->show(array(
-                "user"=>$user,
-                "tricount"=>$tricount,
-                "template_title"=>$template_title,
-                "listUser"=>$listUser,
-                "checkedUser"=>$checkedUsers,
-                "combined_array"=>$combined_array,
-                "weights"=> $weights,
-                "errors"=>$errors,
-                "templateID" => $templateID));
+            $result = true;
         }
+        return $result;
     }
-    
 
     private function combine_array($ids, $weight) : array{
         $combined_array = array();
@@ -169,6 +160,18 @@ class ControllerTemplates extends Controller
             }
         }
         return $combined_array;
+    }
+    private function validate($checkedUsers, $template_title) : array{
+        $errors = [];
+         // si le tableau est vide
+         if(empty($checkedUsers)){
+            $errors[] = "You must check at least 1 user ";
+        }
+        // si le title est incorrect
+        if(!Repartition_templates::validatetitle($template_title)){
+            $errors[] = "Title must be 3 characters minimum.";
+        }
+        return $errors;
     }
 
 
