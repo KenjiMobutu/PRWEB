@@ -233,7 +233,7 @@ class ControllerOperation extends Controller
                         echo "<b>Validation Failed:<b> <br>";
                         foreach ($errors as $error) {
                             echo $error . "<br>";
-                        }
+                    }
                     }
                 }
             } else if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["c"]) && isset($_POST["w"])) {

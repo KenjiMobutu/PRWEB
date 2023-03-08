@@ -30,7 +30,7 @@
                 <form action="profile/edit_profile" method="post">
                     <!-- récup son pseudo -->
                     <label for="fullName">Name:</label><br>
-                    <input type="text" id="fullName" name="fullName" value="<?php echo $user->getFullName(); ?>"><br>
+                    <input type="text" id="fullName" name="fullName" value="<?= isset($user) ? $user->getFullName() : $_SESSION['full_name'] ?>"><br>
 
                     <!-- récup son mail -->
                     <label for="mail">Email:</label><br>

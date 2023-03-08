@@ -41,16 +41,10 @@ class ControllerProfile extends Controller
     {
         $user = $this->get_user_or_redirect();
         $user = User::get_by_id($user->getUserId());
-        // if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
-        //     $this->redirect('main', "error");
-        // }
-        // if (isset($_GET['param1']) && $_GET['param1'] !== $user->getUserId()) {
-        //     $this->redirect('main', 'error');
-        // }
-        $errors = [];
-        $success = array_key_exists('param2', $_GET) && $_GET['param2'] === 'ok' ?
-            "Your password has been successfully changed." : '';
 
+        $errors = [];
+        $success = array_key_exists('param2', $_GET) && $_GET['param2'] === 'ok' ? 
+            "Your password has been successfully changed." : '';
 
         // If the form has been submitted
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -76,17 +70,26 @@ class ControllerProfile extends Controller
                     $user->update_password();
                     $this->redirect("profile", "change_password", $user->getUserId(), "ok");
                 }
-            } 
+            }
         }
+
+        // Get the submitted values if they exist
+        $newPasswordValue = array_key_exists('newPassword', $_POST) ? $_POST['newPassword'] : '';
+        $confirmPasswordValue = array_key_exists('confirmPassword', $_POST) ? $_POST['confirmPassword'] : '';
+        $currentPasswordValue = array_key_exists('currentPassword', $_POST) ? $_POST['currentPassword'] : '';
 
         (new View("change_password"))->show([
             "user" => $user,
             "errors" => $errors,
-            "success" => $success
+            "success" => $success,
+            "newPasswordValue" => $newPasswordValue,
+            "confirmPasswordValue" => $confirmPasswordValue,
+            "currentPasswordValue" => $currentPasswordValue
         ]);
     }
 
-   public function edit_profile()
+
+    public function edit_profile()
    {
        /** @var User $user */
         $loggedUser = $this->get_user_or_redirect();
@@ -107,6 +110,10 @@ class ControllerProfile extends Controller
                     if (!User::validateEmail( $mail)) {
                         $errors[] = "Wrong mail";
                     }
+                    if ($loggedUser->EmailExistsAlready($loggedUser->getUserId(), $_POST['mail'])) {
+                        $errors[] = "Email address is already in use.";
+                    }
+
                 }
                 if (isset($_POST["fullName"])) {
                     if (!User::validateFullName( $fullname)) {
@@ -119,10 +126,17 @@ class ControllerProfile extends Controller
                 $this->redirect("user","profile",$user->getUserId(),"ok");
             }
         }
+
+        $mailValue = array_key_exists('mail', $_POST) ? $_POST['mail'] : '';
+        $fullnameValue = array_key_exists('fullname', $_POST) ? $_POST['fullname'] : '';
+        $ibanValue = array_key_exists('iban', $_POST) ? $_POST['iban'] : '';
         (new View("edit_profile"))->show([
             "user" => $user,
             "errors" => $errors,
             "success" => $success,
+            "mailValue" => $mailValue,
+            "fullnameValue" => $fullnameValue,
+            "ibanvalue" => $ibanValue
         ]);
     }
     public function result_profile()
