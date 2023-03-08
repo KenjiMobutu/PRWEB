@@ -34,17 +34,17 @@ class ControllerTricount extends Controller{
       $description = '';
       $tricount = '';
       $created_at = date('Y-m-d H:i:s');
-      if ( (isset($_POST["title"]) && $_POST["title"]!="")&&(isset($_POST["description"])|| $_POST["description"]=="")){
+      if ( (isset($_POST["title"]) && $_POST["title"]!==" ")&&(isset($_POST["description"])|| $_POST["description"]===" ")){
         $title = Tools::sanitize($_POST["title"]);
         $errors = Tricounts::validate_title($title);
         $description = Tools::sanitize($_POST["description"]);
         $creator = $user->getUserId();
           $tricount = new Tricounts($id, $title, $description, $created_at, $creator);
           $tricountBool = Tricounts::get_by_title($tricount->get_title());
-          if($tricountBool == true){
+          if($tricountBool === true){
             $errors[]  = "This tricount already exist";
           }
-          if (count($errors) == 0) {
+          if (count($errors) === 0) {
             $tricount->addTricount();
             $idT = $tricount->get_id();
             $newSubscriber = new Participations($idT, $tricount->get_creator_id());
@@ -52,7 +52,7 @@ class ControllerTricount extends Controller{
             $this->redirect("tricount", "result", $idT);
           }
       }
-      (new View("add_tricount"))->show(array("user" => $user,"tricount" =>$tricount, "errors"=>$errors));
+      (new View("add_tricount"))->show(array("user" => $user,"tricount" =>$tricount, "errors"=>$errors, "description"=>$description));
     } else {
       $this->redirect("user","profile");
     }

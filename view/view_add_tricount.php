@@ -51,7 +51,7 @@
                         <div class="form-group boxed">
                             <div class="input-wrapper">
                                 <label class="label" for="textarea4b">Description (optional)</label>
-                                <textarea id="textarea4b" name="description" rows="2" class="form-control" placeholder="Your description here!"></textarea>
+                                <input id="textarea4b" name="description" class="form-control" placeholder="Your description here!" value="<?php echo $description;?>">
                             </div>
                         </div>
                         <?php if (count($errors) != 0): ?>
