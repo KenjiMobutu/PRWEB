@@ -44,6 +44,9 @@ class ControllerTricount extends Controller{
           if($tricountBool === true){
             $errors[]  = "This tricount already exist";
           }
+          if( strlen($description) > 5 ){
+            $errors[] = "Description to long";
+          }
           if (count($errors) === 0) {
             $tricount->addTricount();
             $idT = $tricount->get_id();
@@ -76,6 +79,11 @@ class ControllerTricount extends Controller{
     if (isset($_GET['param1']) || isset($_POST['param1'])) {
       $id = isset($_POST['param1']) ? $_POST['param1'] : $_GET['param1'];
       $tricount = Tricounts::get_by_id($id);
+      $title = $tricount->get_title();
+      $tricountTitle = Tricounts::get_by_title($tricount->get_title());
+          if($tricountTitle === true){
+            $errors[]  = "This title already exist";
+          }
       $subscriptions = Participations::by_tricount($tricount->get_id());
       $users = User::not_participate($tricount->get_id());
       foreach($subscriptions as $s){
@@ -131,6 +139,11 @@ class ControllerTricount extends Controller{
         $tricount = Tricounts::get_by_id($id);
         $subscriptions = Participations::by_tricount($tricount->get_id());
         $users = User::not_participate($tricount->get_id());
+        $tricount2 = Tricounts::get_by_title($_POST["title"]);
+        $tricountTitle = $tricount2->get_title();
+        if (strcasecmp($title, $tricountTitle) == 0){
+            $errors[]  = "This title already exist";
+        }
         foreach($subscriptions as $s){
           $sub[] = User::get_by_id($s->user);
         }
