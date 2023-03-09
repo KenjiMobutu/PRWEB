@@ -44,8 +44,8 @@ class ControllerTricount extends Controller{
           if($tricountBool === true){
             $errors[]  = "This tricount already exist";
           }
-          if( strlen($description) > 5 ){
-            $errors[] = "Description to long";
+          if( strlen($description) < 3 && !empty($description)){
+            $errors[] = "Description to short min. 3 characters";
           }
           if (count($errors) === 0) {
             $tricount->addTricount();
