@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Add Expense</title>
+    <title>Edit Expense</title>
     <base href="<?= $web_root ?>" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="css/style.css" rel="stylesheet" type="text/css" />
@@ -16,24 +16,31 @@
             <?php echo $tricount->get_title(); ?> > Edit expense
         </p>
         <form action="operation/edit_expense/<?php echo $operation_data->get_id() ?>" method="post">
+        <div class="errors">
+                    <ul>
+                        <?php if(!empty($errors)) foreach ($errors as $error): ?>
+                        <li><?= $error ?></li>
+                        <?php endforeach; ?>
+                    </ul>
+                </div>  
             <input type="hidden" id="operationId" name="operationId" value="<?php echo $operation_data->get_id() ?>">
             <input class="addExp" placeholder="Title" type="text" id="title"
                 value="<?php echo $operation_data->getTitle() ?>" name="title">
             <input type="hidden" id="tricId" name="tricId" value="<?php echo $tricount->get_id() ?>">
             <br>
-            <input class="addExp" placeholder="Amount (EUR)" value="<?php echo $operation_data->getAmount() ?>" type="number"
-                id="amount" name="amount">
+            <input class="addExp" placeholder="Amount (EUR)" value="<?php echo $operation_data->getAmount() ?>"
+                type="number" id="amount" name="amount">
             <br>
             <label for="operation_date">Date</label>
-            <input class="addExp" type="date" id="operation_date" value="<?php echo $operation_data->getOperationDate() ?>"
-                name="operation_date">
+            <input class="addExp" type="date" id="operation_date"
+                value="<?php echo $operation_data->getOperationDate() ?>" name="operation_date">
             <br>
 
             <label for="paid_by">Paid By</label>
             <select id="initiator" name="initiator">
                 <option style="color: black;" selected value="<?php echo $usr ?>"><?php echo $usr ?></option>
                 <?php foreach ($users as $urss): ?>
-                    <?php if($urss->getUserInfo() !== $usr): ?>
+                    <?php if ($urss->getUserInfo() !== $usr): ?>
                         <option style="color: black;" value="<?php echo $urss->getUserInfo() ?>"><?php echo $urss->getUserInfo() ?></option>
                     <?php endif; ?>
                 <?php endforeach; ?>
@@ -52,17 +59,17 @@
             <label for="who">For whom? (select at least one)</label>
             <?php foreach ($users as $usr): ?>
                 <div class="checks">
-                    <input type="checkbox" name="c[<?= $usr->get_user() ?>]" value="<?= $usr->get_user(); ?>" id="<?php echo $usr->getUserInfo() ?>"
-                        <?php if ($usr->is_in_tricount($tricount->get_id())) {
-                            echo "checked";
-                        } ?>>
+                    <input type="checkbox" name="c[<?= $usr->get_user() ?>]" value="<?= $usr->get_user(); ?>"
+                        id="<?php echo $usr->getUserInfo() ?>" <?php if ($usr->is_in_tricount($tricount->get_id())) {
+                               echo "checked";
+                           } ?>>
                     <span style="color: yellow; font-weight: bold;">
                         <?php echo $usr->getUserInfo() ?>
                     </span>
                     <fieldset>
                         <legend>Weight</legend>
-                        <input type="number" name="w[<?= $usr->get_user() ?>]" id="<?php echo $usr->get_user() ?>" value="1" min="0"
-                            max="50">
+                        <input type="number" name="w[<?= $usr->get_user() ?>]" id="<?php echo $usr->get_user() ?>" value="1"
+                            min="0" max="50">
                     </fieldset>
                 </div>
             <?php endforeach; ?>
