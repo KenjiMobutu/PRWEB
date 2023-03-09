@@ -97,3 +97,31 @@
 </body>
 
 </html>
+
+
+
+
+
+
+
+
+
+<!-- public function add_expense()
+    {
+        $user = $this->get_user_or_redirect();
+        if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
+
+            $this->redirect('main', "error");
+        }
+        //if i choose a template from the templates list
+        if (isset($_POST["refreshBtn"])) {
+            $this->refreshBtnHandler($user);
+            //TODO NOT SURE WE NEED THIS ONE ????????????????????????
+        } else if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST["save_template"])) {
+            //print_r($_POST);
+            $this->saveWithoutTemplate($user);
+            //if i make a custom template => need save name checked
+        } else if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["c"]) && isset($_POST["w"])) {
+            $this->saveWithCustomTemplate()->validate();
+        }
+    } -->

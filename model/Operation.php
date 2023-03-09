@@ -279,13 +279,13 @@ class Operation extends Model
                                 WHERE t.id = :id AND o.initiator =:user
                                 GROUP BY o.initiator;", array("id" => $tricId, "user" => $userId));
         $data = $query->fetch();
-        if($query->rowCount()==0){
+        if ($query->rowCount() == 0) {
             return false;
         }
         return $data["balance"];
     }
 
-   
+
 
     public static function exists($id)
     {
@@ -346,6 +346,19 @@ class Operation extends Model
         return $query;
     }
 
+    public static function validateTitle($title)
+    {
+        $query = self::execute("SELECT title from operations WHERE title=:title",
+            array(
+                "title" => $title
+            )
+        );
+        if ($query->rowCount() == 0) {
+            return "Title already exists in the database.";
+        }
+        return;
+    }
+
 
     public function validate()
     {
@@ -353,6 +366,10 @@ class Operation extends Model
 
         if ((isset($this->title) && strlen($this->title) < 3)) {
             $errors[] = "Title must be at least 3 characters.";
+        }
+
+        if ($this->title && !self::validateTitle($this->title)) {
+            $errors[] = "Title already exists in the database.";
         }
 
         if ((isset($this->amount) && ($this->amount < 0))) {
@@ -441,7 +458,7 @@ class Operation extends Model
             return true;
         }
         return false;
-    }  
+    }
 
     public function setOperationId()
     {
