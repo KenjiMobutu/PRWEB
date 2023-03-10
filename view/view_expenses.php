@@ -64,8 +64,10 @@
         let html = "<select id='sort-select'>" +
             "<option value='title'> by title &#xf0de;</option>" +
             "<option value='title'> by title &#xf0dd;</option>" +
-            "<option value='creator'> by creator &#xf0de;</option>" +
-            "<option value='creator'> by creator &#xf0dd;</option>" +
+            "<option value='date'> by date &#xf0de;</option>" +
+            "<option value='date'> by date &#xf0dd;</option>" +
+            "<option value='initiator'> by creator &#xf0de;</option>" +
+            "<option value='initiator'> by creator &#xf0dd;</option>" +
             "<option value='amount'> by amount &#xf0de;</option>" +
             "<option value='amount'> by amount &#xf0dd;</option>" +
             "</select>";
