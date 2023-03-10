@@ -29,6 +29,10 @@ class User extends Model
         $this->iban = $iban;
     }
 
+    public function get_tricounts() : array{
+        return Tricounts::get_tricount_by_user_id($this->getUserId());
+    }
+
     public static function getUsers()
     {
         $result = [];

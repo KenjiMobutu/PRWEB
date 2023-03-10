@@ -12,10 +12,112 @@
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
     <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
-</head>
+    <script src="lib/jquery-3.6.3.min.js" type="text/javascript"></script>
 
+</head>
+<style>
+    select{
+		font-family: fontAwesome
+	}
+    </style>
 <body>
+<script>
+/**
+ * (par montant, par date, par initiateur et par titre, de façon croissante et décroissante).
+ * 
+ * arrow up : <i class="fa-solid fa-sort-up"></i>
+ * 
+ * arrow down : <i class="fa-solid fa-sort-down"></i>
+ */
+    const expenses = <?= $expenses_json ?>;
+    let listExpenses;
+    let sortColumn = 'title';
+    let sortAscending = false;
+
+    $(function(){
+
+        //$('.data-item').hide();
+        listExpenses = $('.expenses_json');
+        showSelectSection();
+        displayExpenses();
+
+        $('#sort-select').on('change', function() {
+            let value = $(this).val();
+            sort(value);
+        });
+
+    });
+    
+    async function getExpenses(){
+        try {
+            expenses = await $.getJSON("operations/get_expenses_service")
+            sortExpenses();
+            displayExpenses();
+        }catch(e){
+            $('.data-item').html("<tr><td>Error encountered while retrieving the expenses!</td></tr>");
+        }
+        
+    }
+    
+
+    function showSelectSection() {
+        let html = "<select id='sort-select'>" +
+            "<option value='title'> by title &#xf0de;</option>" +
+            "<option value='title'> by title &#xf0dd;</option>" +
+            "<option value='creator'> by creator &#xf0de;</option>" +
+            "<option value='creator'> by creator &#xf0dd;</option>" +
+            "<option value='amount'> by amount &#xf0de;</option>" +
+            "<option value='amount'> by amount &#xf0dd;</option>" +
+            "</select>";
+        $('#js_Select').html(html);
+
+        
+    }
+    function sortExpenses(){
+        expenses.sort(function (a,b) {
+                    if (a[sortColumn] < b[sortColumn])
+                        return sortAscending ? -1 : 1;
+                    if (a[sortColumn] > b[sortColumn])
+                        return sortAscending ? 1 : -1;
+                    return 0;
+                });
+    }
+
+    function sort(value){
+        console.log(value);
+       if(value === sortColumn){
+        sortAscending = !sortAscending;
+       }else{
+        sortColumn = value;
+        sortAscending = true;
+       }
+       sortExpenses();
+       displayExpenses();
+    }
+
+
+
+    function displayExpenses(){
+        let data_items ="";
+        for (let exp of expenses){
+            data_items += "<a href='Operation/detail_expense/" + exp.id + "'>";
+            data_items += "<div class='data-card'>";
+                data_items += "<h2 class='title'>"+exp.title + "</h2>";
+                data_items += "<input type='hidden' name ='operationId' value='"+exp.id+"'";
+                data_items += "<p class='amount'>"+ exp.amount + "€</p>";
+                data_items += "<p class='initiator'>Paid by "+ exp.initiator + "</p>";
+                data_items += "<p class='date'>"+ exp.operation_date + "</p>";
+            data_items += "</div>";
+            data_items += "</a>";
+        }
+        $('.data-item').html(data_items);
+        
+    }
+</script>
     <?php include 'menu.html' ?>
+    
+    <div id="js_Select" >
+    </div>
     <div class="cont">
         <div class="view_expenses">
             <button class="edit-btn">
@@ -47,6 +149,7 @@
                                     echo '<i class="fa fa-exchange"></i>View Balance';
                                     echo '</button>';
                                     echo '</a>';
+                                    echo '<div class="expenses_json"> </div>';
                                     echo '<li class="data-item">';
                                     foreach ($amount as $am):
                                         $id = $am->initiator;
