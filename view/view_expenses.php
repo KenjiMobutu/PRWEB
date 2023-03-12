@@ -30,8 +30,8 @@
  * arrow down : <i class="fa-solid fa-sort-down"></i>
  */
 const expenses = <?= $expenses_json ?>;
-let sortColumn = 'title-desc';
-let sortAscending = false;
+let sortColumn = 'date';
+let sortAscending = true;
 
 function displayExpenses(){
     let data_items ="";
@@ -51,13 +51,26 @@ function displayExpenses(){
 
 function sortExpenses(){
     expenses.sort(function (a,b) {
-        if (a[sortColumn] < b[sortColumn])
-            return sortAscending ? -1 : 1;
-        if (a[sortColumn] > b[sortColumn])
-            return sortAscending ? 1 : -1;
-        return 0;
+        if (sortColumn === 'date') {
+            let dateA = new Date(a.operation_date);
+            let dateB = new Date(b.operation_date);
+            if (dateA < dateB) {
+                return sortAscending ? -1 : 1;
+            } else if (dateA > dateB) {
+                return sortAscending ? 1 : -1;
+            } else {
+                return 0;
+            }
+        } else {
+            if (a[sortColumn] < b[sortColumn])
+                return sortAscending ? -1 : 1;
+            if (a[sortColumn] > b[sortColumn])
+                return sortAscending ? 1 : -1;
+            return 0;
+        }
     });
 }
+
 
 function sort(value){
     let [column, order] = value.split('-');
