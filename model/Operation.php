@@ -112,7 +112,6 @@ class Operation extends Model
         } else {
             foreach ($data as $row) {
                 $operation_date = (string) $row["operation_date"];
-                ;
                 $created_at = (string) $row["created_at"];
                 $result[] = new Operation(
                     $row["title"],
