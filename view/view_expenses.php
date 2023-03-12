@@ -29,92 +29,76 @@
  * 
  * arrow down : <i class="fa-solid fa-sort-down"></i>
  */
-    const expenses = <?= $expenses_json ?>;
-    let listExpenses;
-    let sortColumn = 'title';
-    let sortAscending = false;
+const expenses = <?= $expenses_json ?>;
+let sortColumn = 'title-desc';
+let sortAscending = false;
 
-    $(function(){
+function displayExpenses(){
+    let data_items ="";
+    for (let exp of expenses){
+        data_items += "<a href='Operation/detail_expense/" + exp.id + "'>";
+        data_items += "<div class='data-card'>";
+        data_items += "<h2 class='title'>"+exp.title + "</h2>";
+        data_items += "<input type='hidden' name ='operationId' value='"+exp.id+"'>";
+        data_items += "<p class='amount'>"+ exp.amount + "€</p>";
+        data_items += "<p class='initiator'>Paid by "+ exp.initiator + "</p>";
+        data_items += "<p class='date'>"+ exp.operation_date + "</p>";
+        data_items += "</div>";
+        data_items += "</a>";
+    }
+    $('.data-item').html(data_items);
+}
 
-        //$('.data-item').hide();
-        listExpenses = $('.expenses_json');
-        showSelectSection();
-        displayExpenses();
-
-        $('#sort-select').on('change', function() {
-            let value = $(this).val();
-            sort(value);
-        });
-
+function sortExpenses(){
+    expenses.sort(function (a,b) {
+        if (a[sortColumn] < b[sortColumn])
+            return sortAscending ? -1 : 1;
+        if (a[sortColumn] > b[sortColumn])
+            return sortAscending ? 1 : -1;
+        return 0;
     });
-    
-    async function getExpenses(){
-        try {
-            expenses = await $.getJSON("operations/get_expenses_service")
-            sortExpenses();
-            displayExpenses();
-        }catch(e){
-            $('.data-item').html("<tr><td>Error encountered while retrieving the expenses!</td></tr>");
-        }
-        
-    }
-    
+}
 
-    function showSelectSection() {
-        let html = "<select id='sort-select'>" +
-            "<option value='title'> by title &#xf0de;</option>" +
-            "<option value='title'> by title &#xf0dd;</option>" +
-            "<option value='date'> by date &#xf0de;</option>" +
-            "<option value='date'> by date &#xf0dd;</option>" +
-            "<option value='initiator'> by creator &#xf0de;</option>" +
-            "<option value='initiator'> by creator &#xf0dd;</option>" +
-            "<option value='amount'> by amount &#xf0de;</option>" +
-            "<option value='amount'> by amount &#xf0dd;</option>" +
-            "</select>";
-        $('#js_Select').html(html);
-
-        
-    }
-    function sortExpenses(){
-        expenses.sort(function (a,b) {
-                    if (a[sortColumn] < b[sortColumn])
-                        return sortAscending ? -1 : 1;
-                    if (a[sortColumn] > b[sortColumn])
-                        return sortAscending ? 1 : -1;
-                    return 0;
-                });
-    }
-
-    function sort(value){
-        console.log(value);
-       if(value === sortColumn){
+function sort(value){
+    let [column, order] = value.split('-');
+    console.log([column, order] + " trsr");
+    if(column === sortColumn || order === 'desc'){
         sortAscending = !sortAscending;
-       }else{
-        sortColumn = value;
+    }else{
+        sortColumn = column;
         sortAscending = true;
-       }
-       sortExpenses();
-       displayExpenses();
     }
+    
+    sortExpenses();
+    displayExpenses();
+}
 
 
 
-    function displayExpenses(){
-        let data_items ="";
-        for (let exp of expenses){
-            data_items += "<a href='Operation/detail_expense/" + exp.id + "'>";
-            data_items += "<div class='data-card'>";
-                data_items += "<h2 class='title'>"+exp.title + "</h2>";
-                data_items += "<input type='hidden' name ='operationId' value='"+exp.id+"'";
-                data_items += "<p class='amount'>"+ exp.amount + "€</p>";
-                data_items += "<p class='initiator'>Paid by "+ exp.initiator + "</p>";
-                data_items += "<p class='date'>"+ exp.operation_date + "</p>";
-            data_items += "</div>";
-            data_items += "</a>";
-        }
-        $('.data-item').html(data_items);
-        
-    }
+function showSelectSection() {
+    let html = "<select id='sort-select'>" +
+        "<option value='title-asc'> by title &#xf0de;</option>" +
+        "<option value='title-desc'> by title &#xf0dd;</option>" +
+        "<option value='date-asc'> by date &#xf0de;</option>" +
+        "<option value='date-desc'> by date &#xf0dd;</option>" +
+        "<option value='initiator-asc'> by creator &#xf0de;</option>" +
+        "<option value='initiator-desc'> by creator &#xf0dd;</option>" +
+        "<option value='amount-asc'> by amount &#xf0de;</option>" +
+        "<option value='amount-desc'> by amount &#xf0dd;</option>" +
+        "</select>";
+    $('#js_Select').html(html);
+}
+
+$(function(){
+    showSelectSection();
+    sort(sortColumn);
+    displayExpenses();
+    $('#sort-select').on('change', function() {
+        let value = $(this).val();
+        sort(value);
+        console.log(value);
+    });
+});
 </script>
     <?php include 'menu.html' ?>
     
