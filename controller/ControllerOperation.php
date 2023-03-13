@@ -32,8 +32,8 @@ class ControllerOperation extends Controller
             }
             $tricount = Tricounts::get_by_id($_GET['param1']);
             $tricountID = $tricount->get_id();
-
             $tricountParticipants = Operation::getUsersFromTricount($tricountID);
+            $expenses_json = $tricount->get_expenses_as_json();
             // if(!in_array($userId,$tricountParticipants)){ //TODO y a que boris qui peut les voir idk
             //     $this->redirect('main', "error");    //si l'user ne participe pas dans un tric il peux pas voir les operations
             // }
@@ -44,7 +44,7 @@ class ControllerOperation extends Controller
             $totalExp = Tricounts::get_total_amount_by_tric_id($tricountID);
             $mytot = Tricounts::get_my_total($userId);
         }
-        (new View("expenses"))->show(array("operations_of_tricount" => $operations_of_tricount, "user" => $user, "tricount" => $tricount, "amounts" => $amounts, "totalExp" => $totalExp, "mytot" => $mytot, "participants" => $participants, "nbOperations" => $nbOperations));
+        (new View("expenses"))->show(array("operations_of_tricount" => $operations_of_tricount, "user" => $user, "tricount" => $tricount, "amounts" => $amounts, "totalExp" => $totalExp, "mytot" => $mytot, "participants" => $participants, "nbOperations" => $nbOperations, "expenses_json"=>$expenses_json));
     }
 
     public function balance()
@@ -484,6 +484,13 @@ class ControllerOperation extends Controller
             }
         }
     }
+
+    public function get_expenses_service() : void{
+        $user = $this->get_user_or_redirect();
+        $user = User::get_by_id($user->getUserId());
+    }
+
+
 // /**      idée de fonction si on doit mettre une fonction a part pour previous_experience
 //  * public function previous_experience(){
 //     if(isset($_POST["tricount_id"])&& isset($_POST["operation"]) ){
@@ -503,6 +510,8 @@ class ControllerOperation extends Controller
 //     }
 // }
 // */
+
+
 }
 
 ?>
