@@ -25,7 +25,7 @@ class ControllerTricount extends Controller{
     (new View("list_tricounts"))->show(array("loggedUser" => $loggedUser, "user" => $user, "tricounts_list"=>$tricounts_list));
   }
 
-  public function add(){
+  public function add(): void{
     $user = $this->get_user_or_redirect();
     if (!is_null($user)) {
       $id = null;
@@ -71,7 +71,7 @@ class ControllerTricount extends Controller{
     }
   }
 
-  public function edit(){
+  public function edit(): void{
     $user = $this->get_user_or_redirect();
     $id = null;
     $sub = [];
