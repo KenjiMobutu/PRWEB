@@ -96,11 +96,20 @@ if (isset($_GET['action']) && $_GET['action'] === 'add') { ?>
                                                 <input type="number" name="w[<?= $usr->get_user(); ?>]" id="userWeight" min="0" max="50" <?php if (isset($template)) {
                                                       if ($usr->is_in_Items($template->get_id())) {
                                                           echo "value=" . $usr->get_weight_by_user($template->get_id());
-                                                      }
-                                                      ;
+                                                      };
                                                   } else
                                                       echo "value=0"; ?>>
+                                                <legend class="legend" style="color: yellow; font-weight: bold;">Amount</legend>
+                                                <input type="number" >
+
+                                                ///////////////////////////////////
                                             </fieldset>
+                                            <input type="number" name="w[<?= $usr->get_user(); ?>]" id="userWeight" min="0" max="50" <?php if (isset($template)) {
+                                                      if ($usr->is_in_Items($template->get_id())) {
+                                                          echo "value=" . $usr->get_weight_by_user($template->get_id());
+                                                      };
+                                                  } else
+                                                      echo "value=0"; ?>>
                                         </div>
                                     </div>
                                     <?php
