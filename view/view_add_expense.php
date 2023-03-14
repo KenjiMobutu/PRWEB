@@ -99,17 +99,8 @@ if (isset($_GET['action']) && $_GET['action'] === 'add') { ?>
                                                       };
                                                   } else
                                                       echo "value=0"; ?>>
-                                                <legend class="legend" style="color: yellow; font-weight: bold;">Amount</legend>
-                                                <input type="number" >
-
-                                                ///////////////////////////////////
                                             </fieldset>
-                                            <input type="number" name="w[<?= $usr->get_user(); ?>]" id="userWeight" min="0" max="50" <?php if (isset($template)) {
-                                                      if ($usr->is_in_Items($template->get_id())) {
-                                                          echo "value=" . $usr->get_weight_by_user($template->get_id());
-                                                      };
-                                                  } else
-                                                      echo "value=0"; ?>>
+
                                         </div>
                                     </div>
                                     <?php
@@ -180,6 +171,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'add') { ?>
                                 value="<?php echo $operation_data->getTitle() ?>" name="title">
                             <input type="hidden" id="tricId" name="tricId" value="<?php echo $tricount->get_id() ?>">
                             <br>
+                            <label for="operation_amount">Total Amount</label>
                             <input class="addExp" placeholder="Amount (EUR)" value="<?php echo $operation_data->getAmount() ?>"
                                 type="number" id="amount" name="amount">
                             <br>
@@ -222,13 +214,18 @@ if (isset($_GET['action']) && $_GET['action'] === 'add') { ?>
                                             <legend>Weight</legend>
                                             <input type="number" name="w[<?= $usr->get_user() ?>]" id="<?php echo $usr->get_user() ?>" value="1"
                                                 min="0" max="50">
+                                            ///////////////
+                                            ////// opération->total_alberti, view tricount_balance
+                                            <legend>Amount</legend>
+                                            <input type="number" value="<?php echo $operation_data->getAmount() ?>" >
+                                            //////////////////////////////
                                         </fieldset>
                                     </div>
                     <?php endforeach; ?>
                             <p>Add a new repartition template</p>
                             <div class="save-template">
                                 <input type="checkbox" name="save_template" id="save"> <span
-                                    style="color: yellow; font-weight: bold;">Save this template</span>
+                                    style="color: pink; font-weight: bold;">Save this template</span>
                                 <fieldset>
                                     <legend>Name</legend>
                                     <input type="text" name="name_template" id="savename" placeholder="Name">
