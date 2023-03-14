@@ -21,7 +21,7 @@
         <input type="hidden" name="operation" value="<?php echo $operation_data->get_id(); ?>" hidden>
         <p>
             <?php echo $tricount->get_title(); ?> >
-            <?php echo $operation_data->getTitle() ?> <button class="edit-btn">
+            <?php echo $operation_data->getTitle() ?> <button id="edit" class="edit-btn">
                 <a href="Operation/edit/<?php echo $operation_data->get_id() ?>"
                     style="text-decoration: none; color: black;">Edit</a>
             </button>
