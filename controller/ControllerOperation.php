@@ -269,7 +269,7 @@ class ControllerOperation extends Controller
 
                     $errors = $operation->validate();
 
-                    if (empty($errors)) {
+                    if (empty($errors)) { 
                         $operation->insert();
                         $template->newTemplate($template_name, $_POST["tricId"]);
                         if ($template !== null) {

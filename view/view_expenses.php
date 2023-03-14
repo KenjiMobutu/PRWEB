@@ -75,13 +75,12 @@ function sortExpenses(){
 function sort(value){
     let [column, order] = value.split('-');
     console.log([column, order] + " trsr");
-    if(column === sortColumn || order === 'desc'){
-        sortAscending = !sortAscending;
+    if(order === "desc"){
+        sortAscending = false;
     }else{
-        sortColumn = column;
         sortAscending = true;
     }
-    
+    sortColumn = column;
     sortExpenses();
     displayExpenses();
 }
@@ -109,7 +108,6 @@ $(function(){
     $('#sort-select').on('change', function() {
         let value = $(this).val();
         sort(value);
-        console.log(value);
     });
 });
 </script>
