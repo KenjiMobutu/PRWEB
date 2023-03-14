@@ -15,11 +15,7 @@
     <script src="lib/jquery-3.6.3.min.js" type="text/javascript"></script>
 
 </head>
-<style>
-    select{
-		font-family: fontAwesome
-	}
-    </style>
+
 <body>
 <script>
 /**
