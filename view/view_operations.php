@@ -68,7 +68,7 @@
                                             </div>
                                             <div class="add-btn">
                                                 <a href="/prwb_2223_c03/Operation/add/' . $tricount->get_id() . '">
-                                                    <button id="button" class="add-button">+
+                                                    <button class="add-button">+
                                                     </button>
                                                 </a>
                                             </div>

@@ -57,7 +57,7 @@
                               array("user" => $user,"repartition_template"=>$repartition_template));
       $data = $query->fetch(); //un seul resultat max
       if ($query->rowCount() == 0) {
-        return 0;
+        return null;
       } else
         return ($data["weight"]);
     }
@@ -87,11 +87,11 @@
       return $data;
     }
 
-    public static function get_by_user_and_tricount($user, $tricountId){ //à refaire
+    public static function get_by_user($user){ //à refaire
       $query = self::execute("SELECT * FROM  repartition_template_items rti, repartition_templates rt
                               where rti.repartition_template = rt.id
-                              and rti.user=:user and rt.tricount=:tricount",
-                              array("user" => $user, "tricount"=>$tricountId));
+                              and rti.user=:user",
+                              array("user" => $user));
       $data = $query->fetchAll();
       if ($query->rowCount() == 0) {
         return null;

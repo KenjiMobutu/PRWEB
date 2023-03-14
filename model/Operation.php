@@ -112,6 +112,7 @@ class Operation extends Model
         } else {
             foreach ($data as $row) {
                 $operation_date = (string) $row["operation_date"];
+                ;
                 $created_at = (string) $row["created_at"];
                 $result[] = new Operation(
                     $row["title"],
@@ -201,7 +202,18 @@ class Operation extends Model
         return $result;
     }
 
-
+    public static function total_by_user($userId, $operationId)
+    {
+        $query = self::execute("SELECT (SELECT o.amount/SUM(r.weight)
+                                                FROM repartitions r, operations o 
+                                                where r.operation = o.id 
+                                                and o.id =:id GROUP BY o.amount) *  
+                                                (SELECT weight FROM repartitions 
+                                                WHERE user = :user AND operation = :id) 
+                                                AS result LIMIT 1", array("id" => $operationId, "user" => $userId));
+        $data = $query->fetch();
+        return $data["result"];
+    }
 
     public static function get_users_from_operation($operationId)
     {
@@ -251,22 +263,6 @@ class Operation extends Model
             return false;
         }
         return $query;
-    }
-
-    public static function total_by_user($userId, $operationId)
-    {
-        $query = self::execute("SELECT (
-            SELECT COALESCE(o.amount/SUM(r.weight), 0)
-            FROM operations o 
-            LEFT JOIN repartitions r ON r.operation = o.id
-            WHERE o.id = :id
-            GROUP BY o.amount
-        ) * COALESCE(
-            (SELECT weight FROM repartitions WHERE user = :user AND operation = :id), 0
-        ) AS result;
-        ", array("id" => $operationId, "user" => $userId));
-        $data = $query->fetch();
-        return $data["result"];
     }
 
     public static function total_alberti($tricId, $userId)
@@ -336,16 +332,15 @@ class Operation extends Model
         return $query;
     }
 
-    public static function deleteRepartition($idOperation)
-    {
-        //     DELETE
-        // FROM repartition_template_items
-        // where repartition_template=:repartition_template",
-        // array("repartition_template"=>$repartition_template)
+    public static function deleteRepartition($idOperation){
+    //     DELETE
+    // FROM repartition_template_items
+    // where repartition_template=:repartition_template",
+    // array("repartition_template"=>$repartition_template)
         $query = self::execute("DELETE
                         FROM repartitions where operation =:operation",
             array(
-                "operation" => $idOperation
+                "operation" =>$idOperation
             )
         );
         return $query;
@@ -353,8 +348,7 @@ class Operation extends Model
 
     public static function validateTitle($title)
     {
-        $query = self::execute(
-            "SELECT title from operations WHERE title=:title",
+        $query = self::execute("SELECT title from operations WHERE title=:title",
             array(
                 "title" => $title
             )
