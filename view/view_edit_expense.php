@@ -16,13 +16,16 @@
             <?php echo $tricount->get_title(); ?> > Edit expense
         </p>
         <form action="operation/edit_expense/<?php echo $operation_data->get_id() ?>" method="post">
-        <div class="errors">
-                    <ul>
-                        <?php if(!empty($errors)) foreach ($errors as $error): ?>
-                        <li><?= $error ?></li>
+            <div class="errors">
+                <ul>
+                    <?php if (!empty($errors))
+                        foreach ($errors as $error): ?>
+                            <li>
+                                <?= $error ?>
+                            </li>
                         <?php endforeach; ?>
-                    </ul>
-                </div>  
+                </ul>
+            </div>
             <input type="hidden" id="operationId" name="operationId" value="<?php echo $operation_data->get_id() ?>">
             <input class="addExp" placeholder="Title" type="text" id="title"
                 value="<?php echo $operation_data->getTitle() ?>" name="title">
@@ -97,31 +100,3 @@
 </body>
 
 </html>
-
-
-
-
-
-
-
-
-
-<!-- public function add_expense()
-    {
-        $user = $this->get_user_or_redirect();
-        if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
-
-            $this->redirect('main', "error");
-        }
-        //if i choose a template from the templates list
-        if (isset($_POST["refreshBtn"])) {
-            $this->refreshBtnHandler($user);
-            //TODO NOT SURE WE NEED THIS ONE ????????????????????????
-        } else if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST["save_template"])) {
-            //print_r($_POST);
-            $this->saveWithoutTemplate($user);
-            //if i make a custom template => need save name checked
-        } else if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["c"]) && isset($_POST["w"])) {
-            $this->saveWithCustomTemplate()->validate();
-        }
-    } -->

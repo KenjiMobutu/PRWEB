@@ -26,11 +26,17 @@
             </p>
             <?php
             $total_usr = 0;
-            if (!is_null($operations_of_tricount)) {
-                foreach ($operations_of_tricount as $operation):
-                    if ($user->is_in_operation($operation->get_id()) || $user === $operation->getInitiator())
-                        $total_usr += Operation::total_by_user($user->getUserId(), $operation->get_id());
-                endforeach;
+            if (!empty($amounts)) {
+                foreach ($amounts as $operations) {
+                    if (!is_null($operations)) {
+                        foreach ($operations as $operation) {
+                            if ($user->is_in_operation($operation->id) || $user === $operation->initiator) {
+                                $total_usr += Operation::total_by_user($user->getUserId(), $operation->id);
+                            }
+                        }
+                    }
+
+                }
             } else {
                 $total_usr = 0;
             }
@@ -49,7 +55,7 @@
                                     echo '</a>';
                                     echo '<li class="data-item">';
                                     foreach ($amount as $am):
-                                        $id = $am->initiator;
+                                        //$id = $am->initiator;
                                         $id_expense = $am->id;
                                         echo '<a href="Operation/detail_expense/' . $id_expense . '">
                                             <div class="data-card">
