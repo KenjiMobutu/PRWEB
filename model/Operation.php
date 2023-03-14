@@ -588,7 +588,7 @@ class Operation extends Model
         $this->operation_date = $operation_date;
     }
 
-    public function setInitiator(int $initiator): void
+    public function setInitiator(int $initiator)
     {
         $this->initiator = $initiator;
     }

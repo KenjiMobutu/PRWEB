@@ -101,9 +101,7 @@ class Repartition_template_items extends Model
       array("user" => $user, "tricount" => $tricountId)
     );
     $data = $query->fetchAll();
-    if ($query->rowCount() == 0) {
-      return null;
-    } else
+    
       return $data;
   }
   public static function by_user($user)
