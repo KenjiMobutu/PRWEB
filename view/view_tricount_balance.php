@@ -86,7 +86,6 @@
                         }
                     endforeach;
                     $balance = $alberti_balance - $total_balance;
-
                     if (abs($balance) > $max_balance) {
                         $max_balance = abs($balance);
                     }

@@ -102,7 +102,7 @@ class ControllerOperation extends Controller
             $debt = Operation::get_dette_by_operation($operationId, $userId);
             $participants = Operation::getNumberParticipantsByOperationId($operationId);
             $operation_data = Operation::getOperationByOperationId($operationId);
-            $usr = $operation_data->getInitiator();
+            $usr = $operation_data->getInitiatorId();
         }
 
         (new View("detail_expense"))->show(
@@ -122,7 +122,9 @@ class ControllerOperation extends Controller
     public function refreshBtnHandler($user)
     {
         $errors = [];
-        if (isset($_POST["refreshBtn"])) {
+        //var_dump($_POST);
+        
+        if (isset($_POST["addrefreshBtn"]) && $_POST['rti'] !== 'option-default') {
             $requiredFields = ["title", "tricId", "amount", "operation_date", "initiator", "rti"];
             $allFieldsExist = true;
             foreach ($requiredFields as $field) {
@@ -131,7 +133,9 @@ class ControllerOperation extends Controller
                     break;
                 }
             }
+            //var_dump($allFieldsExist);
             if ($allFieldsExist) {
+                $action = $_GET['action'];
                 $userId = $user->getUserId();
                 $title = Tools::sanitize($_POST["title"]);
                 $tricId = $_POST["tricId"];
@@ -151,7 +155,7 @@ class ControllerOperation extends Controller
                 $listItems = Repartition_template_items::get_user_by_repartition($template->get_id());
                 $operation = new Operation($title, $tricId, $amount, $operation_date, $initiator, $operation_date);
                 $errors = $operation->validate();
-
+                var_dump($errors);
                 if (count($errors) === 0) {
                     (new View("add_expense"))->show(
                         array(
@@ -163,9 +167,11 @@ class ControllerOperation extends Controller
                             "template" => $template,
                             "ListUsers" => $ListUsers,
                             "listItems" => $listItems,
-                            "errors" => $errors
+                            "errors" => $errors,
+                            "action"=>$action
                         )
                     );
+                    echo 'test';
                 } else {
                     // show errors
                     (new View("add_expense"))->show(
@@ -186,7 +192,11 @@ class ControllerOperation extends Controller
                     );
                 }
             }
+            //var_dump($_POST); die();
+            //$this->redirect("main", "error");
         }
+        // var_dump($_POST );
+        // die();
     }
 
 
@@ -199,8 +209,7 @@ class ControllerOperation extends Controller
         $initiator = $_POST["initiator"];
         $created_at = date('y-m-d h:i:s');
         $errors = [];
-
-        ;
+        
         //$operation = new Operation($title, $tricountId, $amount, $operation_date, $initiator, $created_at);
         if (!$title || !$tricountId || !$amount || !$operation_date || !$initiator) {
             // Handle missing fields error
@@ -329,8 +338,9 @@ class ControllerOperation extends Controller
             $tricount = Tricounts::get_by_id($_GET['param1']);
             $users = Participations::get_by_tricount($_GET['param1']);
             $rti = Repartition_template_items::get_by_user_and_tricount($userId, $_GET['param1']);
+            $action = $_GET['action'];
         }
-        (new View("add_expense"))->show(array("user" => $user, "tricount" => $tricount, "rti" => $rti, "users" => $users));
+        (new View("add_expense"))->show(array("user" => $user, "tricount" => $tricount, "rti" => $rti, "users" => $users, "action"=>$action));
 
     }
     //TODO garder les weights en cas d'erreur ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -341,9 +351,10 @@ class ControllerOperation extends Controller
 
             $this->redirect('main', "error");
         }
+        
         //print_r($_POST);
         //if i choose a template from the templates list
-        if (isset($_POST["refreshBtn"])) {
+        if (isset($_POST["addrefreshBtn"])) {
             $this->refreshBtnHandler($user);
         } else if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST["save_template"])) {
             //print_r($_POST);
@@ -365,6 +376,7 @@ class ControllerOperation extends Controller
         if ($checkOperation <= 0) {
             $this->redirect('main', "error");
         } else {
+            $action = $_GET['action'];
             $userId = $user->getUserId();
             $tricount = Tricounts::get_tricount_by_operation_id($_GET['param1']);
             $operationId = $_GET['param1'];
@@ -376,7 +388,7 @@ class ControllerOperation extends Controller
             $rti = Repartition_template_items::get_by_user_and_tricount($userId, $_GET['param1']);
         }
 
-        (new View("add_expense"))->show(array("user" => $user, "operation_data" => $operation_data, "users" => $users, "rti" => $rti, "tricount" => $tricount, "usr" => $usr));
+        (new View("add_expense"))->show(array("user" => $user, "action" => $action, "operation_data" => $operation_data, "users" => $users, "rti" => $rti, "tricount" => $tricount, "usr" => $usr));
 
     }
 
@@ -483,6 +495,7 @@ class ControllerOperation extends Controller
 
     public function editWithoutTemplate($user)
     {
+       
         $title = $_POST["title"];
         $tricountId = $_POST["tricId"];
         $amount = $_POST["amount"];
@@ -538,12 +551,13 @@ class ControllerOperation extends Controller
 
     public function editWithCustomTemplate()
     {
+        
         $title = $_POST["title"];
         $tricount = $_POST["tricId"];
         $amount = $_POST["amount"];
         $operation_date = $_POST["operation_date"];
         $initiator = $_POST["initiator"];
-        $template_name = $_POST["template_name"];
+        $template_name = $_POST["name_template"];
         $checkedUsers = $_POST["c"];
         $weights = $_POST["w"];
 
@@ -554,7 +568,7 @@ class ControllerOperation extends Controller
             $operation_date = $_POST["operation_date"];
             $initiator = $_POST["initiator"];
             $created_at = date('y-m-d h:i:s');
-            $template_name = Tools::sanitize($_POST["template_name"]);
+            $template_name = Tools::sanitize($_POST["name_template"]);
 
             $operation = new Operation($title, $tricount, $amount, $operation_date, $initiator, $created_at);
             $template = new Repartition_templates(null, $template_name, $_POST["tricId"]);

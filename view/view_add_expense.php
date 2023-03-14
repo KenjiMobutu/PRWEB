@@ -2,8 +2,8 @@
 <html>
 
 <?php
-if (isset($_GET['action']) && $_GET['action'] === 'add') { ?>
-
+if (isset($action) && ($action === 'add'  || $action === 'add_expense')) { ?>
+    
         <head>
             <title>Add Expense</title>
             <base href="<?= $web_root ?>" />
@@ -57,7 +57,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'add') { ?>
                     </select>
                     <br>
                     <label for="repartition_template">Use repartition template (optional)</label>
-                    <button name="refreshBtn" id="refreshBtn">Refresh</button>
+                    <button name="addrefreshBtn" id="addrefreshBtn">Refresh</button>
                     <select id="rti" name="rti">
                         <?php if (isset($_POST["rti"]) && $template !== null):
                             echo '<option style="color: black;" value=' . $template->get_id() . ">" . $template->get_title() . "</option>";
@@ -75,7 +75,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'add') { ?>
                     </select>
                     <label for="who">For whom? (select at least one)</label>
                     <?php
-                    if (isset($_POST["refreshBtn"])) {
+                    if (isset($_POST["addrefreshBtn"])) {
                         foreach ($ListUsers as $usr) {
                             ?>
                                     <div class="checks">
@@ -139,7 +139,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'add') { ?>
                 </form>
             </div>
         </body>
-<?php } else if (isset($_GET['action']) && $_GET['action'] === 'edit') { ?>
+<?php } else if (isset($action) && $action === 'edit') { ?>
 
                 <head>
                     <title>Edit Expense</title>
@@ -184,13 +184,13 @@ if (isset($_GET['action']) && $_GET['action'] === 'add') { ?>
                                 <option style="color: black;" selected value="<?php echo $usr ?>"><?php echo $usr ?></option>
                         <?php foreach ($users as $urss): ?>
                                 <?php if ($urss->getUserInfo() !== $usr): ?>
-                                                <option style="color: black;" value="<?php echo $urss->getUserInfo() ?>"><?php echo $urss->getUserInfo() ?></option>
+                                                <option style="color: black;" value="<?php echo $urss->get_user() ?>"><?php echo $urss->getUserInfo() ?></option>
                                 <?php endif; ?>
                         <?php endforeach; ?>
                             </select>
                             <br>
                             <label for="repartition_template">Use repartition template (optional)</label>
-                            <button name="refreshBtn" id="refreshBtn">Refresh</button>
+                            <button name="addrefreshBtn" id="addrefreshBtn">Refresh</button>
                             <select id="rti" name="rti">
                                 <option style="color: black;" value="option-default">No,I'll use custom repartition</option>
                         <?php foreach ($rti as $rt):
