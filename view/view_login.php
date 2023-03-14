@@ -32,7 +32,7 @@
                     <table>
                         <tr>
                             <td><input class="sign" id="mail" name="mail" placeholder="example@email.com" type="email"
-                                    value="<?= $mail ?>"></td>
+                                   value="<?= $mail ?>"></td>
                         </tr>
                         <tr>
                             <td><input class="sign" id="password" placeholder="Password" name="password" type="password"

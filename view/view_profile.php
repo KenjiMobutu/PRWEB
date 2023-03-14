@@ -24,7 +24,7 @@
             </div>
             <div class="profile">
                 <div class="name">
-                    <h1>PROFILEEEEEEEEEEEEEE</h1>
+                    <h1>PROFILE</h1>
                     <div>
                         <p>Hey
                             <?php echo $user->getFullName(); ?> !
@@ -38,9 +38,8 @@
                 </div>
             </div>
             <div class="profile-buttons">
-                <ul><li><a class="create" href="Tricount/index">Tricount list</a></li>
-                    <li><a class="create" href="">Create tricount</a></li>
-                    <li><a class="edit" href="Templates/templates">Templates </a></li>
+                <ul><li><a class="create" href="tricount/index">Tricount list</a></li>
+                    <li><a class="create" href="tricount/add">Create tricount</a></li>
                     <li><a class="edit" href="Profile/edit_profile">Edit profile</a></li>
                     <li><a class="change" href="profile/change_password">Change password</a></li>
                     <li><a class="logout" href="user/logout">Logout</a></li>

@@ -9,27 +9,52 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
 <body>
+<style>
+        
+
+
+
+</style>
     <?php include 'menu.html' ?>
     <div class="view_templates">
-        <p><?php echo $tricount->get_title();?> > templates</p>
+        <?php echo $tricount->get_title() . " > templates";?> 
+        <a href="templates/edit_template/<?php echo $tricount->get_id();?>" id="addNewTemplate"> New template</a>
 
-        <div class="templates_container">
+        <div class="templates_container_1">
             <table class="tab_templates">
-                <?php foreach($templates as $tmp) :?>
-                    <tr>
-                        <!-- on récupère juste le titre  -->
-                        <th><?= $tmp['title'] ?></th>
-                        
-                    </tr>
-                    <ul>
-                    <!-- on doit récupérer les noms des user -->
-                        <?php foreach($participant as $participe): ?>
-                            <li>
-                                <?= $participe["full_name"] ?>
-                            </li>
-                        <?php endforeach;?>
-                    </ul>
-                <?php endforeach; ?>
+                <?php if($templates !== null) : ?>
+                    <?php foreach($templates as $rt) :?>
+                            <tr>
+                                <th>     <a href="templates/edit_template/<?php echo $tricount->get_id();?>/<?php echo $rt->get_id()?>"> <?= $rt->get_title();?></th></a>
+                            </tr>
+                            <tr>
+                                <th class="info_templates">
+                                    <ul>
+                                        <?php foreach($items as $participe): ?>
+
+                                            <!-- <?php echo '<pre>'; print_r($templates); echo '</pre>';?>  -->   
+                                            <?php if ($participe !== null) : ?>                 
+                                                    <?php foreach($participe as $row) : ?>
+                                                        <?php if($row->get_rt() === $rt->get_id()): ?>
+                                                            
+                                                            <li> <?php echo $row->get_user_info();?> 
+                                                                    <?php echo "("; echo $row->get_weight_by_user($row->get_user(), $row->repartition_template);
+                                                                        echo "/"; 
+                                                                            echo $row->get_Sum_Weight();
+                                                                                echo ")"; ?></li>
+                                                        
+                                                        <?php endif;?>
+                                                    <?php endforeach ; ?>  
+                                            <?php endif; ?>            
+                                        <?php endforeach;?>
+                                    </ul>
+                                </th>       
+                                </tr>                 
+                            
+                        <?php endforeach; ?>
+                        <?php else : ?>
+                            <p> <strong>no template for now.</strong></p>
+                    <?php endif;?>
             </table>
         </div>
     </div>

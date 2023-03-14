@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
     <head>
         <base href="<?= $web_root ?>" />
         <meta charset="UTF-8">
@@ -19,58 +20,38 @@
     </head>
 
     <body>
-    <form id="addTricount" action="tricount/add" method="post">
         <div class="appHeader">
             <div class="left">
-                <a href="tricount/index" class="headerButton goBack">
-                <i class="bi bi-arrow-left"></i>
+                <a href="#" class="headerButton goBack">
+                    <ion-icon name="chevron-back-outline"></ion-icon>
                 </a>
             </div>
             <div class="pageTitle">
-                Add new Tricount
+                Delete your tricount ?
             </div>
             <div class="right">
-                <button type="submit" value="add" class="addTricount_btn">
-                    <i class="bi bi-save"></i>
-                </button>
+                <a href="tricount/add" class="headerButton goBack" >
+                    <ion-icon name="add-outline"></ion-icon>
+                </a>
             </div>
         </div>
-
-    <!-- * tricount block -->
-
-        <div class="section mt-2 mb-2">
-            <div class="card">
-                <div class="card-body">
-                        <div class="form-group boxed">
-                            <div class="input-wrapper">
-                                <label class="label" for="text4b">Title</label>
-                                <input type="text" name="title" class="form-control" id="text4b" placeholder="Your Title here!">
-                            </div>
-                        </div>
-
-                        <div class="form-group boxed">
-                            <div class="input-wrapper">
-                                <label class="label" for="textarea4b">Description (optional)</label>
-                                <textarea id="textarea4b" name="description" rows="2" class="form-control" placeholder="Your description here!"></textarea>
-                            </div>
-                        </div>
-                        <?php if (count($errors) != 0): ?>
-                            <div class='errors'>
-                                <br><br><p>Please correct the following error(s) :</p>
-                                <ul>
-                                    <?php foreach ($errors as $error): ?>
-                                        <li><?= $error ?></li>
-                                    <?php endforeach; ?>
-                                </ul>
-                            </div>
-                        <?php endif; ?>
-    </form>
-                </div>
+        <div class="confirm_delete_Tricount">
+          <div class="confirmation-box">
+            <div class="trash_confirm_delete_Tricount">
+              <i class="bi bi-trash3"></i>
             </div>
+          <hr>
+            <h2>Etes-vous sûr de vouloir supprimer ce tricount " <?= $tricount->get_title()?> " ?</h2>
+            <p>Cette action est irréversible et supprimera
+              toutes les données associées au tricount.</p>
+            <div class="button_delete_confirm">
+              <form action="tricount/delete_confirm/<?= $tricount->get_id()?>" method="POST" method="post">
+                <button class="delete-tricount-confirm" type="submit">Supprimer</button>
+                <a href="tricount/index" class="cancel-tricount-confirm">Annuler</a>
+              </form>
+            </div>
+          </div>
         </div>
-
-
-
         <!-- JavaScript Bundle with Popper -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>
         <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
