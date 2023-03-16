@@ -148,15 +148,16 @@ class ControllerOperation extends Controller
                 $rti = Repartition_template_items::get_by_user_and_tricount($userId, $tricId);
                 $template = Repartition_templates::get_by_id($_POST['rti']);
                 
-                $repartitions = Repartitions::get_by_operation($_GET['param1']);
+                isset($_GET['param1']) ? $repartitions = Repartitions::get_by_operation($_GET['param1']) : null;
+                //$repartitions = Repartitions::get_by_operation($_GET['param1'] ? $_GET['param1'] : null);
                 $templateId = $template->get_id();
                 
                 // var_dump($templateId);
-        // var_dump($templateId);
+                // var_dump($templateId);
                 if ($template === null) {
                     $this->redirect("operation", "expenses/" . $tricount->get_id());
                 }
-                $operationId = $_GET['param1'];
+                isset($_GET['param1']) ? $operationId = $_GET['param1'] :  null;
                 $ListUsers = Participations::get_by_tricount($tricId);
                 $listItems = Repartition_template_items::get_user_by_repartition($template->get_id());
                 $operation = new Operation($title, $tricId, $amount, $operation_date, $initiator, $operation_date);
@@ -431,7 +432,7 @@ class ControllerOperation extends Controller
 
     public function edit_expense()
     {
-        // var_dump($_POST); die();
+        //var_dump($_POST); die();
         $user = $this->get_user_or_redirect();
         $action = $_GET['action'];
         $operationId = $_POST['operationId'];
@@ -507,16 +508,12 @@ class ControllerOperation extends Controller
                     if ($userId === '') {
                         continue;
                     }
-        
                     $weight = isset($weights[$userId]) && $weights[$userId] !== '' ? $weights[$userId] : 1;
         
                     Repartition_template_items::addNewItems($userId, $template->get_id(), $weight);
-                    Operation::deleteRepartition($_GET['param1']);
-                    Operation::insertRepartition($_GET['param1'], $userId, $weight);
-
+                    Operation::deleteRepartition($_GET['param1']);// TODO : a modif car c'est censé supp toutes les items pas les repartitions
+                    Operation::insertRepartition($_GET['param1'], $userId, $weight);// TODO : a modif car c'est censé supp toutes les items pas les repartitions
                 }
-                    
-
                 $this->redirect('operation', 'expenses','aiciTemplate', $_POST['tricId']);
             }
         }
