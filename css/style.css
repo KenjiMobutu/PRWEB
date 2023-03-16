@@ -781,14 +781,19 @@ li {
   margin: 0 auto;
 }
   a{
-      color: rgb(147,87,87);
+      color: rgb(166, 98, 98);
   }
   #addNewTemplate{
       float: right;
       color: #FFDB58;
   }
+  #addNewTemplate:hover{
+    color: #ad9641;
+  }
 
-
+table.tab_templates a:hover {
+  color: rgb(141, 84, 84); ;
+}
 table.tab_templates {
   width: 100%;
   border-collapse: collapse;
