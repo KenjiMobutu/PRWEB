@@ -65,6 +65,22 @@ class Repartition_template_items extends Model
       return ($data["weight"]);
   }
 
+  public static function get_all_from_template_by_id($templateId)
+  {
+      $query = self::execute("SELECT * FROM `repartition_template_items` WHERE `repartition_template`=:templateId", array("templateId" => $templateId));
+      $repartition_template_items = array();
+      while ($data = $query->fetch()) {
+          $repartition_template_item = new Repartition_template_items($data["user"], $data["repartition_template"], $data["weight"]);
+          $repartition_template_items[] = $repartition_template_item;
+      }
+      return $repartition_template_items;
+  }
+  
+
+  public function get_template(){
+    return Repartition_templates::get_by_id($this->repartition_template);
+  }
+
 
   public function get_Sum_Weight()
   {
@@ -94,7 +110,7 @@ class Repartition_template_items extends Model
   }
 
   public static function get_by_user_and_tricount($user, $tricountId)
-  { //à refaire
+  { 
     $query = self::execute("SELECT * FROM  repartition_template_items rti, repartition_templates rt
                               where rti.repartition_template = rt.id
                               and rti.user=:user and rt.tricount=:tricount",

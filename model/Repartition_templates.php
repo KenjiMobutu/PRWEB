@@ -42,6 +42,8 @@ class Repartition_templates extends Model
     $this->setId($id);
   }
 
+  
+
   public static function get_by_id($id): Repartition_templates|null
   {
     $query = self::execute("SELECT * FROM  `repartition_templates` where id=:id", array("id" => $id));

@@ -5,7 +5,7 @@ require_once 'model/Operation.php';
 
 class Repartitions extends Model
 {
-    private ?int $weight;
+    public ?int $weight;
 
     public ?int $operation;
 
@@ -44,11 +44,27 @@ class Repartitions extends Model
         }
     }
 
-    public static function get_user_and_weight_by_operation_id($operation){
-        $query = self::execute("SELECT user, weight FROM repartitions WHERE operation=:id", array("id"=>$operation));
-        $data = $query->fetchAll();
-        return $data;
+    // public static function get_user_and_weight_by_operation_id($operation){
+    //     $query = self::execute("SELECT user, weight FROM repartitions WHERE operation=:id", array("id"=>$operation));
+    //     $data = $query->fetchAll();
+    //     return $data;
+    // }
+
+
+    public static function get_by_operation($operationId){
+        $query = self::execute("SELECT weight, operation, user FROM repartitions WHERE operation=:id
+        ", array("id"=>$operationId));
+        $repartitions = array();
+        while ($data = $query->fetch()) {
+            if ($data !== NULL) {
+                $repartition = new Repartitions($data["weight"], $data["operation"], $data["user"]);
+                $repartitions[] = $repartition;
+            }
+        }
+        
+        return $repartitions;
     }
+    
     
     // public static function create()
     // {

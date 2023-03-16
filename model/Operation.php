@@ -239,8 +239,6 @@ class Operation extends Model
             $data["id"]
         );
     }
-
-
     public function is_in_operation($operationId)
     {
         $query = self::execute(
@@ -321,10 +319,8 @@ class Operation extends Model
         return $query->fetch();
     }
 
-
     public static function insertRepartition($id, $weight, $initiator)
     {
-
         $query = self::execute("INSERT INTO repartitions (operation, weight, user) 
                                 VALUES (:operation_id, :weight, :user)",
             array(
@@ -365,6 +361,19 @@ class Operation extends Model
         return;
     }
 
+    public function validateForEdit(){
+        $errors = [];
+
+        if ((isset($this->title) && strlen($this->title) < 3)) {
+            $errors[] = "Title must be at least 3 characters.";
+        }
+
+        if ((isset($this->amount) && ($this->amount < 0))) {
+            $errors[] = "The amount must be positive.";
+        }
+
+        return $errors;
+    }
 
     public function validate()
     {
@@ -431,7 +440,7 @@ class Operation extends Model
                     "tricount" => $this->tricount,
                     "amount" => $this->amount,
                     "operation_date" => $this->operation_date,
-                    "intitiator" => $this->initiator,
+                    "initiator" => $this->initiator,
                     "created_at" => $this->created_at,
                 ]
             );
