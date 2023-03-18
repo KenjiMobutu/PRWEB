@@ -862,7 +862,7 @@ fieldset, legend{
   font-family: serif;
 }
 
-input[type="text"] {
+.edit_template_container input[type="text"] {
   padding: 10px;
   margin: 10px;
   border-radius: 5px;
