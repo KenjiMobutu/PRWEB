@@ -372,11 +372,16 @@ class ControllerOperation extends Controller
             $usr = $operation_data->getInitiator();
             $users = Participations::get_by_tricount($tricount->get_id());
 
-            // $users = User::getUsers();
+            foreach ($users as $u) {
+                $userAmount = Operation::get_dette_by_operation($operationId, $u->get_user());
+                var_dump(number_format($userAmount['result'], 2));
+            }
+            var_dump("-->",number_format($userAmount['result'], 2));
+
             $rti = Repartition_template_items::get_by_user_and_tricount($userId, $_GET['param1']);
         }
 
-        (new View("add_expense"))->show(array("user" => $user, "operation_data" => $operation_data, "users" => $users, "rti" => $rti, "tricount" => $tricount, "usr" => $usr));
+        (new View("add_expense"))->show(array("user" => $user, "operation_data" => $operation_data, "users" => $users, "rti" => $rti, "tricount" => $tricount, "usr" => $usr,"userAmount"=>$userAmount));
 
     }
 

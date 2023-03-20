@@ -201,31 +201,32 @@ if (isset($_GET['action']) && $_GET['action'] === 'add') { ?>
                         <?php endforeach; ?>
                             </select>
                             <label for="who">For whom? (select at least one)</label>
+                            /////////
                     <?php foreach ($users as $usr): ?>
                                     <div class="checks">
                                         <input type="checkbox" name="c[<?= $usr->get_user() ?>]" value="<?= $usr->get_user(); ?>"
                                             id="<?php echo $usr->getUserInfo() ?>" <?php if ($usr->is_in_tricount($tricount->get_id())) {
-                                                   echo "checked";
-                                               } ?>>
+                                                echo "checked";
+                                            } ?>>
                                         <span style="color: yellow; font-weight: bold;">
                                     <?php echo $usr->getUserInfo() ?>
                                         </span>
-                                        <fieldset>
+
                                             <legend>Weight</legend>
                                             <input type="number" name="w[<?= $usr->get_user() ?>]" id="<?php echo $usr->get_user() ?>" value="1"
                                                 min="0" max="50">
-                                            ///////////////
-                                            ////// opération->total_alberti, view tricount_balance
+
                                             <legend>Amount</legend>
-                                            <input type="number" value="<?php echo $operation_data->getAmount() ?>" >
-                                            //////////////////////////////
-                                        </fieldset>
+                                            <?= number_format($userAmount['result'], 2) ?>
+
+                                            <input type="number" value="<?= number_format($userAmount['result'], 2) ?>" >
                                     </div>
                     <?php endforeach; ?>
+
                             <p>Add a new repartition template</p>
                             <div class="save-template">
                                 <input type="checkbox" name="save_template" id="save"> <span
-                                    style="color: pink; font-weight: bold;">Save this template</span>
+                                    style="color: yellow; font-weight: bold;">Save this template</span>
                                 <fieldset>
                                     <legend>Name</legend>
                                     <input type="text" name="name_template" id="savename" placeholder="Name">
