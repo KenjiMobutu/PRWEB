@@ -62,10 +62,10 @@
                     echo 'solo';
                 } else if ($user['user'] == $operation_data->getInitiatorId()) {
                     echo '<td style="color:yellow"><b>' . $username->getFullName() . '</b></td>';
-                    echo '<td style="color:yellow"><b>' . number_format($debt['result'], 2) . '</b></td>';
+                    echo '<td style="color:yellow"><b>' . $username->get_dette($_GET['param1']) . '</b></td>';
                 } else {
                     echo '<td>' . $username->getFullName() . '</td>';
-                    echo '<td>' . number_format($debt['result'], 2) . '</td>';
+                    echo '<td>' .  $username->get_dette($_GET['param1']). '</td>';
                 }
                 echo '</tr>';
             }
