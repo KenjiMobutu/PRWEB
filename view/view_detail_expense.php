@@ -61,10 +61,10 @@
                     echo 'solo';
                 } else if ($user->getUserId() == $operation_data->getInitiatorId()) {
                     echo '<td style="color:yellow"><b>' . $user->getFullName() . '</b></td>';
-                    echo '<td style="color:yellow"><b>' . $user->get_dette($operation_data->get_id()) . '</b></td>';
+                    echo '<td style="color:yellow"><b>' . number_format($user->get_dette($operation_data->get_id()), 2) . '</b></td>';
                 } else {
                     echo '<td>' . $user->getFullName() . '</td>';
-                    echo '<td>' . $user->get_dette($operation_data->get_id()). '</td>';
+                    echo '<td>' . number_format($user->get_dette($operation_data->get_id()), 2). '</td>';
                 }
                 echo '</tr>';
             }
