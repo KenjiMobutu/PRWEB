@@ -217,8 +217,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'add') { ?>
 
                                             <legend>Amount</legend>
 
-                                            <input type="number" value="<?= number_format($userAmount['result'], 2) ?>" >
-
                                             <input type="number" value="<?php echo $usr->get_dette($operation_data->get_id(), $usr)?>" >
 
                                     </div>
