@@ -80,11 +80,9 @@ class ControllerOperation extends Controller
         if (empty($checkId)) {
             $this->redirect('main', "error");
         } else {
-            $userId = $user->getUserId();
             $operationId = $_GET['param1'];
             $tricount = Tricounts::get_tricount_by_operation_id($operationId);
             $operationUsers = Operation::get_users_from_operation($operationId);
-            $debt = Operation::get_dette_by_operation($operationId, $userId);
             $participants = Operation::getNumberParticipantsByOperationId($operationId);
             $operation_data = Operation::getOperationByOperationId($operationId);
             $usr = $operation_data->getInitiator();
@@ -92,11 +90,10 @@ class ControllerOperation extends Controller
 
         (new View("detail_expense"))->show(array("user" => $user, 
         "operationUsers" => $operationUsers, 
-        "debt" => $debt,
-         "operation_data" => $operation_data, 
-         "participants" => $participants, 
-         "tricount" => $tricount, 
-         "usr" => $usr));
+        "operation_data" => $operation_data, 
+        "participants" => $participants, 
+        "tricount" => $tricount, 
+        "usr" => $usr));
 
     }
 
