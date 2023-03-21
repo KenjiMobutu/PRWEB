@@ -65,6 +65,11 @@ class Repartitions extends Model
     //     return $query->fetch();
     // }
 
+
+    public function get_dette($operation) : float{
+        return Operation::get_dette_by_operation($operation, $this->user);
+    }
+
 }
 
 ?>

@@ -210,8 +210,7 @@ class Operation extends Model
         return $data;
     }
 
-    public static function get_dette_by_operation($operationId, $userId)
-    {
+    public static function get_dette_by_operation($operationId, $userId) : float{
         $query = self::execute("SELECT (SELECT o.amount/SUM(r.weight)
                                     FROM repartitions r, operations o
                                     where r.operation = o.id
@@ -220,7 +219,7 @@ class Operation extends Model
                                     WHERE user = :user AND operation = :operation)
                                     AS result LIMIT 1", array("operation" => $operationId, "user" => $userId));
         $data = $query->fetch();
-        return $data;
+        return $data["result"];
     }
 
     public static function get_by_id($id)
