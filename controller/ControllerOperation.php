@@ -90,7 +90,13 @@ class ControllerOperation extends Controller
             $usr = $operation_data->getInitiator();
         }
 
-        (new View("detail_expense"))->show(array("user" => $user, "operationUsers" => $operationUsers, "debt" => $debt, "operation_data" => $operation_data, "participants" => $participants, "tricount" => $tricount, "usr" => $usr));
+        (new View("detail_expense"))->show(array("user" => $user, 
+        "operationUsers" => $operationUsers, 
+        "debt" => $debt,
+         "operation_data" => $operation_data, 
+         "participants" => $participants, 
+         "tricount" => $tricount, 
+         "usr" => $usr));
 
     }
 

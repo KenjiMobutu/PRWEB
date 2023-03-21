@@ -216,9 +216,24 @@ class Operation extends Model
 
     public static function get_users_from_operation($operationId)
     {
-        $query = self::execute("SELECT user FROM repartitions WHERE operation = :operationId", array("operationId" => $operationId));
+        $query = self::execute("SELECT u.* FROM repartitions r, users u  
+                                        WHERE operation = :operationId
+                                        and r.user = u.id;", array("operationId" => $operationId));
         $data = $query->fetchAll();
-        return $data;
+        if ($query->rowCount() == 0) {
+            return null;
+        } else {
+            foreach ($data as $row) {
+                $results[] = new User(
+                    $row["id"],
+                    $row["mail"], 
+                    $row["hashed_password"],
+                    $row["full_name"], 
+                    $row["role"], 
+                    $row["iban"]);
+            }
+            return $results;
+        }
     }
 
     public static function get_dette_by_operation($operationId, $userId)
@@ -556,6 +571,10 @@ class Operation extends Model
     public function setCreated_at(string $created_at): void
     {
         $this->created_at = $created_at;
+    }
+
+    public function get_user($user) : User{
+        return User::get_by_id($user);
     }
 
 }

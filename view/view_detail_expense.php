@@ -54,17 +54,17 @@
                     </tr>
                 </thead>
                 <tbody>';
+                
             foreach ($operationUsers as $user) {
-                $username = User::get_by_id($user['user']);
-                $debt = Operation::get_dette_by_operation($_GET['param1'], $user['user']);
+                $debt = Operation::get_dette_by_operation($operation_data->get_id(), $user->getUserId());
                 echo '<tr>';
                 if ($participants["0"] === 0) {
                     echo 'solo';
-                } else if ($user['user'] == $operation_data->getInitiatorId()) {
-                    echo '<td style="color:yellow"><b>' . $username->getFullName() . '</b></td>';
+                } else if ($user->getUserId() == $operation_data->getInitiatorId()) {
+                    echo '<td style="color:yellow"><b>' . $user->getFullName() . '</b></td>';
                     echo '<td style="color:yellow"><b>' . number_format($debt['result'], 2) . '</b></td>';
                 } else {
-                    echo '<td>' . $username->getFullName() . '</td>';
+                    echo '<td>' . $user->getFullName() . '</td>';
                     echo '<td>' . number_format($debt['result'], 2) . '</td>';
                 }
                 echo '</tr>';

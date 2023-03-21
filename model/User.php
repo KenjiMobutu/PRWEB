@@ -29,10 +29,6 @@ class User extends Model
         $this->iban = $iban;
     }
 
-    public function get_tricounts() : array{
-        return Tricounts::get_tricount_by_user_id($this->getUserId());
-    }
-
     public static function getUsers()
     {
         $result = [];
@@ -104,10 +100,13 @@ class User extends Model
     // }
 
 
-    public function is_in_operation($operationId){
-        $query = self::execute("SELECT user FROM repartitions WHERE operation = :id ",
-                                array("id"=>$operationId));
-        if($query->rowCount()==0){
+    public function is_in_operation($operationId)
+    {
+        $query = self::execute(
+            "SELECT user FROM repartitions WHERE operation = :id ",
+            array("id" => $operationId)
+        );
+        if ($query->rowCount() == 0) {
             return false;
         }
         return $query;
@@ -165,6 +164,8 @@ class User extends Model
         return $this;
     }
 
+
+    
 
 
     public function setRole(string $role): void
@@ -361,6 +362,13 @@ class User extends Model
         return true;
     }
 
+    public static function EmailExistsAlready($id, $email)
+    {
+        $query = self::execute("SELECT mail FROM Users WHERE mail=:email AND id!=:id", array("email" => $email, "id" => $id));
+        //query checks if the email address exists in the database for any user other than the logged-in user
+        $data = $query->fetch(); //un seul resultat max
+        return $data ? true : false;
+    }
 
     public static function validateEmail($email): bool
     {
@@ -369,6 +377,11 @@ class User extends Model
         }
         return false;
     }
+
+    public function get_dette($operation) : float{
+        return Operation::get_dette_by_operation($operation, $this->id);
+    }
+
 
     private static function validate_password($password)
     {
@@ -438,7 +451,7 @@ class User extends Model
                                 FROM repartition_template_items
                                 WHERE user = :user
                                 LIMIT 1;
-                                ", array("user" =>$this->getUserId()));
+                                ", array("user" => $this->getUserId()));
         $data = $query->fetch();
         if ($query->rowCount() == 0) {
             return false;
@@ -447,7 +460,7 @@ class User extends Model
         }
 
     }
-    
+
     public function can_be_delete($tricount): bool
     {
         $query = self::execute("SELECT count(*)
@@ -465,7 +478,7 @@ class User extends Model
         JOIN operations
         ON repartitions.operation = operations.id
         WHERE tricount = :tricount
-        );", array("tricount"=>$tricount,"user" =>$this->getUserId()));
+        );", array("tricount" => $tricount, "user" => $this->getUserId()));
         if ($query->fetchColumn() == 0) {
             return false;
         } else {
@@ -473,27 +486,34 @@ class User extends Model
         }
 
     }
-    
-    public function is_in_tricount($idTricount){
-        $query = self::execute("SELECT * from subscriptions s where s.user = :user and s.tricount =:id  ",array("user"=>$this->id,"id"=>$idTricount));
-        $data = $query->fetch();
-        if($query->rowCount()== 0)
+
+    public function is_in_tricount($idTricount)
+    {
+        $query = self::execute("SELECT * from subscriptions s where s.user = :user and s.tricount =:id  ", array("user" => $this->id, "id" => $idTricount));
+        if ($query->rowCount() == 0)
             return false;
-        return $data;
+        return true;
     }
-    public function is_creator($idTricount){
-        $query = self::execute("SELECT * FROM tricounts t where t.creator =:user and t.id=:id ",array("user"=>$this->id,"id"=>$idTricount));
-        $data = $query->fetch();
-        if($query->rowCount()== 0)
+    public function is_in_tricount_by_template($idTemplate, $idTricount)
+    {
+        $query = self::execute("SELECT * FROM repartition_templates rt where rt.id =:id and rt.tricount =:tricount ", array("tricount" => $idTricount, "id" => $idTemplate));
+        if ($query->rowCount() == 0)
             return false;
-        return $data;
+        return true;
     }
-    public function is_in_items($idTemplate){
-        $query = self::execute("SELECT * FROM repartition_template_items rti where rti.user =:user and rti.repartition_template=:id ",array("user"=>$this->id,"id"=>$idTemplate));
-        $data = $query->fetch();
-        if($query->rowCount()== 0)
+    public function is_creator($idTricount)
+    {
+        $query = self::execute("SELECT * FROM tricounts t where t.creator =:user and t.id=:id ", array("user" => $this->id, "id" => $idTricount));
+        if ($query->rowCount() == 0)
             return false;
-        return $data;
+        return true;
+    }
+    public function is_in_items($idTemplate)
+    {
+        $query = self::execute("SELECT * FROM repartition_template_items rti where rti.user =:user and rti.repartition_template=:id ", array("user" => $this->id, "id" => $idTemplate));
+        if ($query->rowCount() == 0)
+            return false;
+        return true;
     }
 }
 ?>
