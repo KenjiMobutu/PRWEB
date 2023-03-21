@@ -177,7 +177,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'add') { ?>
                             <br>
                             <label for="operation_amount">Total Amount</label>
                             <input class="addExp" placeholder="Amount (EUR)" value="<?php echo $operation_data->getAmount() ?>"
-                                type="number" id="amount" name="amount">
+                                type="number" id="amount" name="amount" oninput="calculateAmounts()">
                             <br>
                             <label for="operation_date">Date</label>
                             <input class="addExp" type="date" id="operation_date"
@@ -217,7 +217,7 @@ if (isset($_GET['action']) && $_GET['action'] === 'add') { ?>
 
                                             <legend>Weight</legend>
                                             <input type="number" name="w[<?= $usr->get_user() ?>]" id="<?php echo $usr->get_user() ?>" value="1"
-                                                min="0" max="50">
+                                                min="0" max="50"hidden>
                                             <!-- Add id attributes to the input fields -->
                                             <input type="number" name="w[<?= $usr->get_user() ?>]" id="<?= $usr->get_user() ?>_weight" value="1" min="0" max="50">
                                             <input type="number" id="<?= $usr->get_user() ?>_amount" value="<?php echo $usr->get_dette($operation_data->get_id(), $usr)?>" hidden>
