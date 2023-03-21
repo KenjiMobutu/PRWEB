@@ -246,7 +246,7 @@ class Operation extends Model
                                     WHERE user = :user AND operation = :operation) 
                                     AS result LIMIT 1", array("operation" => $operationId, "user" => $userId));
         $data = $query->fetch();
-        return $data;
+        return $data['result'];
     }
 
     public static function get_by_id($id)

@@ -56,16 +56,15 @@
                 <tbody>';
                 
             foreach ($operationUsers as $user) {
-                $debt = Operation::get_dette_by_operation($operation_data->get_id(), $user->getUserId());
                 echo '<tr>';
                 if ($participants["0"] === 0) {
                     echo 'solo';
                 } else if ($user->getUserId() == $operation_data->getInitiatorId()) {
                     echo '<td style="color:yellow"><b>' . $user->getFullName() . '</b></td>';
-                    echo '<td style="color:yellow"><b>' . number_format($debt['result'], 2) . '</b></td>';
+                    echo '<td style="color:yellow"><b>' . $user->get_dette($operation_data->get_id()) . '</b></td>';
                 } else {
                     echo '<td>' . $user->getFullName() . '</td>';
-                    echo '<td>' . number_format($debt['result'], 2) . '</td>';
+                    echo '<td>' . $user->get_dette($operation_data->get_id()). '</td>';
                 }
                 echo '</tr>';
             }
