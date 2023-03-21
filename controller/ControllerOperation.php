@@ -125,6 +125,9 @@ class ControllerOperation extends Controller
     {
         $errors = [];
 
+        // var_dump($_GET); echo"<----------- GET \n";
+        // var_dump($_POST);die();
+
         if (isset($_POST["addrefreshBtn"]) && $_POST['rti'] !== 'option-default') {
             $requiredFields = ["title", "tricId", "amount", "operation_date", "initiator", "rti"];
             $allFieldsExist = true;
@@ -149,6 +152,9 @@ class ControllerOperation extends Controller
                 $template = Repartition_templates::get_by_id($_POST['rti']);
                 
                 isset($_GET['param1']) ? $repartitions = Repartitions::get_by_operation($_GET['param1']) : null;
+                if(isset($_POST['repartitions'])){
+                    $repartitions = Repartitions::get_by_operation($_POST['rti']);
+                }
                 //$repartitions = Repartitions::get_by_operation($_GET['param1'] ? $_GET['param1'] : null);
                 $templateId = $template->get_id();
                 
@@ -158,9 +164,11 @@ class ControllerOperation extends Controller
                     $this->redirect("operation", "expenses/" . $tricount->get_id());
                 }
                 isset($_GET['param1']) ? $operationId = $_GET['param1'] :  null;
+                if(isset($_POST["operationId"]))
+                    $operationId = $_POST["operationId"];
                 $ListUsers = Participations::get_by_tricount($tricId);
                 $listItems = Repartition_template_items::get_user_by_repartition($template->get_id());
-                $operation = new Operation($title, $tricId, $amount, $operation_date, $initiator, $operation_date);
+                $operation = new Operation($title, $tricId, $amount, $operation_date, $initiator, $operation_date, $operationId);
                 $errors = $operation->validateForEdit();
                 //var_dump($repartitions);
                 //var_dump($repartitions);
