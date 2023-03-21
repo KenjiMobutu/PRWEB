@@ -28,6 +28,10 @@ require_once "framework/Model.php";
             return $query;
         }
 
+        public function get_dette($operation) : float{
+            return Operation::get_dette_by_operation($operation, $this->user);
+        }
+
 
         public static function get_by_tricount($tricount){
             $query = self::execute("SELECT s.*, t.creator from subscriptions s, tricounts t

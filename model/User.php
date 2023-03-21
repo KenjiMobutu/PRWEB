@@ -165,6 +165,8 @@ class User extends Model
     }
 
 
+    
+
 
     public function setRole(string $role): void
     {
