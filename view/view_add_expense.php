@@ -201,7 +201,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'add') { ?>
                         <?php endforeach; ?>
                             </select>
                             <label for="who">For whom? (select at least one)</label>
-                            /////////
                     <?php foreach ($users as $usr): ?>
                                     <div class="checks">
                                         <input type="checkbox" name="c[<?= $usr->get_user() ?>]" value="<?= $usr->get_user(); ?>"
@@ -217,8 +216,6 @@ if (isset($_GET['action']) && $_GET['action'] === 'add') { ?>
                                                 min="0" max="50">
 
                                             <legend>Amount</legend>
-                                            <?= number_format($userAmount['result'], 2) ?>
-
                                             <input type="number" value="<?= number_format($userAmount['result'], 2) ?>" >
                                     </div>
                     <?php endforeach; ?>
