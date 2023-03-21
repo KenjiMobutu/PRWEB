@@ -378,6 +378,11 @@ class User extends Model
         return false;
     }
 
+    public function get_dette($operation) : float{
+        return Operation::get_dette_by_operation($operation, $this->id);
+    }
+
+
     private static function validate_password($password)
     {
         $errors = [];

@@ -221,7 +221,6 @@ class Operation extends Model
         $data = $query->fetch();
         return $data["result"];
     }
-
     public static function get_by_id($id)
     {
         $query = self::execute("SELECT * FROM operations where id =:id", array("id" => $id));
