@@ -126,7 +126,7 @@ $(function(){
                     if (!is_null($operations)) {
                         foreach ($operations as $operation) {
                             if ($user->is_in_operation($operation->id) || $user === $operation->initiator) {
-                                $total_usr += Operation::total_by_user($user->getUserId(), $operation->id);
+                                $total_usr += $operation->total_by_user($user->getUserId(), $operation->get_id());
                             }
                         }
                     }
