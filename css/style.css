@@ -200,7 +200,7 @@ select {
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
-  background-color: #3ebcbc;
+  background-color: lightcoral;
 }
 
 .cancel-sign-up-btn:hover {
@@ -844,8 +844,6 @@ table.tab_templates tr:hover {
 .edit_template_p {
   margin-right: 10px;
 }
-
-
 .button_delete_confirm{
   margin: auto;
   width: 80%;
@@ -871,6 +869,56 @@ fieldset, legend{
   color: white;
   text-align: center;
 }
+.edit_template_container input[type="submit"]#btnSubmit,
+#delete_template {
+  padding: 10px;
+  /*top right bottom left */
+  margin: 20px;
+  width: 20%;
+  border-radius: 5px;
+  border: none;
+  background-color: #4a6785;
+  color: white;
+  text-align: center;
+  font-weight: bold;  
+}
+.edit_template_container input[type="submit"]#btnSubmit:hover, 
+#delete_template:hover {
+  background-color: #6688ac;
+}
+
+/*DELETE TEMPLATE*/
+
+.delete_template {
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.delete_template_container {
+  max-width: 600px;
+  padding: 40px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  color: black;
+}
+
+.delete_template_container h1{
+    font-size: 36px;
+    font-weight: 400;
+    margin-bottom: 30px;
+}
+.delete_template_container p{
+  font-size: 18px;
+  margin-bottom: 20px;
+}
+.delete_template_container b{
+  font-weight: 700;
+}
+
 input[type="number"] {
   flex: 1;
   padding: 10px;
@@ -896,20 +944,7 @@ input[type="submit"]:hover {
   background-color: #1abc9c;
 }
 
-#delete_template{
-  margin: 20px;
-  padding: 10px 20px;
-  border-radius: 5px;
-  border: none;
-  background-color: #16a085;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-}
 
-#delete_template:hover{
-  background-color: #1abc9c;
-}
 .edit-selectSub{
   margin-left: 15% !important;
   width: 70% !important;
@@ -973,6 +1008,11 @@ input[type="submit"]:hover {
   .edit-tricount {
     width: 90%;
   }
+  
+  .edit_template_container input[type="submit"]#btnSubmit {
+    width: 80%;
+    background-color: #4a6785;
+  }
   input[type="text"],
   input[type="number"] {
     width: 100%;
@@ -985,5 +1025,8 @@ input[type="submit"]:hover {
 
 /* tablet and large mobiles */
 @media screen and (min-width: 575px) and (max-width: 767.98px) {
-
+  .edit_template_container input[type="submit"]#btnSubmit {
+    width: 80%;
+    background-color: #4a6785;
+  }
 }
