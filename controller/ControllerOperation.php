@@ -46,11 +46,15 @@ class ControllerOperation extends Controller
         }
         (new View("expenses"))->show(
             array(
+                "operations_of_tricount" => $operations_of_tricount,
                 "user" => $user,
                 "tricount" => $tricount,
                 "amounts" => $amounts,
                 "totalExp" => $totalExp,
-                "participants" => $participants
+                "mytot" => $mytot,
+                "participants" => $participants,
+                "nbOperations" => $nbOperations,
+                "expenses_json" => $expenses_json
             )
         );
     }
@@ -107,12 +111,16 @@ class ControllerOperation extends Controller
             $usr = $operation_data->getInitiator();
         }
 
-        (new View("detail_expense"))->show(array("user" => $user, 
-        "operationUsers" => $operationUsers, 
-        "operation_data" => $operation_data, 
-        "participants" => $participants, 
-        "tricount" => $tricount, 
-        "usr" => $usr));
+        (new View("detail_expense"))->show(
+            array(
+                "user" => $user,
+                "operationUsers" => $operationUsers,
+                "operation_data" => $operation_data,
+                "participants" => $participants,
+                "tricount" => $tricount,
+                "usr" => $usr
+            )
+        );
 
     }
 
@@ -311,40 +319,40 @@ class ControllerOperation extends Controller
             $template = new Repartition_templates(null, $template_name, $_POST["tricId"]);
 
             $errors = $operation->validate();
-
+            //$errors = $operation->validateTitle($title);
             if (empty($errors)) {
                 $operation->insert();
                 $template->newTemplate($template_name, $_POST["tricId"]);
+
                 if ($template !== null) {
-                    for ($i = 0; $i <= count($checkedUsers) + 1; $i++) {
+                    for ($i = 0; $i <= count($checkedUsers) + 50; $i++) {
                         if (isset($checkedUsers[$i]) && $checkedUsers[$i] !== null) {
-                            if ($weights[$i] === "" || $weights[$i] === "0")
+                            if ($weights[$i] === "" || $weights[$i] === "0") {
                                 $weights[$i] = 1;
+                            }
+                            Repartition_template_items::addNewItems($checkedUsers[$i], $template->get_id(), $weights[$i]);
+                            Operation::insertRepartition($operation->get_id(), $weights[$i], $checkedUsers[$i]);
+                        }
                     }
-                    Repartition_template_items::addNewItems($checkedUsers[$i], $template->get_id(), $weights[$i]);
-                    Operation::insertRepartition($operation->get_id(), $weights[$i], $checkedUsers[$i]);
+                    $this->redirect("operation", "expenses", $_POST["tricId"]);
                 }
-           
-            $this->redirect("operation", "expenses", $_POST["tricId"]);
- }
-         else
-            (new View("add_expense"))->show(
-                array(
-                    //print_r($tricount),
-                    "title" => $title,
-                    "amount" => $amount,
-                    "operation_date" => $operation_date,
-                    "init" => $init,
-                    "users" => $users,
-                    "tricount" => $tricount,
-                    "template" => $template,
-                    "errors" => $errors,
-                    "action" => $action
-                )
-            );
-        
+            } else
+                (new View("add_expense"))->show(
+                    array(
+                        //print_r($tricount),
+                        "title" => $title,
+                        "amount" => $amount,
+                        "operation_date" => $operation_date,
+                        "init" => $init,
+                        "users" => $users,
+                        "tricount" => $tricount,
+                        "template" => $template,
+                        "errors" => $errors,
+                        "action" => $action
+                    )
+                );
+        }
     }
-}
 
 
     public function add()
