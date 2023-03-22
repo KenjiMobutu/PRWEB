@@ -275,7 +275,7 @@ class Tricounts extends Model
     return $data[0];
   }
 
-    public function get_expenses(): array{
+    public function get_expenses(): array|null{
       return Operation::get_operations_by_tricount($this->get_id());
     }
 
@@ -283,18 +283,20 @@ class Tricounts extends Model
       $str = "";
 
       $expenses = $this->get_expenses();
+      if(!empty($expenses)){
+        foreach($expenses as $expense){
+            $expense_id = json_encode( $expense->get_id());
+            $title = json_encode( $expense->getTitle());
+            $tricount = json_encode($this->get_id());
+            $amount = json_encode($expense->getAmount());
+            $operation_date = json_encode($expense->getOperationDate());
+            $initiator = json_encode($expense->getInitiator());
+            $created_at = json_encode($expense->getCreatedAt());
 
-      foreach($expenses as $expense){
-        $expense_id = json_encode( $expense->get_id());
-        $title = json_encode( $expense->getTitle());
-        $tricount = json_encode($this->get_id());
-        $amount = json_encode($expense->getAmount());
-        $operation_date = json_encode($expense->getOperationDate());
-        $initiator = json_encode($expense->getInitiator());
-        $created_at = json_encode($expense->getCreatedAt());
-
-        $str .= "{\"id\":$expense_id,\"title\":$title,\"tricount\":$tricount,\"amount\":$amount,\"operation_date\":$operation_date,\"initiator\":$initiator,\"created_at\":$created_at},";
+          $str .= "{\"id\":$expense_id,\"title\":$title,\"tricount\":$tricount,\"amount\":$amount,\"operation_date\":$operation_date,\"initiator\":$initiator,\"created_at\":$created_at},";
+        }
       }
+      
       if($str !== "")
         $str = substr($str,0,strlen($str)-1);
       return "[$str]";
