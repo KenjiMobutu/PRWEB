@@ -21,7 +21,7 @@
         <input type="hidden" name="operation" value="<?php echo $operation_data->get_id(); ?>" hidden>
         <p>
             <?php echo $tricount->get_title(); ?> >
-            <?php echo $operation_data->getTitle() ?> <button class="edit-btn">
+            <?php echo $operation_data->getTitle() ?> <button id="edit" class="edit-btn">
                 <a href="Operation/edit/<?php echo $operation_data->get_id() ?>"
                     style="text-decoration: none; color: black;">Edit</a>
             </button>
@@ -30,6 +30,7 @@
                 <?php echo number_format($operation_data->getAmount(), 2) ?>
             </h2>
             <?php
+            // var_dump($participants); die();
             if ($participants["0"] === 0) {
                 echo "<p>For me</p>";
             } else {
@@ -54,21 +55,24 @@
                     </tr>
                 </thead>
                 <tbody>';
-            foreach ($operationUsers as $user) {
-                $username = User::get_by_id($user['user']);
-                $debt = Operation::get_dette_by_operation($_GET['param1'], $user['user']);
-                echo '<tr>';
-                if ($participants["0"] === 0) {
-                    echo 'solo';
-                } else if ($user['user'] == $operation_data->getInitiatorId()) {
-                    echo '<td style="color:yellow"><b>' . $username->getFullName() . '</b></td>';
-                    echo '<td style="color:yellow"><b>' . number_format($debt['result'], 2) . '</b></td>';
-                } else {
-                    echo '<td>' . $username->getFullName() . '</td>';
-                    echo '<td>' . number_format($debt['result'], 2) . '</td>';
+                if(!empty($operationUsers)){
+                    foreach ($operationUsers as $user) {
+                        echo '<tr>';
+                        if ($participants["0"] === 0) {
+                            echo 'solo';
+                        } else if ($user->getUserId() == $operation_data->getInitiatorId()) {
+                            echo '<td style="color:yellow"><b>' . $user->getFullName() . '</b></td>';
+                            echo '<td style="color:yellow"><b>' . number_format($user->get_dette($operation_data->get_id()), 2) . '</b></td>';
+                        } else {
+                            echo '<td>' . $user->getFullName() . '</td>';
+                            echo '<td>' . number_format($user->get_dette($operation_data->get_id()), 2). '</td>';
+                        }
+                        echo '</tr>';
+                    }
+                }else{
+                    echo "solo";
                 }
-                echo '</tr>';
-            }
+                
             ?>
             </tbody>
             </table>

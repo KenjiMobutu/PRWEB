@@ -1,26 +1,29 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <meta charset="UTF-8">
-    <title>Log In</title>
-    <base href="<?= $web_root ?>" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="css/style.css" rel="stylesheet" type="text/css" />
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400&family=Sen:wght@400;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <title>Log In</title>
+        <base href="<?= $web_root ?>" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="css/style.css" rel="stylesheet" type="text/css" />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400&family=Sen:wght@400;700;800&display=swap"
+            rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    </head>
 
-<body>
-    
-    <div class="navbar">
-        <div class="navbar-container">
-            <div class="logo-container">
-            <h1 class="logo"><i class="fa fa-credit-card" aria-hidden="true" onclick='window.location.reload(true);'></i> Tricount</h1>
+    <body>
+
+        <div class="navbar">
+            <div class="navbar-container">
+                <div class="logo-container">
+                    <h1 class="logo"><i class="fa fa-credit-card" aria-hidden="true"
+                            onclick='window.location.reload(true);'></i> Tricount</h1>
+                </div>
+                <a href="main/index">Back</a>
             </div>
-            <a href="main/index">Back</a>
         </div>
-    </div>
 
     <div class="menu">
     </div>
@@ -45,14 +48,16 @@
                 <div class='errors'>
                     <p>Please correct the following error(s) :</p>
                     <ul>
-                        <?php foreach ($errors as $error) : ?>
-                            <li><?= $error ?></li>
+                        <?php foreach ($errors as $error): ?>
+                        <li>
+                            <?= $error ?>
+                        </li>
                         <?php endforeach; ?>
                     </ul>
                 </div>
-            <?php endif; ?>
+                <?php endif; ?>
+            </div>
         </div>
-    </div>
-</body>
+    </body>
 
 </html>

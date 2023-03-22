@@ -112,7 +112,6 @@ class Operation extends Model
         } else {
             foreach ($data as $row) {
                 $operation_date = (string) $row["operation_date"];
-                ;
                 $created_at = (string) $row["created_at"];
                 $result[] = new Operation(
                     $row["title"],
@@ -186,7 +185,7 @@ class Operation extends Model
         } else {
             foreach ($data as $row) {
                 $operation_date = (string) $row["operation_date"];
-                ;
+
                 $created_at = (string) $row["created_at"];
                 $result = new Operation(
                     $row["title"],
@@ -202,45 +201,46 @@ class Operation extends Model
         return $result;
     }
 
-    public static function total_by_user($userId, $operationId)
-    {
-        $query = self::execute("SELECT (SELECT o.amount/SUM(r.weight)
-                                                FROM repartitions r, operations o 
-                                                where r.operation = o.id 
-                                                and o.id =:id GROUP BY o.amount) *  
-                                                (SELECT weight FROM repartitions 
-                                                WHERE user = :user AND operation = :id) 
-                                                AS result LIMIT 1", array("id" => $operationId, "user" => $userId));
-        $data = $query->fetch();
-        return $data["result"];
-    }
+
 
     public static function get_users_from_operation($operationId)
     {
-        $query = self::execute("SELECT user FROM repartitions WHERE operation = :operationId", array("operationId" => $operationId));
+        $query = self::execute("SELECT u.* FROM repartitions r, users u  
+                                        WHERE operation = :operationId
+                                        and r.user = u.id;", array("operationId" => $operationId));
         $data = $query->fetchAll();
-        return $data;
+        if ($query->rowCount() == 0) {
+            return null;
+        } else {
+            foreach ($data as $row) {
+                $results[] = new User(
+                    $row["id"],
+                    $row["mail"], 
+                    $row["hashed_password"],
+                    $row["full_name"], 
+                    $row["role"], 
+                    $row["iban"]);
+            }
+            return $results;
+        }
     }
 
-    public static function get_dette_by_operation($operationId, $userId)
-    {
+    public static function get_dette_by_operation($operationId, $userId){
         $query = self::execute("SELECT (SELECT o.amount/SUM(r.weight)
-                                    FROM repartitions r, operations o 
-                                    where r.operation = o.id 
-                                    and o.id =:operation GROUP BY o.amount) *  
-                                    (SELECT weight FROM repartitions 
-                                    WHERE user = :user AND operation = :operation) 
+                                    FROM repartitions r, operations o
+                                    where r.operation = o.id
+                                    and o.id =:operation GROUP BY o.amount) *
+                                    (SELECT weight FROM repartitions
+                                    WHERE user = :user AND operation = :operation)
                                     AS result LIMIT 1", array("operation" => $operationId, "user" => $userId));
         $data = $query->fetch();
-        return $data;
+        return $data["result"];
     }
-
     public static function get_by_id($id)
     {
         $query = self::execute("SELECT * FROM operations where id =:id", array("id" => $id));
         $data = $query->fetch();
         $operation_date = (string) $data["operation_date"];
-        ;
         $created_at = (string) $data["created_at"];
         return new Operation(
             $data["title"],
@@ -252,8 +252,6 @@ class Operation extends Model
             $data["id"]
         );
     }
-
-
     public function is_in_operation($operationId)
     {
         $query = self::execute(
@@ -264,6 +262,22 @@ class Operation extends Model
             return false;
         }
         return $query;
+    }
+
+    public static function total_by_user($userId, $operationId)
+    {
+        $query = self::execute("SELECT (
+            SELECT COALESCE(o.amount/SUM(r.weight), 0)
+            FROM operations o
+            LEFT JOIN repartitions r ON r.operation = o.id
+            WHERE o.id = :id
+            GROUP BY o.amount
+        ) * COALESCE(
+            (SELECT weight FROM repartitions WHERE user = :user AND operation = :id), 0
+        ) AS result;
+        ", array("id" => $operationId, "user" => $userId));
+        $data = $query->fetch();
+        return $data["result"];
     }
 
     public static function total_alberti($tricId, $userId)
@@ -280,10 +294,32 @@ class Operation extends Model
                                 WHERE t.id = :id AND o.initiator =:user
                                 GROUP BY o.initiator;", array("id" => $tricId, "user" => $userId));
         $data = $query->fetch();
+        if ($query->rowCount() == 0) {
+            return false;
+        }
         return $data["balance"];
     }
 
-   
+    public static function amountByUserWeight($operationId, $userId)
+    {
+        $query = self::execute("SELECT DISTINCT o.initiator, SUM((rp.weight / total_weight) * o.amount) AS balance
+                                FROM operations o
+                                JOIN tricounts t ON t.id = o.tricount
+                                JOIN (
+                                SELECT operation, SUM(weight) AS total_weight
+                                FROM repartitions
+                                GROUP BY operation
+                                ) r ON r.operation = o.id
+                                JOIN repartitions rp ON rp.operation = o.id
+                                WHERE t.id = :id AND o.initiator =:user
+                                GROUP BY o.initiator;", array("id" => $operationId, "user" => $userId));
+        $data = $query->fetch();
+        if ($query->rowCount() == 0) {
+            return false;
+        }
+        return $data["balance"];
+    }
+
 
     public static function exists($id)
     {
@@ -315,11 +351,10 @@ class Operation extends Model
         return $query->fetch();
     }
 
-
     public static function insertRepartition($id, $weight, $initiator)
     {
 
-        $query = self::execute("INSERT INTO repartitions (operation, weight, user) 
+        $query = self::execute("INSERT INTO repartitions (operation, weight, user)
                                 VALUES (:operation_id, :weight, :user)",
             array(
                 "operation_id" => $id,
@@ -330,6 +365,60 @@ class Operation extends Model
         return $query;
     }
 
+    public static function deleteRepartition($idOperation)
+    {
+        //     DELETE
+        // FROM repartition_template_items
+        // where repartition_template=:repartition_template",
+        // array("repartition_template"=>$repartition_template)
+        $query = self::execute("DELETE
+                        FROM repartitions where operation =:operation",
+            array(
+                "operation" => $idOperation
+            )
+        );
+        return $query;
+    }
+
+    public static function deleteItems($repartitionId)
+    {
+        $query = self::execute("DELETE
+        FROM repartition_template_items where repartition_template =:repartition_template",
+            array(
+                "repartitions_template" => $repartitionId
+            )
+        );
+        return $query;
+    }
+
+    public static function validateTitle($title)
+    {
+        $query = self::execute(
+            "SELECT title from operations WHERE title=:title",
+            array(
+                "title" => $title
+            )
+        );
+        if ($query->rowCount() == 0) {
+            return "Title already exists in the database.";
+        }
+        return;
+    }
+
+    public function validateForEdit()
+    {
+        $errors = [];
+
+        if ((isset($this->title) && strlen($this->title) < 3)) {
+            $errors[] = "Title must be at least 3 characters.";
+        }
+
+        if ((isset($this->amount) && ($this->amount < 0))) {
+            $errors[] = "The amount must be positive.";
+        }
+
+        return $errors;
+    }
 
     public function validate()
     {
@@ -337,6 +426,10 @@ class Operation extends Model
 
         if ((isset($this->title) && strlen($this->title) < 3)) {
             $errors[] = "Title must be at least 3 characters.";
+        }
+
+        if ($this->title && !self::validateTitle($this->title)) {
+            $errors[] = "Title already exists in the database.";
         }
 
         if ((isset($this->amount) && ($this->amount < 0))) {
@@ -392,7 +485,7 @@ class Operation extends Model
                     "tricount" => $this->tricount,
                     "amount" => $this->amount,
                     "operation_date" => $this->operation_date,
-                    "intitiator" => $this->initiator,
+                    "initiator" => $this->initiator,
                     "created_at" => $this->created_at,
                 ]
             );
@@ -425,7 +518,7 @@ class Operation extends Model
             return true;
         }
         return false;
-    }  
+    }
 
     public function setOperationId()
     {
@@ -467,9 +560,9 @@ class Operation extends Model
 
     public function get_previous_operation_by_tricount($id, $tricount)
     {
-        $query = self::execute("SELECT * 
+        $query = self::execute("SELECT *
                                 FROM `operations` o
-                                where o.id < :id 
+                                where o.id < :id
                                 and o.tricount = :tricount
                                 ORDER BY o.id DESC
                                 LIMIT 1",
@@ -499,7 +592,7 @@ class Operation extends Model
 
     public function get_next_operation_by_tricount($id, $tricount)
     {
-        $query = self::execute("SELECT o.* 
+        $query = self::execute("SELECT o.*
                                 FROM `operations` o
                                 WHERE o.tricount = :tricount
                                 AND o.id > :id
@@ -549,7 +642,7 @@ class Operation extends Model
         $this->operation_date = $operation_date;
     }
 
-    public function setInitiator(int $initiator): void
+    public function setInitiator(int $initiator)
     {
         $this->initiator = $initiator;
     }
@@ -557,6 +650,10 @@ class Operation extends Model
     public function setCreated_at(string $created_at): void
     {
         $this->created_at = $created_at;
+    }
+
+    public function get_user($user) : User{
+        return User::get_by_id($user);
     }
 
 }

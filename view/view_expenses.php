@@ -15,11 +15,7 @@
     <script src="lib/jquery-3.6.3.min.js" type="text/javascript"></script>
 
 </head>
-<style>
-    select{
-		font-family: fontAwesome
-	}
-    </style>
+
 <body>
 <script>
 /**
@@ -75,13 +71,12 @@ function sortExpenses(){
 function sort(value){
     let [column, order] = value.split('-');
     console.log([column, order] + " trsr");
-    if(column === sortColumn || order === 'desc'){
-        sortAscending = !sortAscending;
+    if(order === "desc"){
+        sortAscending = false;
     }else{
-        sortColumn = column;
         sortAscending = true;
     }
-    
+    sortColumn = column;
     sortExpenses();
     displayExpenses();
 }
@@ -109,7 +104,6 @@ $(function(){
     $('#sort-select').on('change', function() {
         let value = $(this).val();
         sort(value);
-        console.log(value);
     });
 });
 </script>
@@ -127,11 +121,17 @@ $(function(){
             </p>
             <?php
             $total_usr = 0;
-            if (!is_null($operations_of_tricount)) {
-                foreach ($operations_of_tricount as $operation):
-                    if ($user->is_in_operation($operation->get_id()) || $user === $operation->getInitiator())
-                        $total_usr += Operation::total_by_user($user->getUserId(), $operation->get_id());
-                endforeach;
+            if (!empty($amounts)) {
+                foreach ($amounts as $operations) {
+                    if (!is_null($operations)) {
+                        foreach ($operations as $operation) {
+                            if ($user->is_in_operation($operation->id) || $user === $operation->initiator) {
+                                $total_usr += $operation->total_by_user($user->getUserId(), $operation->get_id());
+                            }
+                        }
+                    }
+
+                }
             } else {
                 $total_usr = 0;
             }
@@ -151,7 +151,7 @@ $(function(){
                                     echo '<div class="expenses_json"> </div>';
                                     echo '<li class="data-item">';
                                     foreach ($amount as $am):
-                                        $id = $am->initiator;
+                                        //$id = $am->initiator;
                                         $id_expense = $am->id;
                                         echo '<a href="Operation/detail_expense/' . $id_expense . '">
                                             <div class="data-card">
@@ -170,7 +170,7 @@ $(function(){
                                             </div>
                                             <div class="add-btn">
                                                 <a href="/prwb_2223_c03/Operation/add/' . $tricount->get_id() . '">
-                                                    <button class="add-button">+
+                                                    <button id="button" class="add-button">+
                                                     </button>
                                                 </a>
                                             </div>
@@ -198,7 +198,7 @@ $(function(){
                                 }
                                 if (empty($amount) && ($participants == 0) && $totalExp["0"] === null) {
                                     $totalExp["0"] = 0;
-                                    echo "<h1 style='text-align:center;'>you are alone loser :(</h1>";
+                                    echo "<h1 style='text-align:center;'>you are alone :(</h1>";
                                     echo '<a href="tricount/edit/' . $tricount->get_id() . '">';
                                     echo '<button class="view-balance-button">';
                                     echo 'ADD FRIENDS';

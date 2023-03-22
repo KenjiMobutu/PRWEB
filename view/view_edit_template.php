@@ -138,9 +138,9 @@
                 <p>You're alone. Don't be shy -> <a href="tricount/edit/<?php echo $tricount->get_id(); ?>"> ADD FRIENDS</a> ☻</p>
         <?php endif;?>
             
-            <?php if(isset($templateID)){
-                echo "<a href='templates/delete_template/$templateID'"; echo " id='delete_template'>DELETE</a>";
-            }?>
+        <?php if(isset($templateID)){
+            echo "<a href='templates/delete_template/$templateID'"; echo " id='delete_template'>DELETE</a>";
+        }?>
 
         </div>
 

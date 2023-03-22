@@ -152,6 +152,18 @@
         }
     }
 
+    public static function get_by_user_and_tricount($user, $tricountId)
+  { 
+    $query = self::execute("SELECT * FROM  repartition_template_items rti, repartition_templates rt
+                              where rti.repartition_template = rt.id
+                              and rti.user=:user and rt.tricount=:tricount",
+      array("user" => $user, "tricount" => $tricountId)
+    );
+    $data = $query->fetchAll();
+
+      return $data;
+  }
+
     public function get_user_info() : string
     {  // on récupère les noms des utilisateurs lié a un template_items
       $query = self::execute("SELECT *
@@ -224,9 +236,20 @@
       }
       return $this;
     }
+
+
+
+
+    public static function combine_array($ids, $weight) : array{
+      $combined_array = array();
+      foreach ($ids as $i => $id) {
+          if (isset($weight[$i])) {
+              $combined_array[$id] = $weight[$i];
+          } else {
+              $combined_array[$id] = null; 
+          }
+      }
+      return $combined_array;
+    }
   }
-
-
-
-
 ?>

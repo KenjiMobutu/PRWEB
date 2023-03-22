@@ -75,6 +75,10 @@ class ControllerTricount extends Controller{
     $errors = [];
     if (isset($_GET['param1']) || isset($_POST['param1'])) {
       $id = isset($_POST['param1']) ? $_POST['param1'] : $_GET['param1'];
+      $tricountExist = Tricounts::exists($id);
+      if(empty($tricountExist)){
+        $this->redirect('tricount', "index");
+      }
       $tricount = Tricounts::get_by_id($id);
       $subscriptions = Participations::by_tricount($tricount->get_id());
       $users = User::not_participate($tricount->get_id());
@@ -91,6 +95,10 @@ class ControllerTricount extends Controller{
   public function delete(){
     $user = $this->get_user_or_redirect();
     if (isset($_GET['param1']) && is_numeric($_GET['param1']) && $_GET['param1'] != null ) {
+      $tricountExist = Tricounts::exists($_GET['param1']);
+      if(empty($tricountExist)){
+        $this->redirect('tricount', "index");
+      }
       $id = $_GET['param1'];
       $tricount = Tricounts::get_by_id($id);
       if($tricount->get_creator_id() === $user->getUserId()){
