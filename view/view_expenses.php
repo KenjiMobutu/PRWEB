@@ -124,7 +124,7 @@ $(function(){
             if (!is_null($operations_of_tricount)) {
                 foreach ($operations_of_tricount as $operation):
                     if ($user->is_in_operation($operation->get_id()) || $user === $operation->getInitiator())
-                        $total_usr += Operation::total_by_user($user->getUserId(), $operation->get_id());
+                        $total_usr += $operation->total_by_user($user->getUserId(), $operation->get_id());
                 endforeach;
             } else {
                 $total_usr = 0;

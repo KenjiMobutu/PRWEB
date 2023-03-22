@@ -32,7 +32,6 @@ class ControllerOperation extends Controller
             }
             $tricount = Tricounts::get_by_id($_GET['param1']);
             $tricountID = $tricount->get_id();
-            $tricountParticipants = Operation::getUsersFromTricount($tricountID);
             $expenses_json = $tricount->get_expenses_as_json();
             // if(!in_array($userId,$tricountParticipants)){ //TODO y a que boris qui peut les voir idk
             //     $this->redirect('main', "error");    //si l'user ne participe pas dans un tric il peux pas voir les operations

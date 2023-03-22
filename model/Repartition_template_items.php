@@ -238,7 +238,7 @@
           }
       }
       return $combined_array;
-  }
+    }
   }
 
 
