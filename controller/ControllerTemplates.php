@@ -152,15 +152,7 @@ class ControllerTemplates extends Controller
         return $result;
     }
     private function combine_array($ids, $weight) : array{
-        $combined_array = array();
-        foreach ($ids as $i => $id) {
-            if (isset($weight[$i])) {
-                $combined_array[$id] = $weight[$i];
-            } else {
-                $combined_array[$id] = null; 
-            }
-        }
-        return $combined_array;
+        return Repartition_template_items::combine_array($ids,$weight);
     }
     private function validate($checkedUsers, $template_title, $tricount, $templateId) : array{
         $errors = [];
