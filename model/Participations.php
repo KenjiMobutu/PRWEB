@@ -33,6 +33,10 @@ class Participations extends Model
         return true;
     }
 
+        public function get_dette($operation) : float{
+            return Operation::get_dette_by_operation($operation, $this->user);
+        }
+
 
         public static function get_by_tricount($tricount){
             $query = self::execute("SELECT DISTINCT u.full_name, s.*, t.creator 

@@ -185,7 +185,7 @@ class Operation extends Model
         } else {
             foreach ($data as $row) {
                 $operation_date = (string) $row["operation_date"];
-                ;
+
                 $created_at = (string) $row["created_at"];
                 $result = new Operation(
                     $row["title"],
@@ -225,19 +225,17 @@ class Operation extends Model
         }
     }
 
-    public static function get_dette_by_operation($operationId, $userId)
-    {
+    public static function get_dette_by_operation($operationId, $userId){
         $query = self::execute("SELECT (SELECT o.amount/SUM(r.weight)
-                                    FROM repartitions r, operations o 
-                                    where r.operation = o.id 
-                                    and o.id =:operation GROUP BY o.amount) *  
-                                    (SELECT weight FROM repartitions 
-                                    WHERE user = :user AND operation = :operation) 
+                                    FROM repartitions r, operations o
+                                    where r.operation = o.id
+                                    and o.id =:operation GROUP BY o.amount) *
+                                    (SELECT weight FROM repartitions
+                                    WHERE user = :user AND operation = :operation)
                                     AS result LIMIT 1", array("operation" => $operationId, "user" => $userId));
         $data = $query->fetch();
-        return $data['result'];
+        return $data["result"];
     }
-
     public static function get_by_id($id)
     {
         $query = self::execute("SELECT * FROM operations where id =:id", array("id" => $id));
@@ -270,7 +268,7 @@ class Operation extends Model
     {
         $query = self::execute("SELECT (
             SELECT COALESCE(o.amount/SUM(r.weight), 0)
-            FROM operations o 
+            FROM operations o
             LEFT JOIN repartitions r ON r.operation = o.id
             WHERE o.id = :id
             GROUP BY o.amount
@@ -302,6 +300,25 @@ class Operation extends Model
         return $data["balance"];
     }
 
+    public static function amountByUserWeight($operationId, $userId)
+    {
+        $query = self::execute("SELECT DISTINCT o.initiator, SUM((rp.weight / total_weight) * o.amount) AS balance
+                                FROM operations o
+                                JOIN tricounts t ON t.id = o.tricount
+                                JOIN (
+                                SELECT operation, SUM(weight) AS total_weight
+                                FROM repartitions
+                                GROUP BY operation
+                                ) r ON r.operation = o.id
+                                JOIN repartitions rp ON rp.operation = o.id
+                                WHERE t.id = :id AND o.initiator =:user
+                                GROUP BY o.initiator;", array("id" => $operationId, "user" => $userId));
+        $data = $query->fetch();
+        if ($query->rowCount() == 0) {
+            return false;
+        }
+        return $data["balance"];
+    }
 
 
     public static function exists($id)
@@ -336,7 +353,8 @@ class Operation extends Model
 
     public static function insertRepartition($id, $weight, $initiator)
     {
-        $query = self::execute("INSERT INTO repartitions (operation, weight, user) 
+
+        $query = self::execute("INSERT INTO repartitions (operation, weight, user)
                                 VALUES (:operation_id, :weight, :user)",
             array(
                 "operation_id" => $id,
@@ -542,9 +560,9 @@ class Operation extends Model
 
     public function get_previous_operation_by_tricount($id, $tricount)
     {
-        $query = self::execute("SELECT * 
+        $query = self::execute("SELECT *
                                 FROM `operations` o
-                                where o.id < :id 
+                                where o.id < :id
                                 and o.tricount = :tricount
                                 ORDER BY o.id DESC
                                 LIMIT 1",
@@ -574,7 +592,7 @@ class Operation extends Model
 
     public function get_next_operation_by_tricount($id, $tricount)
     {
-        $query = self::execute("SELECT o.* 
+        $query = self::execute("SELECT o.*
                                 FROM `operations` o
                                 WHERE o.tricount = :tricount
                                 AND o.id > :id

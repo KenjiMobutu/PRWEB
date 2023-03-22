@@ -92,7 +92,8 @@
                 endforeach;
                 foreach ($users as $user):
                     $total_balance = 0;
-                    $alberti_balance = Operation::total_alberti($tricount->get_id(), $user->get_user()); foreach ($operations_of_tricount as $operation):
+                    $alberti_balance = Operation::total_alberti($tricount->get_id(), $user->get_user());
+                    foreach ($operations_of_tricount as $operation):
                         if ($user->is_in_operation($operation->get_id()) || $user->getUserInfo() === $operation->getInitiator()) {
                             $total_balance += Operation::total_by_user($user->get_user(), $operation->get_id());
                         }
