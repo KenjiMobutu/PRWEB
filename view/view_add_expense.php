@@ -160,7 +160,7 @@ if (isset($action) && ($action === 'add' || $action === 'add_expense')) { ?>
                         <p>
                     <?php echo $tricount->get_title(); ?> > Edit expense
                         </p>
-                        <form action="operation/edit_expense/<?php echo $operation_data->get_id() ?>" method="post">
+                        <form action="operation/edit_expense/<?php echo $operation->get_id() ?>" method="post">
                             <div class="errors">
                                 <ul>
                             <?php if (!empty($errors))
@@ -171,23 +171,23 @@ if (isset($action) && ($action === 'add' || $action === 'add_expense')) { ?>
                                     <?php endforeach; ?>
                                 </ul>
                             </div>
-                            <input type="hidden" id="operationId" name="operationId" value="<?php echo $operation_data->get_id() ?>">
+                            <input type="hidden" id="operationId" name="operationId" value="<?php echo $operation->get_id() ?>">
                             <input class="addExp" placeholder="Title" type="text" id="title"
-                                value="<?php echo $operation_data->getTitle() ?>" name="title">
+                                value="<?php echo $operation->getTitle() ?>" name="title">
                             <input type="hidden" id="tricId" name="tricId" value="<?php echo $tricount->get_id() ?>">
                             <br>
                             <label for="operation_amount">Total Amount</label>
-                            <input class="addExp" placeholder="Amount (EUR)" value="<?php echo $operation_data->getAmount() ?>"
+                            <input class="addExp" placeholder="Amount (EUR)" value="<?php echo $operation->getAmount() ?>"
                                 type="number" id="amount" name="amount" oninput="calculateAmounts()">
                             <br>
                             <label for="operation_date">Date</label>
                             <input class="addExp" type="date" id="operation_date"
-                                value="<?php echo $operation_data->getOperationDate() ?>" name="operation_date">
+                                value="<?php echo $operation->getOperationDate() ?>" name="operation_date">
                             <br>
 
                             <label for="paid_by">Paid By</label>
                             <select id="initiator" name="initiator">
-                                <option style="color: black;" selected value="<?php echo $usr ?>"><?php echo $usr ?></option>
+                                <option style="color: black;" selected value="<?php echo $operation->getInitiator(); ?>"><?php echo $operation->getInitiator(); ?></option>
                         <?php foreach ($users as $urss): ?>
                                 <?php if ($urss->getUserInfo() !== $usr): ?>
                                                 <option style="color: black;" value="<?php echo $urss->getUserInfo() ?>"><?php echo $urss->getUserInfo() ?></option>
@@ -221,12 +221,12 @@ if (isset($action) && ($action === 'add' || $action === 'add_expense')) { ?>
                                                 min="0" max="50"hidden>
                                             <!-- Add id attributes to the input fields -->
                                             <input type="number" name="w[<?= $usr->get_user() ?>]" id="<?= $usr->get_user() ?>_weight" value="1" min="0" max="50">
-                                            <input type="number" id="<?= $usr->get_user() ?>_amount" value="<?php echo $usr->get_dette($operation_data->get_id(), $usr)?>" hidden>
+                                            <input type="number" id="<?= $usr->get_user() ?>_amount" value="<?php echo $usr->get_dette($operation->get_id(), $usr)?>" hidden>
 
                                             <legend>Amount</legend>
-                                            <!-- <input type="number" id="test" value="<?php echo $usr->get_dette($operation_data->get_id(), $usr)?>" >-->
+                                            <!-- <input type="number" id="test" value="<?php echo $usr->get_dette($operation->get_id(), $usr)?>" >-->
                                             <!-- Display the total amount owed by each user -->
-                                            <input type="number" id="<?= $usr->get_user() ?>_dette" value="<?php echo $usr->get_dette($operation_data->get_id(), $usr)?>" >
+                                            <input type="number" id="<?= $usr->get_user() ?>_dette" value="<?php echo $usr->get_dette($operation->get_id(), $usr)?>" >
                                     </div>
                     <?php endforeach; ?>
 
@@ -243,7 +243,7 @@ if (isset($action) && ($action === 'add' || $action === 'add_expense')) { ?>
                             <input type="submit" value="Submit">
                         </form>
                         <button class="delete-btn" style="background-color: blue; color: white;">
-                            <a href="/prwb_2223_c03/Operation/delete_confirm/<?php echo $operation_data->get_id() ?>"
+                            <a href="/prwb_2223_c03/Operation/delete_confirm/<?php echo $operation->get_id() ?>"
                                 style="text-decoration: none; color: white;">DELETE</a>
                         </button>
                     </div>

@@ -30,6 +30,7 @@
                 <?php echo number_format($operation_data->getAmount(), 2) ?>
             </h2>
             <?php
+            // var_dump($participants); die();
             if ($participants["0"] === 0) {
                 echo "<p>For me</p>";
             } else {
@@ -54,20 +55,24 @@
                     </tr>
                 </thead>
                 <tbody>';
-                
-            foreach ($operationUsers as $user) {
-                echo '<tr>';
-                if ($participants["0"] === 0) {
-                    echo 'solo';
-                } else if ($user->getUserId() == $operation_data->getInitiatorId()) {
-                    echo '<td style="color:yellow"><b>' . $user->getFullName() . '</b></td>';
-                    echo '<td style="color:yellow"><b>' . number_format($user->get_dette($operation_data->get_id()), 2) . '</b></td>';
-                } else {
-                    echo '<td>' . $user->getFullName() . '</td>';
-                    echo '<td>' . number_format($user->get_dette($operation_data->get_id()), 2). '</td>';
+                if(!empty($operationUsers)){
+                    foreach ($operationUsers as $user) {
+                        echo '<tr>';
+                        if ($participants["0"] === 0) {
+                            echo 'solo';
+                        } else if ($user->getUserId() == $operation_data->getInitiatorId()) {
+                            echo '<td style="color:yellow"><b>' . $user->getFullName() . '</b></td>';
+                            echo '<td style="color:yellow"><b>' . number_format($user->get_dette($operation_data->get_id()), 2) . '</b></td>';
+                        } else {
+                            echo '<td>' . $user->getFullName() . '</td>';
+                            echo '<td>' . number_format($user->get_dette($operation_data->get_id()), 2). '</td>';
+                        }
+                        echo '</tr>';
+                    }
+                }else{
+                    echo "solo";
                 }
-                echo '</tr>';
-            }
+                
             ?>
             </tbody>
             </table>
