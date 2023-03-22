@@ -187,7 +187,7 @@ class ControllerTemplates extends Controller
         if($user->is_in_tricount($_GET['param1'] || $user->is_in_items($_GET['param1'])  )){
             if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
                 $this->redirect('main', "error");
-            }else{    
+            }else{
                 $template = Repartition_templates::get_by_id($_GET['param1']);
                 if(is_null($template)){
                     $this->redirect("user","profile");
