@@ -11,7 +11,7 @@ class Repartitions extends Model
 
     public ?int $user;
 
-    public function __construct(int $weight=NULL, int $operation, int $user)
+    public function __construct(int $weight = NULL, int $operation, int $user)
     {
         $this->weight = $weight;
         $this->operation = $operation;
@@ -51,9 +51,10 @@ class Repartitions extends Model
     // }
 
 
-    public static function get_by_operation($operationId){
+    public static function get_by_operation($operationId)
+    {
         $query = self::execute("SELECT weight, operation, user FROM repartitions WHERE operation=:id
-        ", array("id"=>$operationId));
+        ", array("id" => $operationId));
         $repartitions = array();
         while ($data = $query->fetch()) {
             if ($data !== NULL) {
@@ -61,25 +62,52 @@ class Repartitions extends Model
                 $repartitions[] = $repartition;
             }
         }
-        
+
         return $repartitions;
     }
-    
-    
-    // public static function create()
-    // {
-    //     $query = self::execute(
-    //         "INSERT INTO `repartitions` (`operation`, `user`, `weight`)
-    //         VALUES (':operation', ':user', ':weight');",
-    //         array(
-    //             "operation" => $this->operation,
-    //             "user" => $this->user,
-    //             "weight" => $this->weight
-    //         )
-    //     );
 
-    //     return $query->fetch();
-    // }
+    public static function update($operationId, $checkedUsers, $weights)
+    {
+        try {
+            if (is_string($checkedUsers)) {
+                $checkedUsers = array($checkedUsers);
+            }
+            for ($i = 0; $i < count($checkedUsers); $i++) {
+                $userId = $checkedUsers[$i];
+                $weight = $weights[$i];
+
+                $query = self::execute(
+                    "UPDATE repartitions SET weight = :weight WHERE operation_id = :operation_id AND user_id = :user_id",
+                    array(
+                        "operation_id" => $operationId,
+                        "user_id" => $userId,
+                        "weight" => $weight
+                    )
+                );
+            }
+
+            return true;
+        } catch (Exception $e) {
+            return false;
+        }
+    }
+
+
+
+// public static function create()
+// {
+//     $query = self::execute(
+//         "INSERT INTO `repartitions` (`operation`, `user`, `weight`)
+//         VALUES (':operation', ':user', ':weight');",
+//         array(
+//             "operation" => $this->operation,
+//             "user" => $this->user,
+//             "weight" => $this->weight
+//         )
+//     );
+
+//     return $query->fetch();
+// }
 
 }
 

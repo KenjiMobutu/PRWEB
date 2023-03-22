@@ -29,7 +29,7 @@ if (isset($action) && ($action === 'add' || $action === 'add_expense')) { ?>
                             <?php endforeach; ?>
                     </ul>
                 </div>
-                
+
                 <input class="addExp" placeholder="Title" type="text" id="title" name="title" required <?php
                 if (isset($_POST["title"]))
                     echo 'value=' . $operation->getTitle() ?>>
@@ -80,28 +80,28 @@ if (isset($action) && ($action === 'add' || $action === 'add_expense')) { ?>
                 if (isset($_POST["addrefreshBtn"])) {
                     foreach ($ListUsers as $usr) {
                         ?>
+
                         <div class="checks">
                             <div class="check-input">
-                                <input type="checkbox" name="c[<?= $usr->get_user(); ?>]" value="<?php echo $usr->get_user() ?>"
-                                    id="userIdTemp" <?php if (isset($template)) {
-                                        if ($usr->is_in_Items($templateId)) {
-                                            echo "checked = 'checked'";
-                                        }
-                                    }
-                                    ; ?>>
+                                <?php
+                                $isChecked = isset($template) && $usr->is_in_Items($templateId, $usr->user);
+                                ?>
+
+                                <input type="checkbox" name="c[<?= $usr->get_user(); ?>]" value="<?= $usr->get_user() ?>"
+                                id="userIdTemp" <?= $isChecked ? "checked" : ""; ?>>
+
                                 <span class="text-input" style="color: yellow; font-weight: bold;">
                                     <?php echo $usr->getUserInfo() ?>
                                 </span>
 
                                 <fieldset>
                                     <legend class="legend" style="color: yellow; font-weight: bold;">Weight</legend>
-                                    <input type="number" name="w[<?= $usr->get_user(); ?>]" id="userWeight" min="0" max="50" <?php if (isset($template)) {
-                                          if ($usr->is_in_Items($templateId)) {
-                                              echo "value=" . $usr->get_weight_by_user($templateId);
-                                          }
-                                          ;
-                                      } else
-                                          echo "value=0"; ?>>
+                                    <input type="number" name="w[<?= $usr->get_user(); ?>]" id="userWeight" min="0" max="50" <?php
+                                      if ($usr->is_in_Items($template->get_id())) {
+                                          echo "value=" . $usr->get_weight_by_user($template->get_id());
+                                      }
+                                      ?>>
+
                                 </fieldset>
                             </div>
                         </div>
@@ -157,11 +157,11 @@ if (isset($action) && ($action === 'add' || $action === 'add_expense')) { ?>
                 <p>
                 <?php echo $tricount->get_title(); ?> > Edit expense
                 </p>
-                
+
                 <form action="operation/edit_expense/<?php echo $operation->get_id() ?>" method="post">
-                <input type="hidden" id="operationId" name="operationId" value="<?php echo $operation->get_id() ?>" />
-                
-                <div class="errors">
+                    <input type="hidden" id="operationId" name="operationId" value="<?php echo $operation->get_id() ?>" />
+
+                    <div class="errors">
                         <ul>
                         <?php if (!empty($errors))
                             foreach ($errors as $error): ?>
@@ -238,11 +238,11 @@ if (isset($action) && ($action === 'add' || $action === 'add_expense')) { ?>
                                     <fieldset>
                                         <legend class="legend" style="color: yellow; font-weight: bold;">Weight</legend>
                                         <input type="number" name="w[<?= $usr->get_user(); ?>]" id="userWeight" min="0" max="50" <?php if (isset($template)) {
-                                          if ($usr->is_in_Items($templateId)) {
-                                              echo "value=" . $usr->get_weight_by_user($templateId);
-                                          }
-                                      } else
-                                          echo "value=0"; ?>>
+                                              if ($usr->is_in_Items($templateId)) {
+                                                  echo "value=" . $usr->get_weight_by_user($templateId);
+                                              }
+                                          } else
+                                              echo "value=0"; ?>>
                                     </fieldset>
                                 </div>
                             </div>

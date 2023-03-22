@@ -347,6 +347,17 @@ class Operation extends Model
         return $query;
     }
 
+    public static function deleteItems($repartitionId)
+    {
+        $query = self::execute("DELETE
+        FROM repartition_template_items where repartition_template =:repartition_template",
+            array(
+                "repartitions_template" => $repartitionId
+            )
+        );
+        return $query;
+    }
+
     public static function validateTitle($title)
     {
         $query = self::execute(
@@ -361,7 +372,8 @@ class Operation extends Model
         return;
     }
 
-    public function validateForEdit(){
+    public function validateForEdit()
+    {
         $errors = [];
 
         if ((isset($this->title) && strlen($this->title) < 3)) {

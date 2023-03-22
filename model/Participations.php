@@ -210,6 +210,53 @@ class Participations extends Model
 
     }
 
+    public function is_user_in_items($templateID, $targetUserId)
+    {
+        $query = self::execute("SELECT DISTINCT rti.* 
+            from repartition_template_items rti, subscriptions o 
+            where o.tricount =:tricount
+            and rti.repartition_template = :repartition_template 
+            and rti.user = :user",
+            array(
+                "tricount" => $this->tricount,
+                "user" => $this->user,
+                "repartition_template" => $templateID
+            )
+        );
+
+        while ($row = $query->fetch()) {
+            if ($row['user'] == $targetUserId) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public function get_user_weight_in_items($templateID, $targetUserId)
+{
+    $query = self::execute("SELECT DISTINCT rti.* 
+            from repartition_template_items rti, subscriptions o 
+            where o.tricount =:tricount
+            and rti.repartition_template = :repartition_template 
+            and rti.user = :user",
+        array(
+            "tricount" => $this->tricount,
+            "user" => $this->user,
+            "repartition_template" => $templateID
+        )
+    );
+
+    while ($row = $query->fetch()) {
+        if ($row['user'] == $targetUserId) {
+            return $row['weight'];
+        }
+    }
+
+    return null;
+}
+
+
     public function get_weight_by_user($repartition_template): int
     {
         $query = self::execute("SELECT weight FROM repartition_template_items 
@@ -224,23 +271,26 @@ class Participations extends Model
             return ($data["weight"]);
     }
 
-    public function is_in_repartition($userId, $operationId){
+    public function is_in_repartition($userId, $operationId)
+    {
         $query = self::execute("SELECT user FROM repartitions where user =:user and operation=:operation ", array("user" => $this->get_user(), "operation" => $operationId));
         if ($query->rowCount() == 0)
             return false;
         return true;
     }
 
-    public function get_weight_by_user_and_operation($userId,$operationId){
-        $query = self::execute("SELECT weight FROM repartitions WHERE user=:user and operation=:operation", array("user"=>$this->get_user(), "operation"=>$operationId));
+    public function get_weight_by_user_and_operation($userId, $operationId)
+    {
+        $query = self::execute("SELECT weight FROM repartitions WHERE user=:user and operation=:operation", array("user" => $this->get_user(), "operation" => $operationId));
         $data = $query->fetch();
         if ($query->rowCount() == 0)
             return 0;
         return $data["weight"];
     }
 
-    public function get_weight_by_user_and_template($user,$templateId){
-        $query = self::execute("SELECT weight FROM repartition_template_items WHERE user=:user and repartition_template=:template", array("user"=>$user, "template"=>$templateId));
+    public function get_weight_by_user_and_template($user, $templateId)
+    {
+        $query = self::execute("SELECT weight FROM repartition_template_items WHERE user=:user and repartition_template=:template", array("user" => $user, "template" => $templateId));
         $data = $query->fetch();
         if ($query->rowCount() == 0)
             return 0;
