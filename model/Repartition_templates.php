@@ -70,36 +70,42 @@ class Repartition_templates extends Model
     }
   }
 
-  public function get_items()
-  {
-    $query = self::execute("select rti.* from repartition_template_items rti, repartition_templates rt 
+    public function get_items(){
+      $query =self::execute("select rti.* from repartition_template_items rti, repartition_templates rt, users u
                             where rt.id = rti.repartition_template 
-                            and rt.id=:id", array("id" => $this->id));
-    $data = $query->fetchAll();
-    $items = [];
-    if ($query->rowCount() == 0) {
-      return null;
-    } else {
-      foreach ($data as $row) {
-        $items[] = new repartition_template_items($row["weight"], $row["user"], $row["repartition_template"]);
-        // dans items je dois renvoyer un user de la même façon
+                            and rt.id=:id 
+                            and rti.user =u.id
+                            ORDER BY u.full_name ASC", array("id"=>$this->id));
+      $data = $query->fetchAll();
+      $items=[];
+      if ($query->rowCount() == 0){
+        return null;
+      } else{
+        foreach($data as $row){
+          $items[] = new repartition_template_items($row["weight"],$row["user"],$row["repartition_template"]);
+          // dans items je dois renvoyer un user de la même façon
+        }
+      }
+      return $items;
+    }
+    
+
+    public static function title_already_exist_in_tricount($title,$tricountid) : bool{
+      $query = self::execute("SELECT title FROM `repartition_templates` where title=:title and tricount =:id",array("title"=>$title,"id"=>$tricountid));
+      if($query->rowCount() === 0 )
+        return false;
+      return true;
+    } 
+    public static function template_exist_in_tricount($id, $tricountid){
+      $query = self::execute("SELECT * FROM  `repartition_templates` where id=:id AND tricount =:tricount", array("id" => $id, "tricount"=>$tricountid));
+      $data = $query->fetch(); //un seul resultat max
+      if ($query->rowCount() == 0) {
+        return null;
+      } else {
+        return $data;
       }
     }
-    return $items;
-  }
-
-
-  public static function template_exist_in_tricount($id, $tricountid)
-  {
-    $query = self::execute("SELECT * FROM  `repartition_templates` where id=:id AND tricount =:tricount", array("id" => $id, "tricount" => $tricountid));
-    $data = $query->fetch(); //un seul resultat max
-    if ($query->rowCount() == 0) {
-      return null;
-    } else {
-      return $data;
-    }
-  }
-
+  
 
   public static function delete_by_tricount($tricount)
   {
@@ -193,13 +199,13 @@ class Repartition_templates extends Model
 
 
 
-  public static function validatetitle($title)
+  public static function validatetitle($title) :bool
   {
-    $errors = [];
-    if (strlen($title) < 3) {
-      $errors = "Bad title. Must be at least 3 characters";
-    }
-    return $errors;
+    $valid = false;
+      if(strlen($title) >= 3 ){
+          $valid = true;
+      }
+      return $valid;
   }
 
   public static function is_title_already_exist($title, $tricountid)

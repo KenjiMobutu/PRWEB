@@ -10,49 +10,33 @@ class Repartition_template_items extends Model
   public $repartition_template;
 
 
-  public function __construct($weight, $user, $repartition_template)
-  {
-    $this->weight = $weight;
-    $this->user = $user;
-    $this->repartition_template = $repartition_template;
-  }
-  public function get_weight(): int
-  {
-    return $this->weight;
-  }
-  public function get_user()
-  {
-    return $this->user;
-  }
-  public function get_rt()
-  {
-    return $this->repartition_template;
-  }
+    public function __construct( $weight,  $user, $repartition_template)
+    {
+      $this->weight = $weight;
+      $this->user = $user;
+      $this->repartition_template = $repartition_template;
+    }
+    public function get_weight(): int
+    {
+      return $this->weight;
+    }
+    public function get_user() :int 
+    {
+      return $this->user;
+    }
+    public function get_rt() : int
+    {
+      return $this->repartition_template;
+    }
 
   public function setId($id)
   {
     return $this->user;
   }
 
-
-  // public static function insertVladRTi(){
-  //   $query = self::execute(
-  //     "INSERT INTO `repartition_templates_items` (`weight`, `user`, `repartition_templates`)
-  //             VALUES (:title,
-  //                     :tricount,
-  //                     :repartition_templates)",
-  //     // array(
-  //     //     "weight" =>weight,
-  //     //     "user" =>user,
-  //     //     "repartition_templates" =>repartition_templates
-  //     )
-  // );
-  // // $this->setRepartitionTemplatesItemsId();
-  // return $query->fetch();
-  // }
-  public static function get_weight_by_user($user, $repartition_template): int
-  {
-    $query = self::execute("SELECT *
+    public static function get_weight_by_user($user, $repartition_template): int
+    {
+      $query = self::execute("SELECT *
                               FROM  `repartition_template_items`
                               where user=:user
                               and repartition_template=:repartition_template ",
@@ -193,9 +177,9 @@ class Repartition_template_items extends Model
     }
   }
 
-  public function get_user_info()
-  { // on récupère les noms des utilisateurs lié a un template_items
-    $query = self::execute("SELECT *
+    public function get_user_info() : string
+    {  // on récupère les noms des utilisateurs lié a un template_items
+      $query = self::execute("SELECT *
                               from users u, repartition_template_items rti
                               where rti.user = u.id
                               and  rti.repartition_template =:repartition_template

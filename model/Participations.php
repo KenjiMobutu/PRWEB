@@ -12,15 +12,13 @@ class Participations extends Model
         $this->user = $user;
     }
 
-    public function get_tricount()
-    {
-        return $this->tricount;
-    }
+        public function get_tricount() : int{
+            return $this->tricount;
+        }
 
-    public function get_user()
-    {
-        return $this->user;
-    }
+        public function get_user() : int{
+            return $this->user;
+        }
 
 
     public function is_in_operation($operationId)
@@ -36,22 +34,21 @@ class Participations extends Model
     }
 
 
-    public static function get_by_tricount($tricount)
-    {
-        $query = self::execute("SELECT s.*, t.creator from subscriptions s, tricounts t
-                                            where s.tricount = t.id
-                                            and s.tricount =:tricount
-                                            and t.id = :tricount",
-            array("tricount" => $tricount)
-        );
-        $participant = [];
-        $data = $query->fetchAll();
-        if ($query->rowCount() == 0)
-            return null;
-        foreach ($data as $row)
-            $participant[] = new Participations($row["tricount"], $row["user"]);
-        return $participant;
-    }
+        public static function get_by_tricount($tricount){
+            $query = self::execute("SELECT DISTINCT u.full_name, s.*, t.creator 
+                                        from users u JOIN subscriptions s on s.user = u.id
+                                        JOIN tricounts t on s.tricount = t.id
+                                        where t.id =:tricount
+                                        ORDER BY u.full_name ASC",
+            array("tricount"=>$tricount));
+            $participant = [];
+            $data = $query->fetchAll();
+            if($query->rowCount() == 0)
+                return null;
+            foreach($data as $row)
+                $participant[] = new Participations($row["tricount"], $row["user"]);
+            return $participant;
+        }
 
     public function getUserInfo()
     {

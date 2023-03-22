@@ -165,6 +165,8 @@ class User extends Model
     }
 
 
+    
+
 
     public function setRole(string $role): void
     {
@@ -360,6 +362,7 @@ class User extends Model
         return true;
     }
 
+   
     public static function EmailExistsAlready($id, $email)
     {
         $query = self::execute("SELECT mail FROM Users WHERE mail=:email AND id!=:id", array("email" => $email, "id" => $id));
@@ -375,6 +378,11 @@ class User extends Model
         }
         return false;
     }
+
+    public function get_dette($operation) : float{
+        return Operation::get_dette_by_operation($operation, $this->id);
+    }
+
 
     private static function validate_password($password)
     {
@@ -454,6 +462,7 @@ class User extends Model
 
     }
 
+
     public function can_be_delete($tricount): bool
     {
         $query = self::execute("SELECT count(*)
@@ -487,6 +496,7 @@ class User extends Model
             return false;
         return true;
     }
+    
     public function is_in_tricount_by_template($idTemplate, $idTricount)
     {
         $query = self::execute("SELECT * FROM repartition_templates rt where rt.id =:id and rt.tricount =:tricount ", array("tricount" => $idTricount, "id" => $idTemplate));
