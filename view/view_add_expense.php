@@ -37,27 +37,44 @@
                 <input type="hidden" id="operationId" name="operationId" value="<?php echo $operation->get_id() ?>">
             <?php endif; ?>
             <input class="addExp" placeholder="Title" type="text" id="title"
-                value="<?php echo isset($operation) ? $operation->getTitle() : ''; ?>" name="title">
+                value="<?php
+                    if( isset($operation)) echo $operation->getTitle() ;
+                    else if(isset($info)) echo $info[0];
+                    else echo ''; ?>" name="title">
             <input type="hidden" id="tricId" name="tricId" value="<?php echo $tricount->get_id() ?>">
             <br>
             <label for="operation_amount">Total Amount</label>
             <input class="addExp" placeholder="Amount (EUR)"
-                value="<?php echo isset($operation) ? $operation->getAmount() : ''; ?>" type="number" id="amount"
+                value="<?php
+                    if( isset($operation)) echo $operation->getAmount();
+                    else if (isset($info)) echo $info[1];
+                    else echo '';  ?>" type="number" id="amount"
                 name="amount" oninput="calculateAmounts()">
             <br>
             <label for="operation_date">Date</label>
             <input class="addExp" type="date" id="operation_date"
-                value="<?php echo isset($operation) ? $operation->getOperationDate() : date('Y-m-d'); ?>"
+                value="<?php
+                if(isset($operation) ) echo $operation->getOperationDate();
+                else if(isset($info)) echo $info[2];
+                else echo date('Y-m-d'); ?>"
                 name="operation_date">
 
             <br>
 
             <label for="paid_by">Paid By</label>
             <select id="initiator" name="initiator">
-                <?php if (isset($operation)): ?>
-                    <option style="color: black;" selected value="<?= $operation->getInitiatorId(); ?>"><?php echo $operation->getInitiator(); ?></option>
-                <?php endif; ?>
+                <?php if (isset($operation)){
+                   echo " <option style='color: black;' selected value='$operation->getInitiatorId()'>" . $operation->getInitiator() ."</option>";
+                }
+                else if(isset($init)) {
+                        echo "<option style='color: black;' selected value=' $init->getUserId()'>" . $init->getFullName() . "</option>";
+                    }
+                     
+                ?>
+
                 <?php foreach ($users as $urss): ?>
+
+                    // check si on a opération ou init vérifier si l'urss id est !== a init->getUserId() ou urss id !== $operation->getInitiatorId()
                     <?php if (!isset($operation) || $urss->getUserInfo() !== $operation->getInitiator()): ?>
                         <option style="color: black;" value="<?= $urss->get_user() ?>"><?php echo $urss->getUserInfo() ?></option>
                     <?php endif; ?>
@@ -69,11 +86,25 @@
             <select id="rti" name="rti">
 
 
-                <option style="color: black;" value="option-default">No, I'll use custom repartition</option>
+            <?php if(isset($template)){
+                echo "<option style='color: black;' value=''>" . $template->get_title() ." </option>";
+                echo "<option style='color: black;' value='option-default'>No, I'll use custom repartition</option>";
+            }else {
+                echo "<option style='color: black;' value='option-default'>No, I'll use custom repartition</option>";
+            }
+             ?>
                 <?php foreach ($rti as $rt):
                     $title = $rt["title"];
                     $templateId = $rt["id"] ?>
-                    <option name="option_template" style="color: black;" value="<?php echo $templateId ?>"><?php echo $title ?></option>
+                    <?php if(isset($template)): 
+                        if( $title !== $template->get_title()):?>
+                            <option name="option_template" style="color: black;" value="<?php echo $templateId ?>"><?php echo $title ?></option>
+                        <?php endif; ?>
+
+                    <?php else: ?>
+                        <option name="option_template" style="color: black;" value="<?php echo $templateId ?>"><?php echo $title ?></option>
+                    <?php endif; ?>
+
                 <?php endforeach; ?>
             </select>
             <label for="who">For whom? (select at least one)</label>
@@ -109,7 +140,6 @@
                     </div>
                     <?php
                 }
-                echo '<input type="submit" value="Submit">';
             } else {
                 foreach ($users as $usr) {
                     ?>
@@ -140,7 +170,7 @@
                 </fieldset>
             </div>
 
-            <input type="submit" value="<?php echo (isset($action) && $action === 'edit' || $action === 'edit_expense') ? 'Update' : 'Submit'; ?>">
+            <input type="submit" value="<?php echo 'Submit'; ?>">
         </form>
         <?php
         if ($action === 'edit' || $action === 'edit_expense') {
