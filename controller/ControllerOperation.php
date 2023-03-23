@@ -224,8 +224,8 @@ class ControllerOperation extends Controller
     public function refreshBtnHandler($user)
     {
         $errors = [];
-
-        if (isset($_POST["addrefreshBtn"]) && $_POST['rti'] !== 'option-default') {
+        
+        if (isset($_POST["refreshBtn"]) && $_POST['rti'] !== 'option-default') {
             $requiredFields = ["title", "tricId", "amount", "operation_date", "initiator", "rti"];
             $allFieldsExist = true;
             foreach ($requiredFields as $field) {
@@ -245,7 +245,7 @@ class ControllerOperation extends Controller
                 $initiator = $_POST["initiator"];
                 $users = Participations::get_by_tricount($tricId);
                 $init = User::get_by_id($initiator);
-                $rti = Repartition_template_items::get_by_user_and_tricount($userId, $tricId);
+                $rti = Repartition_template_items::get_by_user_and_tricount($userId, $tricId); // récup les templates ou le user en fait partie.
                 $template = Repartition_templates::get_by_id($_POST['rti']);
                 //$it = Participations::get_user_weight_in_items($template->get_id(),$userId);
                 //isset($_GET['param1']) ? $repartitions = Repartitions::get_by_operation($_GET['param1']) : null;
@@ -258,6 +258,7 @@ class ControllerOperation extends Controller
                 isset($_GET['param1']) ? $operationId = $_GET['param1'] : null;
                 $ListUsers = Participations::get_by_tricount($tricId);
                 $items = Repartition_template_items::get_user_by_repartition($template->get_id());
+                //var_dump($_POST); die();
                 $operation = new Operation($title, $tricId, $amount, $operation_date, $initiator, $operation_date);
                 $errors = $operation->validateForEdit();
                 // echo '<pre>';
@@ -479,14 +480,13 @@ class ControllerOperation extends Controller
         if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
             $this->redirect('main', "error", "add2");
         }
-        //print_r($_POST);
         //if i choose a template from the templates list
-        if (isset($_POST["addrefreshBtn"])) {
+        if (isset($_POST["refreshBtn"])) {
             $this->refreshBtnHandler($user);
         } else if ($_SERVER['REQUEST_METHOD'] === 'POST' && !isset($_POST["save_template"])) {
             // print_r($_POST);
-            // $this->SaveWithTemplateExistant($user);
-            $this->refreshBtnHandler($user);
+          $this->SaveWithTemplateExistant($user);
+          //  $this->refreshBtnHandler($user);
             //if i make a custom template => need save name checked
         } else if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["c"]) && isset($_POST["w"])) {
             $this->saveWithCustomTemplate();
@@ -533,12 +533,9 @@ class ControllerOperation extends Controller
 
     public function edit_expense()
     {
-        //var_dump($_POST); die();
         $user = $this->get_user_or_redirect();
         $action = $_GET['action'];
         $operationId = $_POST['operationId'];
-        // var_dump($operationId);
-        // die();
         if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
             $this->redirect('main', 'error', 'aici3');
         }
@@ -560,9 +557,8 @@ class ControllerOperation extends Controller
             $save_template = false;
         }
 
-        if (isset($_POST["addrefreshBtn"])) {
+        if (isset($_POST["refreshBtn"])) {
             $this->refreshBtnHandler($user);
-
         }
         // var_dump($_POST); die();
         // if ($save_template && empty($_POST['name_template'])) {
@@ -574,25 +570,30 @@ class ControllerOperation extends Controller
         $operation = Operation::get_by_id($operationId);
         // var_dump($operation); die();
         $tricountId = $operation->tricount;
+        $tricount = Tricounts::get_by_id($tricountId);
         // $operationId = $operation->id;
         // var_dump($operation); die();
         $amount = Tools::sanitize(floatval($_POST['amount']));
         $operation_date = $_POST['operation_date'];
-        $init = User::get_by_name($_POST['initiator']);
-        $initiator = $init->getUserId();
+        $initiator = User::get_by_id($_POST['initiator']);
+
         $created_at = date('y-m-d h:i:s');
         // var_dump($amount); die();
         $operation->setTitle($title);
         $operation->setTricount($tricountId);
         $operation->setAmount($amount);
         $operation->setOperation_date($operation_date);
-        $operation->setInitiator($initiator);
+        $operation->setInitiator($initiator->getUserId());
         $operation->setCreated_at($created_at);
         $operation->setId($operationId);
-        $operation = new Operation($title, $tricountId, $amount, $operation_date, $initiator, $created_at, $operationId);
+        $operation = new Operation($title, $tricountId, $amount, $operation_date, $initiator->getUserId(), $created_at, $operationId);
 
         $errors = $operation->validateForEdit();
-
+        if(empty($_POST['c'])){
+            $errors[] = "you've to check at least one user";
+        }else if(empty($_POST['w'])){
+            $errors[] = "you have to put a weight";
+        }
 
 
         if (empty($errors)) {
@@ -611,20 +612,25 @@ class ControllerOperation extends Controller
                 }
             }
             $this->redirect("operation", "expenses", $tricountId);
-        } else
+        } else{
+            $users = Participations::get_by_tricount($tricount->get_id());
+
             (new View("add_expense"))->show(
                 array(
 
                     "title" => $title,
                     "amount" => $amount,
-                    "operation_date" => $operation_date,
-                    "initiator" => $initiator[0],
-                    "tricount" => $tricountId,
+                    "initiator" => $initiator,
+                    "tricount" => $tricount,
+                    "operation" => $operation,
+                    "users"=>$users,
                     // "template" => $template,
                     "errors" => $errors,
                     "action" => $action
                 )
             );
+        }
+            
     }
 
 

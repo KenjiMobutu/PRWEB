@@ -55,11 +55,11 @@
             <label for="paid_by">Paid By</label>
             <select id="initiator" name="initiator">
                 <?php if (isset($operation)): ?>
-                    <option style="color: black;" selected value="<?php echo $operation->getInitiator(); ?>"><?php echo $operation->getInitiator(); ?></option>
+                    <option style="color: black;" selected value="<?= $operation->getInitiatorId(); ?>"><?php echo $operation->getInitiator(); ?></option>
                 <?php endif; ?>
                 <?php foreach ($users as $urss): ?>
                     <?php if (!isset($operation) || $urss->getUserInfo() !== $operation->getInitiator()): ?>
-                        <option style="color: black;" value="<?php echo $urss->getUserInfo() ?>"><?php echo $urss->getUserInfo() ?></option>
+                        <option style="color: black;" value="<?= $urss->get_user() ?>"><?php echo $urss->getUserInfo() ?></option>
                     <?php endif; ?>
                 <?php endforeach; ?>
             </select>
@@ -78,7 +78,7 @@
             </select>
             <label for="who">For whom? (select at least one)</label>
             <?php
-            if (isset($_POST["addrefreshBtn"])) {
+            if (isset($_POST["refreshBtn"])) {
                 foreach ($ListUsers as $usr) {
                     ?>
                     <div class="checks">
@@ -128,32 +128,7 @@
                     <?php
                 }
             } ?>
-            <!-- <?php foreach ($users as $usr): ?>
-                <div class="checks">
-                    <input type="checkbox" name="c[<?= $usr->get_user() ?>]" value="<?= $usr->get_user(); ?>"
-                        id="<?php echo $usr->getUserInfo() ?>" <?php if (isset($operation) && $usr->is_in_tricount($tricount->get_id())) {
-                               echo "checked";
-                           } ?>>
-                    <span style="color: yellow; font-weight: bold;">
-                        <?php echo $usr->getUserInfo() ?>
-                    </span>
-
-                    <legend>Weight</legend>
-                    <input type="number" name="w[<?= $usr->get_user() ?>]" id="<?= $usr->get_user() ?>_weight" value="1"
-                        min="0" max="50">
-                    <?php if (isset($operation)): ?>
-                        <input type="number" id="<?= $usr->get_user() ?>_amount"
-                            value="<?php echo $usr->get_dette($operation->get_id(), $usr) ?>" hidden>
-                    <?php endif; ?>
-
-                    <legend>Amount</legend>
-                    <?php if (isset($operation)): ?>
-                        <input type="number" id="<?= $usr->get_user() ?>_dette"
-                            value="<?php echo $usr->get_dette($operation->get_id(), $usr) ?>">
-                    <?php endif; ?>
-                </div>
-            <?php endforeach; ?> -->
-
+ 
             <p>Add a new repartition template</p>
             <div class="save-template">
                 <input type="checkbox" name="save_template" id="save"> <span
@@ -165,7 +140,7 @@
                 </fieldset>
             </div>
 
-            <input type="submit" value="<?php echo isset($operation) ? 'Update' : 'Submit'; ?>">
+            <input type="submit" value="<?php echo (isset($action) && $action === 'edit' || $action === 'edit_expense') ? 'Update' : 'Submit'; ?>">
         </form>
         <?php
         if ($action === 'edit' || $action === 'edit_expense') {
