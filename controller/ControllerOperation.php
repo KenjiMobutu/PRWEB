@@ -592,7 +592,7 @@ class ControllerOperation extends Controller
         if(empty($_POST['c'])){
             $errors[] = "you've to check at least one user";
         }else if(empty($_POST['w'])){
-            $errors[] = "you have to put a weight";
+            $errors[] = "you have to put some weights";
         }
 
 
@@ -637,6 +637,18 @@ class ControllerOperation extends Controller
                     $weight = 1;
                 Operation::insertRepartition($operation->get_id(), $weight, $user_id); 
             };
+
+            if(!is_null($templateName)){
+                $template = new Repartition_templates(null, $templateName, $operation->getTricount());
+                $template->newTemplate($templateName, $operation->getTricount());
+                if($template !== null){
+                    foreach($combine_array as $user_id => $weight) {
+                        if($weight ==="" || $weight === "0" )
+                            $weight = 1;
+                        Repartition_template_items::addNewItems($user_id, $template->get_id(), $weight); 
+                    }
+                }
+            }
         }
     }
 
