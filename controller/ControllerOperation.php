@@ -600,17 +600,10 @@ class ControllerOperation extends Controller
             $operation->update();
 
             // Update repartition details
-            Repartition_template_items::delete_by_repartition_template($operationId);
-            $checkedUsers = $_POST["c"];
-            $weights = $_POST["w"];
-            for ($i = 0; $i <= count($checkedUsers) + 50; $i++) {
-                if (isset($checkedUsers[$i]) && $checkedUsers[$i] !== null) {
-                    if ($weights[$i] === "" || $weights[$i] === "0") {
-                        $weights[$i] = 1;
-                    }
-                    Repartition_template_items::addNewItems($checkedUsers[$i], $operationId, $weights[$i]);
-                }
+            if((isset($_POST['c']) && !empty($_POST['c']) ) && isset($_POST['template_name'])){
+                $this->saveEditOperation($operation, $_POST['c'], $_POST['w'], $_POST['template_name']);
             }
+            
             $this->redirect("operation", "expenses", $tricountId);
         } else{
             $users = Participations::get_by_tricount($tricount->get_id());
@@ -631,6 +624,20 @@ class ControllerOperation extends Controller
             );
         }
             
+    }
+
+    private function saveEditOperation($operation, $checkedUsers, $weights, $templateName){
+        // operation -> l'objet. pas un id
+        // checkedUser && weights -> 2 arrays différents.
+        $combine_array = Repartition_template_items::combine_array($checkedUsers, $weights);
+        if(!is_null($operation)){
+            Operation::deleteRepartition($operation->get_id());
+            foreach($combine_array as $user_id => $weight) {                        
+                if($weight ==="" || $weight === "0" )
+                    $weight = 1;
+                Operation::insertRepartition($operation->get_id(), $weight, $user_id); 
+            };
+        }
     }
 
 
