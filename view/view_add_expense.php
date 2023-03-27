@@ -210,22 +210,22 @@ if (isset($_GET['action']) && $_GET['action'] === 'add') { ?>
                                         <input type="checkbox" name="c[<?= $usr->get_user() ?>]" value="<?= $usr->get_user(); ?>"
                                             id="<?php echo $usr->getUserInfo() ?>" <?php if ($usr->is_in_tricount($tricount->get_id())) {
                                                 echo "checked";
-                                            } ?>>
+                                            } ?> onchange="calculateAmounts()">
                                         <span style="color: yellow; font-weight: bold;">
                                     <?php echo $usr->getUserInfo() ?>
                                         </span>
 
                                             <legend>Weight</legend>
                                             <input type="number" name="w[<?= $usr->get_user() ?>]" id="<?php echo $usr->get_user() ?>" value="1"
-                                                min="0" max="50"hidden>
+                                                min="0" max="50" onchange="calculateAmounts()"hidden>
                                             <!-- Add id attributes to the input fields -->
-                                            <input type="number" name="w[<?= $usr->get_user() ?>]" id="<?= $usr->get_user() ?>_weight" value="1" min="0" max="50">
-                                            <input type="number" id="<?= $usr->get_user() ?>_amount" value="<?php echo $usr->get_dette($operation_data->get_id(), $usr)?>" hidden>
+                                            <input type="number" name="w[<?= $usr->get_user() ?>]" id="<?= $usr->get_user() ?>_weight" value="1" min="0" max="50" onchange="calculateAmounts()" >
+                                            <input type="number" id="<?= $usr->get_user() ?>_amount" value="<?php echo $usr->get_dette($operation_data->get_id(), $usr)?>" onchange="calculateAmounts()" hidden>
 
                                             <legend>Amount</legend>
                                             <!-- <input type="number" id="test" value="<?php echo $usr->get_dette($operation_data->get_id(), $usr)?>" >-->
                                             <!-- Display the total amount owed by each user -->
-                                            <input type="number" id="<?= $usr->get_user() ?>_dette" value="<?php echo $usr->get_dette($operation_data->get_id(), $usr)?>" >
+                                            <input type="number" id="<?= $usr->get_user() ?>_dette" value="<?php echo $usr->get_dette($operation_data->get_id(), $usr)?>"onchange="calculateAmounts()">
                                     </div>
                     <?php endforeach; ?>
 
