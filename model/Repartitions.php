@@ -33,22 +33,26 @@ class Repartitions extends Model
         return $this->user;
     }
 
-    public static function get_by_user($user)
-    {
-        $query = self::execute("SELECT operation FROM repartitions WHERE user=:user", array("user" => $user));
-        $data = $query->fetch();
-        if ($query->rowCount() == 0) {
-            return false;
-        } else {
-            return $data;
-        }
-    }
-
     // public static function get_user_and_weight_by_operation_id($operation){
     //     $query = self::execute("SELECT user, weight FROM repartitions WHERE operation=:id", array("id"=>$operation));
     //     $data = $query->fetchAll();
     //     return $data;
     // }
+
+    public static function get_by_name($templateName)
+    {
+        $query = self::execute("SELECT weight, operation, user FROM repartitions WHERE operation=:id
+        ", array("id" => $templateName));
+        $repartitions = array();
+        while ($data = $query->fetch()) {
+            if ($data !== NULL) {
+                $repartition = new Repartitions($data["weight"], $data["operation"], $data["user"]);
+                $repartitions[] = $repartition;
+            }
+        }
+
+        return $repartitions;
+    }
 
 
     public static function get_by_operation($operationId)
