@@ -266,9 +266,9 @@ class ControllerOperation extends Controller
             $operation->insert();
             if ($template !== null) {
                 //si le template est existant : 
-                $this->saveEditOperation($operation,$checkedUsers,$weights,$rti['id'],$template);
-
-                $this->redirect("operation", "expenses", $_POST["tricId"]);
+                if($this->saveOperationRepartition($operation,$checkedUsers,$weights)){
+                    $this->redirect("operation", "expenses", $_POST["tricId"]);
+                }
             }
             $this->redirect("operation", "expenses", $tricountId);
         } else
@@ -317,9 +317,8 @@ class ControllerOperation extends Controller
             //$errors = $operation->validateTitle($title);
             if (empty($errors)) {
                 $operation->insert();
-                $this->saveEditOperation($operation,$checkedUsers, $weights,$template_name,null);
-                
-                $this->redirect("operation", "expenses", $_POST["tricId"]);
+                if($this->saveOperationRepartition($operation,$checkedUsers, $weights))
+                    $this->redirect("operation", "expenses", $_POST["tricId"]);
             } else
                 (new View("add_expense"))->show(
                     array(
@@ -484,17 +483,19 @@ class ControllerOperation extends Controller
         }else if(empty($_POST['w'])){
             $errors[] = "you have to put some weights";
         }
+        $checkedUsers = $_POST['c'];
+        $weight = $_POST['w'];
+        if(isset($_POST['rti']) && !is_null( $_POST['rti'])){
+            $rti = Repartition_templates::get_by_id($_POST['rti']);
+        }
 
 
         if (empty($errors)) {
             $operation->update();
-
             // Update repartition
-            if((isset($_POST['c']) && !empty($_POST['c']) ) && isset($_POST['template_name'])){
-                $this->saveEditOperation($operation, $_POST['c'], $_POST['w'], $_POST['template_name'],null);
+            if($this->saveOperationRepartition($operation, $_POST['c'], $_POST['w'])){
+                $this->redirect("operation", "expenses", $tricountId);
             }
-            
-            $this->redirect("operation", "expenses", $tricountId);
         } else{
             $users = Participations::get_by_tricount($tricount->get_id());
 
@@ -516,9 +517,8 @@ class ControllerOperation extends Controller
             
     }
 
-    private function saveEditOperation($operation, $checkedUsers, $weights, $templateName, $currentTemplate){
-        // operation -> l'objet. pas un id
-        // checkedUser && weights -> 2 arrays différents.
+    private function saveOperationRepartition($operation, $checkedUsers, $weights) : bool{
+        $ok = false;
         $combine_array = Repartition_template_items::combine_array($checkedUsers, $weights);
         if(!is_null($operation)){
             Operation::deleteRepartition($operation->get_id());
@@ -527,29 +527,23 @@ class ControllerOperation extends Controller
                     $weight = 1;
                 Operation::insertRepartition($operation->get_id(), $weight, $user_id); 
             };
-            //TODO templateId is null ??
-            if(!is_null($templateName)){
-                $template = new Repartition_templates(null, $templateName, $operation->getTricount());
-                $template->newTemplate($templateName, $operation->getTricount());
-                if($template !== null){
-                    var_dump($template);
-                    foreach($combine_array as $user_id => $weight) {
-                        if($weight ==="" || $weight === "0" )
-                            $weight = 1;
-                        Repartition_template_items::addNewItems($user_id, $template->get_id(), $weight); 
-                    }
+            $ok = true;
+        }
+        return $ok;
+    }
+
+    private function save_Template( $operation, $checkedUsers, $weights, $template_name){
+        $combine_array = Repartition_template_items::combine_array($checkedUsers, $weights);
+        $template = new Repartition_template_items(null, $template_name, $operation->getTricount());
+        if($template !== null){
+            foreach($combine_array as $user_id => $weight){
+                if($weight === "" || $weight ==="0"){
+                    $weight = 1;
                 }
-            }else if(!is_null($currentTemplate)){
-                Repartition_template_items::delete_by_repartition_template($currentTemplate->get_id());
-                    foreach($combine_array as $user_id => $weight) {                        
-                        if($weight ==="" || $weight === "0")
-                            $weight = 1;
-                        Repartition_template_items::addNewItems($user_id, $currentTemplate->id, $weight); 
-                    };
+                Repartition_template_items::addNewItems($user_id, $template->get_id(), $weight);
             }
         }
     }
-
 
 
     public function delete_confirm()
