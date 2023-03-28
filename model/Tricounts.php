@@ -1,4 +1,3 @@
-<!-- //title,description,created_at,creator,id -->
 <?php
 
 class Tricounts extends Model
