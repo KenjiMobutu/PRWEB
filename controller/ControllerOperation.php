@@ -125,6 +125,7 @@ class ControllerOperation extends Controller
     public function refreshBtnHandler($user)
     {
         $errors = [];
+
         
         // TODO :       -----------------> IL FAUT GERER LE RTI. SI C'EST OPTION-DEFAULT -> METTRE ERREUR
         if (isset($_POST["refreshBtn"]) && $_POST['rti'] !== 'option-default') {
@@ -171,28 +172,47 @@ class ControllerOperation extends Controller
                 // print_r($items);
                 // echo '</pre>';
 
+                if(isset($_POST['operationId']))
+                    $operation = Operation::get_by_id($_POST['operationId']);
+                
                 if (count($errors) === 0) {
-                    (new View("add_expense"))->show(
-                        array(
-                            "user" => $user,
-                           // "operation" => $operation,
-                            "rti" => $rti,
-                            "templateId" => $templateId,
-                            "users" => $users,
-                            "tricount" => $tricount,
-                            "template" => $template,
-                            "ListUsers" => $ListUsers,
-                            "info" => $info,
-                            "items" => $items,
-                            "init"=>$init,
-                            //"repartitions" =>$repartitions,
-                            "errors" => $errors,
-                            "action" => $action,
-
-                            //"operationId"=> $operationId
-                        )
-                    );
-
+                    if(!isset($operation)){
+                        (new View("add_expense"))->show(
+                            array(
+                                "user" => $user,
+                               // "operation" => $operation,
+                                "rti" => $rti,
+                                "templateId" => $templateId,
+                                "users" => $users,
+                                "tricount" => $tricount,
+                                "template" => $template,
+                                "ListUsers" => $ListUsers,
+                                "info" => $info,
+                                "items" => $items,
+                                "init"=>$init,
+                                "errors" => $errors,
+                                "action" => $action
+                            )
+                        );
+                    }else{
+                        (new View("add_expense"))->show(
+                            array(
+                                "user" => $user,
+                                "operation" => $operation,
+                                "rti" => $rti,
+                                "templateId" => $templateId,
+                                "users" => $users,
+                                "tricount" => $tricount,
+                                "template" => $template,
+                                "ListUsers" => $ListUsers,
+                                "info" => $info,
+                                "items" => $items,
+                                "init"=>$init,
+                                "errors" => $errors,
+                                "action" => $action    
+                            )
+                        );
+                    }
                 } else {
                     // show errors
                     (new View("add_expense"))->show(
@@ -475,7 +495,7 @@ class ControllerOperation extends Controller
         $operation->setInitiator($initiator->getUserId());
         $operation->setCreated_at($created_at);
         $operation->setId($operationId);
-        $operation = new Operation($title, $tricountId, $amount, $operation_date, $initiator->getUserId(), $created_at, $operationId);
+        //$operation = new Operation($title, $tricountId, $amount, $operation_date, $initiator->getUserId(), $created_at, $operationId);
 
         $errors = $operation->validateForEdit();
         if(empty($_POST['c'])){
@@ -483,13 +503,7 @@ class ControllerOperation extends Controller
         }else if(empty($_POST['w'])){
             $errors[] = "you have to put some weights";
         }
-        $checkedUsers = $_POST['c'];
-        $weight = $_POST['w'];
-        if(isset($_POST['rti']) && !is_null( $_POST['rti'])){
-            $rti = Repartition_templates::get_by_id($_POST['rti']);
-        }
-
-
+        
         if (empty($errors)) {
             $operation->update();
             // Update repartition
@@ -498,10 +512,8 @@ class ControllerOperation extends Controller
             }
         } else{
             $users = Participations::get_by_tricount($tricount->get_id());
-
             (new View("add_expense"))->show(
                 array(
-
                     "title" => $title,
                     "amount" => $amount,
                     "initiator" => $initiator,
