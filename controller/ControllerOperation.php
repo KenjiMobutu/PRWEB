@@ -166,7 +166,6 @@ class ControllerOperation extends Controller
                 $ListUsers = Participations::get_by_tricount($tricId);
                 $items = Repartition_template_items::get_user_by_repartition($template->get_id());
                 //var_dump($_POST); die();
-                //$operation = new Operation($title, $tricId, $amount, $operation_date, $initiator, $operation_date);
                 //$errors = $operation->validateForEdit();
                 // echo '<pre>';
                 // print_r($items);
@@ -210,7 +209,6 @@ class ControllerOperation extends Controller
         $created_at = date('y-m-d h:i:s');
         $errors = [];
 
-        //$operation = new Operation($title, $tricountId, $amount, $operation_date, $initiator, $created_at);
         if (!$title || !$tricountId || !$amount || !$operation_date || !$initiator) {
             // Handle missing fields error
             return;
@@ -233,12 +231,21 @@ class ControllerOperation extends Controller
             return;
         }
 
-        $operation = new Operation($title, $tricountId, $amount, $operation_date, $initiator, $created_at);
-        $errors = $operation->validate();
+        
+        if(isset($_POST['c']) && isset($_POST['w'])){
+            $checkedUsers = $_POST['c']; $weights = $_POST['w'];
+        }
         //$errors = $operation->validateTitle($title);
-        $checkedUsers = $_POST["c"];
-        $weights = $_POST["w"];
-        if (empty($errors)) {
+        $info = [$title, $amount, $operation_date, $initiator];
+
+        // si l'user met pas de weight, la fonction qui va save la repartition mettra le weight a 1 par défaut.
+        if (isset($_POST['c']) || !empty($_POST['c'])) { // check s'il y a au moins un user checked
+            $operation = new Operation($title, $tricountId, $amount, $operation_date, $initiator, $created_at);
+            $errors = $operation->validate();
+        }else{
+            $errors[] = "you must check one user";
+        }
+        if(empty($errors)){ // check si l'opération est correcte.
             $operation->insert();
             if(isset($_POST['save_template']) && $_POST['tempalte_name'] !== ""){
                 $this->save_Template($operation,$checkedUsers,$weights, $_POST['tempalte_name']);
@@ -246,72 +253,20 @@ class ControllerOperation extends Controller
             if($this->saveOperationRepartition($operation,$checkedUsers,$weights)){
                 $this->redirect("operation", "expenses", $_POST["tricId"]);
             }
-        } else
+        }else
             (new View("add_expense"))->show(
                 array(
                     "user" => $user,
-                    "operation" => $operation,
+                    "info"=>$info,
                     "rti" => $rti,
                     "users" => $users,
                     "tricount" => $tricount,
                     "template" => $template,
                     "errors" => $errors,
-                    "action" => $action
+                    "action" => $action,
                 )
             );
     }
-
-    //-------------WORKS-------------
-    public function saveWithCustomTemplate()
-    {
-        $action = $_GET['action'];
-        $title = $_POST["title"];
-        $tricountId = $_POST["tricId"];
-        $amount = $_POST["amount"];
-        $operation_date = $_POST["operation_date"];
-        $initiator = $_POST["initiator"];
-        $template_name = $_POST["template_name"];
-        $checkedUsers = $_POST["c"];
-        $weights = $_POST["w"];
-        $errors = [];
-        if ($title && $tricountId && $amount && $operation_date && $initiator && $template_name && $checkedUsers && $weights) {
-            $title = Tools::sanitize($_POST["title"]);
-            $tricount = Tricounts::get_by_id($tricountId);
-            $amount = Tools::sanitize(floatval($_POST["amount"]));
-            $operation_date = $_POST["operation_date"];
-            $initiator = $_POST["initiator"];
-            $created_at = date('y-m-d h:i:s');
-            $users = Participations::get_by_tricount($tricountId);
-            $init = User::get_by_id($initiator);
-            $template_name = Tools::sanitize($_POST["template_name"]);
-
-            $operation = new Operation($title, $tricountId, $amount, $operation_date, $init->getUserId(), $created_at);
-            $template = new Repartition_templates(null, $template_name, $_POST["tricId"]);
-
-            $errors = $operation->validate();
-            //$errors = $operation->validateTitle($title);
-            if (empty($errors)) {
-                $operation->insert();
-                if($this->saveOperationRepartition($operation,$checkedUsers, $weights))
-                    $this->redirect("operation", "expenses", $_POST["tricId"]);
-            } else
-                (new View("add_expense"))->show(
-                    array(
-                        //print_r($tricount),
-                        "title" => $title,
-                        "amount" => $amount,
-                        "operation_date" => $operation_date,
-                        "init" => $init,
-                        "users" => $users,
-                        "tricount" => $tricount,
-                        "template" => $template,
-                        "errors" => $errors,
-                        "action" => $action
-                    )
-                );
-        }
-    }
-
 
     public function add()
     {
@@ -450,7 +405,6 @@ class ControllerOperation extends Controller
             $operation->setInitiator($initiator->getUserId());
             $operation->setCreated_at($created_at);
             $operation->setId($operationId);
-            //$operation = new Operation($title, $tricountId, $amount, $operation_date, $initiator->getUserId(), $created_at, $operationId);
 
             $errors = $operation->validateForEdit($title);
             if(empty($_POST['c'])){
