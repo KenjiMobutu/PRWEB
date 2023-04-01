@@ -125,8 +125,6 @@ class ControllerOperation extends Controller
     public function refreshBtnHandler($user)
     {
         $errors = [];
-
-        
         // TODO :       -----------------> IL FAUT GERER LE RTI. SI C'EST OPTION-DEFAULT -> METTRE ERREUR
         if (isset($_POST["refreshBtn"]) && $_POST['rti'] !== 'option-default') {
             $requiredFields = ["title", "tricId", "amount", "operation_date", "initiator", "rti"];
@@ -173,6 +171,8 @@ class ControllerOperation extends Controller
 
                 if(isset($_POST['operationId']))
                     $operation = Operation::get_by_id($_POST['operationId']);
+                else
+                    $operation = null;
                 
                 (new View("add_expense"))->show(
                     array(
