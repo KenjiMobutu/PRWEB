@@ -142,9 +142,12 @@
                 foreach ($users as $usr) {
                     ?>
                     <?php $repartitions_map = [];
-                    foreach ($repartitions as $repartition) {
-                        $repartitions_map[$repartition->user] = $repartition;
+                    if(isset($repartitions)){
+                        foreach ($repartitions as $repartition) {
+                            $repartitions_map[$repartition->user] = $repartition;
+                        }
                     }
+                    
                     ?>
                     <div class="check-input">
                         <input type="checkbox" name="c[<?= $usr->get_user() ?>]"
