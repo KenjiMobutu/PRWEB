@@ -36,10 +36,38 @@ class ControllerParticipation extends Controller{
       $this->redirect("tricount","index");
     }
 
-
   }
+  public function add_service() : void {
+    header('Content-Type: application/json');
 
-  public function delete(){
+    $data = json_decode(file_get_contents('php://input'), true);
+
+    if(isset($data['id']) && isset($data['userId'])) {
+        $tricount_id = $data['id'];
+        $user_id = $data['userId'];
+
+        $tricount = Tricounts::get_by_id($tricount_id);
+        if(!$tricount) {
+            echo json_encode(['success' => false, 'message' => 'Tricount not found']);
+            return;
+        }
+
+        $participation = new Participations($tricount_id, $user_id);
+        if(!$participation->add()) {
+            echo json_encode(['success' => false, 'message' => 'Unable to add user']);
+            return;
+        }
+
+        echo json_encode(['success' => true]);
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Missing parameters']);
+    }
+}
+  public function delete_service() : void {
+    $user = $this->delete();
+    echo $user ? "true" : "false";
+  }
+  public function delete(): User|false{
     $user = $this->get_user_or_redirect();
     if (isset($_POST["userId" ]) && is_numeric($_POST["userId" ]) && $_POST["userId" ] != null && (isset($_GET["param1"]) && $_GET["param1"]!="")) {
       $id = $_POST["userId" ];
@@ -53,5 +81,21 @@ class ControllerParticipation extends Controller{
         echo "Une erreur s'est produite lors de la suppression de la participation.";
       }
     }
+    return false;
   }
+
+  public function get_visible_users_service() : void {
+
+    if(isset($_GET["param1"]) && $_GET["param1"]!=""){
+        var_dump($_GET["param1"]);
+        $id = $_GET['param1'];
+        $tricount = Tricounts::get_by_id($id);
+        $users_json = $tricount->not_participate_as_json($id);
+    }
+    echo $users_json;
+  }
+
+
+
+
 }

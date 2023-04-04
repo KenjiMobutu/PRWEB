@@ -86,7 +86,6 @@ class ControllerTricount extends Controller{
       $users = $tricount->not_participate($tricount->get_id());
       $users_json = $tricount->not_participate_as_json($tricount->get_id());
       foreach($subscriptions as $s){
-        var_dump($s->getUserId());
         $sub[] = User::get_by_id($s->getUserId());
       }
     }else {
@@ -95,6 +94,17 @@ class ControllerTricount extends Controller{
 
     (new View("edit_tricount"))->show(array("user" => $user,"tricount" => $tricount,"subscriptions" =>$subscriptions, "sub" => $sub,"users" => $users,"users_json"=>$users_json,"subscribers_json"=>$subscribers_json,"errors"=>$errors));
   }
+
+  public function get_visible_users_service() : void {
+
+    if(isset($_GET["param1"]) && $_GET["param1"]!=""){
+        var_dump($_GET["param1"]);
+        $id = $_GET['param1'];
+        $tricount = Tricounts::get_by_id($id);
+        $users_json = $tricount->not_participate_as_json($id);
+    }
+    echo $users_json;
+}
 
   public function delete(){
     $user = $this->get_user_or_redirect();
@@ -111,7 +121,6 @@ class ControllerTricount extends Controller{
       }else {
         $this->redirect('main', "error");
       }
-      //var_dump($tricount);
     }
   }
   public function delete_confirm(){
@@ -125,7 +134,6 @@ class ControllerTricount extends Controller{
       }else {
         $this->redirect('main', "error");
       }
-      //var_dump($tricount);
     }
   }
   public function update(){
@@ -160,7 +168,6 @@ class ControllerTricount extends Controller{
       $this->redirect("user","profile");
     }
   }
-
 
 }
 

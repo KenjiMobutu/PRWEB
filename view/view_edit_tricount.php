@@ -25,7 +25,7 @@
         let usersList;
         let addSubDropdown;
 
-        const user = "<?= $user->getUserId(); ?>";
+        const tricount_id = "<?=  $tricount->get_id() ?>";
         const user_JSON = <?= $users_json ?>; //users who not participate
         const subscribers_json = <?= $subscribers_json ?>  ; // users who participate
 
@@ -46,44 +46,87 @@
 
             displayUserList();
             dropdownUserList();
+            getUsersForDropdownList();
         });
 
-        async function addUser(){
-
+    async function addUser(){
+        // Vérifier que l'utilisateur n'est pas déjà dans la liste des souscripteurs
+        // for (let s of subscribers_json) {
+        //     if (s.id == userId) {
+        //         alert("This user is already subscribed!");
+        //         return;
+        //     }
+        // }
+        try {
+            // Ajouter l'utilisateur à la liste des souscripteurs
+            await $.post("participation/add_service/"+ tricount_id, {"userId": id});
+            getUsers();
+        } catch(e) {
+            usersList.html("<tr><td>Error encountered while retrieving the users! 1 </td></tr>");
         }
+    }
 
-        async function deleteUser(id){
+    async function deleteUser(id){
+        const idx = subscribers_json.findIndex(function (el, idx, arr) {
+            return el.id === id;
+        });
+        subscribers_json.splice(idx, 1);
+        displayUserList();
 
-            displayUserList();
+        try {
+            await $.post("participation/delete_service/" + tricount_id, {"userId": id});
+            //await getUsersForDropdownList();
+            //dropdownUserList();
+        } catch(e) {
+            usersList.html("<tr><td>Error encountered while retrieving the users! 2 </td></tr>");
+        }
+    }
+        async function getUsersForDropdownList() {
             try {
-                await $.post("tricount/delete_service/" + recipient, {"userId": id});
-                getUsers();
+                user_JSON = await $.getJSON("participation/get_visible_users_service/" + tricount_id);
+                dropdownUserList();
             } catch(e) {
-                usersList.html("<tr><td>Error encountered while retrieving the users!</td></tr>");
+                usersList.html("<tr><td>Error encountered while retrieving the users! 3</td></tr>");
             }
-
-        }
-        async function getUsers() {
-
         }
 
         function displayUserList(){
-            let html = "";
-            for(let u of user_JSON ){
+            let html = "<ul class='edit-subscriberInput'>";
+            for(let u of subscribers_json){
                 html += "<li>";
-                html += "displayUserList";
-
+                html += "<div class='infos_tricount_edit'>";
+                html += "<div class='name_tricount_edit'>";
+                if(u.id == <?= $tricount->get_creator_id() ?>){
+                    html += "<input type='text' name='name' value='"+u.full_name+" (creator)' disabled/>";
+                }else{
+                    html += "<input type='text' name='name' value='"+u.full_name+"' disabled/>";
+                }
+                if(u.id !== <?= $tricount->get_creator_id() ?>){
+                    html += "<div class='trash_edit_tricount'>";
+                    html += "<button class='btnDeleteSubscriber' onclick='deleteUser("+u.id+")' style='background-color:transparent;'>";
+                    html += "<i class='bi bi-trash3'></i>";
+                    html += "</button>";
+                    html += "</div>";
+                }
+                html += "</div>";
+                html += "</div>";
                 html += "</li>";
             }
+            html += "</ul>"
             usersList.html(html);
         }
 
         function dropdownUserList(){
-            let html = "";
-            html += "dropdownUserList";
-
-
+            let html = "<select class='selectSub' name='names' id='names'>";
+            html += "<option value=''>--Add a new subscriber--</option>";
+            for(let u of user_JSON){
+                if(u.userId != user){
+                html += "<option value='" + u.userId + "'>" + u.full_name + "</option>";
+                }
+            }
+            html += "</select>";
             addSubDropdown.html(html);
+            //addSubDropdown.append("<button id='btnAddSubscriber' type='button' class='btn btn-primary ms-2'>Add</button>");
         }
 
     </script>
@@ -167,10 +210,10 @@
             <?php endforeach; ?>
         </div>
             <!-- Formulaire d'ajout de souscripteurs -->
-            <div id="addSubDropdown">
+            <div >
                 <form  action="participation/add/<?= $tricount->get_id() ?>" method="post">
                     <div  class="edit-selectSub">
-                        <select class="selectSub" name="names" id="names">
+                        <select id="addSubDropdown" class="selectSub" name="names" id="names">
                             <option value="">--Add a new subscriber--</option>
                             <?php foreach ($users as $u): ?>
                                 <option id="subValue" value='<?= $u->getUserId() ?>'><?= $u->getFullName() ?></option>

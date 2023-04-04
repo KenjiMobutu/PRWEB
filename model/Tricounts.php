@@ -305,23 +305,22 @@ class Tricounts extends Model
   }
   public function subscribers($tricount){
     $query = self::execute("SELECT s.*
-    FROM subscriptions s, tricounts t
-    where s.tricount = t.id
-    And s.tricount = :tricount
-    ", array("tricount"=>$tricount));
-$data = $query->fetchAll();
-$subscription  = array();
-$sub = array();
+                            FROM subscriptions s, tricounts t
+                            where s.tricount = t.id
+                            And s.tricount = :tricount",
+                            array("tricount"=>$tricount));
+    $data = $query->fetchAll();
+    $subscription  = array();
+    $sub = array();
 
-foreach ($data as $row) {
-  $subscription[] = User::get_by_id($row["user"]);
-}
+    foreach ($data as $row) {
+      $subscription[] = User::get_by_id($row["user"]);
+    }
+    foreach($subscription as $s){
+      $sub[] = $s;
+    }
 
-foreach($subscription as $s){
-$sub[] = $s;
-}
-
-return $sub;
+    return $sub;
   }
   public function subscribers_as_json($tricountId) : string{
     $table = [];
