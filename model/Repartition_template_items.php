@@ -34,9 +34,28 @@ class Repartition_template_items extends Model
     return $this->user;
   }
 
+  public static function get_template_data_service($templateId)
+  {
+    $query = self::execute(
+      "SELECT * FROM  repartition_template_items rti, repartition_templates rt
+    where rti.repartition_template = rt.id
+    and rti.repartition_template=:templateId",
+      array("templateId" => $templateId)
+    );
+    $data = $query->fetchAll();
+    if ($query->rowCount() == 0) {
+      return null;
+    } else {
+      return json_encode($data);
+    }
+  }
+
+
+
   public static function get_weight_by_user($user, $repartition_template): int
   {
-    $query = self::execute("SELECT *
+    $query = self::execute(
+      "SELECT *
                               FROM  `repartition_template_items`
                               where user=:user
                               and repartition_template=:repartition_template ",
@@ -52,7 +71,8 @@ class Repartition_template_items extends Model
 
   public function get_Sum_Weight(): int
   {
-    $query = self::execute("SELECT SUM(weight)
+    $query = self::execute(
+      "SELECT SUM(weight)
                                   FROM `repartition_template_items`
                                   WHERE repartition_template =:repartition_template;",
       array("repartition_template" => $this->repartition_template)
@@ -79,7 +99,8 @@ class Repartition_template_items extends Model
 
   public static function get_by_user($user)
   { //à refaire
-    $query = self::execute("SELECT * FROM  repartition_template_items rti, repartition_templates rt
+    $query = self::execute(
+      "SELECT * FROM  repartition_template_items rti, repartition_templates rt
                               where rti.repartition_template = rt.id
                               and rti.user=:user",
       array("user" => $user)
@@ -92,7 +113,8 @@ class Repartition_template_items extends Model
   }
   public static function by_user($user)
   {
-    $query = self::execute("SELECT *
+    $query = self::execute(
+      "SELECT *
                               FROM  repartition_template_items rti, repartition_templates rt
                               where rti.repartition_template = rt.id
                               and rti.user=:user",
@@ -109,7 +131,8 @@ class Repartition_template_items extends Model
   }
   public static function get_by_tricount($tricount)
   {
-    $query = self::execute("SELECT *
+    $query = self::execute(
+      "SELECT *
                               FROM repartition_templates rt
                               JOIN repartition_template_items rti
                               ON rt.id = rti.repartition_template
@@ -145,7 +168,8 @@ class Repartition_template_items extends Model
     if ($weight === null || $templateId === null || $user === null) {
       return null;
     } else {
-      $query = self::execute("INSERT INTO
+      $query = self::execute(
+        "INSERT INTO
                                   repartition_template_items
                                   (`weight`,
                                   user,
@@ -165,7 +189,8 @@ class Repartition_template_items extends Model
 
   public static function get_by_user_and_tricount($user, $tricountId)
   {
-    $query = self::execute("SELECT * FROM  repartition_template_items rti, repartition_templates rt
+    $query = self::execute(
+      "SELECT * FROM  repartition_template_items rti, repartition_templates rt
                               where rti.repartition_template = rt.id
                               and rti.user=:user and rt.tricount=:tricount",
       array("user" => $user, "tricount" => $tricountId)
@@ -177,7 +202,8 @@ class Repartition_template_items extends Model
 
   public function get_user_info(): string
   { // on récupère les noms des utilisateurs lié a un template_items
-    $query = self::execute("SELECT *
+    $query = self::execute(
+      "SELECT *
                               from users u, repartition_template_items rti
                               where rti.user = u.id
                               and  rti.repartition_template =:repartition_template
@@ -194,7 +220,8 @@ class Repartition_template_items extends Model
 
   public static function delete_by_repartition_template($repartition_template)
   {
-    $query = self::execute("DELETE
+    $query = self::execute(
+      "DELETE
                               FROM repartition_template_items
                               where repartition_template=:repartition_template",
       array("repartition_template" => $repartition_template)
@@ -207,7 +234,8 @@ class Repartition_template_items extends Model
 
   public static function addNewItems($user, $repartition_template, $weight)
   {
-    $query = self::execute("INSERT INTO
+    $query = self::execute(
+      "INSERT INTO
             repartition_template_items (`user`, `repartition_template`, `weight`)
             VALUES(:user,
             :repartition_template,
@@ -225,7 +253,8 @@ class Repartition_template_items extends Model
   public function update()
   {
     if (!is_null($this->repartition_template)) {
-      self::execute("UPDATE `repartition_template_items` SET
+      self::execute(
+        "UPDATE `repartition_template_items` SET
             weight=:weight,
             user =:user
 
@@ -237,7 +266,8 @@ class Repartition_template_items extends Model
         )
       );
     } else {
-      self::execute("INSERT INTO
+      self::execute(
+        "INSERT INTO
             `repartition_template_items` (weight,user, repartition_template)
             VALUES(:`weight`,
             :`user`,
@@ -268,4 +298,3 @@ class Repartition_template_items extends Model
     return $combined_array;
   }
 }
-?>
