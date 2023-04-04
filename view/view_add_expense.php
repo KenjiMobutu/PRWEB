@@ -87,7 +87,6 @@
                 <?php if (isset($template)) {
                     echo "<option style='color: black;' value='{$template->get_id()}'>{$template->get_title()}</option>";
 
-                    //echo "<option style='color: black;' value='option-default'>No, I'll use custom repartition</option>";
                 } else {
                     echo "<option style='color: black;' value='option-default'>No, I'll use custom repartition</option>";
                 }
@@ -163,8 +162,13 @@
                         </span>
                         <fieldset>
                             <legend class="legend" style="color: yellow; font-weight: bold;">Weight</legend>
-                            <input type="number" name="w[<?= $usr->get_user(); ?>]" id="userWeight" min="0" max="50"
-                                value="<?php echo isset($repartitions_map[$usr->get_user()]) ? $repartitions_map[$usr->get_user()]->weight : ''; ?>">
+                            <input type="number" name="w[<?= $usr->get_user(); ?>]_weight" id="userWeight" min="0" max="50"
+                                value="<?php echo isset($repartitions_map[$usr->get_user()]) ? $repartitions_map[$usr->get_user()]->weight : ''; ?>" onchange="calculateAmounts()">
+                        </fieldset>
+                        <input type="number" id="<?= $usr->get_user() ?>_amount" value="<?php echo $usr->get_dette($operation_data->get_id(), $usr)?>" onchange="calculateAmounts()" hidden>
+                        <fieldset> 
+                            <legend>Amount</legend>
+                            <input type="number" id="<?= $usr->get_user() ?>_dette" value="<?php echo $usr->get_dette($operation_data->get_id(), $usr)?>"onchange="calculateAmounts()">
                         </fieldset>
                     </div>
                     <?php
