@@ -107,10 +107,13 @@
             <label for="who">For whom? (select at least one)</label>
             <?php
             foreach ($users as $usr) {
-                $repartitions_map = [];
-                foreach ($repartitions as $repartition) {
-                    $repartitions_map[$repartition->user] = $repartition;
+                if(isset($repartition)){
+                    $repartitions_map = [];
+                    foreach ($repartitions as $repartition) {
+                        $repartitions_map[$repartition->user] = $repartition;
+                    }
                 }
+                
             ?>
                 <div class="check-input">
                     <?php
