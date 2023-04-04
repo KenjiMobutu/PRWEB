@@ -153,7 +153,7 @@ class ControllerOperation extends Controller
     {
         $errors = [];
         // TODO :       -----------------> IL FAUT GERER LE RTI. SI C'EST OPTION-DEFAULT -> METTRE ERREUR
-        if (isset($_POST["refreshBtn"]) && $_POST['rti'] !== 'option-default') {
+        if (isset($_POST["refreshBtn"])) {
             $requiredFields = ["title", "tricId", "amount", "operation_date", "initiator", "rti"];
             $allFieldsExist = true;
             foreach ($requiredFields as $field) {
@@ -174,6 +174,7 @@ class ControllerOperation extends Controller
                 $users = Participations::get_by_tricount($tricId);
                 $init = User::get_by_id($initiator);
                 $rti = Repartition_template_items::get_by_user_and_tricount($userId, $tricId); // récup les templates ou le user en fait partie.
+                
                 $template = Repartition_templates::get_by_id($_POST['rti']);
 
                 $info = [$title, $amount, $operation_date, $initiator];
@@ -190,38 +191,31 @@ class ControllerOperation extends Controller
                 isset($_GET['param1']) ? $operationId = $_GET['param1'] : null;
                 $ListUsers = Participations::get_by_tricount($tricId);
                 $items = Repartition_template_items::get_user_by_repartition($template->get_id());
-                //var_dump($_POST); die();
-                //$errors = $operation->validateForEdit();
-                // echo '<pre>';
-                // print_r($items);
-                // echo '</pre>';
-
                 if(isset($_POST['operationId']))
                     $operation = Operation::get_by_id($_POST['operationId']);
                 else
                     $operation = null;
                 
-                (new View("add_expense"))->show(
-                    array(
-                        "user" => $user,
-                        "operation" => $operation,
-                        "rti" => $rti,
-                        "templateId" => $templateId,
-                        "users" => $users,
-                        "tricount" => $tricount,
-                        "template" => $template,
-                        "ListUsers" => $ListUsers,
-                        "info" => $info,
-                        "items" => $items,
-                        "init"=>$init,
-                        "errors" => $errors,
-                        "action" => $action
-                    )
-                );
             }
 
         }
-
+        (new View("add_expense"))->show(
+            array(
+                "user" => $user,
+                "operation" => $operation,
+                "rti" => $rti,
+                "templateId" => $templateId,
+                "users" => $users,
+                "tricount" => $tricount,
+                "template" => $template,
+                "ListUsers" => $ListUsers,
+                "info" => $info,
+                "items" => $items,
+                "init"=>$init,
+                "errors" => $errors,
+                "action" => $action
+            )
+        );
     }
 
 
