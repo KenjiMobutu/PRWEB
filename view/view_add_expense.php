@@ -126,13 +126,13 @@
                     <fieldset>
                         <legend class="legend" style="color: yellow; font-weight: bold;">Weight</legend>
                         <input type="number" name="w[<?= $usr->get_user(); ?>]" id="userWeight" min="0" max="50" <?php
-                                                                                                                    if (isset($template)) {
-                                                                                                                        if ($usr->is_in_Items($template->get_id())) {
-                                                                                                                            echo "value=" . $usr->get_weight_by_user($template->get_id());
-                                                                                                                        }
-                                                                                                                    } else {
-                                                                                                                        echo "value=" . (isset($repartitions_map[$usr->get_user()]) ? $repartitions_map[$usr->get_user()]->weight : '');
-                                                                                                                    } ?>>
+                            if (isset($template)) {
+                                if ($usr->is_in_Items($template->get_id())) {
+                                    echo "value=" . $usr->get_weight_by_user($template->get_id());
+                                }
+                            } else {
+                                echo "value=" . (isset($repartitions_map[$usr->get_user()]) ? $repartitions_map[$usr->get_user()]->weight : '');
+                            } ?>>
                     </fieldset>
                 </div>
             <?php
