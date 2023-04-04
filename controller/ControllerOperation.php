@@ -122,6 +122,33 @@ class ControllerOperation extends Controller
 
     }
 
+    public function get_template_service(){
+        if(isset($_GET['templateId'])){
+            $template = $_GET['templateId'];
+            $data = Repartition_template_items::get_template_data_service($template);
+            echo $data;
+        }
+    }
+
+    public function getTemplateDataById() {
+        // Get the template ID from the request
+        $templateId = isset($_GET['templateId']) ? intval($_GET['templateId']) : null;
+    
+        // Fetch the template data from the model
+        $templateData = Repartition_template_items::get_template_data_service($templateId);
+    
+        // Check if the template data is valid
+        if ($templateData !== null) {
+            // Return the template data as JSON
+            echo json_encode($templateData);
+        } else {
+            // Return an error message if the template data is not found
+            echo json_encode(['error' => 'Template data not found.']);
+        }
+    }
+    
+    
+
     public function refreshBtnHandler($user)
     {
         $errors = [];
