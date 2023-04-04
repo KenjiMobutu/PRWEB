@@ -18,39 +18,6 @@
     <!-- CSS only -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
 </head>
-<script>
-    $(document).ready(function() {
-        $('#title').blur(function() {
-            var title = $(this).val();
-            var creator = $('#creator').val();
-            if (title === '') {
-                return;
-            }
-            $(this).siblings('.input-feedback').remove();
-            $(this).after('<span class="loading-icon"><i class="fa fa-spinner fa-spin"></i></span>');
-
-            $.ajax({
-                url: '/tricount/check_title_service',
-                type: 'POST',
-                data: {
-                    title: title, creator : creator
-                },
-                success: function(response) {
-
-                    $('.loading-icon').remove();
-                    if (response.exists) {
-                        $('#text4b').after('<div class="input-feedback">This title already exists. Please choose a different one.</div>');
-                    }
-                },
-                error: function(jqXHR, textStatus, errorThrown) {
-                    $('.loading-icon').remove();
-                    $('#text4b').after('<div class="input-feedback">An error occurred. Please try again later.</div>');
-                }
-            });
-        });
-    });
-</script>
-
 <body>
     <form id="addTricount" action="tricount/add" method="post">
         <div class="appHeader">
@@ -88,6 +55,16 @@
                             <label class="label" for="textarea4b">Description (optional)</label>
                             <textarea id="textarea4b" name="description" rows="2" class="form-control" placeholder="Your description here!"></textarea>
                         </div>
+                        <?php if (count($errors) != 0): ?>
+                            <div class='errors'>
+                                <br><br><p>Please correct the following error(s) :</p>
+                                <ul>
+                                    <?php foreach ($errors as $error): ?>
+                                        <li><?= $error ?></li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </div>
+                        <?php endif; ?>
                     </div>
                     
     </form>
