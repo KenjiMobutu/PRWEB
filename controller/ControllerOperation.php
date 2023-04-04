@@ -176,7 +176,7 @@ class ControllerOperation extends Controller
                 $rti = Repartition_template_items::get_by_user_and_tricount($userId, $tricId); // récup les templates ou le user en fait partie.
                 
                 $template = Repartition_templates::get_by_id($_POST['rti']);
-
+                $refreshBtn = $_POST["refreshBtn"];
                 $info = [$title, $amount, $operation_date, $initiator];
                 //$it = Participations::get_user_weight_in_items($template->get_id(),$userId);
                 //isset($_GET['param1']) ? $repartitions = Repartitions::get_by_operation($_GET['param1']) : null;
@@ -212,6 +212,7 @@ class ControllerOperation extends Controller
                 "info" => $info,
                 "items" => $items,
                 "init"=>$init,
+                "refreshBtn"=>$refreshBtn,
                 "errors" => $errors,
                 "action" => $action
             )

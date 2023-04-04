@@ -108,7 +108,7 @@
             </select>
             <label for="who">For whom? (select at least one)</label>
             <?php
-            if (isset($_POST["refreshBtn"])) {
+            if (isset($refreshBtn)) {
                 foreach ($ListUsers as $usr) {
                     ?>
                     <div class="checks">
