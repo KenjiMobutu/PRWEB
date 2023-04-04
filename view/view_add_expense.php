@@ -107,13 +107,11 @@
             <label for="who">For whom? (select at least one)</label>
             <?php
             foreach ($users as $usr) {
-                if(isset($repartition)){
-                    $repartitions_map = [];
-                    foreach ($repartitions as $repartition) {
-                        $repartitions_map[$repartition->user] = $repartition;
-                    }
+                $repartitions_map = [];
+                foreach ($repartitions as $repartition) {
+                    $repartitions_map[$repartition->user] = $repartition;
                 }
-                
+
             ?>
                 <div class="check-input">
                     <?php
@@ -126,13 +124,13 @@
                     <fieldset>
                         <legend class="legend" style="color: yellow; font-weight: bold;">Weight</legend>
                         <input type="number" name="w[<?= $usr->get_user(); ?>]" id="userWeight" min="0" max="50" <?php
-                                                                                                                    if (isset($template)) {
-                                                                                                                        if ($usr->is_in_Items($template->get_id())) {
-                                                                                                                            echo "value=" . $usr->get_weight_by_user($template->get_id());
-                                                                                                                        }
-                                                                                                                    } else {
-                                                                                                                        echo "value=" . (isset($repartitions_map[$usr->get_user()]) ? $repartitions_map[$usr->get_user()]->weight : '');
-                                                                                                                    } ?>>
+                            if (isset($template)) {
+                                if ($usr->is_in_Items($template->get_id())) {
+                                    echo "value=" . $usr->get_weight_by_user($template->get_id());
+                                }
+                            } else {
+                                echo "value=" . (isset($repartitions_map[$usr->get_user()]) ? $repartitions_map[$usr->get_user()]->weight : '');
+                            } ?>>
                     </fieldset>
                 </div>
             <?php
@@ -153,7 +151,7 @@
         <?php
         if ($action === 'edit' || $action === 'edit_expense') {
             echo '<button class="delete-btn" style="background-color: blue; color: white;">';
-            echo '<a href="/prwb_2223_c03/Operation/delete_confirm/' . $_GET['param1'] . '" style="text-decoration: none; color: white;">DELETE</a>';
+            echo '<a href="/Operation/delete_confirm/' . $_GET['param1'] . '" style="text-decoration: none; color: white;">DELETE</a>';
             echo '</button>';
         }
         ?>
@@ -172,7 +170,7 @@ $(document).ready(function () {
         const selectedTemplateId = repartitionTemplate.val(); //GET TEPLATE ID
         console.log(selectedTemplateId);
         $.ajax({
-            url: '/prwb_2223_c03/Operation?action=get_template_service&templateId=' + selectedTemplateId,
+            url: 'operation/get_template_service/' + selectedTemplateId,
             method: 'GET',
             dataType: 'json',
             success: function (templateData) {

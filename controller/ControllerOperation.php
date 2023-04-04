@@ -123,8 +123,8 @@ class ControllerOperation extends Controller
     }
 
     public function get_template_service(){
-        if(isset($_GET['templateId'])){
-            $template = $_GET['templateId'];
+        if(isset($_GET['param1'])){
+            $template = $_GET['param1'];
             $data = Repartition_template_items::get_template_data_service($template);
             echo $data;
         }
