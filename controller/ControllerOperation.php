@@ -159,7 +159,7 @@ class ControllerOperation extends Controller
             foreach ($requiredFields as $field) {
                 if (!array_key_exists($field, $_POST)) {
                     $allFieldsExist = false;
-                    break;
+                    die();
                 }
             }
             if ($allFieldsExist) {
@@ -359,10 +359,6 @@ class ControllerOperation extends Controller
             $users = Participations::get_by_tricount($tricount->get_id());
             $repartitions = Repartitions::get_by_operation($operationId);
             $rti = Repartition_template_items::get_by_user_and_tricount($userId, $tricount->get_id());
-            
-           
-            
-            // die();
         }
 
         (new View("add_expense"))->show(
