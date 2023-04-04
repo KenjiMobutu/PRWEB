@@ -83,11 +83,10 @@
             <br>
             <label for="repartition_template">Use repartition template (optional)</label>
             <button name="refreshBtn" id="refreshBtn">Refresh</button>
+            <!--$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ a template is lost after refresh + error $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$-->
             <select id="repartitionTemplate" name="rti">
                 <?php if (isset($template)) {
                     echo "<option style='color: black;' value='{$template->get_id()}'>{$template->get_title()}</option>";
-
-                    //echo "<option style='color: black;' value='option-default'>No, I'll use custom repartition</option>";
                 } else {
                     echo "<option style='color: black;' value='option-default'>No, I'll use custom repartition</option>";
                 }
@@ -111,17 +110,25 @@
             <label for="who">For whom? (select at least one)</label>
             <?php foreach ($users as $usr) {
                 $repartitions_map = [];
-                foreach ($repartitions as $repartition) {
-                    $repartitions_map[$repartition->user] = $repartition;
+                if (!empty($repartitions)) {
+                    foreach ($repartitions as $repartition) {
+                        $repartitions_map[$repartition->user] = $repartition;
+                    }
                 }
-
                 ?>
                 <div class="check-input">
                     <?php
-                    $isChecked = isset($template) && $usr->is_in_Items($templateId, $usr->user);
+                    $isChecked = isset($repartitions_map[$usr->get_user()]);
+                    if (!empty($templateId) && isset($template) && $usr->is_in_Items($templateId, $usr->user)) {
+                        $isChecked = true;
+                    }
+                    if (isset($_POST['c']) && is_array($_POST['c']) && in_array($usr->get_user(), $_POST['c'])) {
+                        // Keep the checkbox checked in case of error
+                        $isChecked = true;
+                    }
                     ?>
-                    <input type="checkbox" name="c[<?= $usr->get_user(); ?>]" value="<?= $usr->get_user() ?>"
-                        id="userIdTemp" <?= $isChecked ? "checked" : ""; ?>>
+                    <input type="checkbox" name="c[<?= $usr->get_user() ?>]" value="<?= $usr->get_user() ?>"
+                        id="<?php echo $usr->getUserInfo() ?>" <?php echo $isChecked ? "checked" : ""; ?>>
                     <span class="text-input" style="color: yellow; font-weight: bold;">
                         <?php echo $usr->getUserInfo() ?>
                     </span>
@@ -129,14 +136,16 @@
                         <legend class="legend" style="color: yellow; font-weight: bold;">Weight</legend>
                         <input type="number" name="w[<?= $usr->get_user(); ?>]" id="userWeight" min="0" max="50" <?php
                           if (isset($template)) {
-                              if ($usr->is_in_Items($template->get_id())) {
+                              if ($usr->is_in_Items($template->get_id(), $usr->user)) {
                                   echo "value=" . $usr->get_weight_by_user($template->get_id());
                               }
                           } else {
                               echo "value=" . (isset($repartitions_map[$usr->get_user()]) ? $repartitions_map[$usr->get_user()]->weight : '');
-                          } ?>>
+                          }
+                          ?>>
                     </fieldset>
                 </div>
+
                 <?php
             }
             ?>
@@ -180,31 +189,27 @@
                     updateInputsAndCheckboxes(templateData);
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
-                    // console.error('Error fetching template data:', textStatus, errorThrown);
-                    console.log(jqXHR);
+                    console.error('Error fetching template data:', textStatus, errorThrown);
                 }
             });
 
             function updateInputsAndCheckboxes(templateData) {
-                // alert('ok');
                 var check = $(`input[type="checkbox"]`);
-                check.each((i, element) => {
-                    if (element.id == 'userIdTemp')
-                        element.checked = false;
-                });
+                check.prop('checked', false);
+
                 var numb = $(`input[type="number"]`);
-                numb.each((i, element) => {
-                    if (element.id == 'userWeight')
-                        element.value = '';
-                });
+                numb.val('');
+
                 templateData.forEach(userTemplateData => {
                     const userCheckbox = $(`input[type="checkbox"][name="c[${userTemplateData.user}]"]`);
-                    userCheckbox.prop('checked', (userTemplateData.user ? true : false));
-                    console.log(userTemplateData);
-                    const userWeight = $(`input[type="number"][name="w[${userTemplateData.user}]"]`);
-                    userWeight.val(userTemplateData.weight);
+                    if (userCheckbox.length > 0) {
+                        userCheckbox.prop('checked', true);
+                        const userWeight = $(`input[type="number"][name="w[${userTemplateData.user}]"]`);
+                        userWeight.val(userTemplateData.weight);
+                    }
                 });
             }
+
         });
     });
 </script>

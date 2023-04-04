@@ -152,71 +152,84 @@ class ControllerOperation extends Controller
     public function refreshBtnHandler($user)
     {
         $errors = [];
-        // TODO :       -----------------> IL FAUT GERER LE RTI. SI C'EST OPTION-DEFAULT -> METTRE ERREUR
+    
         if (isset($_POST["refreshBtn"])) {
-            $requiredFields = ["title", "tricId", "amount", "operation_date", "initiator", "rti"];
-            $allFieldsExist = true;
-            foreach ($requiredFields as $field) {
-                if (!array_key_exists($field, $_POST)) {
-                    $allFieldsExist = false;
-                    die();
-                }
-            }
-            if ($allFieldsExist) {
+            if ($this->validateRequiredFields()) {
                 $action = $_GET['action'];
                 $userId = $user->getUserId();
-                $title = Tools::sanitize($_POST["title"]);
                 $tricId = $_POST["tricId"];
+    
                 $tricount = Tricounts::get_by_id($tricId);
-                $amount = Tools::sanitize(floatval($_POST["amount"]));
-                $operation_date = $_POST["operation_date"];
-                $initiator = $_POST["initiator"];
                 $users = Participations::get_by_tricount($tricId);
-                $init = User::get_by_id($initiator);
-                $rti = Repartition_template_items::get_by_user_and_tricount($userId, $tricId); // récup les templates ou le user en fait partie.
+                $init = User::get_by_id($_POST["initiator"]);
+    
+                $template = $this->getTemplateByUserAndTricount($userId, $tricId);
+                $templateId = $template ? $template->id : null;
+
+                $operation = $this->getOperationById($_POST['operationId'] ?? null);
+    
+                $listUsers = Participations::get_by_tricount($tricId);
+                $items = Repartition_template_items::get_user_by_repartition($templateId);
+                $info = $this->getInfoFromPost();
+    
+                $rti = Repartition_template_items::get_by_user_and_tricount($userId, $tricId);
                 
-                $template = Repartition_templates::get_by_id($_POST['rti']);
-
-                $info = [$title, $amount, $operation_date, $initiator];
-                //$it = Participations::get_user_weight_in_items($template->get_id(),$userId);
-                //isset($_GET['param1']) ? $repartitions = Repartitions::get_by_operation($_GET['param1']) : null;
-                //$repartitions = Repartitions::get_by_operation($_GET['param1'] ? $_GET['param1'] : null);
-                // var_dump($template);
-                if(!is_null($template))
-                    $templateId = $template->id;
-
                 if ($template === null) {
                     $this->redirect("operation", "expenses/" . $tricount->get_id());
                 }
-                isset($_GET['param1']) ? $operationId = $_GET['param1'] : null;
-                $ListUsers = Participations::get_by_tricount($tricId);
-                $items = Repartition_template_items::get_user_by_repartition($template->get_id());
-                if(isset($_POST['operationId']))
-                    $operation = Operation::get_by_id($_POST['operationId']);
-                else
-                    $operation = null;
-                
             }
-
         }
-        (new View("add_expense"))->show(
-            array(
-                "user" => $user,
-                "operation" => $operation,
-                "rti" => $rti,
-                "templateId" => $templateId,
-                "users" => $users,
-                "tricount" => $tricount,
-                "template" => $template,
-                "ListUsers" => $ListUsers,
-                "info" => $info,
-                "items" => $items,
-                "init"=>$init,
-                "errors" => $errors,
-                "action" => $action
-            )
-        );
+    
+        (new View("add_expense"))->show([
+            "user" => $user,
+            "operation" => $operation,
+            "rti" => $rti,
+            "templateId" => $templateId,
+            "users" => $users,
+            "tricount" => $tricount,
+            "template" => $template,
+            "ListUsers" => $listUsers,
+            "info" => $info,
+            "items" => $items,
+            "init" => $init,
+            "errors" => $errors,
+            "action" => $action
+        ]);
     }
+    
+    private function validateRequiredFields()
+    {
+        $requiredFields = ["title", "tricId", "amount", "operation_date", "initiator", "rti"];
+    
+        foreach ($requiredFields as $field) {
+            if (!array_key_exists($field, $_POST)) {
+                return false;
+            }
+        }
+    
+        return true;
+    }
+    
+    private function getTemplateByUserAndTricount($userId, $tricId)
+    {
+        return Repartition_templates::get_by_id($_POST['rti']);
+    }
+    
+    private function getOperationById($operationId)
+    {
+        return $operationId ? Operation::get_by_id($operationId) : null;
+    }
+    
+    private function getInfoFromPost()
+    {
+        $title = Tools::sanitize($_POST["title"]);
+        $amount = Tools::sanitize(floatval($_POST["amount"]));
+        $operation_date = $_POST["operation_date"];
+        $initiator = $_POST["initiator"];
+    
+        return [$title, $amount, $operation_date, $initiator];
+    }
+    
 
 
     public function saveOperation($user)
