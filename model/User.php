@@ -165,7 +165,7 @@ class User extends Model
     }
 
 
-    
+
 
 
     public function setRole(string $role): void
@@ -212,7 +212,7 @@ class User extends Model
         }
         return $results;
     }
-    public static function not_participate($tricountId)
+    public function not_participate($tricountId)
     { //récup tous les users
         $query = self::execute("SELECT *
             FROM users
@@ -225,6 +225,8 @@ class User extends Model
         }
         return $results;
     }
+
+
     public static function get_by_mail($mail)
     { //récup l'user par son mail
         $query = self::execute("SELECT * FROM  `users` where mail=:mail", array("mail" => $mail));

@@ -80,16 +80,20 @@ class ControllerTricount extends Controller{
         $this->redirect('tricount', "index");
       }
       $tricount = Tricounts::get_by_id($id);
-      $subscriptions = Participations::by_tricount($tricount->get_id());
-      $users = User::not_participate($tricount->get_id());
+      //$subscriptions = Participations::by_tricount($tricount->get_id());
+      $subscriptions = $tricount->subscribers($tricount->get_id());
+      $subscribers_json = $tricount->subscribers_as_json($tricount->get_id());
+      $users = $tricount->not_participate($tricount->get_id());
+      $users_json = $tricount->not_participate_as_json($tricount->get_id());
       foreach($subscriptions as $s){
-        $sub[] = User::get_by_id($s->user);
+        var_dump($s->getUserId());
+        $sub[] = User::get_by_id($s->getUserId());
       }
     }else {
       $this->redirect("tricount","index");
     }
 
-    (new View("edit_tricount"))->show(array("user" => $user,"tricount" => $tricount,"subscriptions" =>$subscriptions, "sub" => $sub,"users" => $users, "errors"=>$errors));
+    (new View("edit_tricount"))->show(array("user" => $user,"tricount" => $tricount,"subscriptions" =>$subscriptions, "sub" => $sub,"users" => $users,"users_json"=>$users_json,"subscribers_json"=>$subscribers_json,"errors"=>$errors));
   }
 
   public function delete(){
@@ -138,7 +142,7 @@ class ControllerTricount extends Controller{
         $description = Tools::sanitize($_POST["description"]);
         $tricount = Tricounts::get_by_id($id);
         $subscriptions = Participations::by_tricount($tricount->get_id());
-        $users = User::not_participate($tricount->get_id());
+        $users = $tricount->not_participate($tricount->get_id());
         foreach($subscriptions as $s){
           $sub[] = User::get_by_id($s->user);
         }

@@ -19,57 +19,72 @@
     <script src="lib/jquery-3.6.3.min.js" type="text/javascript"></script>
 
     <script>
-        $(() => {
-    console.log("TEST AJAX");
-    console.log($('#names').val());
-    $("#btnAddSubscriber").click(() => {
-        console.log("TEST AJAX CLICK1");
-        const names = $('#names').val();
-        console.log(userId);
-        console.log($('#names').val());
-        console.log("TEST AJAX CLICK2");
-        $.post("participation/add/<?= $tricount->get_id() ?>", { names: names}, (params) => {
-            $("#names").html(params);
-        });
-        console.log("TEST AJAX CLICK1");
-        console.log("TEST AJAX CLICK2");
-    });
-    });
 
-//     $(() => {
-//     $("#btnAddSubscriber").click(() => {
-//         const userId = $('#names').val();
-//         if (!userId) return; // vérifier que l'utilisateur a été sélectionné
-//         $.post("participation/add/<?= $tricount->get_id() ?>", { userId: userId }, (data) => {
-//             // ajouter le nouvel utilisateur à la liste des participants triée par nom
-//             const $subscriberInput = $('.edit-subscriberInput');
-//             $subscriberInput.append(`<li>
-//                 <div class="infos_tricount_edit">
-//                     <div class="name_tricount_edit">
-//                         <input type="text" name="name" value="${data.userFullName}" disabled />
-//                         <div class="trash_edit_tricount">
-//                             <form action="participation/delete/<?= $tricount->get_id() ?>" method="POST">
-//                                 <input name="userId" value="${data.userId}" hidden />
-//                                 <button type="submit" style="background-color:transparent;">
-//                                     <i class="bi bi-trash3"></i>
-//                                 </button>
-//                             </form>
-//                         </div>
-//                     </div>
-//                 </div>
-//             </li>`);
-//             // trier la liste des participants par nom
-//             const $subscribers = $subscriberInput.children().sort((a, b) => {
-//                 const nameA = $(a).find('.name_tricount_edit input').val().toUpperCase();
-//                 const nameB = $(b).find('.name_tricount_edit input').val().toUpperCase();
-//                 return (nameA < nameB) ? -1 : (nameA > nameB) ? 1 : 0;
-//             });
-//             $subscriberInput.empty().append($subscribers);
-//             // remettre la liste déroulante des utilisateurs à zéro
-//             $('#names').val('');
-//         }, 'json');
-//     });
-// });
+        let addSubscriberButton;
+        let deleteSubscriberButton;
+        let usersList;
+        let addSubDropdown;
+
+        const user = "<?= $user->getUserId(); ?>";
+        const user_JSON = <?= $users_json ?>; //users who not participate
+        const subscribers_json = <?= $subscribers_json ?>  ; // users who participate
+
+
+
+        $(function(){
+
+            usersList = $('#usersList');
+            addSubDropdown = $('#addSubDropdown');
+
+            addSubscriberButton = $('#btnAddSubscriber');
+            addSubscriberButton.attr("type", "button");
+            addSubscriberButton.click(addUser);
+
+            addSubscriberButton = $('#btnDeleteSubscriber');
+            addSubscriberButton.attr("type", "button");
+            addSubscriberButton.click(deleteUser);
+
+            displayUserList();
+            dropdownUserList();
+        });
+
+        async function addUser(){
+
+        }
+
+        async function deleteUser(id){
+
+            displayUserList();
+            try {
+                await $.post("tricount/delete_service/" + recipient, {"userId": id});
+                getUsers();
+            } catch(e) {
+                usersList.html("<tr><td>Error encountered while retrieving the users!</td></tr>");
+            }
+
+        }
+        async function getUsers() {
+
+        }
+
+        function displayUserList(){
+            let html = "";
+            for(let u of user_JSON ){
+                html += "<li>";
+                html += "displayUserList";
+
+                html += "</li>";
+            }
+            usersList.html(html);
+        }
+
+        function dropdownUserList(){
+            let html = "";
+            html += "dropdownUserList";
+
+
+            addSubDropdown.html(html);
+        }
 
     </script>
 
@@ -126,7 +141,7 @@
         <div class="edit-settingsTitle">
             <h1>Subscriptions</h1>
         </div>
-        <div class="edit-subscriberInput">
+        <div id="usersList" class="edit-subscriberInput">
             <!-- Boucle sur les souscriptions -->
             <?php foreach ($sub as $s): ?>
                 <li>
@@ -140,7 +155,7 @@
                                 <?php if ($s->can_be_delete($tricount->get_id()) && $s->getUserId() != $tricount->get_creator_id()): ?>
                                     <form action="participation/delete/<?=  $tricount->get_id() ?>" method="POST">
                                         <input name="userId" value="<?= $s->getUserId() ?>" hidden />
-                                        <button type="submit" style="background-color:transparent;">
+                                        <button id="btnDeleteSubscriber" type="submit" style="background-color:transparent;">
                                             <i class="bi bi-trash3"></i>
                                         </button>
                                     </form>
@@ -151,19 +166,21 @@
                 </li>
             <?php endforeach; ?>
         </div>
-            <!-- Formulaire d'ajout de souscripteur -->
-            <form id="addSubscriber" action="participation/add/<?= $tricount->get_id() ?>" method="post">
-                <div class="edit-selectSub">
-                    <select class="selectSub" name="names" id="names">
-                        <option value="">--Add a new subscriber--</option>
-                        <?php foreach ($users as $u): ?>
-                            <option id="subValue" value='<?= $u->getUserId() ?>'><?= $u->getFullName() ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                    <button id="btnAddSubscriber">Add</button>
+            <!-- Formulaire d'ajout de souscripteurs -->
+            <div id="addSubDropdown">
+                <form  action="participation/add/<?= $tricount->get_id() ?>" method="post">
+                    <div  class="edit-selectSub">
+                        <select class="selectSub" name="names" id="names">
+                            <option value="">--Add a new subscriber--</option>
+                            <?php foreach ($users as $u): ?>
+                                <option id="subValue" value='<?= $u->getUserId() ?>'><?= $u->getFullName() ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <button id="btnAddSubscriber">Add</button>
 
-                </div>
-            </form>
+                    </div>
+                </form>
+            </div>
             <div class="buttons_edit_tricount">
                 <div class="button-manage-repartition-template">
                     <form action="templates/templates/<?= $tricount->get_id() ?>">
@@ -184,7 +201,7 @@
             <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
             <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
             <!-- Splide -->
-            <!-- <script src="css/src/splide/splide.min.js"></script>-->
+            <script src="css/src/splide/splide.min.js"></script>
             <!-- Base Js File -->
             <script src="css/src/js/base.js"></script>
 </body>
