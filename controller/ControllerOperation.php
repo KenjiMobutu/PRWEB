@@ -154,12 +154,12 @@ class ControllerOperation extends Controller
         $errors = [];
         // TODO :       -----------------> IL FAUT GERER LE RTI. SI C'EST OPTION-DEFAULT -> METTRE ERREUR
         if (isset($_POST["refreshBtn"])) {
-            $requiredFields = ["title", "tricId", "amount", "operation_date", "initiator", "rti"];
+            $requiredFields = ["title", "tricId", "amount", "operation_date", "initiator"];
             $allFieldsExist = true;
             foreach ($requiredFields as $field) {
                 if (!array_key_exists($field, $_POST)) {
                     $allFieldsExist = false;
-                    die();
+                    Tools::abort("pouet pouet");
                 }
             }
             if ($allFieldsExist) {
