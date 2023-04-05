@@ -1,4 +1,3 @@
-<!-- //title,description,created_at,creator,id -->
 <?php
 
 class Tricounts extends Model
@@ -76,7 +75,6 @@ class Tricounts extends Model
       $result[] = new Tricounts($row["id"], $row["title"], $row["description"], $row["created_at"], $row["creator"]);
     }
     return $result;
-
   }
 
   public static function get_my_total($id)
@@ -144,7 +142,8 @@ class Tricounts extends Model
   public function update()
   {
     if (!is_null($this->id)) {
-      self::execute("UPDATE tricounts SET
+      self::execute(
+        "UPDATE tricounts SET
           title=:title,
           description=:description,
           created_at=:created_at,
@@ -159,7 +158,8 @@ class Tricounts extends Model
         )
       );
     } else {
-      self::execute("INSERT INTO
+      self::execute(
+        "INSERT INTO
           tricounts (id,title,description,
           created_at,
           creator)
@@ -180,7 +180,8 @@ class Tricounts extends Model
   }
   public function addTricount()
   {
-    self::execute("INSERT INTO
+    self::execute(
+      "INSERT INTO
           tricounts (title,description,
           created_at,
           creator)
@@ -235,7 +236,8 @@ class Tricounts extends Model
   }
   public static function list($creator)
   {
-    $query = self::execute("SELECT DISTINCT tricounts.*
+    $query = self::execute(
+      "SELECT DISTINCT tricounts.*
                               FROM tricounts
                               LEFT JOIN subscriptions
                               ON tricounts.id = subscriptions.tricount
@@ -264,7 +266,8 @@ class Tricounts extends Model
 
   public static function number_of_friends($tricountId)
   { //recupère le nb d'amis sans le créateur du tricount
-    $query = self::execute("SELECT count(*)
+    $query = self::execute(
+      "SELECT count(*)
                               FROM subscriptions s
                               where s.tricount =:tricountId
                               AND s.user NOT IN (SELECT creator FROM tricounts WHERE id = :tricountId)
@@ -275,33 +278,40 @@ class Tricounts extends Model
     return $data[0];
   }
 
-    public function get_expenses(): array|null{
-      return Operation::get_operations_by_tricount($this->get_id());
-    }
+  public function get_expenses(): array|null
+  {
+    return Operation::get_operations_by_tricount($this->get_id());
+  }
 
-    public function get_expenses_as_json(){
-      $str = "";
+  public function get_expenses_as_json()
+  {
+    $str = "";
 
-      $expenses = $this->get_expenses();
-      if(!empty($expenses)){
-        foreach($expenses as $expense){
-            $expense_id = json_encode( $expense->get_id());
-            $title = json_encode( $expense->getTitle());
-            $tricount = json_encode($this->get_id());
-            $amount = json_encode($expense->getAmount());
-            $operation_date = json_encode($expense->getOperationDate());
-            $initiator = json_encode($expense->getInitiator());
-            $created_at = json_encode($expense->getCreatedAt());
+    $expenses = $this->get_expenses();
+    if (!empty($expenses)) {
+      foreach ($expenses as $expense) {
+        $expense_id = json_encode($expense->get_id());
+        $title = json_encode($expense->getTitle());
+        $tricount = json_encode($this->get_id());
+        $amount = json_encode($expense->getAmount());
+        $operation_date = json_encode($expense->getOperationDate());
+        $initiator = json_encode($expense->getInitiator());
+        $created_at = json_encode($expense->getCreatedAt());
 
-          $str .= "{\"id\":$expense_id,\"title\":$title,\"tricount\":$tricount,\"amount\":$amount,\"operation_date\":$operation_date,\"initiator\":$initiator,\"created_at\":$created_at},";
-        }
+        $str .= "{\"id\":$expense_id,\"title\":$title,\"tricount\":$tricount,\"amount\":$amount,\"operation_date\":$operation_date,\"initiator\":$initiator,\"created_at\":$created_at},";
       }
-      
-      if($str !== "")
-        $str = substr($str,0,strlen($str)-1);
-      return "[$str]";
     }
 
+    if ($str !== "")
+      $str = substr($str, 0, strlen($str) - 1);
+    return "[$str]";
+  }
 
+  public static function get_by_user_and_title($title, $creator)
+  {
+    $query = self::execute("SELECT COUNT(*) FROM `tricounts` WHERE title = :title AND creator = :creator", array("title" => $title, "creator" => $creator));
+    $count = $query->fetchColumn();
+
+    return $count > 0;
+  }
 }
-?>

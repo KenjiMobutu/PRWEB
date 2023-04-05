@@ -1,7 +1,5 @@
 <?php
 require_once "framework/Model.php";
-//seul l'iban peut être null
-
 class User extends Model
 {
     private ?int $id;

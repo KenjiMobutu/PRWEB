@@ -405,7 +405,7 @@ class Operation extends Model
         return;
     }
 
-    public function validateForEdit()
+    public function validateForEdit($title)
     {
         $errors = [];
 
@@ -413,6 +413,10 @@ class Operation extends Model
             $errors[] = "Title must be at least 3 characters.";
         }
 
+        if($title !== $this->title){
+            if(!self::validateTitle($title))
+                $errors[] = "Title already exists in the database.";
+        }
         if ((isset($this->amount) && ($this->amount < 0))) {
             $errors[] = "The amount must be positive.";
         }
