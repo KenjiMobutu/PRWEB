@@ -38,33 +38,33 @@
 
             addSubscriberButton = $('#btnAddSubscriber');
             addSubscriberButton.attr("type", "button");
-            addSubscriberButton.click(addUser);
+            addSubscriberButton.click(dropdownUserList);
 
-            addSubscriberButton = $('#btnDeleteSubscriber');
-            addSubscriberButton.attr("type", "button");
-            addSubscriberButton.click(deleteUser);
+            deleteSubscriberButton = $('#btnDeleteSubscriber');
+            deleteSubscriberButton.attr("type", "button");
+            deleteSubscriberButton.click(deleteUser);
 
             displayUserList();
-            dropdownUserList();
-            getUsersForDropdownList();
+            //dropdownUserList();
+            //getUsersForDropdownList();
         });
 
-    async function addUser(){
-        // Vérifier que l'utilisateur n'est pas déjà dans la liste des souscripteurs
-        // for (let s of subscribers_json) {
-        //     if (s.id == userId) {
-        //         alert("This user is already subscribed!");
-        //         return;
-        //     }
-        // }
-        try {
-            // Ajouter l'utilisateur à la liste des souscripteurs
-            await $.post("participation/add_service/"+ tricount_id, {"userId": id});
-            getUsers();
-        } catch(e) {
-            usersList.html("<tr><td>Error encountered while retrieving the users! 1 </td></tr>");
+        async function addUser(id) {
+            try {
+                // Ajouter l'utilisateur à la liste des souscripteurs
+                await $.post("participation/add_service/" + tricount_id, {"names": id});
+                console.log( "userToAddID --> "+id);
+                const userToAdd = user_JSON.find(function (el) {
+                    return el.id == id;
+                });
+                console.log( "userToAdd --> "+userToAdd);
+                subscribers_json.push(userToAdd);
+                displayUserList();
+                //dropdownUserList(); //mise à jour de la liste déroulante
+            } catch(e) {
+                usersList.html("<tr><td>Error encountered while retrieving the users!</td></tr>");
+            }
         }
-    }
 
     async function deleteUser(id){
         const idx = subscribers_json.findIndex(function (el, idx, arr) {
@@ -114,19 +114,27 @@
             }
             html += "</ul>"
             usersList.html(html);
+
         }
 
         function dropdownUserList(){
-            let html = "<select class='selectSub' name='names' id='names'>";
-            html += "<option value=''>--Add a new subscriber--</option>";
+            let html = "";
+
             for(let u of user_JSON){
-                if(u.userId != user){
-                html += "<option value='" + u.userId + "'>" + u.full_name + "</option>";
+                if(u.id != <?= $tricount->get_creator_id() ?>){
+                    html += "<option data-user-id='" + u.id + "' value='" + u.id + "'>" + u.full_name + "</option>";
+                    console.log("Le code rentre dans for !");
+                    console.log("user id dans le for: "+u.id);
                 }
             }
-            html += "</select>";
-            addSubDropdown.html(html);
-            //addSubDropdown.append("<button id='btnAddSubscriber' type='button' class='btn btn-primary ms-2'>Add</button>");
+                console.log("NAMES == " + $('#names').val());
+                const userId = $('#names').val();
+                console.log("id que je veux avoir  ---> " +userId);
+                if (userId) {
+                    addUser(userId);
+                }
+
+
         }
 
     </script>
@@ -213,14 +221,13 @@
             <div >
                 <form  action="participation/add/<?= $tricount->get_id() ?>" method="post">
                     <div  class="edit-selectSub">
-                        <select id="addSubDropdown" class="selectSub" name="names" id="names">
+                        <select class="selectSub" name="names" id="names">
                             <option value="">--Add a new subscriber--</option>
                             <?php foreach ($users as $u): ?>
                                 <option id="subValue" value='<?= $u->getUserId() ?>'><?= $u->getFullName() ?></option>
                             <?php endforeach; ?>
                         </select>
                         <button id="btnAddSubscriber">Add</button>
-
                     </div>
                 </form>
             </div>

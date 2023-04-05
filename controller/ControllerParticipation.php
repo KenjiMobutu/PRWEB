@@ -13,7 +13,7 @@ class ControllerParticipation extends Controller{
     $this->redirect('profile');
   }
 
-  public function add(){
+  public function add() : User|false{
     $user = $this->get_user_or_redirect();
     $id = null;
     $sub = [];
@@ -26,42 +26,42 @@ class ControllerParticipation extends Controller{
       $idTricount = $_GET['param1'];
       var_dump($idTricount);
       var_dump($idUser);
+
       $newSubscriber = new Participations($idTricount , $idUser );
       if($newSubscriber == NULL){
         $this->redirect("tricount","index");
       }
       $newSubscriber->add();
-      $this->redirect("tricount","edit",$idTricount);
+      $this->redirect("tricount","edit",$idTricount);die();
     }else {
       $this->redirect("tricount","index");
     }
-
+    return false;
   }
   public function add_service() : void {
-    header('Content-Type: application/json');
+    
 
-    $data = json_decode(file_get_contents('php://input'), true);
+    $tricount_id = $_GET["param1"] ?? null;
+    $user_id = $_POST['names'] ?? null;
 
-    if(isset($data['id']) && isset($data['userId'])) {
-        $tricount_id = $data['id'];
-        $user_id = $data['userId'];
-
-        $tricount = Tricounts::get_by_id($tricount_id);
-        if(!$tricount) {
-            echo json_encode(['success' => false, 'message' => 'Tricount not found']);
-            return;
-        }
-
-        $participation = new Participations($tricount_id, $user_id);
-        if(!$participation->add()) {
-            echo json_encode(['success' => false, 'message' => 'Unable to add user']);
-            return;
-        }
-
-        echo json_encode(['success' => true]);
-    } else {
+    if (!$tricount_id || !$user_id) {
         echo json_encode(['success' => false, 'message' => 'Missing parameters']);
+        return;
     }
+
+    $tricount = Tricounts::get_by_id($tricount_id);
+    if (!$tricount) {
+        echo json_encode(['success' => false, 'message' => 'Tricount not found']);
+        return;
+    }
+
+    $participation = new Participations($tricount_id, $user_id);
+    if (!$participation->add()) {
+        echo json_encode(['success' => false, 'message' => 'Failed to add participation']);
+        return;
+    }
+
+    echo json_encode(['success' => true]);
 }
   public function delete_service() : void {
     $user = $this->delete();
