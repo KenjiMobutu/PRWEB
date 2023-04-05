@@ -67,45 +67,24 @@ class Operation extends Model
         return $this->id;
     }
 
-    public static function get_tricount_by_id(int $id): ?Operation
+    public function isFirstOperation($tricountId)
     {
-        $query = self::execute("SELECT * FROM operations where id = :id", ["id" => $id]);
-        $data = $query->fetch();
-        if ($query->rowCount() == 0) {
-            return null;
-        } else {
-            return new Operation(
-                $data["title"],
-                $data["tricount"],
-                $data["amount"],
-                $data["operation_date"],
-                $data["initiator"],
-                $data["created_at"],
-                $data["id"]
-            );
-        }
+      $query = self::execute("SELECT * FROM operations WHERE tricount = :id ORDER BY id ASC LIMIT 1", array("id" => $tricountId));
+      $row = $query->fetch();
+      return ($row && $row["id"] === $this->get_id());
     }
-
-    public static function getUsersFromTricount($tricountId)
+  
+    public function isLastOperation($tricountId)
     {
-        $query = self::execute("SELECT user FROM subscriptions JOIN tricounts t on t.id = subscriptions.tricount
-            WHERE tricount = :tricountId", array("tricountId" => $tricountId));
-        $data = $query->fetch();
-        return $data;
-    }
-
-
-    public static function getOperationId($tricountId)
-    {
-        $query = self::execute("SELECT * FROM operations where tricount = :tricountId", array("tricountId" => $tricountId));
-        $data = $query->fetch();
-        return $data;
+      $query = self::execute("SELECT * FROM operations WHERE tricount = :id ORDER BY id DESC LIMIT 1", array("id" => $tricountId));
+      $row = $query->fetch();
+      return ($row && $row["id"] === $this->get_id());
     }
 
     public static function get_operations_by_tricount($id)
     {
         $result = [];
-        $query = self::execute("SELECT * FROM operations WHERE tricount = :id ORDER BY amount ASC", array("id" => $id));
+        $query = self::execute("SELECT * FROM operations WHERE tricount = :id ORDER BY id ASC", array("id" => $id));
         $data = $query->fetchAll();
         if ($query->rowCount() == 0) {
             return null;
@@ -127,29 +106,6 @@ class Operation extends Model
         return $result;
     }
 
-    public static function getOperationByUserID(int $initiator): array
-    {
-        $result = [];
-        $query = self::execute("SELECT * FROM operations where initiator = :initiator", array("initiator" => $initiator));
-        $data = $query->fetchAll();
-        if ($query->rowCount() == 0) {
-            return $result;
-        } else {
-            foreach ($data as $row) {
-                $result[] = new Operation(
-                    $row["title"],
-                    $row["tricount"],
-                    $row["amount"],
-                    date_format($row["operation_date"], "Y-m-d"),
-                    $row["initiator"],
-                    $row["created_at"],
-                    $row["id"]
-                );
-            }
-
-        }
-        return $result;
-    }
 
     public static function getNbOfOperations($id)
     {
@@ -176,8 +132,6 @@ class Operation extends Model
 
     public static function getOperationByOperationId($id)
     {
-        // database connection
-
         $query = self::execute("SELECT * FROM operations WHERE id =:id", array("id" => $id));
         $data = $query->fetchAll();
         if ($query->rowCount() == 0) {
@@ -251,17 +205,6 @@ class Operation extends Model
             $created_at,
             $data["id"]
         );
-    }
-    public function is_in_operation($operationId)
-    {
-        $query = self::execute(
-            "SELECT user FROM repartitions WHERE operation = :id ",
-            array("id" => $this->id)
-        );
-        if ($query->rowCount() == 0) {
-            return false;
-        }
-        return $query;
     }
 
     public static function total_by_user($userId, $operationId)
@@ -367,10 +310,6 @@ class Operation extends Model
 
     public static function deleteRepartition($idOperation)
     {
-        //     DELETE
-        // FROM repartition_template_items
-        // where repartition_template=:repartition_template",
-        // array("repartition_template"=>$repartition_template)
         $query = self::execute("DELETE
                         FROM repartitions where operation =:operation",
             array(
@@ -507,22 +446,6 @@ class Operation extends Model
         $data[] = $query1->fetchAll();
         return $data;
     }
-    public static function delete_by_tricount($id)
-    {
-        $query = self::execute("DELETE from `operations` where tricount=:id", array("id" => $id));
-        if ($query->rowCount() == 0)
-            return false;
-        else
-            return $query;
-    }
-
-    private function validateDate(string $operation_date): bool
-    {
-        if (preg_match("/^(\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/", $operation_date)) {
-            return true;
-        }
-        return false;
-    }
 
     public function setOperationId()
     {
@@ -537,29 +460,6 @@ class Operation extends Model
     public function setId($id)
     {
         $this->id = $id;
-    }
-
-    public static function byTricountId($tricount)
-    {
-        $query = self::execute("SELECT o.*
-                                FROM `operations` o
-                                Where o.tricount =:id ",
-            array("id" => $tricount)
-        );
-        $data = $query->fetchAll();
-        $operation = [];
-        foreach ($data as $row) {
-            $operation[] = new Operation(
-                $row['id'],
-                $row['title'],
-                $row['tricount'],
-                $row['amount'],
-                $row['operation_date'],
-                $row['initiator'],
-                $row['created_at']
-            );
-        }
-        return $operation;
     }
 
     public function get_previous_operation_by_tricount($id, $tricount)

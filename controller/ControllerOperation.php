@@ -33,7 +33,6 @@ class ControllerOperation extends Controller
             $tricount = Tricounts::get_by_id($_GET['param1']);
             $tricountID = $tricount->get_id();
             $expenses_json = $tricount->get_expenses_as_json();
-            $operations_of_tricount = Operation::get_operations_by_tricount($tricountID);
             $participants = Tricounts::number_of_friends($tricountID);
             $amounts[] = Operation::get_operations_by_tricount($tricountID);
             $nbOperations = Operation::getNbOfOperations($tricountID);
@@ -152,7 +151,6 @@ class ControllerOperation extends Controller
     public function refreshBtnHandler($user)
     {
         $errors = [];
-    
         if (isset($_POST["refreshBtn"])) {
             if ($this->validateRequiredFields()) {
                 $action = $_GET['action'];
@@ -171,7 +169,6 @@ class ControllerOperation extends Controller
                 $listUsers = Participations::get_by_tricount($tricId);
                 $items = Repartition_template_items::get_user_by_repartition($templateId);
                 $info = $this->getInfoFromPost();
-    
                 $rti = Repartition_template_items::get_by_user_and_tricount($userId, $tricId);
                 
                 if ($template === null) {
@@ -196,7 +193,7 @@ class ControllerOperation extends Controller
             "action" => $action
         ]);
     }
-    
+    //REFRESH HANDLER FUNCTIONS
     private function validateRequiredFields()
     {
         $requiredFields = ["title", "tricId", "amount", "operation_date", "initiator", "rti"];
@@ -230,6 +227,7 @@ class ControllerOperation extends Controller
         return [$title, $amount, $operation_date, $initiator];
     }
     
+    //REFRESH HANDLER FUNCTIONS
 
 
     public function saveOperation($user)
@@ -281,8 +279,8 @@ class ControllerOperation extends Controller
         }
         if(empty($errors)){ // check si l'opération est correcte.
             $operation->insert();
-            if(isset($_POST['save_template']) && $_POST['tempalte_name'] !== ""){
-                $this->save_Template($operation,$checkedUsers,$weights, $_POST['tempalte_name']);
+            if(isset($_POST['save_template']) && $_POST['template_name'] !== ""){
+                $this->save_Template($operation,$checkedUsers,$weights, $_POST['template_name']);
             }
             if($this->saveOperationRepartition($operation,$checkedUsers,$weights)){
                 $this->redirect("operation", "expenses", $_POST["tricId"]);

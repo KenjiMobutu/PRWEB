@@ -33,45 +33,47 @@
                         <?php endforeach; ?>
                 </ul>
             </div>
-            <?php if (isset($operation)): ?>
-                <input type="hidden" id="operationId" name="operationId" value="<?php echo $operation->get_id() ?>">
+            <?php if (isset($operation) || isset($operationId)): ?>
+                <input type="hidden" id="operationId" name="operationId"
+                    value="<?php if (isset($operation))
+                        echo $operation->get_id();
+                    else if (isset($operationId))
+                        echo $operationId; ?>">
             <?php endif; ?>
             <input required class="addExp" placeholder="Title" type="text" id="title" value="<?php
-            if (isset($operation))
-                echo $operation->getTitle();
-            else if (isset($info))
+            if (isset($info))
                 echo $info[0];
+            else if (isset($operation))
+                echo $operation->getTitle();
             else
                 echo ''; ?>" name="title">
             <input type="hidden" id="tricId" name="tricId" value="<?php echo $tricount->get_id() ?>">
             <br>
             <label for="operation_amount">Amount</label>
             <input required class="addExp" placeholder="Amount (EUR)" value="<?php
-            if (isset($operation))
-                echo $operation->getAmount();
-            else if (isset($info))
+            if (isset($info))
                 echo $info[1];
+            else if (isset($operation))
+                echo $operation->getAmount();
             else
                 echo ''; ?>" type="number" id="amount" name="amount" oninput="calculateAmounts()">
             <br>
             <label for="operation_date">Date</label>
             <input class="addExp" type="date" id="operation_date" value="<?php
-            if (isset($operation))
-                echo $operation->getOperationDate();
-            else if (isset($info))
+            if (isset($info))
                 echo $info[2];
+            else if (isset($operation))
+                echo $operation->getOperationDate();
             else
                 echo date('Y-m-d'); ?>" name="operation_date">
-
             <br>
-
             <label for="paid_by">Paid By</label>
             <select id="initiator" name="initiator">
                 <?php
-                if (isset($operation)) {
-                    echo "<option style='color: black;' selected value='{$operation->getInitiatorId()}'>{$operation->getInitiator()}</option>";
-                } else if (isset($init)) {
+                if (isset($init)) {
                     echo "<option style='color: black;' selected value='{$init->getUserId()}'>{$init->getFullName()}</option>";
+                } else if (isset($operation)) {
+                    echo "<option style='color: black;' selected value='{$operation->getInitiatorId()}'>{$operation->getInitiator()}</option>";
                 }
                 ?>
                 <?php foreach ($users as $user): ?>
@@ -122,10 +124,11 @@
                     if (!empty($templateId) && isset($template) && $usr->is_in_Items($templateId, $usr->user)) {
                         $isChecked = true;
                     }
-                    if (isset($_POST['c']) && is_array($_POST['c']) && in_array($usr->get_user(), $_POST['c'])) {
-                        // Keep the checkbox checked in case of error
-                        $isChecked = true;
-                    }
+                    //$$$$$$$$$$$$$$$ Keep the checkbox checked in case of error but if weight is null, the user is still checkedin the next refresh :(
+                    // if (isset($_POST['c']) && is_array($_POST['c']) && in_array($usr->get_user(), $_POST['c'])) {
+                    //     
+                    //     $isChecked = true;
+                    // }
                     ?>
                     <input type="checkbox" name="c[<?= $usr->get_user() ?>]" value="<?= $usr->get_user() ?>"
                         id="<?php echo $usr->getUserInfo() ?>" <?php echo $isChecked ? "checked" : ""; ?>>

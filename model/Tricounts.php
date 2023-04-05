@@ -309,10 +309,10 @@ class Tricounts extends Model
 
   public static function is_title_unique_for_creator($title, $creator)
   {
-      $query = self::execute("SELECT COUNT(*) FROM `tricounts` WHERE title = :title AND creator = :creator", array("title" => $title, "creator" => $creator));
-      $count = $query->fetchColumn();
-  
-      return $count == 0;
+    $query = self::execute("SELECT COUNT(*) FROM `tricounts` WHERE title = :title AND creator = :creator", array("title" => $title, "creator" => $creator));
+    $count = $query->fetchColumn();
+
+    return $count == 0;
   }
-  
+
 }
