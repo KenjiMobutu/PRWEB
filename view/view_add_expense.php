@@ -96,84 +96,62 @@
                     $rtiId = $rt["id"] ?>
                     <?php if (isset($template)):
                         if ($title !== $template->get_title()): ?>
-                            <option name="option_template" style="color: black;" value="<?php echo $rtiId ?>"><?php echo $title ?></option>
+                            <option name="option_template" style="color: black;" value="<?php echo $rtiId ?>"><?php echo $title ?>
+                            </option>
                         <?php endif; ?>
 
                     <?php else: ?>
-                        <option name="option_template" style="color: black;" value="<?php echo $rtiId ?>"><?php echo $title ?></option>
+                        <option name="option_template" style="color: black;" value="<?php echo $rtiId ?>"><?php echo $title ?>
+                        </option>
                     <?php endif; ?>
-
                 <?php endforeach; ?>
             </select>
             <label for="who">For whom? (select at least one)</label>
-            <?php
-            if (isset($refreshBtn)) {
-                foreach ($ListUsers as $usr) {
-                    ?>
-                    <div class="checks">
-                        <div class="check-input">
-                            <?php
-                            $isChecked = isset($template) && $usr->is_in_Items($templateId, $usr->user);
-                            ?>
-                            <input type="checkbox" name="c[<?= $usr->get_user(); ?>]" value="<?= $usr->get_user() ?>"
-                                id="userIdTemp" <?= $isChecked ? "checked" : ""; ?>>
-
-                            <span class="text-input" style="color: yellow; font-weight: bold;">
-                                <?php echo $usr->getUserInfo() ?>
-                            </span>
-
-                            <fieldset>
-                                <legend class="legend" style="color: yellow; font-weight: bold;">Weight</legend>
-                                <input type="number" name="w[<?= $usr->get_user(); ?>]" id="userWeight" min="0" max="50" <?php if (isset($template)) {
-                                      if ($usr->is_in_Items($template->get_id())) {
-                                          echo "value=" . $usr->get_weight_by_user($template->get_id());
-                                      }
-
-                                  } else
-                                      echo "value=0"; ?>>
-                            </fieldset>
-
-                        </div>
-                    </div>
-                    <?php
-                }
-            } else {
-                foreach ($users as $usr) {
-                    ?>
-                    <?php $repartitions_map = [];
-                    if(isset($repartitions)){
-                        foreach ($repartitions as $repartition) {
-                            $repartitions_map[$repartition->user] = $repartition;
-                        }
+            <?php foreach ($users as $usr) {
+                $repartitions_map = [];
+                if (!empty($repartitions)) {
+                    foreach ($repartitions as $repartition) {
+                        $repartitions_map[$repartition->user] = $repartition;
                     }
-                    
-                    ?>
-                    <div class="check-input">
-                        <input type="checkbox" name="c[<?= $usr->get_user() ?>]"
-                            value="<?= isset($template) ? 0 : $usr->get_user(); ?>" id="<?php echo $usr->getUserInfo() ?>" <?php if (!isset($operation)) {
-                                         echo "not-checked";
-                                     } elseif (isset($repartitions_map[$usr->get_user()])) {
-                                         echo "checked";
-                                     } else {
-                                         echo "not-checked";
-                                     } ?>>
-            <span class="text-input" style="color: yellow; font-weight: bold;">
-                            <?php echo $usr->getUserInfo() ?>
-                        </span>
-                        <fieldset>
-                            <legend class="legend" style="color: yellow; font-weight: bold;">Weight</legend>
-                            <input type="number" name="w[<?= $usr->get_user(); ?>]_weight" id="userWeight" min="0" max="50"
-                                value="<?php echo isset($repartitions_map[$usr->get_user()]) ? $repartitions_map[$usr->get_user()]->weight : ''; ?>" onchange="calculateAmounts()">
-                        </fieldset>
-                        <input type="number" id="<?= $usr->get_user() ?>_amount" value="<?php echo $usr->get_dette($operation_data->get_id(), $usr)?>" onchange="calculateAmounts()" hidden>
-                        <fieldset> 
-                            <legend>Amount</legend>
-                            <input type="number" id="<?= $usr->get_user() ?>_dette" value="<?php echo $usr->get_dette($operation_data->get_id(), $usr)?>"onchange="calculateAmounts()">
-                        </fieldset>
-                    </div>
-                    <?php
                 }
-            } ?>
+                ?>
+                <div class="check-input">
+                    <?php
+                    $isChecked = isset($repartitions_map[$usr->get_user()]);
+                    if (!empty($templateId) && isset($template) && $usr->is_in_Items($templateId, $usr->user)) {
+                        $isChecked = true;
+                    }
+                    ?>
+                    <input type="checkbox" name="c[<?= $usr->get_user() ?>]" value="<?= $usr->get_user() ?>"
+                        id="<?php echo $usr->getUserInfo() ?>" <?php echo $isChecked ? "checked" : ""; ?>>
+                    <span class="text-input" style="color: yellow; font-weight: bold;">
+                        <?php echo $usr->getUserInfo() ?>
+                    </span>
+                    <fieldset>
+                        <legend class="legend" style="color: yellow; font-weight: bold;">Weight</legend>
+                        <input type="number" name="w[<?= $usr->get_user(); ?>]" id="userWeight" min="0" max="50" <?php
+                          if (isset($template)) {
+                              if ($usr->is_in_Items($template->get_id(), $usr->user)) {
+                                  echo "value=" . $usr->get_weight_by_user($template->get_id());
+                              }
+                          } else {
+                              echo "value=" . (isset($repartitions_map[$usr->get_user()]) ? $repartitions_map[$usr->get_user()]->weight : '');
+                          }
+                          ?>>
+                    </fieldset>
+                    <fieldset>
+                        <legend class="legend" style="color: yellow; font-weight: bold;">Amount</legend>
+                        <?php $amount = $usr->get_dette(isset($operation) ? $operation->get_id() : null, $usr); ?>
+                        <?php if ($amount != 0): ?>
+                            <input type="number" id="<?= $usr->get_user() ?>_amount" value="<?php echo $amount ?>"
+                                onchange="calculateAmounts()" hidden>
+                        <?php else: ?>
+                            <input type="number" id="<?= $usr->get_user() ?>_amount" value="" onchange="calculateAmounts()">
+                        <?php endif; ?>
+
+                    </fieldset>
+                </div>
+            <?php } ?>
 
             <p>Add a new repartition template</p>
             <div class="save-template">
@@ -185,7 +163,6 @@
                     <input type="text" name="template_name" id="savename" placeholder="Name">
                 </fieldset>
             </div>
-
             <input type="submit" value="<?php echo 'Submit'; ?>">
         </form>
         <?php

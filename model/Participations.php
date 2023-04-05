@@ -35,9 +35,14 @@ class Participations extends Model
         return true;
     }
 
-    public function get_dette($operation): float
+    public function get_dette($operation): int
     {
-        return Operation::get_dette_by_operation($operation, $this->user);
+        if ($operation) {
+            $dette = Operation::get_dette_by_operation($operation, $this->user);
+            return (int) ($dette ?? 0); // return 0 if $dette is null
+        } else {
+            return 0;
+        }
     }
 
 

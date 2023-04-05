@@ -63,7 +63,7 @@ class Repartition_template_items extends Model
     );
     $data = $query->fetch(); //un seul resultat max
     if ($query->rowCount() == 0) {
-      return null;
+      return 0;
     } else
       return ($data["weight"]);
   }
@@ -79,7 +79,7 @@ class Repartition_template_items extends Model
     );
     $data = $query->fetch();
     if ($query->rowCount() == 0) {
-      return null;
+      return 0;
     } else
       return $data[0]; //ou return $data["SUM(weight)"]
   }
