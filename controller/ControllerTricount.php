@@ -80,6 +80,7 @@ class ControllerTricount extends Controller{
         $this->redirect('tricount', "index");
       }
       $tricount = Tricounts::get_by_id($id);
+
       //$subscriptions = Participations::by_tricount($tricount->get_id());
       $subscriptions = $tricount->subscribers($tricount->get_id());
       $subscribers_json = $tricount->subscribers_as_json($tricount->get_id());
@@ -87,12 +88,14 @@ class ControllerTricount extends Controller{
       $users_json = $tricount->not_participate_as_json($tricount->get_id());
       foreach($subscriptions as $s){
         $sub[] = User::get_by_id($s->getUserId());
+        //$users_deletable = $tricount->users_deletable($tricount, $s->getUserId());
+        $users_deletable_json = $tricount->users_deletable_as_json($tricount->get_id(), $s->getUserId());
       }
     }else {
       $this->redirect("tricount","index");
     }
 
-    (new View("edit_tricount"))->show(array("user" => $user,"tricount" => $tricount,"subscriptions" =>$subscriptions, "sub" => $sub,"users" => $users,"users_json"=>$users_json,"subscribers_json"=>$subscribers_json,"errors"=>$errors));
+    (new View("edit_tricount"))->show(array("user" => $user,"tricount" => $tricount,"subscriptions" =>$subscriptions, "sub" => $sub,"users" => $users,"users_json"=>$users_json,"subscribers_json"=>$subscribers_json,"users_deletable_json"=>$users_deletable_json,"errors"=>$errors));
   }
 
   public function get_visible_users_service() : void {

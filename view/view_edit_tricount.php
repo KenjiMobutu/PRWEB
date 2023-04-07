@@ -26,10 +26,10 @@
         let addSubDropdown;
 
         const tricount_id = "<?=  $tricount->get_id() ?>";
-        const user_JSON = <?= $users_json ?>; //users who not participate
-        const subscribers_json = <?= $subscribers_json ?>  ; // users who participate
 
-
+        let users_deletable_json = <?= $users_deletable_json?>;// users who participate but not deletable
+        let user_JSON = <?= $users_json ?>; //users who not participate
+        let subscribers_json = <?= $subscribers_json ?>  ; // users who participate
 
         $(function(){
 
@@ -40,59 +40,56 @@
             addSubscriberButton.attr("type", "button");
             addSubscriberButton.click(dropdownUserList);
 
-            deleteSubscriberButton = $('#btnDeleteSubscriber');
-            deleteSubscriberButton.attr("type", "button");
-            deleteSubscriberButton.click(deleteUser);
+            // deleteSubscriberButton = $('#btnDeleteSubscriber');
+            // deleteSubscriberButton.attr("type", "button");
+            // deleteSubscriberButton.click(deleteUser);
 
             displayUserList();
-            //dropdownUserList();
-            //getUsersForDropdownList();
         });
 
         async function addUser(id) {
             try {
                 // Ajouter l'utilisateur à la liste des souscripteurs
-                await $.post("participation/add_service/" + tricount_id, {"names": id});
+
                 console.log( "userToAddID --> "+id);
+                console.log( "tricount_id --> "+tricount_id);
                 const userToAdd = user_JSON.find(function (el) {
                     return el.id == id;
                 });
                 console.log( "userToAdd --> "+userToAdd);
                 subscribers_json.push(userToAdd);
+                user_JSON = user_JSON.filter(function (el) {
+                    return el.id != id;
+                });
+                await $.post("participation/add_service/" + tricount_id, {"names": id});
                 displayUserList();
-                //dropdownUserList(); //mise à jour de la liste déroulante
+                dropdownUserList();
             } catch(e) {
                 usersList.html("<tr><td>Error encountered while retrieving the users!</td></tr>");
             }
         }
 
-    async function deleteUser(id){
-        const idx = subscribers_json.findIndex(function (el, idx, arr) {
-            return el.id === id;
-        });
-        subscribers_json.splice(idx, 1);
-        displayUserList();
-
-        try {
-            await $.post("participation/delete_service/" + tricount_id, {"userId": id});
-            //await getUsersForDropdownList();
-            //dropdownUserList();
-        } catch(e) {
-            usersList.html("<tr><td>Error encountered while retrieving the users! 2 </td></tr>");
-        }
-    }
-        async function getUsersForDropdownList() {
+        async function deleteUser(id){
+            const idx = subscribers_json.findIndex(u => u.id === id);
+            subscribers_json.splice(idx, 1);
+            const userToDelete = user_JSON.find(u => u.id == id);
+            if (userToDelete) {
+                user_JSON.push(userToDelete);
+            }
+            displayUserList();
             try {
-                user_JSON = await $.getJSON("participation/get_visible_users_service/" + tricount_id);
-                dropdownUserList();
+                await $.post("participation/delete_service/" + tricount_id, {"userId": id});
             } catch(e) {
-                usersList.html("<tr><td>Error encountered while retrieving the users! 3</td></tr>");
+                $('#usersList').html("<tr><td>Error encountered while retrieving the users!</td></tr>");
             }
         }
 
         function displayUserList(){
             let html = "<ul class='edit-subscriberInput'>";
+
             for(let u of subscribers_json){
+                //let canDelete = u.can_be_delete(tricount_id);
+                const userExists = users_deletable_json.find(user => user.id === u.id);
                 html += "<li>";
                 html += "<div class='infos_tricount_edit'>";
                 html += "<div class='name_tricount_edit'>";
@@ -101,7 +98,7 @@
                 }else{
                     html += "<input type='text' name='name' value='"+u.full_name+"' disabled/>";
                 }
-                if(u.id !== <?= $tricount->get_creator_id() ?>){
+                if(u.id !== <?= $tricount->get_creator_id()?> ){
                     html += "<div class='trash_edit_tricount'>";
                     html += "<button class='btnDeleteSubscriber' onclick='deleteUser("+u.id+")' style='background-color:transparent;'>";
                     html += "<i class='bi bi-trash3'></i>";
@@ -114,29 +111,29 @@
             }
             html += "</ul>"
             usersList.html(html);
-
         }
 
         function dropdownUserList(){
-            let html = "";
+            const addSubDropdown = $('#addSubDropdown');
+            const names = $('#names');
 
+            let html = "";
             for(let u of user_JSON){
                 if(u.id != <?= $tricount->get_creator_id() ?>){
                     html += "<option data-user-id='" + u.id + "' value='" + u.id + "'>" + u.full_name + "</option>";
-                    console.log("Le code rentre dans for !");
-                    console.log("user id dans le for: "+u.id);
+                    console.debug("Le code rentre dans for !");
+                    console.debug("user id dans le for: "+u.id);
                 }
             }
-                console.log("NAMES == " + $('#names').val());
-                const userId = $('#names').val();
-                console.log("id que je veux avoir  ---> " +userId);
-                if (userId) {
-                    addUser(userId);
-                }
+            addSubDropdown.html(html);
 
-
+            console.debug("NAMES == " + names.val());
+            let userId = names.val();
+            console.debug("id que je veux avoir  ---> " + userId);
+            if (userId) {
+                addUser(userId);
+            }
         }
-
     </script>
 
     <!-- CSS only -->

@@ -39,30 +39,9 @@ class ControllerParticipation extends Controller{
     return false;
   }
   public function add_service() : void {
-    
-
-    $tricount_id = $_GET["param1"] ?? null;
-    $user_id = $_POST['names'] ?? null;
-
-    if (!$tricount_id || !$user_id) {
-        echo json_encode(['success' => false, 'message' => 'Missing parameters']);
-        return;
-    }
-
-    $tricount = Tricounts::get_by_id($tricount_id);
-    if (!$tricount) {
-        echo json_encode(['success' => false, 'message' => 'Tricount not found']);
-        return;
-    }
-
-    $participation = new Participations($tricount_id, $user_id);
-    if (!$participation->add()) {
-        echo json_encode(['success' => false, 'message' => 'Failed to add participation']);
-        return;
-    }
-
-    echo json_encode(['success' => true]);
-}
+    $user = $this->add();
+    echo $user ? "true" : "false";
+  }
   public function delete_service() : void {
     $user = $this->delete();
     echo $user ? "true" : "false";
@@ -84,15 +63,15 @@ class ControllerParticipation extends Controller{
     return false;
   }
 
-  public function get_visible_users_service() : void {
-
-    if(isset($_GET["param1"]) && $_GET["param1"]!=""){
-        var_dump($_GET["param1"]);
+  public function get_visible_users_service(): void {
+    if (isset($_GET["param1"]) && !empty($_GET["param1"])) {
         $id = $_GET['param1'];
         $tricount = Tricounts::get_by_id($id);
         $users_json = $tricount->not_participate_as_json($id);
+        echo $users_json;
+    } else {
+        echo json_encode(array("error" => "ID is not defined."));
     }
-    echo $users_json;
   }
 
 
