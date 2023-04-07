@@ -20,111 +20,132 @@
 
     <script>
 
-let addSubscriberButton;
-let deleteSubscriberButton;
-let usersList;
-let addSubDropdown;
+        let addSubscriberButton;
+        let deleteSubscriberButton;
+        let usersList;
+        let addSubDropdown;
+        let creator = "<?= $tricount->get_creator_id() ?>";
 
-const tricount_id = "<?= $tricount->get_id() ?>";
+        const tricount_id = "<?= $tricount->get_id() ?>";
 
-let users_deletable_json = <?= $users_deletable_json?>;// users who participate but not deletable
-let user_JSON = <?= $users_json ?>; //users who not participate
-let subscribers_json = <?= $subscribers_json ?>; // users who participate
-let addingUser = false;
+        let users_deletable_json = <?= $users_deletable_json?>;// users who participate but not deletable
+        let user_JSON = <?= $users_json ?>; //users who not participate
+        let subscribers_json = <?= $subscribers_json ?>; // users who participate
+        let addingUser = false;
 
-$(function() {
-    usersList = $('#usersList');
-    addSubDropdown = $('#addSubDropdown');
-    addSubscriberButton = $('#btnAddSubscriber');
-    addSubscriberButton.attr("type", "button");
-    //addSubscriberButton.click(dropdownUserList);
-    displayUserList();
-    $('#subForm').hide();
-});
-
-async function addUser() {
-    try {
-        const id = $('#addSubDropdown option:selected').data('user-id');
-        // Ajouter l'utilisateur à la liste des souscripteurs
-        console.log("userToAddID --> " + id);
-        console.log("tricount_id --> " + tricount_id);
-        const userToAdd = user_JSON.find(function(el) {
-            return el.id == id;
+        $(function() {
+            usersList = $('#usersList');
+            addSubDropdown = $('#addSubDropdown');
+            addSubscriberButton = $('#btnAddSubscriber');
+            addSubscriberButton.attr("type", "button");
+            //addSubscriberButton.click(dropdownUserList);
+            displayUserList();
+            $('#subForm').hide();
         });
-        console.log("userToAdd --> " + userToAdd);
-        subscribers_json.push(userToAdd);
-        user_JSON = user_JSON.filter(function(el) {
-            return el.id != id;
-        });
-        await $.post("participation/add_service/" + tricount_id, {"names": id});
-        displayUserList();
-        //dropdownUserList(); // mettre à jour la liste déroulante des utilisateurs après l'ajout
-    } catch(e) {
-        usersList.html("<tr><td>Error encountered while retrieving the users!</td></tr>");
-    }
-}
 
-async function deleteUser(id) {
-    const userToDelete = subscribers_json.find(u => u.id == id);
-    const idx = subscribers_json.findIndex(u => u.id === id);
-    subscribers_json.splice(idx, 1);
-    console.log(userToDelete);
-    if (userToDelete) {
-        user_JSON.push(userToDelete);
-    }
-    displayUserList();
-    try {
-        await $.post("participation/delete_service/" + tricount_id, {"userId": id});
-    } catch(e) {
-        $('#usersList').html("<tr><td>Error encountered while retrieving the users!</td></tr>");
-    }
-}
-
-function displayUserList(){
-    let html = "<ul class='edit-subscriberInput'>";
-
-    for(let u of subscribers_json){
-        const userExists = users_deletable_json.find(user => user.id === u.id);
-        html += "<li>";
-        html += "<div class='infos_tricount_edit'>";
-        html += "<div class='name_tricount_edit'>";
-        if(u.id == <?= $tricount->get_creator_id() ?>){
-            html += "<input type='text' name='name' value='"+u.full_name+" (creator)' disabled/>";
-        }else{
-            html += "<input type='text' name='name' value='"+u.full_name+"' disabled/>";
+        async function addUser() {
+        try {
+            const id = $('#addSubDropdown option:selected').data('user-id');
+            const userToAdd = user_JSON.find(function(el) {
+                return el.id == id;
+            });
+            if (subscribers_json.some(sub => sub.id === id)) {
+                alert("User already subscribed!");
+            } else {
+                subscribers_json.push(userToAdd);
+                user_JSON = user_JSON.filter(function(el) {
+                    return el.id != id;
+                });
+                await $.post("participation/add_service/" + tricount_id, {"names": id});
+                displayUserList();
+            }
+        } catch(e) {
+            usersList.html("<tr><td>Error encountered while retrieving the users!</td></tr>");
         }
-        if(u.id !== <?= $tricount->get_creator_id()?> ){
-            html += "<div class='trash_edit_tricount'>";
-            html += "<button class='btnDeleteSubscriber' onclick='deleteUser("+u.id+")' style='background-color:transparent;'>";
-            html += "<i class='bi bi-trash3'></i>";
-            html += "</button>";
+    }
+
+        async function deleteUser(id) {
+            const userToDelete = subscribers_json.find(u => u.id == id);
+            const idx = subscribers_json.findIndex(u => u.id === id);
+            subscribers_json.splice(idx, 1);
+            console.log(userToDelete);
+            if (userToDelete) {
+                user_JSON.push(userToDelete);
+            }
+
+            displayUserList();
+            try {
+                await $.post("participation/delete_service/" + tricount_id, {"userId": id});
+            } catch(e) {
+                $('#usersList').html("<tr><td>Error encountered while retrieving the users!</td></tr>");
+            }
+        }
+
+        function displayUserList(){
+            const sortedSubscribers = sortUsers(subscribers_json);
+
+            let html = "<ul class='edit-subscriberInput'>";
+            for(let u of sortedSubscribers){
+                const isDeletable = users_deletable_json.some(del => del.id === u.id);
+
+                html += "<li>";
+                html += "<div class='infos_tricount_edit'>";
+                html += "<div class='name_tricount_edit'>";
+                if(u.id == <?= $tricount->get_creator_id() ?>){
+                html += "<input type='text' name='name' value='"+u.full_name+" (creator)' disabled/>";
+                }else{
+                html += "<input type='text' name='name' value='"+u.full_name+"' disabled/>";
+                }
+                if(u.id !== <?= $tricount->get_creator_id() ?>){
+                html += "<div class='trash_edit_tricount'>";
+                html += "<button class='btnDeleteSubscriber' onclick='deleteUser("+u.id+")' style='background-color:transparent;'>";
+                html += "<i class='bi bi-trash3'></i>";
+                html += "</button>";
+                html += "</div>";
+                }
+                html += "</div>";
+                html += "</div>";
+                html += "</li>";
+            }
+            html += "</ul>"
+            html += "<div class='add-subscriber-container'>";
+            html += "<select id='addSubDropdown' data-id='addSubDropdown'>";
+            html += "<option selected disabled>--- Add user to tricount ---</option>";
+
+            for(let u of user_JSON){
+                if(u.id != <?= $tricount->get_creator_id() ?>){
+                const isSubscriber = subscribers_json.some(sub => sub.id === u.id);
+                const isDeletable = users_deletable_json.some(del => del.id === u.id);
+                if (!isSubscriber && isDeletable) {
+                    html += "<option data-user-id='" + u.id + "' value='" + u.id + "'>" + u.full_name + "</option>";
+                }
+                html += "<option data-user-id='" + u.id + "' value='" + u.id + "'>" + u.full_name + "</option>";
+                }
+            }
+
+            html += "</select>";
+            html += "<button class='btn btn-success' onclick='addUser()' >Add</button>";
             html += "</div>";
-        }
-        html += "</div>";
-        html += "</div>";
-        html += "</li>";
-    }
-    html += "</ul>"
-    html += "<div class='add-subscriber-container'>";
-    html += "<select id='addSubDropdown' data-id='addSubDropdown'>";
-    html += "<option selected disabled>Add user to tricount!!!!</option>";
-    for(let u of user_JSON){
-        if(u.id != <?= $tricount->get_creator_id() ?>){
-            // const isSubscriber = subscribers_json.some(sub => sub.id === u.id);
-            // const isDeletable = users_deletable_json.some(del => del.id === u.id);
-            // if (!isSubscriber && isDeletable) {
-            //     html += "<option data-user-id='" + u.id + "' value='" + u.id + "'>" + u.full_name + "</option>";
-            // }
-            html += "<option data-user-id='" + u.id + "' value='" + u.id + "'>" + u.full_name + "</option>";
+            usersList.html(html);
         }
 
-    }
 
-    html += "</select>";
-    html += "<button class='btn btn-success' onclick='addUser()' >Add</button>";
-    html += "</div>";
-    usersList.html(html);
-}
+        function sortUsers(users) {
+            const creator = users.find(function (el) {
+                return el.id == <?= $tricount->get_creator_id() ?>;
+            });
+
+            const otherUsers = users.filter(function (el) {
+                return el.id != <?= $tricount->get_creator_id() ?>;
+            });
+
+            otherUsers.sort(function (a, b) {
+                return a.full_name.localeCompare(b.full_name);
+            });
+
+            return [creator].concat(otherUsers);
+        }
+
     </script>
 
     <!-- CSS only -->

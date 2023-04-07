@@ -346,31 +346,32 @@ class Tricounts extends Model
     }
     return json_encode($table);
   }
-  public function users_deletable($tricount, $userId):  array{
-        $query = self::execute("SELECT *
-          FROM subscriptions s
-          WHERE tricount = :tricount
-          AND user = :user
-          AND user NOT IN (
-            SELECT initiator
-            FROM operations
-            WHERE tricount = :tricount
-          )
-          AND user NOT IN (
-            SELECT user
-            FROM repartitions
-            JOIN operations
-            ON repartitions.operation = operations.id
-            WHERE tricount = :tricount
-          );", array("tricount" => $tricount, "user" => $userId));
-          $data = $query->fetchAll();
-          $subscription  = array();
-    $sub = array();
+  public function users_deletable($tricount, $userId): array {
+    $query = self::execute(
+      "SELECT *
+      FROM subscriptions s
+      WHERE tricount = :tricount
+      AND user = :user
+      AND user NOT IN (
+        SELECT initiator
+        FROM operations
+        WHERE tricount = :tricount
+      )
+      AND user NOT IN (
+        SELECT user
+        FROM repartitions
+        JOIN operations
+        ON repartitions.operation = operations.id
+        WHERE tricount = :tricount
+      );",
+      array("tricount" => $tricount, "user" => $userId)
+    );
+    $data = $query->fetchAll();
+    $subscription = array();
 
     foreach ($data as $row) {
       $subscription[] = User::get_by_id($row["user"]);
     }
-
 
     return $subscription;
   }
@@ -389,6 +390,36 @@ class Tricounts extends Model
     }
     return json_encode($table);
   }
+
+  // public function users_deletable_as_json($tricount, $userId): string {
+  //   $query = self::execute(
+  //     "SELECT *
+  //     FROM subscriptions s
+  //     WHERE tricount = :tricount
+  //     AND user = :user
+  //     AND user NOT IN (
+  //       SELECT initiator
+  //       FROM operations
+  //       WHERE tricount = :tricount
+  //     )
+  //     AND user NOT IN (
+  //       SELECT user
+  //       FROM repartitions
+  //       JOIN operations
+  //       ON repartitions.operation = operations.id
+  //       WHERE tricount = :tricount
+  //     );",
+  //     array("tricount" => $tricount, "user" => $userId)
+  //   );
+  //   $data = $query->fetchAll();
+  //   $subscription = array();
+
+  //   foreach ($data as $row) {
+  //     $subscription[] = User::get_by_id($row["user"]);
+  //   }
+
+  //   return json_encode($subscription);
+  // }
 
 
 }
