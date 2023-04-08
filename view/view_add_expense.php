@@ -10,56 +10,58 @@
     <link href="css/style.css" rel="stylesheet" type="text/css" />
     <link href="css/add-exp.css" rel="stylesheet" type="text/css" />
     <script src="lib/jquery-3.6.3.min.js" type="text/javascript"></script>
-    <script src="lib/script.js"></script>
+
     <script>
-    $(document).ready(function() {
-    // Calculate the amounts when the page is loaded
-    calculateAmounts();
-
-    // Add event listeners to the input fields
-    $("input[type='number'], input[type='checkbox']").change(function() {
-        calculateAmounts();
-        console.log("Input ou CheckBox a changé");
-    });
-    console.log("LISTENERS",$("input[type='number'], input[type='checkbox']"));
-});
-
-function calculateAmounts() {
+    function calculateAmounts() {
     // Récupère le montant total
+    /*La fonction commence par récupérer le montant total à payer
+    en utilisant la méthode val() de jQuery
+    pour obtenir la valeur de l'élément HTML avec l'id amount.*/
     var totalAmount = parseFloat($("#amount").val());
     console.log("MONTANT TOTAL",totalAmount);
 
     // Récupère le poids de chaque user et calcule le poids total
     var weights = {};
     var totalWeight = 0;
-    $("input[type='number'][name^='w']").each(function() {
-        var userId = $(this).attr("name").substring(2);
+    /*Récupère le poids de chaque utilisateur et calcule le poids total
+    en parcourant les champs d'entrée numériques qui ont un id
+    se terminant par Weight.
+    Pour chaque champ, elle récupère l'id de l'utilisateur,
+    le poids qu'il a entré,
+    stocke le poids dans un objet weights avec l'id de l'utilisateur comme clé
+    et ajoute le poids au poids total.*/
+    $("input[type='number'][id$='Weight']").each(function() {
+        var userId = $(this).attr("id").replace("Weight", "");
         var weight = parseFloat($(this).val());
         weights[userId] = weight;
         totalWeight += weight;
     });
+    //console.log(userId);
     console.log("TOTAL WEIGHTS :",totalWeight);
-    console.log("WEIGHTS",$("input[type='number'][name^='w']"));
+    console.log("WEIGHTS",$("input[type='number'][id$='Weight']"));
 
 
     // Calculer les montants à payer pour chaque utilisateur
-    $("input[type='checkbox'][name^='c']").each(function() {
+    $("input[type='checkbox']").each(function() {
         var user = $(this).val();
         var isChecked = $(this).is(":checked");
         console.log("EST-COCHÉ :", isChecked);
-        var weight = parseFloat($("input[type='number'][name='w["+user+"]']").val());
+        var weight = parseFloat($("#userWeight").val());
         console.log("POIDS :", weight);
         var amount = 0;
         if (isChecked && weight > 0) {
             var amount = (weight / totalWeight) * totalAmount;
         }
-        $("input[type='number'][name='a["+user+"]']").val(amount.toFixed(2));
+        $("#" + user + "_amount").val(amount.toFixed(2));
     });
 
     // Gérer les cases à cocher qui changent de poids
-    $(".check-input input[type='number'] ").change(function() {
+    $(".check-input input[type='number']").change(function() {
         var weight = parseFloat($(this).val());
-        var checkbox = $(this).siblings("input[type='checkbox']");
+        console.log("Poids des checkbox --> " + weight);
+        var userId = $(this).closest('.check-input').find('input[type="checkbox"]').attr('id').replace('_userCheckbox', '');
+        console.log("userID checkbox --> " + userId);
+        var checkbox = $('#' + userId + '_userCheckbox');
         if (weight === 0) {
             checkbox.prop("checked", false);
         } else {
@@ -68,11 +70,11 @@ function calculateAmounts() {
     });
 
     // Calculate the total amount owed by each user
-    $("input[type='number'][name^='d']").each(function() {
-        var userId = $(this).attr("name").substring(2);
+    $("input[type='number'][id$='_dette']").each(function() {
+        var userId = $(this).attr("id").replace("_amount", "");
         var totalAmount = 0;
-        $("input[type='number'][name^='a']").each(function() {
-            var paidByUserId = $(this).attr("name").substring(2);
+        $("input[type='number'][id$='_amount']").each(function() {
+            var paidByUserId = $(this).attr("id").replace("_amount", "");
             var amount = parseFloat($(this).val());
             if (paidByUserId == userId) {
                 totalAmount += amount;
@@ -83,6 +85,19 @@ function calculateAmounts() {
 
     });
 }
+
+
+$(document).ready(function() {
+    // Calculate the amounts when the page is loaded
+    calculateAmounts();
+
+    // Add event listeners to the input fields
+    $("input[type='number'], input[type='checkbox']").change(function() {
+        calculateAmounts();
+        console.log("Input ou CheckBox a changé");
+    });
+    console.log("LISTENERS",$("input[type='number'], input[type='checkbox']"));
+});
 
     </script>
 </head>
@@ -197,7 +212,7 @@ function calculateAmounts() {
                     }
                     ?>
                     <input type="checkbox" name="c[<?= $usr->get_user() ?>]" value="<?= $usr->get_user() ?>"
-                        id="<?php echo $usr->getUserInfo() ?>" <?php echo $isChecked ? "checked" : ""; ?>>
+                        id="<?php echo $usr->getUserInfo() ?>_userCheckbox" <?php echo $isChecked ? "checked" : ""; ?>>
                     <span class="text-input" style="color: yellow; font-weight: bold;">
                         <?php echo $usr->getUserInfo() ?>
                     </span>
@@ -209,7 +224,7 @@ function calculateAmounts() {
                                   echo "value=" . $usr->get_weight_by_user($template->get_id());
                               }
                           } else {
-                              echo "value=" . (isset($repartitions_map[$usr->get_user()]) ? $repartitions_map[$usr->get_user()]->weight : '');
+                              echo "value=" . (isset($repartitions_map[$usr->get_user()]) ? $repartitions_map[$usr->get_user()]->weight : '0');
                           }
                           ?>>
                     </fieldset>
