@@ -44,25 +44,25 @@
         });
 
         async function addUser() {
-        try {
-            const id = $('#addSubDropdown option:selected').data('user-id');
-            const userToAdd = user_JSON.find(function(el) {
-                return el.id == id;
-            });
-            if (subscribers_json.some(sub => sub.id === id)) {
-                alert("User already subscribed!");
-            } else {
-                subscribers_json.push(userToAdd);
-                user_JSON = user_JSON.filter(function(el) {
-                    return el.id != id;
+            try {
+                const id = $('#addSubDropdown option:selected').data('user-id');
+                const userToAdd = user_JSON.find(function(el) {
+                    return el.id == id;
                 });
-                await $.post("participation/add_service/" + tricount_id, {"names": id});
-                displayUserList();
+                if (subscribers_json.some(sub => sub.id === id)) {
+                    alert("User already subscribed!");
+                } else {
+                    subscribers_json.push(userToAdd);
+                    user_JSON = user_JSON.filter(function(el) {
+                        return el.id != id;
+                    });
+                    await $.post("participation/add_service/" + tricount_id, {"names": id});
+                    displayUserList();
+                }
+            } catch(e) {
+                usersList.html("<tr><td>Error encountered while retrieving the users!</td></tr>");
             }
-        } catch(e) {
-            usersList.html("<tr><td>Error encountered while retrieving the users!</td></tr>");
         }
-    }
 
         async function deleteUser(id) {
             const userToDelete = subscribers_json.find(u => u.id == id);
