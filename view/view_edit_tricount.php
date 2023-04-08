@@ -126,9 +126,6 @@
             usersList.html(html);
         }
 
-
-
-
         function sortUsers(users) {
             const creator = users.find(function (el) {
                 return el.id == <?= $tricount->get_creator_id() ?>;
