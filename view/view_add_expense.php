@@ -11,6 +11,80 @@
     <link href="css/add-exp.css" rel="stylesheet" type="text/css" />
     <script src="lib/jquery-3.6.3.min.js" type="text/javascript"></script>
     <script src="lib/script.js"></script>
+    <script>
+    $(document).ready(function() {
+    // Calculate the amounts when the page is loaded
+    calculateAmounts();
+
+    // Add event listeners to the input fields
+    $("input[type='number'], input[type='checkbox']").change(function() {
+        calculateAmounts();
+        console.log("Input ou CheckBox a changé");
+    });
+    console.log("LISTENERS",$("input[type='number'], input[type='checkbox']"));
+});
+
+function calculateAmounts() {
+    // Récupère le montant total
+    var totalAmount = parseFloat($("#amount").val());
+    console.log("MONTANT TOTAL",totalAmount);
+
+    // Récupère le poids de chaque user et calcule le poids total
+    var weights = {};
+    var totalWeight = 0;
+    $("input[type='number'][name^='w']").each(function() {
+        var userId = $(this).attr("name").substring(2);
+        var weight = parseFloat($(this).val());
+        weights[userId] = weight;
+        totalWeight += weight;
+    });
+    console.log("TOTAL WEIGHTS :",totalWeight);
+    console.log("WEIGHTS",$("input[type='number'][name^='w']"));
+
+
+    // Calculer les montants à payer pour chaque utilisateur
+    $("input[type='checkbox'][name^='c']").each(function() {
+        var user = $(this).val();
+        var isChecked = $(this).is(":checked");
+        console.log("EST-COCHÉ :", isChecked);
+        var weight = parseFloat($("input[type='number'][name='w["+user+"]']").val());
+        console.log("POIDS :", weight);
+        var amount = 0;
+        if (isChecked && weight > 0) {
+            var amount = (weight / totalWeight) * totalAmount;
+        }
+        $("input[type='number'][name='a["+user+"]']").val(amount.toFixed(2));
+    });
+
+    // Gérer les cases à cocher qui changent de poids
+    $(".check-input input[type='number'] ").change(function() {
+        var weight = parseFloat($(this).val());
+        var checkbox = $(this).siblings("input[type='checkbox']");
+        if (weight === 0) {
+            checkbox.prop("checked", false);
+        } else {
+            checkbox.prop("checked", true);
+        }
+    });
+
+    // Calculate the total amount owed by each user
+    $("input[type='number'][name^='d']").each(function() {
+        var userId = $(this).attr("name").substring(2);
+        var totalAmount = 0;
+        $("input[type='number'][name^='a']").each(function() {
+            var paidByUserId = $(this).attr("name").substring(2);
+            var amount = parseFloat($(this).val());
+            if (paidByUserId == userId) {
+                totalAmount += amount;
+            }
+        });
+        $(this).val(totalAmount);
+        console.log("DETTE",$(this).val(totalAmount));
+
+    });
+}
+
+    </script>
 </head>
 
 <body>
