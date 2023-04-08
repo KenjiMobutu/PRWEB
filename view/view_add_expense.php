@@ -52,6 +52,7 @@
         if (isChecked && weight > 0) {
             var amount = (weight / totalWeight) * totalAmount;
         }
+
         $("#" + user + "_amount").val(amount.toFixed(2));
     });
 
@@ -67,23 +68,35 @@
         } else {
             checkbox.prop("checked", true);
         }
+        //updateAmount(checkbox);
     });
 
-    // Calculate the total amount owed by each user
-    $("input[type='number'][id$='_dette']").each(function() {
-        var userId = $(this).attr("id").replace("_amount", "");
-        var totalAmount = 0;
-        $("input[type='number'][id$='_amount']").each(function() {
-            var paidByUserId = $(this).attr("id").replace("_amount", "");
-            var amount = parseFloat($(this).val());
-            if (paidByUserId == userId) {
-                totalAmount += amount;
-            }
-        });
-        $(this).val(totalAmount);
-        console.log("DETTE",$(this).val(totalAmount));
+    function updateAmount(userCheckbox) {
+        var user = userCheckbox.val();
+        var isChecked = userCheckbox.is(":checked");
+        var weight = parseFloat(userCheckbox.closest('.check-input').find('input[type="number"]').val());
+        var amount = 0;
+        if (isChecked && weight > 0) {
+            amount = (weight / totalWeight) * totalAmount;
+        }
+        $("#" + user + "_amount").val(amount.toFixed(2));
+    }
 
-    });
+    // // Calculate the total amount owed by each user
+    // $("input[type='number'][id$='_dette']").each(function() {
+    //     var userId = $(this).attr("id").replace("_amount", "");
+    //     var totalAmount = 0;
+    //     $("input[type='number'][id$='_amount']").each(function() {
+    //         var paidByUserId = $(this).attr("id").replace("_amount", "");
+    //         var amount = parseFloat($(this).val());
+    //         if (paidByUserId == userId) {
+    //             totalAmount += amount;
+    //         }
+    //     });
+    //     $(this).val(totalAmount);
+    //     console.log("DETTE",$(this).val(totalAmount));
+
+    // });
 }
 
 
