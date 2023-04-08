@@ -28,7 +28,7 @@
 
         const tricount_id = "<?= $tricount->get_id() ?>";
 
-        let users_deletable_json = <?= $users_deletable_json?>;// users who participate but not deletable
+        let isDeletable = "<?= $users_deletable?>";// users who participate but not deletable
         let user_JSON = <?= $users_json ?>; //users who not participate
         let subscribers_json = <?= $subscribers_json ?>; // users who participate
         let addingUser = false;
@@ -86,22 +86,20 @@
 
             let html = "<ul class='edit-subscriberInput'>";
             for(let u of sortedSubscribers){
-                const isDeletable = users_deletable_json.some(del => del.id === u.id);
-
                 html += "<li>";
                 html += "<div class='infos_tricount_edit'>";
                 html += "<div class='name_tricount_edit'>";
-                if(u.id == <?= $tricount->get_creator_id() ?>){
-                html += "<input type='text' name='name' value='"+u.full_name+" (creator)' disabled/>";
+                if(u.id == creator){
+                    html += "<input type='text' name='name' value='"+u.full_name+" (creator)' disabled/>";
                 }else{
-                html += "<input type='text' name='name' value='"+u.full_name+"' disabled/>";
+                    html += "<input type='text' name='name' value='"+u.full_name+"' disabled/>";
                 }
-                if(u.id !== <?= $tricount->get_creator_id() ?>){
-                html += "<div class='trash_edit_tricount'>";
-                html += "<button class='btnDeleteSubscriber' onclick='deleteUser("+u.id+")' style='background-color:transparent;'>";
-                html += "<i class='bi bi-trash3'></i>";
-                html += "</button>";
-                html += "</div>";
+                if(!isDeletable.includes(u.id) && u.id !== creator){
+                    html += "<div class='trash_edit_tricount'>";
+                    html += "<button class='btnDeleteSubscriber' onclick='deleteUser("+u.id+")' style='background-color:transparent;'>";
+                    html += "<i class='bi bi-trash3'></i>";
+                    html += "</button>";
+                    html += "</div>";
                 }
                 html += "</div>";
                 html += "</div>";
@@ -113,13 +111,12 @@
             html += "<option selected disabled>--- Add user to tricount ---</option>";
 
             for(let u of user_JSON){
-                if(u.id != <?= $tricount->get_creator_id() ?>){
-                const isSubscriber = subscribers_json.some(sub => sub.id === u.id);
-                const isDeletable = users_deletable_json.some(del => del.id === u.id);
-                if (!isSubscriber && isDeletable) {
+                if(u.id != creator){
+                    const isSubscriber = subscribers_json.some(sub => sub.id === u.id);
+                    if (!isSubscriber && isDeletable.includes(u.id)) {
+                        html += "<option data-user-id='" + u.id + "' value='" + u.id + "'>" + u.full_name + "</option>";
+                    }
                     html += "<option data-user-id='" + u.id + "' value='" + u.id + "'>" + u.full_name + "</option>";
-                }
-                html += "<option data-user-id='" + u.id + "' value='" + u.id + "'>" + u.full_name + "</option>";
                 }
             }
 
@@ -128,6 +125,8 @@
             html += "</div>";
             usersList.html(html);
         }
+
+
 
 
         function sortUsers(users) {

@@ -488,6 +488,32 @@ class User extends Model
         }
 
     }
+    public function deletable($tricount) {
+        $query = self::execute("SELECT user
+            FROM subscriptions
+            WHERE tricount = :tricount
+            AND user <> :creator
+            AND user NOT IN (
+                SELECT initiator
+                FROM operations
+                WHERE tricount = :tricount
+            )
+            AND user NOT IN (
+                SELECT user
+                FROM repartitions
+                JOIN operations
+                ON repartitions.operation = operations.id
+                WHERE operations.tricount = :tricount
+            )
+            AND user NOT IN (
+                SELECT user
+                FROM tricounts
+                WHERE id = :tricount
+
+            );", array("tricount" => $tricount, "creator" => $this->getUserId()));
+        $users = $query->fetchAll(PDO::FETCH_ASSOC);
+        return $users;
+    }
 
     public function is_in_tricount($idTricount)
     {
