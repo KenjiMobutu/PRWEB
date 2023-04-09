@@ -38,6 +38,14 @@ class ControllerParticipation extends Controller{
 
 
   }
+  public function add_service() : void {
+    $user = $this->add();
+    echo $user ? "true" : "false";
+  }
+  public function delete_service() : void {
+    $user = $this->delete();
+    echo $user ? "true" : "false";
+  }
 
   public function delete(){
     $user = $this->get_user_or_redirect();
