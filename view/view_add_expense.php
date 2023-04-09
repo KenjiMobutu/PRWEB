@@ -13,106 +13,67 @@
 
     <script>
     function calculateAmounts() {
-    // Récupère le montant total
-    /*La fonction commence par récupérer le montant total à payer
-    en utilisant la méthode val() de jQuery
-    pour obtenir la valeur de l'élément HTML avec l'id amount.*/
-    var totalAmount = parseFloat($("#amount").val());
-    console.log("MONTANT TOTAL",totalAmount);
+        // Récupère le montant total
+        var totalAmount = parseFloat($("#amount").val());
 
-    // Récupère le poids de chaque user et calcule le poids total
-    var weights = {};
-    var totalWeight = 0;
-    /*Récupère le poids de chaque utilisateur et calcule le poids total
-    en parcourant les champs d'entrée numériques qui ont un id
-    se terminant par Weight.
-    Pour chaque champ, elle récupère l'id de l'utilisateur,
-    le poids qu'il a entré,
-    stocke le poids dans un objet weights avec l'id de l'utilisateur comme clé
-    et ajoute le poids au poids total.*/
-    $("input[type='number'][id$='Weight']").each(function() {
-        var userId = $(this).attr("id").replace("Weight", "");
-        var weight = parseFloat($(this).val());
-        weights[userId] = weight;
-        totalWeight += weight;
-    });
-    //console.log(userId);
-    console.log("TOTAL WEIGHTS :",totalWeight);
-    console.log("WEIGHTS",$("input[type='number'][id$='Weight']"));
+        // Récupère le poids de chaque user et calcule le poids total
+        var weights = {};
+        var totalWeight = 0;
+        $("input[type='number'][id$='Weight']").each(function() {
+            var userId = $(this).attr("id").replace("Weight", "");
+            var weight = parseFloat($(this).val());
+            weights[userId] = weight;
+            totalWeight += weight;
+        });
 
+        // Calculer les montants à payer pour chaque utilisateur
+        $("input[type='checkbox']").each(function() {
+            var user = $(this).val();
+            var isChecked = $(this).is(":checked");
+            var weight = parseFloat($("#userWeight").val());
+            var amount = 0;
+            if (isChecked && weight > 0) {
+                amount = weight*(totalAmount / totalWeight);
+            }
+            $("#" + user + "_amount").val(amount.toFixed(2)); // formate le montant à deux chiffres après la virgule
+        });
 
-    // Calculer les montants à payer pour chaque utilisateur
-    $("input[type='checkbox']").each(function() {
-        var user = $(this).val();
-        var isChecked = $(this).is(":checked");
-        console.log("EST-COCHÉ :", isChecked);
-        var weight = parseFloat($("#userWeight").val());
-        console.log("POIDS :", weight);
-        var amount = 0;
-        if (isChecked && weight > 0) {
-            var amount = (weight / totalWeight) * totalAmount;
+        // Gérer les cases à cocher qui changent de poids
+        $(".check-input input[type='number']").change(function() {
+            var weight = parseFloat($(this).val());
+            var userId = $(this).closest('.check-input').find('input[type="checkbox"]').attr('id').replace('_userCheckbox', '');
+            var checkbox = $('#' + userId + '_userCheckbox');
+            if (weight === 0) {
+                checkbox.prop("checked", false);
+            } else {
+                checkbox.prop("checked", true);
+            }
+            updateAmount(checkbox);
+        });
+
+        function updateAmount(userCheckbox) {
+            var user = userCheckbox.val();
+            var isChecked = userCheckbox.is(":checked");
+            var weight = parseFloat(userCheckbox.closest('.check-input').find('input[type="number"]').val());
+            var amount = 0;
+            if (isChecked && weight > 0) {
+                amount = weight*(totalAmount / totalWeight)  ;
+            }
+            $("#" + user + "_amount").val(amount.toFixed(2)); // formate le montant à deux chiffres après la virgule
         }
-
-        $("#" + user + "_amount").val(amount.toFixed(2));
-    });
-
-    // Gérer les cases à cocher qui changent de poids
-    $(".check-input input[type='number']").change(function() {
-        var weight = parseFloat($(this).val());
-        console.log("Poids des checkbox --> " + weight);
-        var userId = $(this).closest('.check-input').find('input[type="checkbox"]').attr('id').replace('_userCheckbox', '');
-        console.log("userID checkbox --> " + userId);
-        var checkbox = $('#' + userId + '_userCheckbox');
-        if (weight === 0) {
-            checkbox.prop("checked", false);
-        } else {
-            checkbox.prop("checked", true);
-        }
-        //updateAmount(checkbox);
-    });
-
-    function updateAmount(userCheckbox) {
-        var user = userCheckbox.val();
-        var isChecked = userCheckbox.is(":checked");
-        var weight = parseFloat(userCheckbox.closest('.check-input').find('input[type="number"]').val());
-        var amount = 0;
-        if (isChecked && weight > 0) {
-            amount = (weight / totalWeight) * totalAmount;
-        }
-        $("#" + user + "_amount").val(amount.toFixed(2));
     }
 
-    // // Calculate the total amount owed by each user
-    // $("input[type='number'][id$='_dette']").each(function() {
-    //     var userId = $(this).attr("id").replace("_amount", "");
-    //     var totalAmount = 0;
-    //     $("input[type='number'][id$='_amount']").each(function() {
-    //         var paidByUserId = $(this).attr("id").replace("_amount", "");
-    //         var amount = parseFloat($(this).val());
-    //         if (paidByUserId == userId) {
-    //             totalAmount += amount;
-    //         }
-    //     });
-    //     $(this).val(totalAmount);
-    //     console.log("DETTE",$(this).val(totalAmount));
-
-    // });
-}
-
-
-$(document).ready(function() {
-    // Calculate the amounts when the page is loaded
-    calculateAmounts();
-
-    // Add event listeners to the input fields
-    $("input[type='number'], input[type='checkbox']").change(function() {
+    $(document).ready(function() {
+        // Calculate the amounts when the page is loaded
         calculateAmounts();
-        console.log("Input ou CheckBox a changé");
-    });
-    console.log("LISTENERS",$("input[type='number'], input[type='checkbox']"));
-});
 
-    </script>
+        // Add event listeners to the input fields
+        $("input[type='number'], input[type='checkbox']").change(function() {
+            calculateAmounts();
+        });
+    });
+</script>
+
 </head>
 
 <body>
@@ -231,7 +192,7 @@ $(document).ready(function() {
                     </span>
                     <fieldset>
                         <legend class="legend" style="color: yellow; font-weight: bold;">Weight</legend>
-                        <input type="number" name="w[<?= $usr->get_user(); ?>]" id="userWeight" min="0" max="50" <?php
+                        <input type="number" name="w[<?= $usr->get_user(); ?>]" onchange="calculateAmounts()" id="userWeight" min="0" max="50" <?php
                           if (isset($template)) {
                               if ($usr->is_in_Items($template->get_id(), $usr->user)) {
                                   echo "value=" . $usr->get_weight_by_user($template->get_id());
