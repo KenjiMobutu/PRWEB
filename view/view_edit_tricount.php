@@ -28,7 +28,7 @@
 
         const tricount_id = "<?= $tricount->get_id() ?>";
 
-        let isDeletable = "<?= $users_deletable?>";// users who participate but not deletable
+        let isDeletable = <?= json_encode($users_deletable) ?>;// users who participate but not deletable
         let user_JSON = <?= $users_json ?>; //users who not participate
         let subscribers_json = <?= $subscribers_json ?>; // users who participate
         let addingUser = false;
@@ -94,7 +94,7 @@
                 }else{
                     html += "<input type='text' name='name' value='"+u.full_name+"' disabled/>";
                 }
-                if(!isDeletable.includes(u.id) && u.id !== creator){
+                if(isDeletable[u.id] && u.id !== creator){
                     html += "<div class='trash_edit_tricount'>";
                     html += "<button class='btnDeleteSubscriber' onclick='deleteUser("+u.id+")' style='background-color:transparent;'>";
                     html += "<i class='bi bi-trash3'></i>";
@@ -125,9 +125,6 @@
             html += "</div>";
             usersList.html(html);
         }
-
-
-
 
         function sortUsers(users) {
             const creator = users.find(function (el) {

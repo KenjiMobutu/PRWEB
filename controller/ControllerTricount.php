@@ -81,22 +81,19 @@ class ControllerTricount extends Controller{
         $this->redirect('tricount', "index");
       }
       $tricount = Tricounts::get_by_id($id);
-
-      //$subscriptions = Participations::by_tricount($tricount->get_id());
       $subscriptions = $tricount->subscribers($tricount->get_id());
       $subscribers_json = $tricount->subscribers_as_json($tricount->get_id());
       $users = $tricount->not_participate($tricount->get_id());
       $users_json = $tricount->not_participate_as_json($tricount->get_id());
-
+      $users_deletable = [];
       foreach($subscriptions as $s){
-        $sub[] = User::get_by_id($s->getUserId());
-        $users_deletable = $s->deletable($tricount->get_id());
-        var_dump($users_deletable);
+          $user = User::get_by_id($s->getUserId());
+          $users_deletable[$user->getUserId()] = $s->can_be_delete($tricount->get_id());
       }
-      foreach ($sub as $s2) {
-        $users_deletable = $s2->can_be_delete($tricount->get_id());
-        var_dump($users_deletable);
-      }
+      // foreach ($sub as $s2) {
+      //   $users_deletable = $s2->can_be_delete($tricount->get_id());
+      //   var_dump($users_deletable);
+      // }
 
     }else {
       $this->redirect("tricount","index");
