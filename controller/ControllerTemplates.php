@@ -92,7 +92,7 @@ class ControllerTemplates extends Controller
             $tricount = Tricounts::get_by_id($_POST["tricountId"]);
             $listUser = Participations::get_by_tricount($_POST["tricountId"]);
         
-            $templateId = $_POST["templateID"];
+            $templateId = isset($_POST["templateID"]) ? $_POST["templateID"] : null ;
             $templateTitle = Tools::sanitize($_POST["template_title"]);
             $checkedUsers = isset($_POST["checkedUser"]) ? $_POST["checkedUser"] : [];
             $weights = $_POST["weight"];
