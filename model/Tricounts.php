@@ -461,5 +461,110 @@ class Tricounts extends Model
 
     return $count > 0;
   }
+  public function not_participate($tricountId) : array{ //récup tous les users
+    $query = self::execute("SELECT *
+        FROM users
+        WHERE id
+        NOT IN (SELECT user FROM subscriptions WHERE tricount =:tricountId)", array("tricountId" => $tricountId));
+    $data = $query->fetchAll();
+    $results = [];
+    foreach ($data as $row) {
+        $results[] = new User($row["id"], $row["mail"], $row["hashed_password"], $row["full_name"], $row["role"], $row["iban"]);
+    }
+    return $results;
+}
+public function not_participate_as_json($tricountId) : string{
+    $users = $this->not_participate($tricountId);
+    $table = [];
+    foreach($users as $user){
+      $row = [];
+      $row["id"] = $user->getUserId();
+      $row["mail"] = $user->getMail();
+      $row["hashed_password"] = $user->getPassword();
+      $row["full_name"] = $user->getFullName();
+      $row["role"] = $user->getRole();
+      $row["iban"] = $user->getUserIban();
+      $table[] = $row;
+    }
+    return json_encode($table);
+}
+public function subscribers($tricount){
+$query = self::execute("SELECT s.*
+                        FROM subscriptions s, tricounts t
+                        where s.tricount = t.id
+                        And s.tricount = :tricount",
+                        array("tricount"=>$tricount));
+$data = $query->fetchAll();
+$subscription  = array();
+$sub = array();
+
+foreach ($data as $row) {
+  $subscription[] = User::get_by_id($row["user"]);
+}
+foreach($subscription as $s){
+  $sub[] = $s;
+}
+
+return $sub;
+}
+public function subscribers_as_json($tricountId) : string{
+$table = [];
+$users = $this->subscribers($tricountId);
+foreach($users as $user){
+  $row = [];
+  $row["id"] = $user->getUserId();
+  $row["mail"] = $user->getMail();
+  $row["hashed_password"] = $user->getPassword();
+  $row["full_name"] = $user->getFullName();
+  $row["role"] = $user->getRole();
+  $row["iban"] = $user->getUserIban();
+  $table[] = $row;
+}
+return json_encode($table);
+}
+public function users_deletable($tricount, $userId): array {
+$query = self::execute(
+  "SELECT *
+  FROM subscriptions s
+  WHERE tricount = :tricount
+  AND user = :user
+  AND user NOT IN (
+    SELECT initiator
+    FROM operations
+    WHERE tricount = :tricount
+  )
+  AND user NOT IN (
+    SELECT user
+    FROM repartitions
+    JOIN operations
+    ON repartitions.operation = operations.id
+    WHERE tricount = :tricount
+  );",
+  array("tricount" => $tricount, "user" => $userId)
+);
+$data = $query->fetchAll();
+$subscription = array();
+
+foreach ($data as $row) {
+  $subscription[] = User::get_by_id($row["user"]);
+}
+
+return $subscription;
+}
+public function users_deletable_as_json($tricountId,$userId) : string{
+$table = [];
+$users = $this->users_deletable($tricountId,$userId);
+foreach($users as $user){
+  $row = [];
+  $row["id"] = $user->getUserId();
+  $row["mail"] = $user->getMail();
+  $row["hashed_password"] = $user->getPassword();
+  $row["full_name"] = $user->getFullName();
+  $row["role"] = $user->getRole();
+  $row["iban"] = $user->getUserIban();
+  $table[] = $row;
+}
+return json_encode($table);
+}
 }
 ?>

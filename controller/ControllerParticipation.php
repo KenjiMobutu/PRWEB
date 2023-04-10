@@ -14,6 +14,7 @@ class ControllerParticipation extends Controller{
   }
 
   public function add() : User|false{
+  public function add() : User|false{
     $user = $this->get_user_or_redirect();
     $id = null;
     $sub = [];
@@ -27,15 +28,26 @@ class ControllerParticipation extends Controller{
       var_dump($idTricount);
       var_dump($idUser);
 
+
       $newSubscriber = new Participations($idTricount , $idUser );
       if($newSubscriber == NULL){
         $this->redirect("tricount","index");
       }
       $newSubscriber->add();
       $this->redirect("tricount","edit",$idTricount);die();
+      $this->redirect("tricount","edit",$idTricount);die();
     }else {
       $this->redirect("tricount","index");
     }
+    return false;
+  }
+  public function add_service() : void {
+    $user = $this->add();
+    echo $user ? "true" : "false";
+  }
+  public function delete_service() : void {
+    $user = $this->delete();
+    echo $user ? "true" : "false";
     return false;
   }
   public function add_service() : void {
@@ -59,6 +71,18 @@ class ControllerParticipation extends Controller{
         // affiche un message d'erreur
         echo "Une erreur s'est produite lors de la suppression de la participation.";
       }
+    }
+    return false;
+  }
+
+  public function get_visible_users_service(): void {
+    if (isset($_GET["param1"]) && !empty($_GET["param1"])) {
+        $id = $_GET['param1'];
+        $tricount = Tricounts::get_by_id($id);
+        $users_json = $tricount->not_participate_as_json($id);
+        echo $users_json;
+    } else {
+        echo json_encode(array("error" => "ID is not defined."));
     }
     return false;
   }

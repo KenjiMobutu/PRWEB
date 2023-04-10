@@ -127,9 +127,9 @@ class User extends Model
         $data = $query->fetch(); //un seul resultat max
         if ($query->rowCount() == 0) {
             return false;
-        } 
+        }
         return new User($data["id"], $data["mail"], $data["hashed_password"], $data["full_name"], $data["role"], $data["iban"]);
-        
+
     }
 
     public function getIban(): string|null
@@ -362,7 +362,7 @@ class User extends Model
         return true;
     }
 
-   
+
     public static function EmailExistsAlready($id, $email)
     {
         $query = self::execute("SELECT mail FROM Users WHERE mail=:email AND id!=:id", array("email" => $email, "id" => $id));
@@ -486,7 +486,33 @@ class User extends Model
         } else {
             return true;
         }
+    }
 
+    public function deletable($tricount) {
+        $query = self::execute("SELECT user
+            FROM subscriptions
+            WHERE tricount = :tricount
+            AND user <> :creator
+            AND user NOT IN (
+                SELECT initiator
+                FROM operations
+                WHERE tricount = :tricount
+            )
+            AND user NOT IN (
+                SELECT user
+                FROM repartitions
+                JOIN operations
+                ON repartitions.operation = operations.id
+                WHERE operations.tricount = :tricount
+            )
+            AND user NOT IN (
+                SELECT user
+                FROM tricounts
+                WHERE id = :tricount
+
+            );", array("tricount" => $tricount, "creator" => $this->getUserId()));
+        $users = $query->fetchAll(PDO::FETCH_ASSOC);
+        return $users;
     }
     public function deletable($tricount) {
         $query = self::execute("SELECT user
@@ -522,7 +548,7 @@ class User extends Model
             return false;
         return true;
     }
-    
+
     public function is_in_tricount_by_template($idTemplate, $idTricount)
     {
         $query = self::execute("SELECT * FROM repartition_templates rt where rt.id =:id and rt.tricount =:tricount ", array("tricount" => $idTricount, "id" => $idTemplate));
@@ -545,6 +571,6 @@ class User extends Model
         return true;
     }
 
-    
+
 }
 ?>
