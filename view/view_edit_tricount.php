@@ -41,6 +41,7 @@
             //addSubscriberButton.click(dropdownUserList);
             displayUserList();
             $('#subForm').hide();
+            //updateUserDeletability();
         });
 
         async function addUser() {
@@ -55,6 +56,7 @@
                 try {
                     await $.post("participation/add_service/" + tricount_id, { "names": id });
                     displayUserList();
+                    updateUserDeletability();
                 } catch (e) {
                     showError("Error encountered while retrieving the users!");
                 }
@@ -80,23 +82,27 @@
         async function updateUserDeletability() {
             for (let u of subscribers_json) {
                 isDeletable[u.id] = await checkUserDeletability(u.id);
+                console.log(isDeletable);
             }
             displayUserList();
         }
 
         async function checkUserDeletability(userId) {
             try {
-                const response = await fetch("user/can_be_delete", {
+                const response = await fetch("user/handle_can_be_delete_request", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
                         userId: userId,
-                        tricountId: tricount_id
+                        tricountId: tricount_id,
+                        creator: creator
                     })
                 });
+                console.log("RESPONSE__> "+response);
                 const data = await response.json();
+                console.log("DATA__> "+data);
                 return data.deletable;
             } catch (error) {
                 console.log("Error retrieving user deletability: " + error);
@@ -106,57 +112,57 @@
 
 
         function displayUserList() {
-        const sortedSubscribers = sortUsers(subscribers_json);
+            const sortedSubscribers = sortUsers(subscribers_json);
 
-        let html = "<ul class='edit-subscriberInput'>";
-        for (let u of sortedSubscribers) {
-            html += `
-            <li>
-                <div class='infos_tricount_edit'>
-                    <div class='name_tricount_edit'>
-                        <input type='text' name='name' value='${u.full_name}${u.id == creator ? " (creator)" : ""}' disabled/>
-                        ${isDeletable[u.id] && u.id !== creator ? `
-                        <div class='trash_edit_tricount'>
-                            <button class='btnDeleteSubscriber' onclick='deleteUser(${u.id})' style='background-color:transparent;'>
-                                <i class='bi bi-trash3'></i>
-                            </button>
-                        </div>` : ""}
+            let html = "<ul class='edit-subscriberInput'>";
+            for (let u of sortedSubscribers) {
+                html += `
+                <li>
+                    <div class='infos_tricount_edit'>
+                        <div class='name_tricount_edit'>
+                            <input type='text' name='name' value='${u.full_name}${u.id == creator ? " (creator)" : ""}' disabled/>
+                            ${isDeletable[u.id] && u.id !== creator ? `
+                            <div class='trash_edit_tricount'>
+                                <button class='btnDeleteSubscriber' onclick='deleteUser(${u.id})' style='background-color:transparent;'>
+                                    <i class='bi bi-trash3'></i>
+                                </button>
+                            </div>` : ""}
+                        </div>
                     </div>
-                </div>
-            </li>`;
-        }
-        html += `
-        </ul>
-        <div class='add-subscriber-container'>
-            <select id='addSubDropdown' data-id='addSubDropdown'>
-                <option selected disabled>--- Add user to tricount ---</option>`;
-
-        const sortedUsers = user_JSON.sort((a, b) => a.full_name.localeCompare(b.full_name));
-        for (let u of sortedUsers) {
-            if (u.id != creator) {
-                html += `<option data-user-id='${u.id}' value='${u.id}'>${u.full_name}</option>`;
+                </li>`;
             }
+            html += `
+            </ul>
+            <div class='add-subscriber-container'>
+                <select id='addSubDropdown' data-id='addSubDropdown'>
+                    <option selected disabled>--- Add user to tricount ---</option>`;
+
+            const sortedUsers = user_JSON.sort((a, b) => a.full_name.localeCompare(b.full_name));
+            for (let u of sortedUsers) {
+                if (u.id != creator) {
+                    html += `<option data-user-id='${u.id}' value='${u.id}'>${u.full_name}</option>`;
+                }
+            }
+
+            html += `
+                </select>
+                <button class='btn btn-success' onclick='addUser()'>Add</button>
+            </div>`;
+            $('#usersList').html(html);
         }
 
-        html += `
-            </select>
-            <button class='btn btn-success' onclick='addUser()'>Add</button>
-        </div>`;
-        $('#usersList').html(html);
-    }
+        function sortUsers(users) {
+            const creatorUser = users.find(el => el.id == creator);
+            const otherUsers = users.filter(el => el.id != creator);
 
-    function sortUsers(users) {
-        const creatorUser = users.find(el => el.id == creator);
-        const otherUsers = users.filter(el => el.id != creator);
+            otherUsers.sort((a, b) => a.full_name.localeCompare(b.full_name));
 
-        otherUsers.sort((a, b) => a.full_name.localeCompare(b.full_name));
+            return [creatorUser].concat(otherUsers);
+        }
 
-        return [creatorUser].concat(otherUsers);
-    }
-
-    function showError(message) {
-        $('#usersList').html(`<tr><td>${message}</td></tr>`);
-    }
+        function showError(message) {
+            $('#usersList').html(`<tr><td>${message}</td></tr>`);
+        }
 
     </script>
 
