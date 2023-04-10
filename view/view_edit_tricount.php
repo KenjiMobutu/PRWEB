@@ -56,7 +56,7 @@
                 try {
                     await $.post("participation/add_service/" + tricount_id, { "names": id });
                     displayUserList();
-                    updateUserDeletability();
+                    //updateUserDeletability();
                 } catch (e) {
                     showError("Error encountered while retrieving the users!");
                 }
