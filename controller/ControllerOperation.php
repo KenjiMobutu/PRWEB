@@ -94,12 +94,15 @@ class ControllerOperation extends Controller
             $this->redirect('main', "error");
         }
         $checkId = Operation::exists($_GET['param1']); //check si l'operation existe dans le tricount
-        if (empty($checkId)) {
+        if (empty($checkId) ) {
             $this->redirect('main', "error");
         } else {
             $userId = $user->getUserId();
             $operationId = $_GET['param1'];
             $tricount = Tricounts::get_tricount_by_operation_id($operationId);
+            if(!$user->is_in_tricount($tricount->get_id())){
+                $this->redirect('user', "profile");
+            }
             $operationUsers = Operation::get_users_from_operation($operationId);
             $debt = Operation::get_dette_by_operation($operationId, $userId);
             $participants = Operation::getNumberParticipantsByOperationId($operationId);
@@ -554,6 +557,8 @@ class ControllerOperation extends Controller
 
     public function next_expense()
     {
+        $user = $this->get_user_or_redirect();
+        $user = User::get_by_id($user->getUserId());
         if (isset($_POST["tricount_id"]) && isset($_POST["operation"])) {
             $idTricount = $_POST["tricount_id"];
             $tricount = Tricounts::get_by_id($idTricount);
