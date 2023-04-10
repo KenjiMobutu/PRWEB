@@ -49,14 +49,13 @@
                         <div class="input-wrapper position-relative">
                             <label id="title" class="label" for="text4b">Title</label>
                             <input type="text" name="title" class="form-control" id="text4b"
-                                placeholder="Your Title here!">
+                             <?php if (isset($tricount) && !empty($tricount)){echo 'value='.$tricount->get_title();}else {echo 'placeholder="Your Title here!"';} ?>>
                             <div class="icon-overlay" id="text4b-icon" style="display: none;"></div>
                             <input type="hidden" name="creator" value="<?php echo $user->getUserId(); ?>">
                             <span id="text4b-error" class="text-danger"></span>
                             <span id="text4b-success" class="text-success"></span>
                         </div>
                     </div>
-
                     <div class="form-group boxed">
                         <div class="input-wrapper position-relative">
                             <label class="label" for="textarea4b">Description (optional)</label>
@@ -70,15 +69,17 @@
                 </div>
 
             </div>
+
             <?php if (count($errors) != 0): ?>
-                    <div class='errors'>
+                <div class='errors'>
+
                         <br><br><p>Please correct the following error(s) :</p>
                         <ul>
                             <?php foreach ($errors as $error): ?>
                                 <li><?= $error ?></li>
                             <?php endforeach; ?>
                         </ul>
-                    </div>
+                </div>
             <?php endif; ?>
         </div>
     </form>
@@ -96,7 +97,9 @@
     <script src="css/src/js/base.js"></script>
 
     <script>
+       
         $(document).ready(function () {
+            $(".errors").hide();
             function validateTitle(title, callback) {
                 $.ajax({
                     url: "tricount/get_title_service",
