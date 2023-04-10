@@ -188,8 +188,6 @@
                     <i class="bi bi-save"></i>
                 </button>
             </div>
-
-        </form>
     </div>
 
     <!-- Bloc de modification du Tricount -->
@@ -215,6 +213,7 @@
                 </div>
             <?php endif; ?>
         </div>
+        </form>
         <!-- Souscriptions au Tricount -->
         <div class="edit-settingsTitle">
             <h1>Subscriptions</h1>
