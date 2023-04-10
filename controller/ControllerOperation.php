@@ -443,6 +443,9 @@ class ControllerOperation extends Controller
             
             if (empty($errors)) {
                 $operation->update();
+                if($save_template && $_POST['template_name'] !== ""){
+                    $this->save_Template($operation,$_POST['c'],$_POST['w'], $_POST['template_name']);
+                }
                 // Update repartition
                 if($this->saveOperationRepartition($operation, $_POST['c'], $_POST['w'])){
                     $this->redirect("operation", "expenses", $tricountId);
