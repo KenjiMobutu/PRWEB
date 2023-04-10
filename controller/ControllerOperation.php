@@ -522,10 +522,11 @@ class ControllerOperation extends Controller
         } else {
             $userId = $user->getUserId();
         }
-        if (isset($_GET["param1"])) {
-
+        
+        if (isset($_GET["param1"]) && $user->is_in_tricount($operation_data->getTricount())) {
             (new View("delete_operation"))->show(array("user" => $user, "operationId" => $operationId, "operation_data" => $operation_data));
-        }
+        }else
+            $this->redirect('user', "profile");
     }
 
     public function delete_operation()
