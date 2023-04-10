@@ -110,7 +110,7 @@
             else if (isset($info))
                 echo $info[1];
             else
-                echo ''; ?>" type="number" id="amount" name="amount" oninput="calculateAmounts()">
+                echo ''; ?>" type="number" step="0.01" id="amount" name="amount" oninput="calculateAmounts()">
             <br>
             <label for="operation_date">Date</label>
             <input class="addExp" type="date" id="operation_date" value="<?php
@@ -201,10 +201,10 @@
                         <legend class="legend" style="color: yellow; font-weight: bold;">Amount</legend>
                         <?php $amount = $usr->get_dette(isset($operation) ? $operation->get_id() : null, $usr); ?>
                         <?php if ($amount != 0): ?>
-                            <input type="number" id="<?= $usr->get_user() ?>_amount" value="<?php echo $amount ?>"
+                            <input type="number" step="0.01" id="<?= $usr->get_user() ?>_amount" value="<?php echo $amount ?>"
                                 onchange="calculateAmounts()" hidden>
                         <?php else: ?>
-                            <input type="number" id="<?= $usr->get_user() ?>_amount" value="" onchange="calculateAmounts()">
+                            <input type="number" step="0.01" id="<?= $usr->get_user() ?>_amount" value="" onchange="calculateAmounts()">
                         <?php endif; ?>
 
                     </fieldset>
