@@ -12,6 +12,21 @@ class ControllerTricount extends Controller{
   public function index() :void{
     $this->tricount_list();
   }
+
+  public function get_title_service() {
+    if (isset($_POST['title']) && isset($_POST['creator'])) {
+        $title = $_POST['title'];
+        $creator = $_POST['creator'];
+        $isTitleUnique = Tricounts::is_title_unique_for_creator($title, $creator);
+        //JSON response
+        $response = array('unique' => $isTitleUnique);
+
+        header('Content-Type: application/json');
+        echo json_encode($response);
+    }
+}
+
+
   public function tricount_list(){
     $loggedUser = $this->get_user_or_redirect();
     if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
@@ -124,7 +139,6 @@ class ControllerTricount extends Controller{
       $id = $_GET['param1'];
       $tricount = Tricounts::get_by_id($id);
       if($tricount->get_creator_id() === $user->getUserId()){
-        //$tricount->delete($tricount->get_id());
         (new View("delete_tricount"))->show(array("user" => $user,"tricount" => $tricount));
       }else {
         $this->redirect('main', "error");
@@ -175,22 +189,6 @@ class ControllerTricount extends Controller{
     } else {
       $this->redirect("user","profile");
     }
-  }
-
-  public function check_title_service()
-  {
-      $title = $_POST['title'];
-
-      // Retrieve the current user ID (assuming you have a session-based authentication system)
-      $user_id = $_SESSION['user_id'];
-
-      // Check if a tricount with the same title already exists for the current user
-      $exists = Tricounts::get_by_user_and_title($title, $user_id);
-
-      $response = ['exists' => $exists];
-
-      header('Content-Type: application/json');
-      echo json_encode($response);
   }
 
 }

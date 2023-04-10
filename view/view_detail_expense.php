@@ -30,7 +30,6 @@
                 <?php echo number_format($operation_data->getAmount(), 2) ?>
             </h2>
             <?php
-            // var_dump($participants); die();
             if ($participants["0"] === 0) {
                 echo "<p>For me</p>";
             } else {
@@ -55,38 +54,45 @@
                     </tr>
                 </thead>
                 <tbody>';
-                if(!empty($operationUsers)){
-                    foreach ($operationUsers as $user) {
-                        echo '<tr>';
-                        if ($participants["0"] === 0) {
-                            echo 'solo';
-                        } else if ($user->getUserId() == $operation_data->getInitiatorId()) {
-                            echo '<td style="color:yellow"><b>' . $user->getFullName() . '</b></td>';
-                            echo '<td style="color:yellow"><b>' . number_format($user->get_dette($operation_data->get_id()), 2) . '</b></td>';
-                        } else {
-                            echo '<td>' . $user->getFullName() . '</td>';
-                            echo '<td>' . number_format($user->get_dette($operation_data->get_id()), 2). '</td>';
-                        }
-                        echo '</tr>';
+            if (!empty($operationUsers)) {
+                foreach ($operationUsers as $user) {
+                    echo '<tr>';
+                    if ($participants["0"] === 0) {
+                        echo 'solo';
+                    } else if ($user->getUserId() == $operation_data->getInitiatorId()) {
+                        echo '<td style="color:yellow"><b>' . $user->getFullName() . '</b></td>';
+                        echo '<td style="color:yellow"><b>' . number_format($user->get_dette($operation_data->get_id()), 2) . '</b></td>';
+                    } else {
+                        echo '<td>' . $user->getFullName() . '</td>';
+                        echo '<td>' . number_format($user->get_dette($operation_data->get_id()), 2) . '</td>';
                     }
-                }else{
-                    echo "solo";
+                    echo '</tr>';
                 }
-                
+            } else {
+                echo "solo";
+            }
+
             ?>
             </tbody>
             </table>
         </div>
-        <form action="operation/next_expense" method="post">
-            <input type="hidden" name="tricount_id" value="<?php echo $tricount->get_id(); ?>" hidden>
-            <input type="hidden" name="operation" value="<?php echo $operation_data->get_id(); ?>" hidden>
-            <input class="btn" type="submit" name="submit" value="Previous">
-        </form>
-        <form action="operation/next_expense" method="post">
-            <input type="hidden" name="tricount_id" value="<?php echo $tricount->get_id(); ?>" hidden>
-            <input type="hidden" name="operation" value="<?php echo $operation_data->get_id(); ?>" hidden>
-            <input class="btn" type="submit" name="submit" value="Next">
-        </form>
+        <?php
+        if (!$operation_data->isFirstOperation($tricount->get_id())): ?>
+
+            <form action="operation/next_expense" method="post">
+                <input type="hidden" name="tricount_id" value="<?php echo $tricount->get_id(); ?>" hidden>
+                <input type="hidden" name="operation" value="<?php echo $operation_data->get_id(); ?>" hidden>
+                <input class="btn" type="submit" name="submit" value="Previous">
+            </form>
+        <?php endif; ?>
+        <?php if (!$operation_data->isLastOperation($tricount->get_id())): ?>
+            <form action="operation/next_expense" method="post">
+                <input type="hidden" name="tricount_id" value="<?php echo $tricount->get_id(); ?>" hidden>
+                <input type="hidden" name="operation" value="<?php echo $operation_data->get_id(); ?>" hidden>
+                <input class="btn" type="submit" name="submit" value="Next">
+            </form>
+        <?php endif; ?>
+
 
     </div>
 

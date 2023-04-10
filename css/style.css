@@ -471,6 +471,47 @@ select {
 }
 
 /* Tricount cart */
+.input-wrapper {
+  position: relative;
+}
+
+.icon-overlay {
+  position: absolute;
+  top: 50%;
+  right: 16px;
+  transform: translateY(-50%);
+  font-size: 1.2rem;
+}
+
+.success-icon {
+  color: #28a745;
+}
+
+.error-icon {
+  color: #dc3545;
+}
+
+
+.error-message {
+  color: red;
+  font-size: 12px;
+  display: none;
+}
+
+.input-error {
+  border: 1px solid red !important;
+}
+
+.input-success {
+  border: 1px solid green !important;
+}
+
+.success-message {
+  color: green;
+  font-size: 12px;
+  display: none;
+}
+
 #loader {
   position: fixed;
   left: 0;
