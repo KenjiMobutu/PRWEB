@@ -362,6 +362,9 @@ class ControllerOperation extends Controller
             $action = $_GET['action'];
             $userId = $user->getUserId();
             $tricount = Tricounts::get_tricount_by_operation_id($_GET['param1']);
+            if(!$user->is_in_tricount($tricount->get_id())){
+                $this->redirect('user', "profile");
+            }
             $operationId = $_GET['param1'];
             $operation = Operation::getOperationByOperationId($operationId);
             $users = Participations::get_by_tricount($tricount->get_id());
@@ -557,8 +560,6 @@ class ControllerOperation extends Controller
 
     public function next_expense()
     {
-        $user = $this->get_user_or_redirect();
-        $user = User::get_by_id($user->getUserId());
         if (isset($_POST["tricount_id"]) && isset($_POST["operation"])) {
             $idTricount = $_POST["tricount_id"];
             $tricount = Tricounts::get_by_id($idTricount);
