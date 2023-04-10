@@ -163,7 +163,7 @@ class User extends Model
     }
 
 
-    
+
 
 
     public function setRole(string $role): void
@@ -210,7 +210,7 @@ class User extends Model
         }
         return $results;
     }
-    public static function not_participate($tricountId)
+    public function not_participate($tricountId)
     { //récup tous les users
         $query = self::execute("SELECT *
             FROM users
@@ -223,6 +223,8 @@ class User extends Model
         }
         return $results;
     }
+
+
     public static function get_by_mail($mail)
     { //récup l'user par son mail
         $query = self::execute("SELECT * FROM  `users` where mail=:mail", array("mail" => $mail));
@@ -485,6 +487,32 @@ class User extends Model
             return true;
         }
 
+    }
+    public function deletable($tricount) {
+        $query = self::execute("SELECT user
+            FROM subscriptions
+            WHERE tricount = :tricount
+            AND user <> :creator
+            AND user NOT IN (
+                SELECT initiator
+                FROM operations
+                WHERE tricount = :tricount
+            )
+            AND user NOT IN (
+                SELECT user
+                FROM repartitions
+                JOIN operations
+                ON repartitions.operation = operations.id
+                WHERE operations.tricount = :tricount
+            )
+            AND user NOT IN (
+                SELECT user
+                FROM tricounts
+                WHERE id = :tricount
+
+            );", array("tricount" => $tricount, "creator" => $this->getUserId()));
+        $users = $query->fetchAll(PDO::FETCH_ASSOC);
+        return $users;
     }
 
     public function is_in_tricount($idTricount)
