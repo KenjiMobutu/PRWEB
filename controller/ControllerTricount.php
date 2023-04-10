@@ -180,21 +180,20 @@ class ControllerTricount extends Controller{
   }
 
   public function check_title_service()
-{
-    $title = $_POST['title'];
+  {
+      $title = $_POST['title'];
 
-    // Retrieve the current user ID (assuming you have a session-based authentication system)
-    $user_id = $_SESSION['user_id'];
+      // Retrieve the current user ID (assuming you have a session-based authentication system)
+      $user_id = $_SESSION['user_id'];
 
-    // Check if a tricount with the same title already exists for the current user
-    $exists = Tricounts::get_by_user_and_title($title, $user_id);
+      // Check if a tricount with the same title already exists for the current user
+      $exists = Tricounts::get_by_user_and_title($title, $user_id);
 
-    $response = ['exists' => $exists];
+      $response = ['exists' => $exists];
 
-    header('Content-Type: application/json');
-    echo json_encode($response);
-}
-
+      header('Content-Type: application/json');
+      echo json_encode($response);
+  }
 
 }
 
