@@ -81,17 +81,9 @@
         <form
             action="<?php echo isset($operation) ? "operation/edit_expense/{$operation->get_id()}" : 'operation/add_expense'; ?>"
             method="post">
-        <form
-            action="<?php echo isset($operation) ? "operation/edit_expense/{$operation->get_id()}" : 'operation/add_expense'; ?>"
-            method="post">
             <div class="errors">
                 <ul>
                     <?php if (!empty($errors))
-                        foreach ($errors as $error): ?>
-                            <li>
-                                <?= $error ?>
-                            </li>
-                        <?php endforeach; ?>
                         foreach ($errors as $error): ?>
                             <li>
                                 <?= $error ?>
@@ -101,24 +93,12 @@
             </div>
             <?php if (isset($operation)): ?>
                 <input type="hidden" id="operationId" name="operationId" value="<?php echo $operation->get_id() ?>">
-            <?php if (isset($operation) || isset($operationId)): ?>
-                <input type="hidden" id="operationId" name="operationId"
-                    value="<?php if (isset($operation))
-                        echo $operation->get_id();
-                    else if (isset($operationId))
-                        echo $operationId; ?>">
             <?php endif; ?>
             <input required class="addExp" placeholder="Title" type="text" id="title" value="<?php
             if (isset($operation))
                 echo $operation->getTitle();
             else if (isset($info))
                 echo $info[0];
-            else
-                echo ''; ?>" name="title">
-            if (isset($info))
-                echo $info[0];
-            else if (isset($operation))
-                echo $operation->getTitle();
             else
                 echo ''; ?>" name="title">
             <input type="hidden" id="tricId" name="tricId" value="<?php echo $tricount->get_id() ?>">
@@ -131,12 +111,6 @@
                 echo $info[1];
             else
                 echo ''; ?>" type="number" id="amount" name="amount" oninput="calculateAmounts()">
-            if (isset($info))
-                echo $info[1];
-            else if (isset($operation))
-                echo $operation->getAmount();
-            else
-                echo ''; ?>" type="number" id="amount" name="amount" oninput="calculateAmounts()">
             <br>
             <label for="operation_date">Date</label>
             <input class="addExp" type="date" id="operation_date" value="<?php
@@ -147,12 +121,6 @@
             else
                 echo date('Y-m-d'); ?>" name="operation_date">
 
-            if (isset($info))
-                echo $info[2];
-            else if (isset($operation))
-                echo $operation->getOperationDate();
-            else
-                echo date('Y-m-d'); ?>" name="operation_date">
             <br>
 
             <label for="paid_by">Paid By</label>
@@ -166,8 +134,6 @@
                 ?>
                 <?php foreach ($users as $user): ?>
                     <?php if (!isset($operation) || $user->getUserInfo() !== $operation->getInitiator()): ?>
-                <?php foreach ($users as $user): ?>
-                    <?php if (!isset($operation) || $user->getUserInfo() !== $operation->getInitiator()): ?>
                         <option style="color: black;" value="<?= $user->get_user() ?>"><?= $user->getUserInfo() ?></option>
                     <?php endif; ?>
                 <?php endforeach; ?>
@@ -175,7 +141,6 @@
             <br>
             <label for="repartition_template">Use repartition template (optional)</label>
             <button name="refreshBtn" id="refreshBtn">Refresh</button>
-            <!--$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ a template is lost after refresh + error $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$-->
             <select id="rti" name="rti">
                 <?php if (isset($template)) {
                     echo "<option style='color: black;' value='{$template->get_id()}'>{$template->get_title()}</option>";
@@ -185,25 +150,17 @@
                 }
                 ?>
                 <?php foreach ($rti as $rt):
-                <?php foreach ($rti as $rt):
                     $title = $rt["title"];
                     $rtiId = $rt["id"] ?>
                     <?php if (isset($template)):
                         if ($title !== $template->get_title()): ?>
                             <option name="option_template" style="color: black;" value="<?php echo $rtiId ?>"><?php echo $title ?>
                             </option>
-                    <?php if (isset($template)):
-                        if ($title !== $template->get_title()): ?>
-                            <option name="option_template" id="option_template" style="color: black;" value="<?php echo $rtiId ?>">
-                                <?php echo $title ?></option>
                         <?php endif; ?>
 
                     <?php else: ?>
                         <option name="option_template" style="color: black;" value="<?php echo $rtiId ?>"><?php echo $title ?>
                         </option>
-                    <?php else: ?>
-                        <option name="option_template" id="option_template" style="color: black;" value="<?php echo $rtiId ?>">
-                            <?php echo $title ?></option>
                     <?php endif; ?>
                 <?php endforeach; ?>
             </select>
@@ -211,14 +168,10 @@
             <?php foreach ($users as $usr) {
                 $repartitions_map = [];
                 if (!empty($repartitions)) {
-            <?php foreach ($users as $usr) {
-                $repartitions_map = [];
-                if (!empty($repartitions)) {
                     foreach ($repartitions as $repartition) {
                         $repartitions_map[$repartition->user] = $repartition;
                     }
                 }
-                ?>
                 ?>
                 <div class="check-input">
                     <?php
@@ -258,14 +211,8 @@
                 </div>
             <?php } ?>
 
-
-                <?php
-            }
-            ?>
             <p>Add a new repartition template</p>
             <div class="save-template">
-                <input type="checkbox" name="save_template" id="save"> <span
-                    style="color: yellow; font-weight: bold;">Save this
                 <input type="checkbox" name="save_template" id="save"> <span
                     style="color: yellow; font-weight: bold;">Save this
                     template</span>
