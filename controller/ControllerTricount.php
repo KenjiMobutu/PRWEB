@@ -87,18 +87,18 @@ class ControllerTricount extends Controller{
       $users_json = $tricount->not_participate_as_json($tricount->get_id());
       $users_deletable = [];
       foreach($subscriptions as $s){
-          $user = User::get_by_id($s->getUserId());
-          $users_deletable[$user->getUserId()] = $s->can_be_delete($tricount->get_id());
-      }
-      // foreach ($sub as $s2) {
-      //   $users_deletable = $s2->can_be_delete($tricount->get_id());
-      //   var_dump($users_deletable);
-      // }
+        $sub[] = User::get_by_id($s->getUserId());
 
+      }
+      foreach($subscriptions as $s){
+        $user = User::get_by_id($s->getUserId());
+        if($user->getUserId() !== $tricount->get_creator_id()) {
+          $users_deletable[$user->getUserId()] = $s->can_be_delete($tricount->get_id());
+        }
+      }
     }else {
       $this->redirect("tricount","index");
     }
-
     (new View("edit_tricount"))->show(array("user" => $user,"tricount" => $tricount,"subscriptions" =>$subscriptions, "sub" => $sub,"users" => $users,"users_json"=>$users_json,"subscribers_json"=>$subscribers_json,"users_deletable"=>$users_deletable,"errors"=>$errors));
   }
 

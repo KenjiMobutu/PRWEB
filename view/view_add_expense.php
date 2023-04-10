@@ -12,11 +12,19 @@
     <script src="lib/jquery-3.6.3.min.js" type="text/javascript"></script>
 
     <script>
-    function calculateAmounts() {
-        // Récupère le montant total
-        var totalAmount = parseFloat($("#amount").val());
+    function updateAmount(userCheckbox, totalAmount, totalWeight) {
+        var user = userCheckbox.val();
+        var isChecked = userCheckbox.is(":checked");
+        var weight = parseFloat(userCheckbox.closest('.check-input').find('input[type="number"]').val());
+        var amount = 0;
+        if (isChecked && weight > 0) {
+            amount = weight*(totalAmount / totalWeight)  ;
+        }
+        $("#" + user + "_amount").val(amount.toFixed(2));
+    }
 
-        // Récupère le poids de chaque user et calcule le poids total
+    function calculateAmounts() {
+        var totalAmount = parseFloat($("#amount").val());
         var weights = {};
         var totalWeight = 0;
         $("input[type='number'][id$='Weight']").each(function() {
@@ -26,53 +34,40 @@
             totalWeight += weight;
         });
 
-        // Calculer les montants à payer pour chaque utilisateur
         $("input[type='checkbox']").each(function() {
-            var user = $(this).val();
-            var isChecked = $(this).is(":checked");
+            var userCheckbox = $(this);
+            var user = userCheckbox.val();
+            var isChecked = userCheckbox.is(":checked");
             var weight = parseFloat($("#userWeight").val());
             var amount = 0;
             if (isChecked && weight > 0) {
                 amount = weight*(totalAmount / totalWeight);
             }
-            $("#" + user + "_amount").val(amount.toFixed(2)); // formate le montant à deux chiffres après la virgule
+            $("#" + user + "_amount").val(amount.toFixed(2));
+            updateAmount(userCheckbox, totalAmount, totalWeight);
         });
 
-        // Gérer les cases à cocher qui changent de poids
         $(".check-input input[type='number']").change(function() {
+            var userCheckbox = $(this).closest('.check-input').find('input[type="checkbox"]');
             var weight = parseFloat($(this).val());
-            var userId = $(this).closest('.check-input').find('input[type="checkbox"]').attr('id').replace('_userCheckbox', '');
-            var checkbox = $('#' + userId + '_userCheckbox');
+            var userId = userCheckbox.attr('id').replace('_userCheckbox', '');
             if (weight === 0) {
-                checkbox.prop("checked", false);
+                userCheckbox.prop("checked", false);
             } else {
-                checkbox.prop("checked", true);
+                userCheckbox.prop("checked", true);
             }
-            updateAmount(checkbox);
+            updateAmount(userCheckbox, totalAmount, totalWeight);
         });
-
-        function updateAmount(userCheckbox) {
-            var user = userCheckbox.val();
-            var isChecked = userCheckbox.is(":checked");
-            var weight = parseFloat(userCheckbox.closest('.check-input').find('input[type="number"]').val());
-            var amount = 0;
-            if (isChecked && weight > 0) {
-                amount = weight*(totalAmount / totalWeight)  ;
-            }
-            $("#" + user + "_amount").val(amount.toFixed(2)); // formate le montant à deux chiffres après la virgule
-        }
     }
 
     $(document).ready(function() {
-        // Calculate the amounts when the page is loaded
         calculateAmounts();
 
-        // Add event listeners to the input fields
         $("input[type='number'], input[type='checkbox']").change(function() {
             calculateAmounts();
         });
     });
-</script>
+    </script>
 
 </head>
 
