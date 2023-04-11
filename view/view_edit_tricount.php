@@ -17,6 +17,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="assets/img/icon/192x192.png">
     <link rel="stylesheet" href="css/style.css">
     <script src="lib/jquery-3.6.3.min.js" type="text/javascript"></script>
+    <script src="lib/sweetalert2@11.js" type="text/javascript"></script>
 
     <script>
 
@@ -33,16 +34,7 @@
         let subscribers_json = <?= $subscribers_json ?>; // users who participate
         let addingUser = false;
         console.log("ISDELETABLE O ---> "+isDeletable);
-        $(function() {
-            usersList = $('#usersList');
-            addSubDropdown = $('#addSubDropdown');
-            addSubscriberButton = $('#btnAddSubscriber');
-            addSubscriberButton.attr("type", "button");
-            //addSubscriberButton.click(dropdownUserList);
-            displayUserList();
-            $('#subForm').hide();
-            //updateUserDeletability();
-        });
+        
 
         async function addUser() {
             const id = $('#addSubDropdown option:selected').data('user-id');
@@ -164,6 +156,58 @@
             $('#usersList').html(`<tr><td>${message}</td></tr>`);
         }
 
+        
+
+    function showDeleteButton(){
+        let deleteBtn ='<button class="delete-btn" onclick="confirmDelete()"  style="background-color: gold" color: white;"> delete Tricount';
+        $('.button-delete-tricount').html(deleteBtn);
+    }
+
+    function confirmDelete() {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteExpense();
+                    Swal.fire(
+                        'Deleted!',
+                        'Your expense has been deleted.',
+                        'success'
+                    ).then(() => {
+                        //redirect
+                        window.location.href = 'tricount/index';
+                    });
+                }
+        })
+    }
+
+    async function deleteExpense(tricount){
+        try {
+            await $.post("tricount/delete_service/" + tricount_id);
+        } catch(e){
+            console.log("Erreur : " + e);
+        }
+    }
+
+    $(function() {
+            usersList = $('#usersList');
+            addSubDropdown = $('#addSubDropdown');
+            addSubscriberButton = $('#btnAddSubscriber');
+            addSubscriberButton.attr("type", "button");
+            //addSubscriberButton.click(dropdownUserList);
+            displayUserList();
+            $('#subForm').hide();
+
+            //$('.button-delete-tricount').hide();
+            showDeleteButton();
+            //updateUserDeletability();
+        });
     </script>
 
     <!-- CSS only -->

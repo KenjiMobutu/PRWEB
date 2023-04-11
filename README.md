@@ -18,8 +18,8 @@ le bouton back fonctionne avec du js
   * A compléter...
 
 ### Liste des bugs connus
-  * bug 1 : add operation : quand on utilise le bouton refresh ça ne fait pas la création des debts ni la mise à jour du total de l'utilisateur
-  * bug 2 : edit operation : bouton refresh fonctionne pas, l'update se fait pour l'opération mais pas pour les items / et la balance
+  * bug 1 : 
+  * bug 2 :
   * ...
 
 ### Liste des fonctionnalités supplémentaires

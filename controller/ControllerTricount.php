@@ -191,6 +191,13 @@ class ControllerTricount extends Controller{
     }
   }
 
+  public function delete_service(){
+    if(isset($_GET['param1']) && $_GET['param1'] !== ""){
+        $tricount = Tricounts::get_by_id($_GET['param1']);
+        $tricount = $tricount->delete($tricount->get_id());
+    }
+}
+
 }
 
 ?>
