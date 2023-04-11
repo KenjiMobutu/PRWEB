@@ -11,6 +11,8 @@
         href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400&family=Sen:wght@400;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 </head>
 <style>
     ul {
@@ -65,12 +67,18 @@
 
 <body>
     <?php include 'menu.html' ?>
-    <div class="view_balance">
 
+    <div class="view_balance">
         <p>
             <?php echo $tricount->get_title(); ?> > Balance
         </p>
+        <!-- Balance with Chart.js-->
+        <div>
+            <canvas id="myChart"></canvas>
+        </div>
 
+
+        <!-- Balance without JS -->
         <div class="balance_container">
             <ul>
                 <?php
@@ -117,6 +125,28 @@
         </div>
 
     </div>
+    <script>
+        const ctx = document.getElementById('myChart');
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            datasets: [{
+                label: '# of Votes',
+                data: [12, 19, 3, 5, 2, 3],
+                borderWidth: 1
+            }]
+            },
+            options: {
+            scales: {
+                y: {
+                beginAtZero: true
+                }
+            }
+            }
+        });
+    </script>
 </body>
 
 </html>
