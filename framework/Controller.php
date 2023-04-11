@@ -73,5 +73,5 @@ abstract class Controller {
 
     //tout controlleur doit posséder une méthode index, c'est son action
     //par défaut
-    public abstract function index() : void;
+    public abstract function index() :void;
 }
