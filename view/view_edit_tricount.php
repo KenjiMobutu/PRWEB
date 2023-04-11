@@ -177,7 +177,7 @@
                     deleteExpense();
                     Swal.fire(
                         'Deleted!',
-                        'Your expense has been deleted.',
+                        'Your tricount has been deleted.',
                         'success'
                     ).then(() => {
                         //redirect
