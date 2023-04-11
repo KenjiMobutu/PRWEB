@@ -507,6 +507,15 @@ class ControllerOperation extends Controller
     }
 
 
+    public function delete_service(){
+        if(isset($_GET['param1']) && $_GET['param1'] !== ""){
+            $operation = Operation::getOperationByOperationId($_GET['param1']);
+            $tricount = Tricounts::get_tricount_by_operation_id($operation->get_id());
+            $tricountId = $tricount->get_id();
+            $operation = $operation->delete();
+        }
+    }
+
     public function delete_confirm()
     {
         $user = $this->get_user_or_redirect();

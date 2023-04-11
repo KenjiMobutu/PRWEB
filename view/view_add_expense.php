@@ -10,8 +10,10 @@
     <link href="css/style.css" rel="stylesheet" type="text/css" />
     <link href="css/add-exp.css" rel="stylesheet" type="text/css" />
     <script src="lib/jquery-3.6.3.min.js" type="text/javascript"></script>
+    <script src="lib/sweetalert2@11.js" type="text/javascript"></script>
 
     <script>
+        /** <---------------------------  IT2 ---------------------------> */
     function updateAmount(userCheckbox, totalAmount, totalWeight) {
         var user = userCheckbox.val();
         var isChecked = userCheckbox.is(":checked");
@@ -62,11 +64,61 @@
 
     $(document).ready(function() {
         calculateAmounts();
-
+        //pour it3
+        $('.deleteContainer').html(
+        showDeleteButton());
         $("input[type='number'], input[type='checkbox']").change(function() {
             calculateAmounts();
         });
     });
+
+
+    
+
+            /** <---------------------------  IT3 ---------------------------> */
+        function showDeleteButton(){
+
+            let deleteBtn ='<button class="delete-btn" onclick="confirmDelete()" style="background-color: gold" color: white;"> delete';
+            $('.deleteContainer').html(deleteBtn);
+        }
+
+        function confirmDelete() {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteExpense(<?= $operation->get_id(); ?>);
+                    Swal.fire(
+                        'Deleted!',
+                        'Your expense has been deleted.',
+                        'success'
+                    ).then(() => {
+                        window.location.href = 'operation/expenses/' + <?= $tricount->get_id(); ?>;
+                    });
+                }
+            })
+            console.log(id);
+
+        }
+
+        
+
+        async function deleteExpense(id){
+            try {
+                await $.post("operation/delete_service/" + id);
+            } catch(e) {
+                console.log("Erreur : " + e);
+            }
+        }
+
+
+
     </script>
 
 </head>
@@ -225,9 +277,12 @@
         </form>
         <?php
         if ($action === 'edit' || $action === 'edit_expense') {
-            echo '<button class="delete-btn" style="background-color: blue; color: white;">';
-            echo '<a href="/prwb_2223_c03/Operation/delete_confirm/' . $_GET['param1'] . '" style="text-decoration: none; color: white;">DELETE</a>';
-            echo '</button>';
+            echo '<div class="deleteContainer">';
+
+                echo '<button class="delete-btn" style="background-color: blue; color: white;">';
+                echo '<a href="/prwb_2223_c03/Operation/delete_confirm/' . $_GET['param1'] . '" style="text-decoration: none; color: white;">DELETE</a>';
+                echo '</button>';
+            echo '</div>';
         }
         ?>
     </div>
