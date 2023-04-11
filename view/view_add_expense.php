@@ -14,6 +14,8 @@
 
     <script>
         /** <---------------------------  IT2 ---------------------------> */
+        let action = "<?= $action ?>"
+
     function updateAmount(userCheckbox, totalAmount, totalWeight) {
         var user = userCheckbox.val();
         var isChecked = userCheckbox.is(":checked");
@@ -65,8 +67,10 @@
     $(document).ready(function() {
         calculateAmounts();
         //pour it3
-        $('.deleteContainer').html(
-        showDeleteButton());
+        if(action === "edit_expense" || action === "edit"){
+            $('.deleteContainer').html(
+            showDeleteButton());
+        }
         $("input[type='number'], input[type='checkbox']").change(function() {
             calculateAmounts();
         });
@@ -76,21 +80,23 @@
     
 
             /** <---------------------------  IT3 ---------------------------> */
-        function showDeleteButton(){
 
-            let deleteBtn ='<button class="delete-btn" onclick="confirmDelete()" style="background-color: gold" color: white;"> delete';
-            $('.deleteContainer').html(deleteBtn);
-        }
+<?php  if ($action === 'edit' || $action === 'edit_expense'): ?>
 
-        function confirmDelete() {
-            Swal.fire({
-                title: 'Are you sure?',
-                text: "You won't be able to revert this!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!'
+    function showDeleteButton(){
+        let deleteBtn ='<button class="delete-btn" onclick="confirmDelete()" style="background-color: gold" color: white;"> delete';
+        $('.deleteContainer').html(deleteBtn);
+    }
+
+    function confirmDelete() {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
                     deleteExpense(<?= $operation->get_id(); ?>);
@@ -102,21 +108,21 @@
                         window.location.href = 'operation/expenses/' + <?= $tricount->get_id(); ?>;
                     });
                 }
-            })
-            console.log(id);
+        })
+    }
 
+    async function deleteExpense(operationId){
+        try {
+            await $.post("operation/delete_service/" + operationId);
+        } catch(e){
+            console.log("Erreur : " + e);
         }
+    }
 
-        
+<?php endif;?>
 
-        async function deleteExpense(id){
-            try {
-                await $.post("operation/delete_service/" + id);
-            } catch(e) {
-                console.log("Erreur : " + e);
-            }
-        }
 
+            
 
 
     </script>
