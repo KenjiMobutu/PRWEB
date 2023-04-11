@@ -18,6 +18,7 @@
 <body>
 <script>
        $(function() {
+        let tricount = <?= $tricount->get_id(); ?>;
             let title = $("#template_title");
             let errTitle = $("#errTitle");
             let btn = $("#btnSubmit");
@@ -63,12 +64,17 @@
         });
 
     <?php if(isset($templateID) && $templateID !== ""): ?>
+        let templateId = <?= $templateID ;?>;
         function showDeleteButton(){
             let deleteBtn ='<button class="delete-btn" onclick="confirmDelete()"  style="background-color: gold" color: white;"> delete Template';
             $('.delete-btn').html(deleteBtn);
         }
 
+
+        
         function confirmDelete() {
+            console.log("Confirm delete function called.");
+
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You won't be able to revert this!",
@@ -79,22 +85,21 @@
                 confirmButtonText: 'Yes, delete it!'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        deleteExpense();
+                        deleteTemplate();
                         Swal.fire(
                             'Deleted!',
                             'Your template has been deleted.',
                             'success'
                         ).then(() => {
-                            //redirect
-                            window.location.href = 'tricount/index';
+                            window.location.href = 'templates/templates/'+ templateId;
                         });
                     }
             })
         }
 
-        async function deleteExpense(){
+        async function deleteTemplate(){
             try {
-                await $.post("tricount/delete_service/"  );
+                await $.post("templates/delete_service/" +<?= $tricount->get_id(); ?>);
             } catch(e){
                 console.log("Erreur : " + e);
             }

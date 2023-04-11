@@ -210,5 +210,11 @@ class ControllerTemplates extends Controller
         }
     }
 
+    public function delete_service(){
+        if(isset($_GET['param1']) && $_GET['param1'] !== ""){
+            $template = Repartition_templates::get_by_id($_GET['param1']);
+            $template = $template->delete_by_id();
+        }
+    }
 }
 ?>
