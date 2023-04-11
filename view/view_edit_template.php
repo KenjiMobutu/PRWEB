@@ -18,7 +18,7 @@
 <body>
 <script>
        $(function() {
-        let tricount = <?= $tricount->get_id(); ?>;
+        
             let title = $("#template_title");
             let errTitle = $("#errTitle");
             let btn = $("#btnSubmit");
@@ -58,15 +58,18 @@
                     btn.prop("disabled", false);
                 }
             });
-            <?php if(isset($templateID) && $templateID !== ""): ?>
-                showDeleteButton();
-            <?php endif; ?>
+           
         });
 
     <?php if(isset($templateID) && $templateID !== ""): ?>
         let templateId = <?= $templateID ;?>;
+        let tricount = <?= $tricount->get_id(); ?>;
+
+        $(function(){
+            showDeleteButton();
+        })
         function showDeleteButton(){
-            let deleteBtn ='<button class="delete-btn" onclick="confirmDelete()"  style="background-color: gold" color: white;"> delete Template';
+            let deleteBtn ='<button class="deleteButton" onclick="confirmDelete()"  style="background-color: gold" color: white;"> delete Template';
             $('.delete-btn').html(deleteBtn);
         }
 
@@ -91,7 +94,7 @@
                             'Your template has been deleted.',
                             'success'
                         ).then(() => {
-                            window.location.href = 'templates/templates/'+ templateId;
+                            window.location.href = 'templates/templates/'+ tricount;
                         });
                     }
             })
@@ -99,7 +102,7 @@
 
         async function deleteTemplate(){
             try {
-                await $.post("templates/delete_service/" +<?= $tricount->get_id(); ?>);
+                await $.post("templates/delete_service/" +templateId);
             } catch(e){
                 console.log("Erreur : " + e);
             }
@@ -109,8 +112,9 @@
 </script>
 
 <?php include 'menu.html' ?>
+<div class="edit_template_container">
+
     <form action="templates/editTemplate" method="post" id="edit_template_form">
-        <div class="edit_template_container">
         <?php if (count($listUser) > 1) : ?>
 
             <p class="edit_template_p">Title :</p>
@@ -186,15 +190,16 @@
                 <p>You're alone. Don't be shy -> <a href="tricount/edit/<?php echo $tricount->get_id(); ?>"> ADD FRIENDS</a> ☻</p>
         <?php endif;?>
             
-        <?php if(isset($templateID) && $templateID !== ""){
+       
+
+
+    </form>
+    <?php if(isset($templateID) && $templateID !== ""){
             echo '<div class="delete-btn">';
                 echo "<a href='templates/delete_template/$templateID'"; echo " id='delete_template'>DELETE</a>";
             echo '</div>';
         }?>
+    </div>
 
-        </div>
-
-    </form>
-    
 </body>
 </html>
