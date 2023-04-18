@@ -166,28 +166,27 @@ $(document).ready(function() {
             <label for="repartition_template">Use repartition template (optional)</label>
             <button name="refreshBtn" id="refreshBtn">Refresh</button>
             <select id="repartitionTemplate" name="rti">
-                <?php if (isset($template)) {
+    <?php if (isset($template)) {
                     echo "<option style='color: black;' value='{$template->get_id()}'>{$template->get_title()}</option>";
 
                 } else {
                     echo "<option style='color: black;' value='option-default'>No, I'll use custom repartition</option>";
                 }
                 ?>
-                <?php foreach ($rti as $rt):
-                    $title = $rt["title"];
-                    $rtiId = $rt["id"] ?>
-                    <?php if (isset($template)):
-                        if ($title !== $template->get_title()): ?>
-                            <option name="option_template" id="option_template" style="color: black;" value="<?php echo $rtiId ?>"><?php echo $title ?>
+                <?php foreach ($allTemplates as $rt): ?>
+                    <?php if (isset($template)): ?>
+                        <?php if ($rt->title !== $template->get_title()): ?>
+                            <option name="option_template" id="option_template" style="color: black;" value="<?php echo $rt->id ?>"><?php echo $rt->title ?>
                             </option>
                         <?php endif; ?>
-
+            
                     <?php else: ?>
-                        <option name="option_template" id="option_template" style="color: black;" value="<?php echo $rtiId ?>"><?php echo $title ?>
+                        <option name="option_template" id="option_template" style="color: black;" value="<?php echo $rt->id ?>"><?php echo $rt->title ?>
                         </option>
                     <?php endif; ?>
                 <?php endforeach; ?>
             </select>
+
             <label for="who">For whom? (select at least one)</label>
             <?php foreach ($users as $usr) {
                 $repartitions_map = [];

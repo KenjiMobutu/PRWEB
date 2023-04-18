@@ -187,7 +187,7 @@ class ControllerOperation extends Controller
             "templateId" => $templateId,
             "users" => $users,
             "tricount" => $tricount,
-            "template" => $template,
+            "repartitionTemplate" => $template,
             "ListUsers" => $listUsers,
             "info" => $info,
             "items" => $items,
@@ -313,7 +313,7 @@ class ControllerOperation extends Controller
             $userId = $user->getUserId();
             $tricount = Tricounts::get_by_id($_GET['param1']);
             $users = Participations::get_by_tricount($_GET['param1']);
-            $rti = Repartition_template_items::get_by_user_and_tricount($userId, $_GET['param1']);
+            $allTemplates = Repartition_templates::get_by_tricount($_GET['param1']);
             $action = $_GET['action'];
             $repartitions = [];
         }
@@ -321,7 +321,7 @@ class ControllerOperation extends Controller
             array(
                 "user" => $user,
                 "tricount" => $tricount,
-                "rti" => $rti,
+                "allTemplates" => $allTemplates,
                 "users" => $users,
                 "action" => $action,
                 "repartitions" => $repartitions

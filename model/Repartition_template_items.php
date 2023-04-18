@@ -190,15 +190,17 @@ class Repartition_template_items extends Model
   public static function get_by_user_and_tricount($user, $tricountId)
   {
     $query = self::execute(
-      "SELECT * FROM  repartition_template_items rti, repartition_templates rt
-                              where rti.repartition_template = rt.id
-                              and rti.user=:user and rt.tricount=:tricount",
+      "SELECT * FROM repartition_templates rt
+    LEFT JOIN repartition_template_items rti ON 
+    rti.repartition_template = rt.id
+    WHERE rti.user=:user AND rt.tricount=:tricount",
       array("user" => $user, "tricount" => $tricountId)
     );
     $data = $query->fetchAll();
 
     return $data;
   }
+
 
   public function get_user_info(): string
   { // on récupère les noms des utilisateurs lié a un template_items
