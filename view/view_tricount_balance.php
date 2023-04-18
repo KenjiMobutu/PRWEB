@@ -11,6 +11,7 @@
         href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400&family=Sen:wght@400;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <style>
     ul {
@@ -71,10 +72,16 @@
             <?php echo $tricount->get_title(); ?> > Balance
         </p>
 
+        <div>
+            <canvas id="myChart"></canvas>
+        </div>
+
         <div class="balance_container">
             <ul>
                 <?php
                 $max_balance = 1;
+                $labels = [];
+                $data = [];
                 usort($users, function ($a, $b) {
                     return strcmp($a->getUserInfo(), $b->getUserInfo());
                 });
@@ -89,7 +96,10 @@
                     if (abs($balance) > $max_balance) {
                         $max_balance = abs($balance);
                     }
+                    array_push($labels, $user->getUserInfo());
+                    array_push($data, $balance);
                 endforeach;
+
                 foreach ($users as $user):
                     $total_balance = 0;
                     $alberti_balance = Operation::total_alberti($tricount->get_id(), $user->get_user());
@@ -117,6 +127,48 @@
         </div>
 
     </div>
+    <script>
+var ctx = document.getElementById('myChart').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: <?php echo json_encode($labels); ?>,
+        datasets: [{
+            label: 'Balance',
+            data: <?php echo json_encode($data); ?>,
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)',
+                'rgba(75, 192, 192, 0.2)',
+                'rgba(153, 102, 255, 0.2)',
+                'rgba(255, 159, 64, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255, 99, 132, 1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)',
+                'rgba(75, 192, 192, 1)',
+                'rgba(153, 102, 255, 1)',
+                'rgba(255, 159, 64, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        indexAxis:'y',
+        scales: {
+            y: {
+                ticks: {
+                    callback: function(value, index, values) {
+                        return value + ' €';
+                    }
+                }
+            }
+        }
+    }
+});
+</script>
 </body>
 
 </html>
