@@ -132,8 +132,8 @@ class ControllerTemplates extends Controller
                 if(!is_null($template)){
                     Repartition_template_items::delete_by_repartition_template($template->get_id());
                     foreach($combined_array as $user_id => $weight) {                        
-                        if($weight ==="" || $weight === "0")
-                            $weight = 1;
+                        if($weight ==="")
+                            $weight = 0;
                         Repartition_template_items::addNewItems($user_id, $template->id, $weight); 
                     };
                 }
@@ -143,8 +143,8 @@ class ControllerTemplates extends Controller
                 $template->newTemplate($template_title, $tricountId);
                 if($template !== null){
                     foreach($combined_array as $user_id => $weight) {
-                        if($weight ==="" || $weight === "0" )
-                            $weight = 1;
+                        if($weight ==="" )
+                            $weight = 0;
                         Repartition_template_items::addNewItems($user_id, $template->get_id(), $weight); 
                     }
                 }

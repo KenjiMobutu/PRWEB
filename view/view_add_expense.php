@@ -14,10 +14,10 @@
     <script>
     function updateAmount(userCheckbox, totalAmount, totalWeight) {
     var user = userCheckbox.val();
-    var isChecked = userCheckbox.is(":checked");
-    var weight = parseFloat(userCheckbox.closest('.check-input').find('input[type="number"]').val());
+    var weightInput = userCheckbox.closest('.check-input').find('input[type="number"]');
+    var weight = parseFloat(weightInput.val());
     var amount = 0;
-    if (isChecked && weight > 0) {
+    if (userCheckbox.is(":checked") && weight > 0) {
         amount = weight * (totalAmount / totalWeight);
     }
     $("#" + user + "_amount").val(amount.toFixed(2));
@@ -27,30 +27,20 @@ function calculateAmounts() {
     var totalAmount = parseFloat($("#amount").val());
     var weights = {};
     var totalWeight = 0;
-    $("input[type='number'][id$='Weight']").each(function() {
-        var userId = $(this).attr("id").replace("Weight", "");
-        var weight = parseFloat($(this).val());
+
+    $("input[type='checkbox']:checked").each(function () {
+        var userId = $(this).val();
+        var weight = parseFloat($(`input[type="number"][name="w[${userId}]"]`).val());
         weights[userId] = weight;
         totalWeight += weight;
     });
 
-    $("input[type='checkbox']").each(function() {
+    $("input[type='checkbox']").each(function () {
         var userCheckbox = $(this);
         updateAmount(userCheckbox, totalAmount, totalWeight);
     });
-
-    $(".check-input input[type='number']").change(function() {
-        var userCheckbox = $(this).closest('.check-input').find('input[type="checkbox"]');
-        var weight = parseFloat($(this).val());
-        var userId = userCheckbox.attr('id').replace('_userCheckbox', '');
-        if (weight === 0) {
-            userCheckbox.prop("checked", false);
-        } else {
-            userCheckbox.prop("checked", true);
-        }
-        updateAmount(userCheckbox, totalAmount, totalWeight);
-    });
 }
+
 
 $(document).ready(function() {
     const repartitionTemplate = $('#repartitionTemplate');
@@ -94,10 +84,13 @@ $(document).ready(function() {
 
     calculateAmounts();
 
+    // Combine the event listeners for checkboxes and number inputs
     $("input[type='number'], input[type='checkbox']").change(function() {
         calculateAmounts();
     });
 });
+
+
 </script>
 
 </head>
