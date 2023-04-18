@@ -173,6 +173,7 @@ $(document).ready(function() {
                     echo "<option style='color: black;' value='option-default'>No, I'll use custom repartition</option>";
                 }
                 ?>
+            <?php if ($allTemplates !== null): ?>
                 <?php foreach ($allTemplates as $rt): ?>
                     <?php if (isset($template)): ?>
                         <?php if ($rt->title !== $template->get_title()): ?>
@@ -185,6 +186,8 @@ $(document).ready(function() {
                         </option>
                     <?php endif; ?>
                 <?php endforeach; ?>
+            <?php endif; ?>
+
             </select>
 
             <label for="who">For whom? (select at least one)</label>
