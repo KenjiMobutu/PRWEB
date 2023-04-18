@@ -13,61 +13,92 @@
 
     <script>
     function updateAmount(userCheckbox, totalAmount, totalWeight) {
-        var user = userCheckbox.val();
-        var isChecked = userCheckbox.is(":checked");
-        var weight = parseFloat(userCheckbox.closest('.check-input').find('input[type="number"]').val());
-        var amount = 0;
-        if (isChecked && weight > 0) {
-            amount = weight*(totalAmount / totalWeight)  ;
-        }
-        $("#" + user + "_amount").val(amount.toFixed(2));
+    var user = userCheckbox.val();
+    var isChecked = userCheckbox.is(":checked");
+    var weight = parseFloat(userCheckbox.closest('.check-input').find('input[type="number"]').val());
+    var amount = 0;
+    if (isChecked && weight > 0) {
+        amount = weight * (totalAmount / totalWeight);
     }
+    $("#" + user + "_amount").val(amount.toFixed(2));
+}
 
-    function calculateAmounts() {
-        var totalAmount = parseFloat($("#amount").val());
-        var weights = {};
-        var totalWeight = 0;
-        $("input[type='number'][id$='Weight']").each(function() {
-            var userId = $(this).attr("id").replace("Weight", "");
-            var weight = parseFloat($(this).val());
-            weights[userId] = weight;
-            totalWeight += weight;
-        });
-
-        $("input[type='checkbox']").each(function() {
-            var userCheckbox = $(this);
-            var user = userCheckbox.val();
-            var isChecked = userCheckbox.is(":checked");
-            var weight = parseFloat($("#userWeight").val());
-            var amount = 0;
-            if (isChecked && weight > 0) {
-                amount = weight*(totalAmount / totalWeight);
-            }
-            $("#" + user + "_amount").val(amount.toFixed(2));
-            updateAmount(userCheckbox, totalAmount, totalWeight);
-        });
-
-        $(".check-input input[type='number']").change(function() {
-            var userCheckbox = $(this).closest('.check-input').find('input[type="checkbox"]');
-            var weight = parseFloat($(this).val());
-            var userId = userCheckbox.attr('id').replace('_userCheckbox', '');
-            if (weight === 0) {
-                userCheckbox.prop("checked", false);
-            } else {
-                userCheckbox.prop("checked", true);
-            }
-            updateAmount(userCheckbox, totalAmount, totalWeight);
-        });
-    }
-
-    $(document).ready(function() {
-        calculateAmounts();
-
-        $("input[type='number'], input[type='checkbox']").change(function() {
-            calculateAmounts();
-        });
+function calculateAmounts() {
+    var totalAmount = parseFloat($("#amount").val());
+    var weights = {};
+    var totalWeight = 0;
+    $("input[type='number'][id$='Weight']").each(function() {
+        var userId = $(this).attr("id").replace("Weight", "");
+        var weight = parseFloat($(this).val());
+        weights[userId] = weight;
+        totalWeight += weight;
     });
-    </script>
+
+    $("input[type='checkbox']").each(function() {
+        var userCheckbox = $(this);
+        updateAmount(userCheckbox, totalAmount, totalWeight);
+    });
+
+    $(".check-input input[type='number']").change(function() {
+        var userCheckbox = $(this).closest('.check-input').find('input[type="checkbox"]');
+        var weight = parseFloat($(this).val());
+        var userId = userCheckbox.attr('id').replace('_userCheckbox', '');
+        if (weight === 0) {
+            userCheckbox.prop("checked", false);
+        } else {
+            userCheckbox.prop("checked", true);
+        }
+        updateAmount(userCheckbox, totalAmount, totalWeight);
+    });
+}
+
+$(document).ready(function() {
+    const repartitionTemplate = $('#repartitionTemplate');
+    const refreshBtn = $('#refreshBtn');
+
+    repartitionTemplate.on('change', function() {
+        refreshBtn.hide();
+
+        const selectedTemplateId = repartitionTemplate.val(); //GET TEMPLATE ID
+        console.log(selectedTemplateId);
+        $.ajax({
+            url: 'operation/get_template_service/' + selectedTemplateId,
+            method: 'GET',
+            dataType: 'json',
+            success: function(templateData) {
+                updateInputsAndCheckboxes(templateData);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error('Error fetching template data:', textStatus, errorThrown);
+            }
+        });
+
+        function updateInputsAndCheckboxes(templateData) {
+            var check = $(`input[type="checkbox"]`);
+            check.prop('checked', false);
+
+            var numb = $(`input[type="number"]`);
+
+            templateData.forEach(userTemplateData => {
+                const userCheckbox = $(`input[type="checkbox"][name="c[${userTemplateData.user}]"]`);
+                if (userCheckbox.length > 0) {
+                    userCheckbox.prop('checked', true);
+                    const userWeight = $(`input[type="number"][name="w[${userTemplateData.user}]"]`);
+                    userWeight.val(userTemplateData.weight);
+                }
+            });
+
+            calculateAmounts();
+        }
+    });
+
+    calculateAmounts();
+
+    $("input[type='number'], input[type='checkbox']").change(function() {
+        calculateAmounts();
+    });
+});
+</script>
 
 </head>
 
@@ -141,7 +172,7 @@
             <br>
             <label for="repartition_template">Use repartition template (optional)</label>
             <button name="refreshBtn" id="refreshBtn">Refresh</button>
-            <select id="rti" name="rti">
+            <select id="repartitionTemplate" name="rti">
                 <?php if (isset($template)) {
                     echo "<option style='color: black;' value='{$template->get_id()}'>{$template->get_title()}</option>";
 
@@ -154,12 +185,12 @@
                     $rtiId = $rt["id"] ?>
                     <?php if (isset($template)):
                         if ($title !== $template->get_title()): ?>
-                            <option name="option_template" style="color: black;" value="<?php echo $rtiId ?>"><?php echo $title ?>
+                            <option name="option_template" id="option_template" style="color: black;" value="<?php echo $rtiId ?>"><?php echo $title ?>
                             </option>
                         <?php endif; ?>
 
                     <?php else: ?>
-                        <option name="option_template" style="color: black;" value="<?php echo $rtiId ?>"><?php echo $title ?>
+                        <option name="option_template" id="option_template" style="color: black;" value="<?php echo $rtiId ?>"><?php echo $title ?>
                         </option>
                     <?php endif; ?>
                 <?php endforeach; ?>
