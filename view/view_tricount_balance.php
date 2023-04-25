@@ -129,7 +129,10 @@
 
     </div>
     <script>
-        $("#balance").hide();
+        $(document).ready(function() {
+            $('#balance').hide();
+        });
+
         var ctx = document.getElementById('myChart').getContext('2d');
         var myChart = new Chart(ctx, {
             type: 'bar',
