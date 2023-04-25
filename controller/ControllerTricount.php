@@ -87,6 +87,8 @@ class ControllerTricount extends Controller{
     $user = $this->get_user_or_redirect();
     $id = null;
     $sub = [];
+    $users_deletable = "";
+    $users_deletable = "";
     $errors = [];
     if (isset($_GET['param1']) || isset($_POST['param1'])) {
       $id = isset($_POST['param1']) ? $_POST['param1'] : $_GET['param1'];
@@ -95,17 +97,37 @@ class ControllerTricount extends Controller{
         $this->redirect('tricount', "index");
       }
       $tricount = Tricounts::get_by_id($id);
-      $subscriptions = Participations::by_tricount($tricount->get_id());
-      $users = User::not_participate($tricount->get_id());
+      $subscriptions = $tricount->subscribers($tricount->get_id());
+      $subscribers_json = $tricount->subscribers_as_json($tricount->get_id());
+      $users = $tricount->not_participate($tricount->get_id());
+      $users_json = $tricount->not_participate_as_json($tricount->get_id());
+      $users_deletable = [];
       foreach($subscriptions as $s){
-        $sub[] = User::get_by_id($s->user);
+        $sub[] = User::get_by_id($s->getUserId());
+
+      }
+      foreach($subscriptions as $s){
+        $user = User::get_by_id($s->getUserId());
+        if($user->getUserId() !== $tricount->get_creator_id()) {
+          $users_deletable[$user->getUserId()] = $s->can_be_delete($tricount->get_id());
+        }
       }
     }else {
       $this->redirect("tricount","index");
     }
-
-    (new View("edit_tricount"))->show(array("user" => $user,"tricount" => $tricount,"subscriptions" =>$subscriptions, "sub" => $sub,"users" => $users, "errors"=>$errors));
+    (new View("edit_tricount"))->show(array("user" => $user,"tricount" => $tricount,"subscriptions" =>$subscriptions, "sub" => $sub,"users" => $users,"users_json"=>$users_json,"subscribers_json"=>$subscribers_json,"users_deletable"=>$users_deletable,"errors"=>$errors));
   }
+
+  public function get_visible_users_service() : void {
+
+    if(isset($_GET["param1"]) && $_GET["param1"]!=""){
+        var_dump($_GET["param1"]);
+        $id = $_GET['param1'];
+        $tricount = Tricounts::get_by_id($id);
+        $users_json = $tricount->not_participate_as_json($id);
+    }
+    echo $users_json;
+}
 
   public function delete(){
     $user = $this->get_user_or_redirect();
@@ -150,7 +172,7 @@ class ControllerTricount extends Controller{
         $description = Tools::sanitize($_POST["description"]);
         $tricount = Tricounts::get_by_id($id);
         $subscriptions = Participations::by_tricount($tricount->get_id());
-        $users = User::not_participate($tricount->get_id());
+        $users = $tricount->not_participate($tricount->get_id());
         foreach($subscriptions as $s){
           $sub[] = User::get_by_id($s->user);
         }

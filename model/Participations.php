@@ -35,9 +35,14 @@ class Participations extends Model
         return true;
     }
 
-    public function get_dette($operation): float
+    public function get_dette($operation): int
     {
-        return Operation::get_dette_by_operation($operation, $this->user);
+        if ($operation) {
+            $dette = Operation::get_dette_by_operation($operation, $this->user);
+            return (int) ($dette ?? 0); // return 0 if $dette is null
+        } else {
+            return 0;
+        }
     }
 
 
@@ -196,12 +201,11 @@ class Participations extends Model
             return false;
         return $data;
     }
-    public function is_in_Items($templateID)
-    {
-        $query = self::execute("SELECT DISTINCT rti.* 
-                from repartition_template_items rti, subscriptions o 
+    public function is_in_Items($templateID){
+        $query = self::execute("SELECT DISTINCT rti.*
+                from repartition_template_items rti, subscriptions o
                 where o.tricount =:tricount
-                and rti.repartition_template = :repartition_template 
+                and rti.repartition_template = :repartition_template
                 and rti.user = :user",
             array(
                 "tricount" => $this->tricount,

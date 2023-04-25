@@ -94,12 +94,15 @@ class ControllerOperation extends Controller
             $this->redirect('main', "error");
         }
         $checkId = Operation::exists($_GET['param1']); //check si l'operation existe dans le tricount
-        if (empty($checkId)) {
+        if (empty($checkId) ) {
             $this->redirect('main', "error");
         } else {
             $userId = $user->getUserId();
             $operationId = $_GET['param1'];
             $tricount = Tricounts::get_tricount_by_operation_id($operationId);
+            if(!$user->is_in_tricount($tricount->get_id())){
+                $this->redirect('user', "profile");
+            }
             $operationUsers = Operation::get_users_from_operation($operationId);
             $debt = Operation::get_dette_by_operation($operationId, $userId);
             $participants = Operation::getNumberParticipantsByOperationId($operationId);
@@ -184,7 +187,7 @@ class ControllerOperation extends Controller
             "templateId" => $templateId,
             "users" => $users,
             "tricount" => $tricount,
-            "template" => $template,
+            "repartitionTemplate" => $template,
             "ListUsers" => $listUsers,
             "info" => $info,
             "items" => $items,
@@ -310,7 +313,7 @@ class ControllerOperation extends Controller
             $userId = $user->getUserId();
             $tricount = Tricounts::get_by_id($_GET['param1']);
             $users = Participations::get_by_tricount($_GET['param1']);
-            $rti = Repartition_template_items::get_by_user_and_tricount($userId, $_GET['param1']);
+            $allTemplates = Repartition_templates::get_by_tricount($_GET['param1']);
             $action = $_GET['action'];
             $repartitions = [];
         }
@@ -318,7 +321,7 @@ class ControllerOperation extends Controller
             array(
                 "user" => $user,
                 "tricount" => $tricount,
-                "rti" => $rti,
+                "allTemplates" => $allTemplates,
                 "users" => $users,
                 "action" => $action,
                 "repartitions" => $repartitions
@@ -359,11 +362,14 @@ class ControllerOperation extends Controller
             $action = $_GET['action'];
             $userId = $user->getUserId();
             $tricount = Tricounts::get_tricount_by_operation_id($_GET['param1']);
+            if(!$user->is_in_tricount($tricount->get_id())){
+                $this->redirect('user', "profile");
+            }
             $operationId = $_GET['param1'];
             $operation = Operation::getOperationByOperationId($operationId);
             $users = Participations::get_by_tricount($tricount->get_id());
             $repartitions = Repartitions::get_by_operation($operationId);
-            $rti = Repartition_template_items::get_by_user_and_tricount($userId, $tricount->get_id());
+            $allTemplates = Repartition_templates::get_by_tricount($tricount->get_id());
         }
 
         (new View("add_expense"))->show(
@@ -372,7 +378,7 @@ class ControllerOperation extends Controller
                 "action" => $action,
                 "operation" => $operation,
                 "users" => $users,
-                "rti" => $rti,
+                "allTemplates" => $allTemplates,
                 "tricount" => $tricount,
                 "repartitions" => $repartitions,
                 "operationId" => $operationId
@@ -443,6 +449,9 @@ class ControllerOperation extends Controller
             
             if (empty($errors)) {
                 $operation->update();
+                if($save_template && $_POST['template_name'] !== ""){
+                    $this->save_Template($operation,$_POST['c'],$_POST['w'], $_POST['template_name']);
+                }
                 // Update repartition
                 if($this->saveOperationRepartition($operation, $_POST['c'], $_POST['w'])){
                     $this->redirect("operation", "expenses", $tricountId);
@@ -475,7 +484,7 @@ class ControllerOperation extends Controller
                 Operation::deleteRepartition($operation->get_id());
             foreach($combine_array as $user_id => $weight) {                        
                 if($weight ==="" || $weight === "0" )
-                    $weight = 1;
+                    $weight = 0;
                 Operation::insertRepartition($operation->get_id(), $weight, $user_id); 
             };
             $ok = true;
@@ -490,7 +499,7 @@ class ControllerOperation extends Controller
         if($template !== null){
             foreach($combine_array as $user_id => $weight){
                 if($weight === "" || $weight ==="0"){
-                    $weight = 1;
+                    $weight = 0;
                 }
                 Repartition_template_items::addNewItems($user_id, $template->get_id(), $weight);
             }
@@ -513,10 +522,11 @@ class ControllerOperation extends Controller
         } else {
             $userId = $user->getUserId();
         }
-        if (isset($_GET["param1"])) {
-
+        
+        if (isset($_GET["param1"]) && $user->is_in_tricount($operation_data->getTricount())) {
             (new View("delete_operation"))->show(array("user" => $user, "operationId" => $operationId, "operation_data" => $operation_data));
-        }
+        }else
+            $this->redirect('user', "profile");
     }
 
     public function delete_operation()
@@ -567,26 +577,9 @@ class ControllerOperation extends Controller
                 $this->redirect("operation", "detail_expense", $_POST["operation"]);
             }
         }
+        
     }
-// /**      idée de fonction si on doit mettre une fonction a part pour previous_experience
-//  * public function previous_experience(){
-//     if(isset($_POST["tricount_id"])&& isset($_POST["operation"]) ){
-//         $idTricount = $_POST["tricount_id"];
-//         $tricount = Tricounts::get_by_id($idTricount);
-//         $idOperation = $_POST["operation"];
-//         $operation = Operation::get_by_id($idOperation);
 
-
-//         $prevOperation = $operation->get_prev_operation_by_tricount($idOperation,$tricount->get_id());
-//         if($prevOperation){
-//             $this->redirect("operation", "detail_expense", $prevOperation->get_id());
-//         }
-//         else{
-//             $this->redirect("operation", "detail_expense", $_POST["operation"]);
-//         }
-//     }
-// }
-// */
 }
 
 ?>
