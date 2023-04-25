@@ -159,7 +159,7 @@
         
 
     function showDeleteButton(){
-        let deleteBtn ='<button class="delete-btn" onclick="confirmDelete()"  style="background-color: gold" color: white;"> delete Tricount';
+        let deleteBtn ='<button class="it3DeleteButton" onclick="confirmDelete()"  style="background-color: red" color: white;"> delete Tricount';
         $('.button-delete-tricount').html(deleteBtn);
     }
 

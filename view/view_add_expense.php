@@ -84,7 +84,7 @@
 <?php  if ($action === 'edit' || $action === 'edit_expense'): ?>
  /** <---------------------------  IT3 ---------------------------> */
     function showDeleteButton(){
-        let deleteBtn ='<button class="delete-btn" onclick="confirmDelete()" style="background-color: gold" color: white;"> delete';
+        let deleteBtn ='<button class="delete-btn" onclick="confirmDelete()" style="background-color: red" color: white;"> delete';
         $('.deleteContainer').html(deleteBtn);
     }
 

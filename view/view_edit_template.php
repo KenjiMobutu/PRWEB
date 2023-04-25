@@ -69,7 +69,7 @@
             showDeleteButton();
         })
         function showDeleteButton(){
-            let deleteBtn ='<button class="deleteButton" onclick="confirmDelete()"  style="background-color: gold" color: white;"> delete Template';
+            let deleteBtn ='<button class="it3DeleteButton" onclick="confirmDelete()"  style="background-color: red" color: white;"> delete Template';
             $('.delete-btn').html(deleteBtn);
         }
 
