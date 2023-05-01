@@ -71,6 +71,29 @@
             }
         }
 
+        async function checkTitle() {
+            const title = $(".tricountTitle").val();
+
+            try {
+                const data = await $.post("tricount/check_title/"+ title +"/"+ tricount_id);
+                console.log(data + "   ->");
+
+                if (data === "true") {
+                    $("#errorTitle").show();
+                    $("#errorTitle").html("Title existe déjà");
+                    $(".addTricount_btn").hide();
+                } else {
+                    $("#errorTitle").html("");
+                    $(".addTricount_btn").removeAttr("disabled");
+                    $(".addTricount_btn").show();
+
+                }
+            } catch (e) {
+                console.log("Error encountered while checking the title!");
+            }
+        }
+
+
         async function updateUserDeletability() {
             for (let u of subscribers_json) {
                 isDeletable[u.id] = await checkUserDeletability(u.id);
@@ -207,6 +230,7 @@
             //$('.button-delete-tricount').hide();
             showDeleteButton();
             //updateUserDeletability();
+            checkTitle();
         });
     </script>
 
@@ -241,7 +265,8 @@
         </div>
         <div class="edit-settingsInput">
             <h2>Title :</h2>
-            <input type="text" name="title" value='<?= $tricount->get_title() ?>'>
+            <input type="text" name="title" class="tricountTitle" onchange="checkTitle()" value='<?= $tricount->get_title() ?>'>
+            <p id="errorTitle"></p>
             <h2>Description (optional) :</h2>
             <input type="text" name="description"
                 value='<?= $tricount->get_description() == null ? "No description" : $tricount->get_description() ?>'>

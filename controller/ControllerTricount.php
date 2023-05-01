@@ -104,7 +104,6 @@ class ControllerTricount extends Controller{
       $users_deletable = [];
       foreach($subscriptions as $s){
         $sub[] = User::get_by_id($s->getUserId());
-
       }
       foreach($subscriptions as $s){
         $user = User::get_by_id($s->getUserId());
@@ -171,6 +170,12 @@ class ControllerTricount extends Controller{
         $errors = Tricounts::validate_title($title);
         $description = Tools::sanitize($_POST["description"]);
         $tricount = Tricounts::get_by_id($id);
+        if($tricount->get_title() !== $title ){
+          $tricountBool = Tricounts::get_by_title($tricount->get_title());
+          if($tricountBool == true){
+            $errors[]  = "This tricount already exist";
+          }
+        }
         $subscriptions = Participations::by_tricount($tricount->get_id());
         $users = $tricount->not_participate($tricount->get_id());
         foreach($subscriptions as $s){
@@ -197,6 +202,19 @@ class ControllerTricount extends Controller{
         $tricount = $tricount->delete($tricount->get_id());
     }
 }
+
+    public function check_title(){
+      $title = $_GET['param1'];
+      $tricount_id = $_GET['param2'];
+      $tricount = Tricounts::get_by_id($tricount_id);
+      if($tricount->get_title() !== $title){
+        $tricountBool = Tricounts::get_by_title($tricount->get_title());
+        if($tricountBool !== null ){
+          echo "true"; 
+        }
+      }
+      echo "false"; 
+    } 
 
 }
 
