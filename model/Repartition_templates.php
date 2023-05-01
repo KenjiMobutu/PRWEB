@@ -70,6 +70,8 @@ class Repartition_templates extends Model
     }
   }
 
+
+  // peut-être juste call une methode dans items qui fait la même chose get_user_by_repartition($repartition)
     public function get_items(){
       $query =self::execute("select rti.* from repartition_template_items rti, repartition_templates rt, users u
                             where rt.id = rti.repartition_template 
@@ -124,7 +126,7 @@ class Repartition_templates extends Model
 
   public function delete_by_id()
   {
-    //doit supprimer le tricount depuis repartition_template_items
+    //doit supprimer le tricount depuis repartition_template_items 
     Repartition_template_items::delete_by_repartition_template($this->id);
     $query = self::execute("DELETE from `repartition_templates` where id=:id", array("id" => $this->id));
     if ($query->rowCount() == 0)

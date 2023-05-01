@@ -102,16 +102,16 @@ class Tricounts extends Model
       return new Tricounts($data["id"], $data["title"], $data["description"], $data["created_at"], $data["creator"]);
     }
   }
-  public function by_id($id)
-  {
-    $query = self::execute("SELECT * FROM tricounts WHERE id = :id", array("id" => $id));
-    $data = $query->fetch();
-    if ($query->rowCount() == 0) {
-      return false;
-    } else {
-      return new Tricounts($data["id"], $data["title"], $data["description"], $data["created_at"], $data["creator"]);
-    }
-  }
+  // public function by_id($id)
+  // {
+  //   $query = self::execute("SELECT * FROM tricounts WHERE id = :id", array("id" => $id));
+  //   $data = $query->fetch();
+  //   if ($query->rowCount() == 0) {
+  //     return false;
+  //   } else {
+  //     return new Tricounts($data["id"], $data["title"], $data["description"], $data["created_at"], $data["creator"]);
+  //   }
+  // }
 
   public static function get_by_title($title)
   {
