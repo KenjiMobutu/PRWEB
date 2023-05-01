@@ -212,7 +212,7 @@ class ControllerTricount extends Controller{
         if($tricountBool !== null ){
           echo "true"; 
         }
-      }
+      } 
       echo "false"; 
     } 
 

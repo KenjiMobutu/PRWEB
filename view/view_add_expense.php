@@ -10,122 +10,92 @@
     <link href="css/style.css" rel="stylesheet" type="text/css" />
     <link href="css/add-exp.css" rel="stylesheet" type="text/css" />
     <script src="lib/jquery-3.6.3.min.js" type="text/javascript"></script>
-    <script src="lib/sweetalert2@11.js" type="text/javascript"></script>
 
     <script>
-        /** <---------------------------  IT2 ---------------------------> */
-        let action = "<?= $action ?>"
-
     function updateAmount(userCheckbox, totalAmount, totalWeight) {
-        var user = userCheckbox.val();
-        var isChecked = userCheckbox.is(":checked");
-        var weight = parseFloat(userCheckbox.closest('.check-input').find('input[type="number"]').val());
-        var amount = 0;
-        if (isChecked && weight > 0) {
-            amount = weight*(totalAmount / totalWeight)  ;
-        }
-        $("#" + user + "_amount").val(amount.toFixed(2));
+    var user = userCheckbox.val();
+    var weightInput = userCheckbox.closest('.check-input').find('input[type="number"]');
+    var weight = parseFloat(weightInput.val());
+    var amount = 0;
+    if (weight > 0) {
+        userCheckbox.prop('checked', true);
+        amount = weight * (totalAmount / totalWeight);
     }
-
-    function calculateAmounts() {
-        var totalAmount = parseFloat($("#amount").val());
-        var weights = {};
-        var totalWeight = 0;
-        $("input[type='number'][id$='Weight']").each(function() {
-            var userId = $(this).attr("id").replace("Weight", "");
-            var weight = parseFloat($(this).val());
-            weights[userId] = weight;
-            totalWeight += weight;
-        });
-
-        $("input[type='checkbox']").each(function() {
-            var userCheckbox = $(this);
-            var user = userCheckbox.val();
-            var isChecked = userCheckbox.is(":checked");
-            var weight = parseFloat($("#userWeight").val());
-            var amount = 0;
-            if (isChecked && weight > 0) {
-                amount = weight*(totalAmount / totalWeight);
-            }
-            $("#" + user + "_amount").val(amount.toFixed(2));
-            updateAmount(userCheckbox, totalAmount, totalWeight);
-        });
-
-        $(".check-input input[type='number']").change(function() {
-            var userCheckbox = $(this).closest('.check-input').find('input[type="checkbox"]');
-            var weight = parseFloat($(this).val());
-            var userId = userCheckbox.attr('id').replace('_userCheckbox', '');
-            if (weight === 0) {
-                userCheckbox.prop("checked", false);
-            } else {
-                userCheckbox.prop("checked", true);
-            }
-            updateAmount(userCheckbox, totalAmount, totalWeight);
-        });
+    if (weight === 0) {
+        userCheckbox.prop('checked', false);
     }
+    $("#" + user + "_amount").val(amount.toFixed(2));
+}
 
-    $(document).ready(function() {
-        calculateAmounts();
-        //pour it3
-        if(action === "edit_expense" || action === "edit"){
-            $('.deleteContainer').html(
-            showDeleteButton());
-        }
-        $("input[type='number'], input[type='checkbox']").change(function() {
-            calculateAmounts();
-        });
+function calculateAmounts() {
+    var totalAmount = parseFloat($("#amount").val());
+    var weights = {};
+    var totalWeight = 0;
+
+    $("input[type='checkbox']:checked").each(function () {
+        var userId = $(this).val();
+        var weight = parseFloat($(`input[type="number"][name="w[${userId}]"]`).val());
+        weights[userId] = weight;
+        totalWeight += weight;
     });
 
+    $("input[type='checkbox']").each(function () {
+        var userCheckbox = $(this);
+        updateAmount(userCheckbox, totalAmount, totalWeight);
+    });
+}
 
-    
 
-           
+$(document).ready(function() {
+    const repartitionTemplate = $('#repartitionTemplate');
+    const refreshBtn = $('#refreshBtn');
 
-<?php  if ($action === 'edit' || $action === 'edit_expense'): ?>
- /** <---------------------------  IT3 ---------------------------> */
-    function showDeleteButton(){
-        let deleteBtn ='<button class="delete-btn" onclick="confirmDelete()" style="background-color: red" color: white;"> delete';
-        $('.deleteContainer').html(deleteBtn);
-    }
+    repartitionTemplate.on('change', function() {
+        refreshBtn.hide();
 
-    function confirmDelete() {
-        Swal.fire({
-            title: 'Are you sure?',
-            text: "You won't be able to revert this!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, delete it!'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    deleteExpense(<?= $operation->get_id(); ?>);
-                    Swal.fire(
-                        'Deleted!',
-                        'Your expense has been deleted.',
-                        'success'
-                    ).then(() => {
-                        window.location.href = 'operation/expenses/' + <?= $tricount->get_id(); ?>;
-                    });
+        const selectedTemplateId = repartitionTemplate.val(); //GET TEMPLATE ID
+        console.log(selectedTemplateId);
+        $.ajax({
+            url: 'operation/get_template_service/' + selectedTemplateId,
+            method: 'GET',
+            dataType: 'json',
+            success: function(templateData) {
+                updateInputsAndCheckboxes(templateData);
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error('Error fetching template data:', textStatus, errorThrown);
+            }
+        });
+
+        function updateInputsAndCheckboxes(templateData) {
+            var check = $(`input[type="checkbox"]`);
+            check.prop('checked', false);
+
+            var numb = $(`input[type="number"]`);
+
+            templateData.forEach(userTemplateData => {
+                const userCheckbox = $(`input[type="checkbox"][name="c[${userTemplateData.user}]"]`);
+                if (userCheckbox.length > 0) {
+                    userCheckbox.prop('checked', true);
+                    const userWeight = $(`input[type="number"][name="w[${userTemplateData.user}]"]`);
+                    userWeight.val(userTemplateData.weight);
                 }
-        })
-    }
+            });
 
-    async function deleteExpense(operationId){
-        try {
-            await $.post("operation/delete_service/" + operationId);
-        } catch(e){
-            console.log("Erreur : " + e);
+            calculateAmounts();
         }
-    }
+    });
 
-<?php endif;?>
+    calculateAmounts();
+
+    // Combine the event listeners for checkboxes and number inputs
+    $("input[type='number'], input[type='checkbox']").change(function() {
+        calculateAmounts();
+    });
+});
 
 
-            
-
-
-    </script>
+</script>
 
 </head>
 
@@ -199,29 +169,31 @@
             <br>
             <label for="repartition_template">Use repartition template (optional)</label>
             <button name="refreshBtn" id="refreshBtn">Refresh</button>
-            <select id="rti" name="rti">
-                <?php if (isset($template)) {
+            <select id="repartitionTemplate" name="rti">
+    <?php if (isset($template)) {
                     echo "<option style='color: black;' value='{$template->get_id()}'>{$template->get_title()}</option>";
 
                 } else {
                     echo "<option style='color: black;' value='option-default'>No, I'll use custom repartition</option>";
                 }
                 ?>
-                <?php foreach ($rti as $rt):
-                    $title = $rt["title"];
-                    $rtiId = $rt["id"] ?>
-                    <?php if (isset($template)):
-                        if ($title !== $template->get_title()): ?>
-                            <option name="option_template" style="color: black;" value="<?php echo $rtiId ?>"><?php echo $title ?>
+            <?php if ($allTemplates !== null): ?>
+                <?php foreach ($allTemplates as $rt): ?>
+                    <?php if (isset($template)): ?>
+                        <?php if ($rt->title !== $template->get_title()): ?>
+                            <option name="option_template" id="option_template" style="color: black;" value="<?php echo $rt->id ?>"><?php echo $rt->title ?>
                             </option>
                         <?php endif; ?>
-
+            
                     <?php else: ?>
-                        <option name="option_template" style="color: black;" value="<?php echo $rtiId ?>"><?php echo $title ?>
+                        <option name="option_template" id="option_template" style="color: black;" value="<?php echo $rt->id ?>"><?php echo $rt->title ?>
                         </option>
                     <?php endif; ?>
                 <?php endforeach; ?>
+            <?php endif; ?>
+
             </select>
+
             <label for="who">For whom? (select at least one)</label>
             <?php foreach ($users as $usr) {
                 $repartitions_map = [];
@@ -245,7 +217,7 @@
                     </span>
                     <fieldset>
                         <legend class="legend" style="color: yellow; font-weight: bold;">Weight</legend>
-                        <input type="number" name="w[<?= $usr->get_user(); ?>]" onchange="calculateAmounts()" id="userWeight" min="0" max="50" <?php
+                        <input type="number" name="w[<?= $usr->get_user(); ?>]" oninput="if(this.value==''){this.value=0;} calculateAmounts();" id="userWeight" min="0" max="50" <?php
                           if (isset($template)) {
                               if ($usr->is_in_Items($template->get_id(), $usr->user)) {
                                   echo "value=" . $usr->get_weight_by_user($template->get_id());
@@ -283,12 +255,9 @@
         </form>
         <?php
         if ($action === 'edit' || $action === 'edit_expense') {
-            echo '<div class="deleteContainer">';
-
-                echo '<button class="delete-btn" style="background-color: blue; color: white;">';
-                echo '<a href="/prwb_2223_c03/Operation/delete_confirm/' . $_GET['param1'] . '" style="text-decoration: none; color: white;">DELETE</a>';
-                echo '</button>';
-            echo '</div>';
+            echo '<button class="delete-btn" style="background-color: blue; color: white;">';
+            echo '<a href="/prwb_2223_c03/Operation/delete_confirm/' . $_GET['param1'] . '" style="text-decoration: none; color: white;">DELETE</a>';
+            echo '</button>';
         }
         ?>
     </div>
