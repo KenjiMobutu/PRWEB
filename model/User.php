@@ -363,9 +363,9 @@ class User extends Model
     }
 
 
-    public static function EmailExistsAlready($id, $email)
+    public static function EmailExistsAlready($email)
     {
-        $query = self::execute("SELECT mail FROM Users WHERE mail=:email AND id!=:id", array("email" => $email, "id" => $id));
+        $query = self::execute("SELECT mail FROM Users WHERE mail=:email", array("email" => $email));
         //query checks if the email address exists in the database for any user other than the logged-in user
         $data = $query->fetch(); //un seul resultat max
         return $data ? true : false;

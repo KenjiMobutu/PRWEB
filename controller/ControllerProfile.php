@@ -68,7 +68,7 @@ class ControllerProfile extends Controller
                 if (empty($errors)) {
                     $user->setPassword(Tools::my_hash($newPass));
                     $user->update_password();
-                    $this->redirect("profile", "change_password", $user->getUserId(), "ok");
+                    $this->redirect("user", "profile", $user->getUserId(), "ok");
                 }
             }
         }

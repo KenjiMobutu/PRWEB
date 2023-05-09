@@ -12,89 +12,113 @@
     <script src="lib/jquery-3.6.3.min.js" type="text/javascript"></script>
     <script src="lib/just-validate-4.2.0.production.min.js" type="text/javascript"></script>
     <script src="lib/just-validate-plugin-date-1.2.0.production.min.js" type="text/javascript"></script>
-        
-
+    <script src="lib/just-validate-4.2.0.production.min.js" type="text/javascript"></script>
+    <script src="lib/just-validate-plugin-date-1.2.0.production.min.js" type="text/javascript"></script>
+    <script src="lib/validationIT3.js" type="text/javascript"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <?php
+    $justvalidate = Configuration::get("justvalidate");
+    ?>
     <script>
+        const useJustValidate = <?= json_encode($justvalidate === "on") ?>;
+        if (useJustValidate) {
+            window.onload = function () {
+                JVAddOperation();
+            };
+        }
+    </script>
+
+<script>
     function updateAmount(userCheckbox, totalAmount, totalWeight) {
-    var user = userCheckbox.val();
-    var weightInput = userCheckbox.closest('.check-input').find('input[type="number"]');
-    var weight = parseFloat(weightInput.val());
-    var amount = 0;
-    if (userCheckbox.is(":checked") && weight > 0) {
-        amount = weight * (totalAmount / totalWeight);
+        var user = userCheckbox.val();
+        var weightInput = userCheckbox.closest('.check-input').find('input[type="number"]');
+        var weight = parseFloat(weightInput.val());
+        var amount = 0;
+        if (userCheckbox.is(":checked") && weight > 0) {
+            amount = weight * (totalAmount / totalWeight);
+        }
+        $("#" + user + "_amount").val(amount.toFixed(2));
     }
-    $("#" + user + "_amount").val(amount.toFixed(2));
-}
 
-function calculateAmounts() {
-    var totalAmount = parseFloat($("#amount").val());
-    var weights = {};
-    var totalWeight = 0;
+    function calculateAmounts() {
+        var totalAmount = parseFloat($("#amount").val());
+        var weights = {};
+        var totalWeight = 0;
 
-    $("input[type='checkbox']:checked").each(function () {
-        var userId = $(this).val();
-        var weight = parseFloat($(`input[type="number"][name="w[${userId}]"]`).val());
-        weights[userId] = weight;
-        totalWeight += weight;
-    });
-
-    $("input[type='checkbox']").each(function () {
-        var userCheckbox = $(this);
-        updateAmount(userCheckbox, totalAmount, totalWeight);
-    });
-}
-
-
-$(document).ready(function() {
-    const repartitionTemplate = $('#repartitionTemplate');
-    const refreshBtn = $('#refreshBtn');
-
-    repartitionTemplate.on('change', function() {
-        refreshBtn.hide();
-
-        const selectedTemplateId = repartitionTemplate.val(); //GET TEMPLATE ID
-        console.log(selectedTemplateId);
-        $.ajax({
-            url: 'operation/get_template_service/' + selectedTemplateId,
-            method: 'GET',
-            dataType: 'json',
-            success: function(templateData) {
-                updateInputsAndCheckboxes(templateData);
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.error('Error fetching template data:', textStatus, errorThrown);
-            }
+        $("input[type='checkbox']:not(#save):checked").each(function () {
+            var userId = $(this).val();
+            var weight = parseFloat($(`input[type="number"][name="w[${userId}]"]`).val());
+            weights[userId] = weight;
+            totalWeight += weight;
         });
 
-        function updateInputsAndCheckboxes(templateData) {
-            var check = $(`input[type="checkbox"]`);
-            check.prop('checked', false);
+        $("input[type='checkbox']:not(#save)").each(function () {
+            var userCheckbox = $(this);
+            updateAmount(userCheckbox, totalAmount, totalWeight);
+        });
+    }
 
-            var numb = $(`input[type="number"]`);
+    $(document).ready(function() {
+        const repartitionTemplate = $('#repartitionTemplate');
+        const refreshBtn = $('#refreshBtn');
 
-            templateData.forEach(userTemplateData => {
-                const userCheckbox = $(`input[type="checkbox"][name="c[${userTemplateData.user}]"]`);
-                if (userCheckbox.length > 0) {
-                    userCheckbox.prop('checked', true);
-                    const userWeight = $(`input[type="number"][name="w[${userTemplateData.user}]"]`);
-                    userWeight.val(userTemplateData.weight);
+        repartitionTemplate.on('change', function() {
+            refreshBtn.hide();
+
+            const selectedTemplateId = repartitionTemplate.val();
+            console.log(selectedTemplateId);
+            $.ajax({
+                url: 'operation/get_template_service/' + selectedTemplateId,
+                method: 'GET',
+                dataType: 'json',
+                success: function(templateData) {
+                    updateInputsAndCheckboxes(templateData);
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    console.error('Error fetching template data:', textStatus, errorThrown);
                 }
             });
 
-            calculateAmounts();
-        }
-    });
+            function updateInputsAndCheckboxes(templateData) {
+                var check = $(`input[type="checkbox"]`);
+                check.prop('checked', false);
 
-    calculateAmounts();
+                var numb = $(`input[type="number"]`);
 
-    // Combine the event listeners for checkboxes and number inputs
-    $("input[type='number'], input[type='checkbox']").change(function() {
+                templateData.forEach(userTemplateData => {
+                    const userCheckbox = $(`input[type="checkbox"][name="c[${userTemplateData.user}]"]`);
+                    if (userCheckbox.length > 0) {
+                        userCheckbox.prop('checked', true);
+                        const userWeight = $(`input[type="number"][name="w[${userTemplateData.user}]"]`);
+                        userWeight.val(userTemplateData.weight);
+                    }
+                });
+
+                calculateAmounts();
+            }
+        });
+
         calculateAmounts();
+
+        // Add event listener for each checkbox
+        $("input[type='checkbox']:not(#save)").change(function() {
+            const userCheckbox = $(this);
+            const weightInput = userCheckbox.closest('.check-input').find('input[type="number"]');
+
+            if (userCheckbox.is(":checked")) {
+                weightInput.val(1);
+            }
+
+            calculateAmounts();
+        });
+
+        // Combine the event listeners for checkboxes and number inputs
+        $("input[type='number'], input[type='checkbox']").change(function() {
+            calculateAmounts();
+        });
     });
-});
-
-
 </script>
+
 
 </head>
 
@@ -104,20 +128,13 @@ $(document).ready(function() {
         <p>
             <?php echo $tricount->get_title(); ?> >
             <?php echo isset($operation) ? 'Edit expense' : 'Add expense'; ?>
+            <div id="error-container"></div>
+
         </p>
-        <form
+        <form id="add-exp-form"
             action="<?php echo isset($operation) ? "operation/edit_expense/{$operation->get_id()}" : 'operation/add_expense'; ?>"
             method="post">
-            <div class="errors">
-                <ul>
-                    <?php if (!empty($errors))
-                        foreach ($errors as $error): ?>
-                            <li>
-                                <?= $error ?>
-                            </li>
-                        <?php endforeach; ?>
-                </ul>
-            </div>
+            
             <?php if (isset($operation)): ?>
                 <input type="hidden" id="operationId" name="operationId" value="<?php echo $operation->get_id() ?>">
             <?php endif; ?>
@@ -128,6 +145,7 @@ $(document).ready(function() {
                 echo $info[0];
             else
                 echo ''; ?>" name="title">
+               <div class="errors just-validate-error-label"></div>
             <input type="hidden" id="tricId" name="tricId" value="<?php echo $tricount->get_id() ?>">
             <br>
             <label for="operation_amount">Amount</label>
@@ -138,6 +156,7 @@ $(document).ready(function() {
                 echo $info[1];
             else
                 echo ''; ?>" type="number" step="0.01" id="amount" name="amount" oninput="calculateAmounts()">
+                <div class="errors just-validate-error-label"></div>
             <br>
             <label for="operation_date">Date</label>
             <input class="addExp" type="date" id="operation_date" value="<?php
@@ -147,7 +166,7 @@ $(document).ready(function() {
                 echo $info[2];
             else
                 echo date('Y-m-d'); ?>" name="operation_date">
-
+<div class="errors just-validate-error-label"></div>
             <br>
 
             <label for="paid_by">Paid By</label>
@@ -209,6 +228,7 @@ $(document).ready(function() {
                         $isChecked = true;
                     }
                     ?>
+                    
                     <input type="checkbox" name="c[<?= $usr->get_user() ?>]" value="<?= $usr->get_user() ?>"
                         id="<?php echo $usr->getUserInfo() ?>_userCheckbox" <?php echo $isChecked ? "checked" : ""; ?>>
                     <span class="text-input" style="color: yellow; font-weight: bold;">

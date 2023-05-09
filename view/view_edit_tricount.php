@@ -17,6 +17,21 @@
     <link rel="apple-touch-icon" sizes="180x180" href="assets/img/icon/192x192.png">
     <link rel="stylesheet" href="css/style.css">
     <script src="lib/jquery-3.6.3.min.js" type="text/javascript"></script>
+    <script src="lib/just-validate-4.2.0.production.min.js" type="text/javascript"></script>
+    <script src="lib/just-validate-plugin-date-1.2.0.production.min.js" type="text/javascript"></script>
+    <script src="lib/validationIT3.js" type="text/javascript"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <?php
+    $justvalidate = Configuration::get("justvalidate");
+    ?>
+    <script>
+        const useJustValidate = <?= json_encode($justvalidate === "on") ?>;
+        if (useJustValidate) {
+            window.onload = function () {
+                JVEditTricount();
+            };
+        }
+    </script>
 
     <script>
 
@@ -197,9 +212,9 @@
         </div>
         <div class="edit-settingsInput">
             <h2>Title :</h2>
-            <input type="text" name="title" value='<?= $tricount->get_title() ?>'>
+            <input type="text" id="title" name="title" value='<?= $tricount->get_title() ?>'>
             <h2>Description (optional) :</h2>
-            <input type="text" name="description"
+            <input type="text" id="description" name="description"
                 value='<?= $tricount->get_description() == null ? "No description" : $tricount->get_description() ?>'>
 
             <?php if (count($errors) != 0): ?>

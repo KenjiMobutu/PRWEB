@@ -11,7 +11,21 @@
             rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
         <script src="lib/jquery-3.6.3.min.js" type="text/javascript"></script>
-
+        <script src="lib/just-validate-4.2.0.production.min.js" type="text/javascript"></script>
+        <script src="lib/just-validate-plugin-date-1.2.0.production.min.js" type="text/javascript"></script>
+        <script src="lib/validationIT3.js" type="text/javascript"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <?php
+        $justvalidate = Configuration::get("justvalidate");
+        ?>
+        <script>
+            const useJustValidate = <?= json_encode($justvalidate === "on") ?>;
+            if (useJustValidate) {
+                window.onload = function () {
+                    JVEditTemplate();
+                };
+            }
+        </script>
         <title>Edit Template</title>
 </head>
 <body>
@@ -103,7 +117,7 @@
                             
                     
                     <?php endif;?>
-                    <input  type="text" name="user"  value="<?php echo $listusr->getUserInfo(); ?>"  disabled="disabled">
+                    <input  type="text" name="user" id="user"  value="<?php echo $listusr->getUserInfo(); ?>"  disabled="disabled">
                     <fieldset>
                         <legend>Weight</legend>
                         <input  type="number" name="weight[<?= $listusr->get_user() ; ?>]"min="0" placeholder="0"  

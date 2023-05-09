@@ -4,6 +4,29 @@
 @import url("https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css");
 @import url("https://fonts.googleapis.com/css?family=Poppins:400,500,600&display=swap");
 
+/* just validate */
+
+.error-field {
+  border: 1px solid red;
+  box-shadow: 0 0 10px 0 red!important;
+}
+
+.success-field {
+  border: 1px solid green;
+  box-shadow: 0 0 10px green;
+}
+
+.successJV {
+  color: green!important;
+  box-shadow: 0 0 10px green;
+}
+
+.errorsJV {
+  color: red;
+  box-shadow: 0 0 10px 0 red!important;
+}
+
+
 /* MENU */
 * {
   margin: 0;
@@ -117,7 +140,7 @@ body {
   text-align: center;
 }
 
-input[class="sign"],
+input.sign,
 select {
   width: 100%;
   padding: 12px 20px;
@@ -172,12 +195,13 @@ input[type="submit"]:hover {
 }
 
 input[class="signup-form-btn"] {
+  margin: 0!important;
   width: 85%;
   background-color: #5e43f3;
   color: white;
 }
 
-input[class="signup-form-items"],
+input.signup-form-items,
 select {
   width: 85%;
   padding: 12px 20px;

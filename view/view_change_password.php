@@ -17,7 +17,21 @@
         <link href="css/style.css" rel="stylesheet" type="text/css" />
         <link href="css/ch-pass.css" rel="stylesheet" type="text/css" />
         <title>Change Password</title>
-
+        <script src="lib/just-validate-4.2.0.production.min.js" type="text/javascript"></script>
+        <script src="lib/just-validate-plugin-date-1.2.0.production.min.js" type="text/javascript"></script>
+        <script src="lib/validationIT3.js" type="text/javascript"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <?php
+        $justvalidate = Configuration::get("justvalidate");
+        ?>
+        <script>
+            const useJustValidate = <?= json_encode($justvalidate === "on") ?>;
+            if (useJustValidate) {
+                window.onload = function () {
+                    JVChangePassword();
+                };
+            }
+        </script>
     </head>
 
     <?php include('menu.html'); ?>
@@ -39,17 +53,21 @@
 
         <div class="chpass_page">
             <div class="chpass-container">
-                <form class="chpass-form" method="POST" enctype="multipart/form-data">
+                <form class="chpass-form" id="chpass-form" method="POST" enctype="multipart/form-data">
+                    
                     <div class="chpass-title">
                         <h2 style="color:black">Change password for
                             <?= $user->getFullName() ?>
                         </h2>
+                        
                     </div>
                     <div class="password-input">
+                   
                         <input class="chpass-form-items" type="password" name="currentPassword" id="currentPassword"
                             value="<?= $currentPasswordValue ?>" placeholder="Current Password" required>
                         <button type="button" onclick="togglePasswordVisibility('currentPassword')">Show
                             Password</button>
+                            <input type="hidden" name="user" value="<?= json_encode($user) ?>">
                     </div>
                     <div class="password-input">
                         <input class="chpass-form-items" type="password" placeholder="New Password" name="newPassword" +
