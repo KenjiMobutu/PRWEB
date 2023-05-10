@@ -366,10 +366,24 @@ class User extends Model
     public static function EmailExistsAlready($email)
     {
         $query = self::execute("SELECT mail FROM Users WHERE mail=:email", array("email" => $email));
-        //query checks if the email address exists in the database for any user other than the logged-in user
-        $data = $query->fetch(); //un seul resultat max
-        return $data ? true : false;
+        $data = $query->fetch();
+        return json_encode($data ? false : true);
     }
+
+
+    public static function EmailCheckJSON($email)
+    {
+        $query = self::execute("SELECT mail FROM Users WHERE mail=:email", array("email" => $email));
+        $data = $query->fetch(); //max one result
+        $result = $data ? true : false;
+        if ($result) {
+            return json_encode(array("exists" => $result));
+        } else {
+            return json_encode(array("errorMessage" => "user not found"));
+        }
+    }
+
+
 
     public static function validateEmail($email): bool
     {
@@ -379,7 +393,8 @@ class User extends Model
         return false;
     }
 
-    public function get_dette($operation) : float{
+    public function get_dette($operation): float
+    {
         return Operation::get_dette_by_operation($operation, $this->id);
     }
 
@@ -489,7 +504,8 @@ class User extends Model
     }
 
 
-    public function deletable($tricount) {
+    public function deletable($tricount)
+    {
         $query = self::execute("SELECT user
             FROM subscriptions
             WHERE tricount = :tricount
@@ -515,7 +531,8 @@ class User extends Model
         $users = $query->fetchAll(PDO::FETCH_ASSOC);
         return $users;
     }
-    public function beDeletable($tricount) {
+    public function beDeletable($tricount)
+    {
         $query = self::execute("SELECT user
             FROM subscriptions
             WHERE tricount = :tricount

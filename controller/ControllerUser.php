@@ -79,14 +79,19 @@ class ControllerUser extends Controller
         echo json_encode(['isValid' => $isValid]);
     }
 
-    public static function validate_login($mail, $hashed_password){
-        return User::validate_login($mail,$hashed_password);
+    public function check_email_service($mail){
+        if(isset($_POST['mail'])){
+            $check = User::EmailExistsAlready($_POST['mail']);
+            echo $check;
+        }
     }
 
-    public static function email_available($email){
-        var_dump($_GET);
-        if(User::EmailExistsAlready($_GET['param1']))
-        echo true ;
+    public function email_available() {
+    
+        if(isset($_POST['email'])){
+            $exis = User::EmailExistsAlready($_POST['email']);
+            echo $exis;
+        }
     }
 
 }
