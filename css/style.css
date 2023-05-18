@@ -47,10 +47,27 @@ body {
   flex: 9;
 }
 
+
 .menu-list {
   display: flex;
   list-style: none;
   justify-content: flex-end;
+}
+
+/*button back menu*/
+.backBtn {
+  padding: 10px 20px;
+  border: 2px solid rgb(204, 204, 0);
+  margin: 10px 10px 10px 10px;
+  border-radius: 5px;
+  color: white;
+  text-decoration: none;
+  transition: background-color 0.3s;
+  background-color: transparent;
+}
+
+.backBtn:hover {
+  background-color: rgb(160, 160, 78);
 }
 
 .errors {
