@@ -64,20 +64,27 @@
     <?php if(isset($templateID) && $templateID !== ""): ?>
         let templateId = <?= $templateID ;?>;
         let tricount = <?= $tricount->get_id(); ?>;
-
-        $(function(){
+        $(document).ready(function() {
             showDeleteButton();
-        })
+            //pour it3
+            var isModified = false;
+            $("input[type='number'], input[type='checkbox'], input ").change(function() {
+                isModified = true;
+            });
+            $(".backBtn").on("click", function(e) {
+                if(isModified){
+                    e.preventDefault();
+                    return confirmLeavePage();
+                }
+            });
+        });
+
         function showDeleteButton(){
             let deleteBtn ='<button class="it3DeleteButton" onclick="confirmDelete()"  style="background-color: red" color: white;"> delete Template';
             $('.delete-btn').html(deleteBtn);
         }
 
-
-        
         function confirmDelete() {
-            console.log("Confirm delete function called.");
-
             Swal.fire({
                 title: 'Are you sure?',
                 text: "You won't be able to revert this!",
@@ -99,6 +106,22 @@
                     }
             })
         }
+        function confirmLeavePage() {
+            Swal.fire({
+                title: 'Attention!',
+                text: "Vous êtes sur le point de quitter la page sans enregistrer les modifications de la dépense. Voulez-vous vraiment quitter la page ?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Oui',
+                cancelButtonText: 'Annuler'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "<?= $backValue; ?>";
+                }
+            })
+        }
 
         async function deleteTemplate(){
             try {
@@ -107,11 +130,10 @@
                 console.log("Erreur : " + e);
             }
         }
-
     <?php endif;?>
 </script>
 
-<?php include 'menu.html' ?>
+<?php include 'menu.php' ?>
 <div class="edit_template_container">
 
     <form action="templates/editTemplate" method="post" id="edit_template_form">

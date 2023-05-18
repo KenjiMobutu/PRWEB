@@ -26,8 +26,6 @@ class ControllerParticipation extends Controller{
       $idTricount = $_GET['param1'];
       var_dump($idTricount);
       var_dump($idUser);
-
-
       $newSubscriber = new Participations($idTricount , $idUser );
       if($newSubscriber == NULL){
         $this->redirect("tricount","index");

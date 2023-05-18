@@ -21,7 +21,6 @@ class ControllerTemplates extends Controller
     {
         $userlogged = $this->get_user_or_redirect();
         $user = User::get_by_id($userlogged->getUserId());
-        
         if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
             $this->redirect('main', "error");
         }
@@ -35,10 +34,13 @@ class ControllerTemplates extends Controller
                     $items[] = $template->get_items();
                 }
             }
+            $backValue = "tricount/edit/". $tricount->get_id();
+
             (new View("templates"))->show(array("user"=>$user,
                                                 "templates"=>$templates, 
                                                 "tricount"=>$tricount, 
-                                                "items"=>$items,));
+                                                "items"=>$items,
+                                                "backValue"=>$backValue));
         }
         else
             $this->redirect('main', "error");        
@@ -48,6 +50,7 @@ class ControllerTemplates extends Controller
         $userlogged = $this->get_user_or_redirect();
         $user = User::get_by_id($userlogged->getUserId());
         if($user->is_in_tricount($_GET['param1']) || $user->is_creator($_GET['param1'])){
+            $backValue = "templates/templates/". $_GET['param1'];
             if($_GET['param1'] !==null && (isset($_GET['param2']) && $_GET['param2'] !== null)){
                 $tricount = Tricounts::get_by_id($_GET["param1"]);
                 $template = Repartition_templates::get_by_id($_GET['param2']);
@@ -67,7 +70,8 @@ class ControllerTemplates extends Controller
                                                         "template"=>$template,
                                                         "listUser"=>$listUser,
                                                         "listItems"=>$listItems,
-                                                        "templateID"=>$templateID));
+                                                        "templateID"=>$templateID,
+                                                        "backValue"=>$backValue));
             }else{
                 if($_GET['param1'] !== null ){
                     $tricount = Tricounts::get_by_id($_GET["param1"]);
@@ -75,7 +79,8 @@ class ControllerTemplates extends Controller
                 }
                 (new View("edit_template"))->show(array("user"=>$user,
                                     "tricount"=>$tricount,
-                                    "listUser"=>$listUser));
+                                    "listUser"=>$listUser,
+                                    "backValue"=>$backValue));
             }     
         }else{
             $this->redirect("user","profile");

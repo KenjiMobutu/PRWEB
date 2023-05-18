@@ -15,7 +15,7 @@
 
 
 </style>
-    <?php include 'menu.html' ?>
+    <?php include 'menu.php' ?>
     <div class="view_templates">
         <?php echo $tricount->get_title() . " > templates";?> 
         <a href="templates/edit_template/<?php echo $tricount->get_id();?>" id="addNewTemplate"> New template</a>

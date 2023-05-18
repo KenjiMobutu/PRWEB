@@ -17,7 +17,7 @@
     </head>
 
     <body>
-        <?php include 'menu.html' ?>
+        <?php include 'menu.php' ?>
         <div class="prf-body">
             <div class="title">
                 <?= $user->getFullName() ?>'s Tricount!

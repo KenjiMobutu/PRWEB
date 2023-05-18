@@ -16,11 +16,14 @@
 
         <link href="css/style.css" rel="stylesheet" type="text/css" />
         <link href="css/ch-pass.css" rel="stylesheet" type="text/css" />
+        
+        <script src="lib/jquery-3.6.3.min.js" type="text/javascript"></script>
+        <script src="lib/sweetalert2@11.js" type="text/javascript"></script>
         <title>Change Password</title>
 
     </head>
 
-    <?php include('menu.html'); ?>
+    <?php include('menu.php'); ?>
 
     <script>
         function togglePasswordVisibility(passwordInputId) {
@@ -32,6 +35,38 @@
                 passwordField.type = "password";
             }
         }
+        $(document).ready(function() {
+            //pour it3
+            var isModified = false;
+            $("input[type='number'], input[type='checkbox'], input ").change(function() {
+                isModified = true;        console.log(isModified);
+            });
+            console.log(isModified);
+            
+            console.log(isModified);
+            $(".backBtn").on("click", function(e) {
+                if(isModified){
+                    e.preventDefault();
+                    return confirmLeavePage();
+                }
+            });
+        });
+        function confirmLeavePage() {
+        Swal.fire({
+            title: 'Attention!',
+            text: "Vous êtes sur le point de quitter la page sans enregistrer les modifications de la dépense. Voulez-vous vraiment quitter la page ?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Oui',
+            cancelButtonText: 'Annuler'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "<?= $backValue; ?>";
+            }
+        })
+    }
     </script>
 
     <body>

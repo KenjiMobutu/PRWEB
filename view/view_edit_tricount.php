@@ -74,23 +74,7 @@
         async function checkTitle() {
             const title = $(".tricountTitle").val();
 
-            try {
-                const data = await $.post("tricount/check_title/"+ title +"/"+ tricount_id);
-                console.log(data + "   ->");
-
-                if (data === "true") {
-                    $("#errorTitle").show();
-                    $("#errorTitle").html("Title existe déjà");
-                    $(".addTricount_btn").hide();
-                } else {
-                    $("#errorTitle").html("");
-                    $(".addTricount_btn").removeAttr("disabled");
-                    $(".addTricount_btn").show();
-
-                }
-            } catch (e) {
-                console.log("Error encountered while checking the title!");
-            }
+            
         }
 
 
@@ -179,8 +163,6 @@
             $('#usersList').html(`<tr><td>${message}</td></tr>`);
         }
 
-        
-
     function showDeleteButton(){
         let deleteBtn ='<button class="it3DeleteButton" onclick="confirmDelete()"  style="background-color: red" color: white;"> delete Tricount';
         $('.button-delete-tricount').html(deleteBtn);
@@ -209,6 +191,22 @@
                 }
         })
     }
+    function confirmLeavePage() {
+            Swal.fire({
+                title: 'Attention!',
+                text: "Vous êtes sur le point de quitter la page sans enregistrer les modifications de la dépense. Voulez-vous vraiment quitter la page ?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Oui',
+                cancelButtonText: 'Annuler'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "<?= $backValue; ?>";
+                }
+            })
+        }
 
     async function deleteExpense(tricount){
         try {
@@ -231,6 +229,24 @@
             showDeleteButton();
             //updateUserDeletability();
             checkTitle();
+
+            var isModified = false;
+            $("input[type='number'], input[type='checkbox'], input ").change(function() {
+                isModified = true;
+            });
+            
+            $(".headerButton.goBack").hide();
+
+            $(".left").html("<a href='<?php $backValue ?>' class='headerGoBackButton'><i class='bi bi-arrow-left'></i></a>");
+
+            $(".headerGoBackButton").show();
+
+            $(".headerGoBackButton").on("click", function(e) {
+                if(isModified){
+                    e.preventDefault();
+                    return confirmLeavePage();
+                }
+            });
         });
     </script>
 

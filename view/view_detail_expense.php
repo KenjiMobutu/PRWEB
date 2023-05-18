@@ -15,7 +15,7 @@
 </head>
 
 <body>
-    <?php include 'menu.html' ?>
+    <?php include 'menu.php' ?>
     <div class="cont">
         <input type="hidden" name="tricount_id" value="<?php echo $tricount->get_id(); ?>" hidden>
         <input type="hidden" name="operation" value="<?php echo $operation_data->get_id(); ?>" hidden>

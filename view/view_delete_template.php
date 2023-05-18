@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
 </head>
 <body>
-    <?php include 'menu.html' ?>
+    <?php include 'menu.php' ?>
     <div class="delete_template">
         <div class="delete_template_container">
             <h1>Are you sure ?</h1>

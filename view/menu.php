@@ -9,22 +9,12 @@
         <ul class="menu-list" id="menu-list">
           <li class="menu-list-item"><a href="user/profile">Home</a></li>
           <li class="menu-list-item"><a class="logout-icon" href="user/logout"><i class="fa-solid fa-right-from-bracket"></i></a></li>
+          <?php if (isset($backValue)) : ?>
+            <a class="backBtn" href="<?= $backValue?>">BACK</a>
+          <?php endif; ?>
         </ul>
       </div>
     </div>
   </div>
-  
-  <script>
-    // afficher bouton Back si js activé
-    document.addEventListener('DOMContentLoaded', function() {
-      var menuList = document.getElementById('menu-list');
-      var backButton = document.createElement('button');
-      backButton.innerText = 'Back';
-      backButton.classList.add('goBackButton');
-      backButton.addEventListener('click', function() {
-        window.history.back();
-      });
-      menuList.appendChild(backButton);
-    });
-  </script>
+
   

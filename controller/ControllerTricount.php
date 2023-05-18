@@ -92,6 +92,7 @@ class ControllerTricount extends Controller{
     $errors = [];
     if (isset($_GET['param1']) || isset($_POST['param1'])) {
       $id = isset($_POST['param1']) ? $_POST['param1'] : $_GET['param1'];
+      $backValue = "operation/expenses/". $id;
       $tricountExist = Tricounts::exists($id);
       if(empty($tricountExist)){
         $this->redirect('tricount', "index");
@@ -114,7 +115,8 @@ class ControllerTricount extends Controller{
     }else {
       $this->redirect("tricount","index");
     }
-    (new View("edit_tricount"))->show(array("user" => $user,"tricount" => $tricount,"subscriptions" =>$subscriptions, "sub" => $sub,"users" => $users,"users_json"=>$users_json,"subscribers_json"=>$subscribers_json,"users_deletable"=>$users_deletable,"errors"=>$errors));
+    (new View("edit_tricount"))->show(array("user" => $user,"tricount" => $tricount,"subscriptions" =>$subscriptions, "sub" => $sub,"users" => $users,"users_json"=>$users_json,"subscribers_json"=>$subscribers_json,"users_deletable"=>$users_deletable,"errors"=>$errors,
+                  "backValue"=>$backValue));
   }
 
   public function get_visible_users_service() : void {

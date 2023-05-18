@@ -107,7 +107,7 @@ $(function(){
     });
 });
 </script>
-    <?php include 'menu.html' ?>
+    <?php include 'menu.php' ?>
     
     <div id="js_Select" >
     </div>
