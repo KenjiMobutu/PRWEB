@@ -21,12 +21,11 @@
                     <h1 class="logo"><i class="fa fa-credit-card" aria-hidden="true"
                             onclick='window.location.reload(true);'></i> Tricount</h1>
                 </div>
-                <a href="main/index">Back</a>
+                <a class="backBtn" href="main/index">Back</a>
             </div>
         </div>
 
-    <div class="menu">
-    </div>
+    
     <div class="signup_page">
         <div class="sign-up-container">
             <form class="signup-form" method="post" action="main/signup" enctype="multipart/form-data">

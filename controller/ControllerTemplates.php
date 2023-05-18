@@ -194,7 +194,10 @@ class ControllerTemplates extends Controller
         if(empty($template)){
             $this->redirect("user","profile");
         }
+        
         if($user->is_in_items($_GET['param1']) || $user->is_in_tricount_by_template($template->get_id(), $template->get_tricount())){
+            $backValue = "templates/templates/". $template->get_tricount();
+
             if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
                 $this->redirect('main', "error");
             }else{
@@ -209,7 +212,8 @@ class ControllerTemplates extends Controller
                 }
             }
             (new View("delete_template"))->show(array("user"=>$user,
-                                                "template"=>$template));
+                                                "template"=>$template,
+                                                "backValue"=>$backValue));
         }else{
             $this->redirect("user","profile");
         }
