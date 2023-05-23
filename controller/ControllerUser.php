@@ -64,12 +64,12 @@ class ControllerUser extends Controller
 
     public static function checkUserPass($password, $user)
     {
-      
+
         $isOk = password_verify($password, $user->getPassword());
-    
+
         return json_encode(['result' => $isOk]);
     }
-    
+
 
     public function validateEmail($email)
     {
@@ -79,16 +79,28 @@ class ControllerUser extends Controller
         echo json_encode(['isValid' => $isValid]);
     }
 
-    public function check_email_service($mail){
-        if(isset($_POST['mail'])){
-            $check = User::EmailExistsAlready($_POST['mail']);
+    public function check_password_service()
+    {
+        if (isset($_POST['email']) && isset($_POST['password'])) {
+            $response = User::validate_login_it3($_POST['email'], $_POST['password']);
+            header('Content-Type: application/json');
+            echo json_encode(['success' => $response]);
+        }
+    }
+    
+
+    public function check_email_service()
+    {
+        if (isset($_POST['email'])) {
+            $check = User::EmailExistsAlready($_POST['email']);
             echo $check;
         }
     }
 
-    public function email_available() {
-    
-        if(isset($_POST['email'])){
+    public function email_available()
+    {
+
+        if (isset($_POST['email'])) {
             $exis = User::EmailExistsAlready($_POST['email']);
             echo $exis;
         }

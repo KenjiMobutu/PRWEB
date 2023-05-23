@@ -183,15 +183,17 @@ class ControllerTemplates extends Controller
         return $errors;
     }
 
-    public function validateTemplateNameForIt3($templatename, $tricount){
-        if(Repartition_templates::title_already_exist_in_tricount($templatename, $tricount)){
-            var_dump($templatename); exit();
-            return json_encode(["isValid" => true]);
+    public function validateTemplateNameForIt3($templatename, $tricount) {
+        if (Repartition_templates::title_already_exist_in_tricount($templatename, $tricount)) {
+          //return json_encode(["isValid" => false]);
+          return false;
         } else {
-            error_log($templatename, $tricount);
-            return json_encode(["isValid" => false]);
+        //   return json_encode(["isValid" => true]);
+          return true;
         }
-    }
+      }
+      
+      
     
 
     public function delete_template(){

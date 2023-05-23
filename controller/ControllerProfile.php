@@ -110,7 +110,7 @@ class ControllerProfile extends Controller
                     if (!User::validateEmail( $mail)) {
                         $errors[] = "Wrong mail";
                     }
-                    if ($loggedUser->EmailExistsAlready($loggedUser->getUserId(), $_POST['mail'])) {
+                    if ($loggedUser->EmailExists($loggedUser->getUserId(), $_POST['mail'])) {
                         $errors[] = "Email address is already in use.";
                     }
 

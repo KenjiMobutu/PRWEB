@@ -336,6 +336,23 @@ class User extends Model
         return $errors;
     }
 
+    public static function validate_login_it3($mail, $password)
+    {
+        // Retrieve the user with the provided email
+        $user = User::get_by_mail($mail);
+        // If a user exists with the given email
+        if ($user !== null) {
+            // Hash the provided password
+            $hashed_password = Tools::my_hash($password);
+
+            // Compare the hashed password with the stored hash
+            return $hashed_password === $user->hashed_password;
+        }
+
+        // If no user exists with the given email, return false
+        return false;
+    }
+
     public function validate(): array
     {
         $errors = [];
@@ -362,7 +379,15 @@ class User extends Model
         return true;
     }
 
+    //for profile changes => the actual email won't get flagged as already in use
+    public static function EmailExists($userId, $email) {
+    $query = self::execute("SELECT mail FROM Users WHERE mail = :email AND id != :userId", array(":email" => $email, ":userId" => $userId));
+    $data = $query->fetch();
+    return $data ? true : false;
+}
 
+
+    //for signup
     public static function EmailExistsAlready($email)
     {
         $query = self::execute("SELECT mail FROM Users WHERE mail=:email", array("email" => $email));

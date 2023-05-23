@@ -14,6 +14,13 @@ body {
 	box-shadow: 0 0 5px 1px limegreen !important;
 }
 
+.add-exp-title,
+.add-exp-amount,
+.add-exp-date {
+    width: 100%;
+}
+
+
 body {
 	font-family: Arial, sans-serif;
 	background-color: #333;
