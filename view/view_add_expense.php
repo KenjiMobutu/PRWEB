@@ -121,17 +121,15 @@
     
         
         
-            <?php if (isset($operation)) :?> 
-                <?php if($operation !== null) :?>
+            <?php if (isset($operation) && $operation !== null) :?> 
                 $(".backBtn").on("click", function(e) {
                     if(isModified){
                         e.preventDefault();
                         return confirmLeavePage();
                     }
                 });
-                <?php endif; ?>
-
             <?php endif; ?>
+            showDeleteButton()
         });
         function confirmLeavePage() {
             Swal.fire({
