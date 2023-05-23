@@ -336,6 +336,23 @@ class User extends Model
         return $errors;
     }
 
+    public static function validate_login_it3($mail, $password)
+    {
+        // Retrieve the user with the provided email
+        $user = User::get_by_mail($mail);
+        // If a user exists with the given email
+        if ($user !== null) {
+            // Hash the provided password
+            $hashed_password = Tools::my_hash($password);
+
+            // Compare the hashed password with the stored hash
+            return $hashed_password === $user->hashed_password;
+        }
+
+        // If no user exists with the given email, return false
+        return false;
+    }
+
     public function validate(): array
     {
         $errors = [];
@@ -362,14 +379,36 @@ class User extends Model
         return true;
     }
 
+    //for profile changes => the actual email won't get flagged as already in use
+    public static function EmailExists($userId, $email) {
+    $query = self::execute("SELECT mail FROM Users WHERE mail = :email AND id != :userId", array(":email" => $email, ":userId" => $userId));
+    $data = $query->fetch();
+    return $data ? true : false;
+}
 
-    public static function EmailExistsAlready($id, $email)
+
+    //for signup
+    public static function EmailExistsAlready($email)
     {
-        $query = self::execute("SELECT mail FROM Users WHERE mail=:email AND id!=:id", array("email" => $email, "id" => $id));
-        //query checks if the email address exists in the database for any user other than the logged-in user
-        $data = $query->fetch(); //un seul resultat max
-        return $data ? true : false;
+        $query = self::execute("SELECT mail FROM Users WHERE mail=:email", array("email" => $email));
+        $data = $query->fetch();
+        return json_encode($data ? false : true);
     }
+
+
+    public static function EmailCheckJSON($email)
+    {
+        $query = self::execute("SELECT mail FROM Users WHERE mail=:email", array("email" => $email));
+        $data = $query->fetch(); //max one result
+        $result = $data ? true : false;
+        if ($result) {
+            return json_encode(array("exists" => $result));
+        } else {
+            return json_encode(array("errorMessage" => "user not found"));
+        }
+    }
+
+
 
     public static function validateEmail($email): bool
     {
@@ -379,7 +418,8 @@ class User extends Model
         return false;
     }
 
-    public function get_dette($operation) : float{
+    public function get_dette($operation): float
+    {
         return Operation::get_dette_by_operation($operation, $this->id);
     }
 
@@ -489,7 +529,8 @@ class User extends Model
     }
 
 
-    public function deletable($tricount) {
+    public function deletable($tricount)
+    {
         $query = self::execute("SELECT user
             FROM subscriptions
             WHERE tricount = :tricount
@@ -515,7 +556,8 @@ class User extends Model
         $users = $query->fetchAll(PDO::FETCH_ASSOC);
         return $users;
     }
-    public function beDeletable($tricount) {
+    public function beDeletable($tricount)
+    {
         $query = self::execute("SELECT user
             FROM subscriptions
             WHERE tricount = :tricount

@@ -32,7 +32,6 @@ class ControllerParticipation extends Controller{
       }
       $newSubscriber->add();
       $this->redirect("tricount","edit",$idTricount);die();
-      $this->redirect("tricount","edit",$idTricount);die();
     }else {
       $this->redirect("tricount","index");
     }

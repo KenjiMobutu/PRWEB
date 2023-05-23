@@ -330,19 +330,22 @@ class Operation extends Model
         return $query;
     }
 
-    public static function validateTitle($title)
-    {
-        $query = self::execute(
-            "SELECT title from operations WHERE title=:title",
-            array(
-                "title" => $title
-            )
-        );
-        if ($query->rowCount() == 0) {
-            return "Title already exists in the database.";
-        }
-        return;
-    }
+
+    //  $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$  plus besoin 
+
+    // public static function validateTitle($title)
+    // {
+    //     $query = self::execute(
+    //         "SELECT title from operations WHERE title=:title",
+    //         array(
+    //             "title" => $title
+    //         )
+    //     );
+    //     if ($query->rowCount() == 0) {
+    //         return "Title already exists in the database.";
+    //     }
+    //     return;
+    // }
 
     public function validateForEdit($title)
     {
@@ -352,10 +355,6 @@ class Operation extends Model
             $errors[] = "Title must be at least 3 characters.";
         }
 
-        if($title !== $this->title){
-            if(!self::validateTitle($title))
-                $errors[] = "Title already exists in the database.";
-        }
         if ((isset($this->amount) && ($this->amount < 0))) {
             $errors[] = "The amount must be positive.";
         }
@@ -369,10 +368,6 @@ class Operation extends Model
 
         if ((isset($this->title) && strlen($this->title) < 3)) {
             $errors[] = "Title must be at least 3 characters.";
-        }
-
-        if ($this->title && !self::validateTitle($this->title)) {
-            $errors[] = "Title already exists in the database.";
         }
 
         if ((isset($this->amount) && ($this->amount < 0))) {

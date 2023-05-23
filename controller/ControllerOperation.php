@@ -198,7 +198,7 @@ class ControllerOperation extends Controller
             "templateId" => $templateId,
             "users" => $users,
             "tricount" => $tricount,
-            "template" => $template,
+            "repartitionTemplate" => $template,
             "ListUsers" => $listUsers,
             "info" => $info,
             "items" => $items,
@@ -329,7 +329,7 @@ class ControllerOperation extends Controller
             $tricount = Tricounts::get_by_id($_GET['param1']);
             $backValue ="operation/expenses/". $tricount->get_id();
             $users = Participations::get_by_tricount($_GET['param1']);
-            $rti = Repartition_template_items::get_by_user_and_tricount($userId, $_GET['param1']);
+            $allTemplates = Repartition_templates::get_by_tricount($_GET['param1']);
             $action = $_GET['action'];
             $repartitions = [];
         }
@@ -337,7 +337,7 @@ class ControllerOperation extends Controller
             array(
                 "user" => $user,
                 "tricount" => $tricount,
-                "rti" => $rti,
+                "allTemplates" => $allTemplates,
                 "users" => $users,
                 "action" => $action,
                 "repartitions" => $repartitions,
@@ -386,8 +386,12 @@ class ControllerOperation extends Controller
             $operation = Operation::getOperationByOperationId($operationId);
             $users = Participations::get_by_tricount($tricount->get_id());
             $repartitions = Repartitions::get_by_operation($operationId);
+<<<<<<< HEAD
             $rti = Repartition_template_items::get_by_user_and_tricount($userId, $tricount->get_id());
             $backValue = "operation/expenses/" . $tricount->get_id();
+=======
+            $allTemplates = Repartition_templates::get_by_tricount($tricount->get_id());
+>>>>>>> origin/feat_vlad
         }
 
         (new View("add_expense"))->show(
@@ -396,7 +400,7 @@ class ControllerOperation extends Controller
                 "action" => $action,
                 "operation" => $operation,
                 "users" => $users,
-                "rti" => $rti,
+                "allTemplates" => $allTemplates,
                 "tricount" => $tricount,
                 "repartitions" => $repartitions,
                 "operationId" => $operationId,
@@ -505,7 +509,7 @@ class ControllerOperation extends Controller
                 Operation::deleteRepartition($operation->get_id());
             foreach($combine_array as $user_id => $weight) {                        
                 if($weight ==="" || $weight === "0" )
-                    $weight = 1;
+                    $weight = 0;
                 Operation::insertRepartition($operation->get_id(), $weight, $user_id); 
             };
             $ok = true;
@@ -520,7 +524,7 @@ class ControllerOperation extends Controller
         if($template !== null){
             foreach($combine_array as $user_id => $weight){
                 if($weight === "" || $weight ==="0"){
-                    $weight = 1;
+                    $weight = 0;
                 }
                 Repartition_template_items::addNewItems($user_id, $template->get_id(), $weight);
             }
@@ -608,26 +612,9 @@ class ControllerOperation extends Controller
                 $this->redirect("operation", "detail_expense", $_POST["operation"]);
             }
         }
+        
     }
-// /**      idée de fonction si on doit mettre une fonction a part pour previous_experience
-//  * public function previous_experience(){
-//     if(isset($_POST["tricount_id"])&& isset($_POST["operation"]) ){
-//         $idTricount = $_POST["tricount_id"];
-//         $tricount = Tricounts::get_by_id($idTricount);
-//         $idOperation = $_POST["operation"];
-//         $operation = Operation::get_by_id($idOperation);
 
-
-//         $prevOperation = $operation->get_prev_operation_by_tricount($idOperation,$tricount->get_id());
-//         if($prevOperation){
-//             $this->redirect("operation", "detail_expense", $prevOperation->get_id());
-//         }
-//         else{
-//             $this->redirect("operation", "detail_expense", $_POST["operation"]);
-//         }
-//     }
-// }
-// */
 }
 
 ?>

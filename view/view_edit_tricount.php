@@ -17,7 +17,25 @@
     <link rel="apple-touch-icon" sizes="180x180" href="assets/img/icon/192x192.png">
     <link rel="stylesheet" href="css/style.css">
     <script src="lib/jquery-3.6.3.min.js" type="text/javascript"></script>
-    <script src="lib/sweetalert2@11.js" type="text/javascript"></script>
+    <script src="lib/just-validate-4.2.0.production.min.js" type="text/javascript"></script>
+    <script src="lib/just-validate-plugin-date-1.2.0.production.min.js" type="text/javascript"></script>
+    <script src="lib/validationIT3.js" type="text/javascript"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="lib/just-validate-4.2.0.production.min.js" type="text/javascript"></script>
+    <script src="lib/just-validate-plugin-date-1.2.0.production.min.js" type="text/javascript"></script>
+    <script src="lib/validationIT3.js" type="text/javascript"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <?php
+    $justvalidate = Configuration::get("justvalidate");
+    ?>
+    <script>
+        const useJustValidate = <?= json_encode($justvalidate === "on") ?>;
+        if (useJustValidate) {
+            window.onload = function () {
+                JVEditTricount();
+            };
+        }
+    </script>
 
     <script>
 
@@ -33,8 +51,17 @@
         let user_JSON = <?= $users_json ?>; //users who not participate
         let subscribers_json = <?= $subscribers_json ?>; // users who participate
         let addingUser = false;
-        console.log("ISDELETABLE O ---> "+isDeletable);
-        
+        console.log("ISDELETABLE O ---> " + isDeletable);
+        $(function () {
+            usersList = $('#usersList');
+            addSubDropdown = $('#addSubDropdown');
+            addSubscriberButton = $('#btnAddSubscriber');
+            addSubscriberButton.attr("type", "button");
+            //addSubscriberButton.click(dropdownUserList);
+            displayUserList();
+            $('#subForm').hide();
+            //updateUserDeletability();
+        });
 
         async function addUser() {
             const id = $('#addSubDropdown option:selected').data('user-id');
@@ -99,9 +126,9 @@
                         creator: creator
                     })
                 });
-                console.log("RESPONSE__> "+response);
+                console.log("RESPONSE__> " + response);
                 const data = await response.json();
-                console.log("DATA__> "+data);
+                console.log("DATA__> " + data);
                 return data.deletable;
             } catch (error) {
                 console.log("Error retrieving user deletability: " + error);
@@ -248,6 +275,87 @@
                 }
             });
         });
+        $(".errors").hide();
+            function validateTitle(title, callback) {
+                $.ajax({
+                    url: "tricount/get_title_service",
+                    type: "POST",
+                    data: {
+                        title: title,
+                        creator: creator
+                    },
+                    dataType: "json",
+                    success: function (response) {
+                        // Assuming the server returns a JSON object with a 'unique' property
+                        if (response.unique) {
+                            callback(true);
+                        } else {
+                            callback(false);
+                        }
+                    },
+                    error: function () {
+                        alert("An error occurred while validating the title. Please try again.");
+                    }
+                });
+            }
+
+            function showError(inputId, errorMessage) {
+                $(`#${inputId}`).addClass('input-error').removeClass('input-success');
+                $(`#${inputId}-icon`).html('<i class="bi bi-exclamation-circle-fill text-danger"></i>').show();
+                $(`#${inputId}-error`).text(errorMessage).show();
+                $(`#${inputId}-success`).text('').hide();
+            }
+
+            function showSuccess(inputId, successMessage) {
+                $(`#${inputId}`).addClass('input-success').removeClass('input-error');
+                $(`#${inputId}-icon`).html('<i class="bi bi-check-circle-fill text-success"></i>').show();
+                $(`#${inputId}-success`).text(successMessage).show();
+                $(`#${inputId}-error`).text('').hide();
+            }
+
+            function clearMessages(inputId) {
+                $(`#${inputId}`).removeClass('input-error input-success');
+                $(`#${inputId}-error`).text('').hide();
+                $(`#${inputId}-success`).text('').hide();
+            }
+
+            function validateInputs() {
+                const title = $("#title").val().trim();
+                const description = $("#description").val().trim();
+
+                if (title.length < 3) {
+                    showError('title', 'Title must have at least 3 characters.');
+                } else {
+                    validateTitle(title, function (isTitleValid) {
+                        if (!isTitleValid) {
+                            showError('title', 'Title must be unique for the creator.');
+                        } else {
+                            showSuccess('title', 'Looks good!');
+                        }
+                    });
+                }
+
+                if (description && description.length < 3) {
+                    showError('description', 'Description must have at least 3 characters if provided.');
+                } else {
+                    showSuccess('description', 'Looks good!');
+                }
+            }
+
+            $("#title, #description").on('input', validateInputs);
+
+            $("#updateTricount").submit(function (e) {
+                e.preventDefault();
+
+                validateInputs();
+
+                const hasError = $(".input-error").length > 0;
+
+                // submit if validations passed
+                if (!hasError) {
+                    $("#updateTricount")[0].submit();
+                }
+            });
     </script>
 
     <!-- CSS only -->
@@ -284,15 +392,18 @@
             <input type="text" name="title" class="tricountTitle" onchange="checkTitle()" value='<?= $tricount->get_title() ?>'>
             <p id="errorTitle"></p>
             <h2>Description (optional) :</h2>
-            <input type="text" name="description"
-                value='<?= $tricount->get_description() == null ? "No description" : $tricount->get_description() ?>'>
+            <input type="text" id="description" name="description"
+                value='<?= $tricount->get_description() == null ? " " : $tricount->get_description() ?>'>
 
             <?php if (count($errors) != 0): ?>
                 <div class='errors'>
-                    <br><br><p>Please correct the following error(s) :</p>
+                    <br><br>
+                    <p>Please correct the following error(s) :</p>
                     <ul>
                         <?php foreach ($errors as $error): ?>
-                            <li><?= $error ?></li>
+                            <li>
+                                <?= $error ?>
+                            </li>
                         <?php endforeach; ?>
                     </ul>
                 </div>
@@ -311,11 +422,13 @@
                         <!-- Nom de l'utilisateur -->
                         <div class="name_tricount_edit">
                             <!-- Indication que l'utilisateur est le créateur -->
-                            <input id="subName"type="text" name="name" value="<?=($s->getUserId() == $tricount->get_creator_id() ? $s->getFullName()." (créateur)" : $s->getFullName())?>" disabled/>
+                            <input id="subName" type="text" name="name"
+                                value="<?= ($s->getUserId() == $tricount->get_creator_id() ? $s->getFullName() . " (créateur)" : $s->getFullName()) ?>"
+                                disabled />
                             <!-- Bouton de suppression (si autorisé) -->
                             <div class="trash_edit_tricount">
                                 <?php if ($s->can_be_delete($tricount->get_id()) && $s->getUserId() != $tricount->get_creator_id()): ?>
-                                    <form action="participation/delete/<?=  $tricount->get_id() ?>" method="POST">
+                                    <form action="participation/delete/<?= $tricount->get_id() ?>" method="POST">
                                         <input name="userId" value="<?= $s->getUserId() ?>" hidden />
                                         <button id="btnDeleteSubscriber" type="submit" style="background-color:transparent;">
                                             <i class="bi bi-trash3"></i>
@@ -328,43 +441,42 @@
                 </li>
             <?php endforeach; ?>
         </div>
-            <!-- Formulaire d'ajout de souscripteurs -->
-            <div id="subForm" >
-                <form  action="participation/add/<?= $tricount->get_id() ?>" method="post">
-                    <div  class="edit-selectSub">
-                        <select class="selectSub" name="names" id="names">
-                            <option value="">--Add a new subscriber--</option>
-                            <?php foreach ($users as $u): ?>
-                                <option id="subValue" value='<?= $u->getUserId() ?>'><?= $u->getFullName() ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                        <button id="btnAddSubscriber">Add</button>
-                    </div>
+        <!-- Formulaire d'ajout de souscripteurs -->
+        <div id="subForm">
+            <form action="participation/add/<?= $tricount->get_id() ?>" method="post">
+                <div class="edit-selectSub">
+                    <select class="selectSub" name="names" id="names">
+                        <option value="">--Add a new subscriber--</option>
+                        <?php foreach ($users as $u): ?>
+                            <option id="subValue" value='<?= $u->getUserId() ?>'><?= $u->getFullName() ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <button id="btnAddSubscriber">Add</button>
+                </div>
+            </form>
+        </div>
+        <div class="buttons_edit_tricount">
+            <div class="button-manage-repartition-template">
+                <form action="templates/templates/<?= $tricount->get_id() ?>">
+                    <button class="manage-tricount" type="submit">Manage Template</button>
                 </form>
             </div>
-            <div class="buttons_edit_tricount">
-                <div class="button-manage-repartition-template">
-                    <form action="templates/templates/<?= $tricount->get_id() ?>">
-                        <button class="manage-tricount" type="submit">Manage Template</button>
-                    </form>
-                </div>
-                <div class="button-delete-tricount">
-                    <form action="tricount/delete/<?= $tricount->get_id() ?>" method="post">
-                        <button class="delete-tricount" type="submit">Delete This Tricount</button>
-                    </form>
-                </div>
+            <div class="button-delete-tricount">
+                <form action="tricount/delete/<?= $tricount->get_id() ?>" method="post">
+                    <button class="delete-tricount" type="submit">Delete This Tricount</button>
+                </form>
             </div>
-            <!-- JavaScript Bundle with Popper -->
-            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
-                integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
-                crossorigin="anonymous">
-                </script>
-            <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-            <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-            <!-- Splide -->
-            <script src="css/src/splide/splide.min.js"></script>
-            <!-- Base Js File -->
-            <script src="css/src/js/base.js"></script>
+        </div>
+        <!-- JavaScript Bundle with Popper -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous">
+            </script>
+        <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+        <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
+        <!-- Splide -->
+        <script src="css/src/splide/splide.min.js"></script>
+        <!-- Base Js File -->
+        <script src="css/src/js/base.js"></script>
 </body>
 
 </html>

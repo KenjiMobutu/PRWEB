@@ -11,8 +11,21 @@
             rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
         <script src="lib/jquery-3.6.3.min.js" type="text/javascript"></script>
-        <script src="lib/sweetalert2@11.js" type="text/javascript"></script>
-
+        <script src="lib/just-validate-4.2.0.production.min.js" type="text/javascript"></script>
+        <script src="lib/just-validate-plugin-date-1.2.0.production.min.js" type="text/javascript"></script>
+        <script src="lib/validationIT3.js" type="text/javascript"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <?php
+        $justvalidate = Configuration::get("justvalidate");
+        ?>
+        <script>
+            const useJustValidate = <?= json_encode($justvalidate === "on") ?>;
+            if (useJustValidate) {
+                window.onload = function () {
+                    JVEditTemplate();
+                };
+            }
+        </script>
         <title>Edit Template</title>
 </head>
 <body>
@@ -78,6 +91,25 @@
                 }
             });
         });
+                    }
+            })
+        }
+        function confirmLeavePage() {
+            Swal.fire({
+                title: 'Attention!',
+                text: "Vous êtes sur le point de quitter la page sans enregistrer les modifications de la dépense. Voulez-vous vraiment quitter la page ?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Oui',
+                cancelButtonText: 'Annuler'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "<?= $backValue; ?>";
+                }
+            })
+        }
 
         function showDeleteButton(){
             let deleteBtn ='<button class="it3DeleteButton" onclick="confirmDelete()"  style="background-color: red" color: white;"> delete Template';
@@ -177,7 +209,7 @@
                             
                     
                     <?php endif;?>
-                    <input  type="text" name="user"  value="<?php echo $listusr->getUserInfo(); ?>"  disabled="disabled">
+                    <input  type="text" name="user" id="user"  value="<?php echo $listusr->getUserInfo(); ?>"  disabled="disabled">
                     <fieldset>
                         <legend>Weight</legend>
                         <input  type="number" name="weight[<?= $listusr->get_user() ; ?>]"min="0" placeholder="0"  

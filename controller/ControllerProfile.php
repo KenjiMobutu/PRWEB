@@ -68,7 +68,7 @@ class ControllerProfile extends Controller
                 if (empty($errors)) {
                     $user->setPassword(Tools::my_hash($newPass));
                     $user->update_password();
-                    $this->redirect("profile", "change_password", $user->getUserId(), "ok");
+                    $this->redirect("user", "profile", $user->getUserId(), "ok");
                 }
             }
         }
@@ -111,7 +111,7 @@ class ControllerProfile extends Controller
                     if (!User::validateEmail( $mail)) {
                         $errors[] = "Wrong mail";
                     }
-                    if ($loggedUser->EmailExistsAlready($loggedUser->getUserId(), $_POST['mail'])) {
+                    if ($loggedUser->EmailExists($loggedUser->getUserId(), $_POST['mail'])) {
                         $errors[] = "Email address is already in use.";
                     }
 

@@ -10,57 +10,104 @@
     <link href="css/style.css" rel="stylesheet" type="text/css" />
     <link href="css/add-exp.css" rel="stylesheet" type="text/css" />
     <script src="lib/jquery-3.6.3.min.js" type="text/javascript"></script>
-    <script src="lib/sweetalert2@11.js" type="text/javascript"></script>
+    <script src="lib/just-validate-4.2.0.production.min.js" type="text/javascript"></script>
+    <script src="lib/just-validate-plugin-date-1.2.0.production.min.js" type="text/javascript"></script>
+    <script src="lib/just-validate-4.2.0.production.min.js" type="text/javascript"></script>
+    <script src="lib/just-validate-plugin-date-1.2.0.production.min.js" type="text/javascript"></script>
+    <script src="lib/validationIT3.js" type="text/javascript"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <?php
+    $justvalidate = Configuration::get("justvalidate");
+    ?>
+    <script>
+        const useJustValidate = <?= json_encode($justvalidate === "on") ?>;
+        if (useJustValidate) {
+            window.onload = function () {
+                JVAddOperation();
+            };
+        }
+    </script>
 
     <script>
-        /** <---------------------------  IT2 ---------------------------> */
-    function updateAmount(userCheckbox, totalAmount, totalWeight) {
-        var user = userCheckbox.val();
-        var isChecked = userCheckbox.is(":checked");
-        var weight = parseFloat(userCheckbox.closest('.check-input').find('input[type="number"]').val());
-        var amount = 0;
-        if (isChecked && weight > 0) {
-            amount = weight*(totalAmount / totalWeight)  ;
-        }
-        $("#" + user + "_amount").val(amount.toFixed(2));
-    }
-
-    function calculateAmounts() {
-        var totalAmount = parseFloat($("#amount").val());
-        var weights = {};
-        var totalWeight = 0;
-        $("input[type='number'][id$='Weight']").each(function() {
-            var userId = $(this).attr("id").replace("Weight", "");
-            var weight = parseFloat($(this).val());
-            weights[userId] = weight;
-            totalWeight += weight;
-        });
-
-        $("input[type='checkbox']").each(function() {
-            var userCheckbox = $(this);
+        function updateAmount(userCheckbox, totalAmount, totalWeight) {
             var user = userCheckbox.val();
-            var isChecked = userCheckbox.is(":checked");
-            var weight = parseFloat($("#userWeight").val());
+            var weightInput = userCheckbox.closest('.check-input').find('input[type="number"]');
+            var weight = parseFloat(weightInput.val());
             var amount = 0;
-            if (isChecked && weight > 0) {
-                amount = weight*(totalAmount / totalWeight);
+            if (userCheckbox.is(":checked") && weight > 0) {
+                amount = weight * (totalAmount / totalWeight);
             }
             $("#" + user + "_amount").val(amount.toFixed(2));
-            updateAmount(userCheckbox, totalAmount, totalWeight);
-        });
+        }
 
-        $(".check-input input[type='number']").change(function() {
-            var userCheckbox = $(this).closest('.check-input').find('input[type="checkbox"]');
-            var weight = parseFloat($(this).val());
-            var userId = userCheckbox.attr('id').replace('_userCheckbox', '');
-            if (weight === 0) {
-                userCheckbox.prop("checked", false);
-            } else {
-                userCheckbox.prop("checked", true);
-            }
-            updateAmount(userCheckbox, totalAmount, totalWeight);
-        });
-    }
+        function calculateAmounts() {
+            var totalAmount = parseFloat($("#amount").val());
+            var weights = {};
+            var totalWeight = 0;
+
+            $("input[type='checkbox']:not(#save):checked").each(function () {
+                var userId = $(this).val();
+                var weight = parseFloat($(`input[type="number"][name="w[${userId}]"]`).val());
+                weights[userId] = weight;
+                totalWeight += weight;
+            });
+
+            $("input[type='checkbox']:not(#save)").each(function () {
+                var userCheckbox = $(this);
+                updateAmount(userCheckbox, totalAmount, totalWeight);
+            });
+        }
+
+        $(document).ready(function () {
+            const repartitionTemplate = $('#repartitionTemplate');
+            const refreshBtn = $('#refreshBtn');
+
+            repartitionTemplate.on('change', function () {
+                refreshBtn.hide();
+
+                const selectedTemplateId = repartitionTemplate.val();
+                console.log(selectedTemplateId);
+                $.ajax({
+                    url: 'operation/get_template_service/' + selectedTemplateId,
+                    method: 'GET',
+                    dataType: 'json',
+                    success: function (templateData) {
+                        updateInputsAndCheckboxes(templateData);
+                    },
+                    error: function (jqXHR, textStatus, errorThrown) {
+                        console.error('Error fetching template data:', textStatus, errorThrown);
+                    }
+                });
+
+                function updateInputsAndCheckboxes(templateData) {
+                    var check = $(`input[type="checkbox"]`);
+                    check.prop('checked', false);
+
+                    var numb = $(`input[type="number"]`);
+
+                    templateData.forEach(userTemplateData => {
+                        const userCheckbox = $(`input[type="checkbox"][name="c[${userTemplateData.user}]"]`);
+                        if (userCheckbox.length > 0) {
+                            userCheckbox.prop('checked', true);
+                            const userWeight = $(`input[type="number"][name="w[${userTemplateData.user}]"]`);
+                            userWeight.val(userTemplateData.weight);
+                        }
+                    });
+
+                    calculateAmounts();
+                }
+            });
+
+            calculateAmounts();
+
+            // Add event listener for each checkbox
+            $("input[type='checkbox']:not(#save)").change(function () {
+                const userCheckbox = $(this);
+                const weightInput = userCheckbox.closest('.check-input').find('input[type="number"]');
+
+                if (userCheckbox.is(":checked")) {
+                    weightInput.val(1);
+                }
 
     $(document).ready(function() {
         calculateAmounts();
@@ -153,6 +200,7 @@
 
     </script>
 
+
 </head>
 
 <body >
@@ -161,49 +209,52 @@
         <p>
             <?php echo $tricount->get_title(); ?> >
             <?php echo isset($operation) ? 'Edit expense' : 'Add expense'; ?>
+        <div id="error-container"></div>
+
         </p>
-        <form
+        <form id="add-exp-form"
             action="<?php echo isset($operation) ? "operation/edit_expense/{$operation->get_id()}" : 'operation/add_expense'; ?>"
             method="post">
-            <div class="errors">
-                <ul>
-                    <?php if (!empty($errors))
-                        foreach ($errors as $error): ?>
-                            <li>
-                                <?= $error ?>
-                            </li>
-                        <?php endforeach; ?>
-                </ul>
-            </div>
+
             <?php if (isset($operation)): ?>
                 <input type="hidden" id="operationId" name="operationId" value="<?php echo $operation->get_id() ?>">
             <?php endif; ?>
-            <input required class="addExp" placeholder="Title" type="text" id="title" value="<?php
-            if (isset($operation))
-                echo $operation->getTitle();
-            else if (isset($info))
-                echo $info[0];
-            else
-                echo ''; ?>" name="title">
+            <div class="add-exp-title">
+                <label for="title">Title</label>
+                <input required class="addExp" placeholder="Title" type="text" id="title" value="<?php
+                if (isset($operation))
+                    echo $operation->getTitle();
+                else if (isset($info))
+                    echo $info[0];
+                else
+                    echo ''; ?>" name="title">
+            </div>
+
+
             <input type="hidden" id="tricId" name="tricId" value="<?php echo $tricount->get_id() ?>">
             <br>
-            <label for="operation_amount">Amount</label>
-            <input required class="addExp" placeholder="Amount (EUR)" value="<?php
-            if (isset($operation))
-                echo $operation->getAmount();
-            else if (isset($info))
-                echo $info[1];
-            else
-                echo ''; ?>" type="number" step="0.01" id="amount" name="amount" oninput="calculateAmounts()">
+
+            <div class="add-exp-amount">
+                <label for="operation_amount">Amount</label>
+                <input required class="addExp" placeholder="Amount (EUR)" value="<?php
+                if (isset($operation))
+                    echo $operation->getAmount();
+                else if (isset($info))
+                    echo $info[1];
+                else
+                    echo ''; ?>" type="number" step="0.01" id="amount" name="amount" oninput="calculateAmounts()">
+            </div>
             <br>
-            <label for="operation_date">Date</label>
-            <input class="addExp" type="date" id="operation_date" value="<?php
-            if (isset($operation))
-                echo $operation->getOperationDate();
-            else if (isset($info))
-                echo $info[2];
-            else
-                echo date('Y-m-d'); ?>" name="operation_date">
+            <div class="add-exp-date">
+                <label for="operation_date">Date</label>
+                <input class="addExp" type="date" id="operation_date" value="<?php
+                if (isset($operation))
+                    echo $operation->getOperationDate();
+                else if (isset($info))
+                    echo $info[2];
+                else
+                    echo date('Y-m-d'); ?>" name="operation_date">
+            </div>
 
             <br>
 
@@ -225,7 +276,7 @@
             <br>
             <label for="repartition_template">Use repartition template (optional)</label>
             <button name="refreshBtn" id="refreshBtn">Refresh</button>
-            <select id="rti" name="rti">
+            <select id="repartitionTemplate" name="rti">
                 <?php if (isset($template)) {
                     echo "<option style='color: black;' value='{$template->get_id()}'>{$template->get_title()}</option>";
 
@@ -233,21 +284,25 @@
                     echo "<option style='color: black;' value='option-default'>No, I'll use custom repartition</option>";
                 }
                 ?>
-                <?php foreach ($rti as $rt):
-                    $title = $rt["title"];
-                    $rtiId = $rt["id"] ?>
-                    <?php if (isset($template)):
-                        if ($title !== $template->get_title()): ?>
-                            <option name="option_template" style="color: black;" value="<?php echo $rtiId ?>"><?php echo $title ?>
+                <?php if ($allTemplates !== null): ?>
+                    <?php foreach ($allTemplates as $rt): ?>
+                        <?php if (isset($template)): ?>
+                            <?php if ($rt->title !== $template->get_title()): ?>
+                                <option name="option_template" id="option_template" style="color: black;" value="<?php echo $rt->id ?>">
+                                    <?php echo $rt->title ?>
+                                </option>
+                            <?php endif; ?>
+
+                        <?php else: ?>
+                            <option name="option_template" id="option_template" style="color: black;" value="<?php echo $rt->id ?>">
+                                <?php echo $rt->title ?>
                             </option>
                         <?php endif; ?>
+                    <?php endforeach; ?>
+                <?php endif; ?>
 
-                    <?php else: ?>
-                        <option name="option_template" style="color: black;" value="<?php echo $rtiId ?>"><?php echo $title ?>
-                        </option>
-                    <?php endif; ?>
-                <?php endforeach; ?>
             </select>
+
             <label for="who">For whom? (select at least one)</label>
             <?php foreach ($users as $usr) {
                 $repartitions_map = [];
@@ -264,6 +319,7 @@
                         $isChecked = true;
                     }
                     ?>
+
                     <input type="checkbox" name="c[<?= $usr->get_user() ?>]" value="<?= $usr->get_user() ?>"
                         id="<?php echo $usr->getUserInfo() ?>_userCheckbox" <?php echo $isChecked ? "checked" : ""; ?>>
                     <span class="text-input" style="color: yellow; font-weight: bold;">
@@ -271,15 +327,16 @@
                     </span>
                     <fieldset>
                         <legend class="legend" style="color: yellow; font-weight: bold;">Weight</legend>
-                        <input type="number" name="w[<?= $usr->get_user(); ?>]" onchange="calculateAmounts()" id="userWeight" min="0" max="50" <?php
-                          if (isset($template)) {
-                              if ($usr->is_in_Items($template->get_id(), $usr->user)) {
-                                  echo "value=" . $usr->get_weight_by_user($template->get_id());
-                              }
-                          } else {
-                              echo "value=" . (isset($repartitions_map[$usr->get_user()]) ? $repartitions_map[$usr->get_user()]->weight : '0');
-                          }
-                          ?>>
+                        <input type="number" name="w[<?= $usr->get_user(); ?>]" onchange="calculateAmounts()"
+                            id="userWeight" min="0" max="50" <?php
+                            if (isset($template)) {
+                                if ($usr->is_in_Items($template->get_id(), $usr->user)) {
+                                    echo "value=" . $usr->get_weight_by_user($template->get_id());
+                                }
+                            } else {
+                                echo "value=" . (isset($repartitions_map[$usr->get_user()]) ? $repartitions_map[$usr->get_user()]->weight : '0');
+                            }
+                            ?>>
                     </fieldset>
                     <fieldset>
                         <legend class="legend" style="color: yellow; font-weight: bold;">Amount</legend>
@@ -288,7 +345,8 @@
                             <input type="number" step="0.01" id="<?= $usr->get_user() ?>_amount" value="<?php echo $amount ?>"
                                 onchange="calculateAmounts()" hidden>
                         <?php else: ?>
-                            <input type="number" step="0.01" id="<?= $usr->get_user() ?>_amount" value="" onchange="calculateAmounts()">
+                            <input type="number" step="0.01" id="<?= $usr->get_user() ?>_amount" value=""
+                                onchange="calculateAmounts()">
                         <?php endif; ?>
 
                     </fieldset>
