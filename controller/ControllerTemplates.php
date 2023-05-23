@@ -28,7 +28,6 @@ class ControllerTemplates extends Controller
         if($user->is_in_tricount($_GET['param1']) || $user->is_creator($_GET['param1'])){
             $items = [];
             $tricount = Tricounts::get_by_id($_GET["param1"]);
-            var_dump($tricount);
             $templates = Repartition_templates::get_by_tricount($_GET["param1"]);
             if($templates !== null){
                 foreach($templates as $template){
