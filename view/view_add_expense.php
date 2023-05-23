@@ -111,21 +111,26 @@
                 if (userCheckbox.is(":checked")) {
                     weightInput.val(1);
                 }
+                calculateAmounts();
             });
 
             $("input[type='number'], input[type='checkbox'], input ").change(function() {
                 isModified = true;        console.log(isModified);
+                calculateAmounts();
             });
     
         
         
-            <?php if ($operation !== null && isset($operation)) :?> 
+            <?php if (isset($operation)) :?> 
+                <?php if($operation !== null) :?>
                 $(".backBtn").on("click", function(e) {
                     if(isModified){
                         e.preventDefault();
                         return confirmLeavePage();
                     }
                 });
+                <?php endif; ?>
+
             <?php endif; ?>
         });
         function confirmLeavePage() {
@@ -160,7 +165,7 @@
         }
 
         
-        <?php if ($operation !== null && isset($operation)) :?> 
+        <?php if (isset($operation) && $operation !== null ) :?> 
             function confirmDelete() {
                 Swal.fire({
                     title: 'Are you sure?',
