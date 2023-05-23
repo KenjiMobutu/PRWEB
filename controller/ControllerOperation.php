@@ -506,7 +506,7 @@ class ControllerOperation extends Controller
                 Operation::deleteRepartition($operation->get_id());
             foreach($combine_array as $user_id => $weight) {                        
                 if($weight ==="" || $weight === "0" )
-                    $weight = 0;
+                    $weight = 1;
                 Operation::insertRepartition($operation->get_id(), $weight, $user_id); 
             };
             $ok = true;
@@ -521,7 +521,7 @@ class ControllerOperation extends Controller
         if($template !== null){
             foreach($combine_array as $user_id => $weight){
                 if($weight === "" || $weight ==="0"){
-                    $weight = 0;
+                    $weight = 1;
                 }
                 Repartition_template_items::addNewItems($user_id, $template->get_id(), $weight);
             }
