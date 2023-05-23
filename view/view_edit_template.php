@@ -91,9 +91,7 @@
                 }
             });
         });
-                    }
-            })
-        }
+                    
         function confirmLeavePage() {
             Swal.fire({
                 title: 'Attention!',

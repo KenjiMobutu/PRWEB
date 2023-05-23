@@ -386,12 +386,9 @@ class ControllerOperation extends Controller
             $operation = Operation::getOperationByOperationId($operationId);
             $users = Participations::get_by_tricount($tricount->get_id());
             $repartitions = Repartitions::get_by_operation($operationId);
-<<<<<<< HEAD
             $rti = Repartition_template_items::get_by_user_and_tricount($userId, $tricount->get_id());
             $backValue = "operation/expenses/" . $tricount->get_id();
-=======
             $allTemplates = Repartition_templates::get_by_tricount($tricount->get_id());
->>>>>>> origin/feat_vlad
         }
 
         (new View("add_expense"))->show(

@@ -61,6 +61,7 @@
         $(document).ready(function () {
             const repartitionTemplate = $('#repartitionTemplate');
             const refreshBtn = $('#refreshBtn');
+            var isModified = false;
 
             repartitionTemplate.on('change', function () {
                 refreshBtn.hide();
@@ -108,50 +109,47 @@
                 if (userCheckbox.is(":checked")) {
                     weightInput.val(1);
                 }
-
-    $(document).ready(function() {
-        calculateAmounts();
-        var isModified = false;
-        $("input[type='number'], input[type='checkbox'], input ").change(function() {
-            isModified = true;        console.log(isModified);
-        });
-        console.log(isModified);
-        //window.addEventListener("unload", confirmLeavePage());
-        //pour it3
-        console.log(isModified);
-        
-
-        
-        $('.deleteContainer').html(
-            showDeleteButton());
-        $("input[type='number'], input[type='checkbox']").change(function() {
-            calculateAmounts();
-        });
-        <?php if ($operation !== null && isset($operation)) :?> 
-            $(".backBtn").on("click", function(e) {
-                if(isModified){
-                    e.preventDefault();
-                    return confirmLeavePage();
-                }
             });
-        <?php endif; ?>
-    });
-    function confirmLeavePage() {
-        Swal.fire({
-            title: 'Attention!',
-            text: "Vous êtes sur le point de quitter la page sans enregistrer les modifications de la dépense. Voulez-vous vraiment quitter la page ?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Oui',
-            cancelButtonText: 'Annuler'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = "<?= $backValue; ?>";
+
+            $("input[type='number'], input[type='checkbox'], input ").change(function() {
+                isModified = true;        console.log(isModified);
+            });
+    
+        
+        
+            <?php if ($operation !== null && isset($operation)) :?> 
+                $(".backBtn").on("click", function(e) {
+                    if(isModified){
+                        e.preventDefault();
+                        return confirmLeavePage();
+                    }
+                });
+            <?php endif; ?>
+        });
+        function confirmLeavePage() {
+            Swal.fire({
+                title: 'Attention!',
+                text: "Vous êtes sur le point de quitter la page sans enregistrer les modifications de la dépense. Voulez-vous vraiment quitter la page ?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Oui',
+                cancelButtonText: 'Annuler'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "<?= $backValue; ?>";
+                }
+            })
+        }
+        async function deleteExpense(id){
+            try {
+                await $.post("operation/delete_service/" + id);
+            } catch(e) {
+                console.log("Erreur : " + e);
             }
-        })
-    }
+        }
+
             /** <---------------------------  IT3 ---------------------------> */
         function showDeleteButton(){
 
@@ -159,6 +157,7 @@
             $('.deleteContainer').html(deleteBtn);
         }
 
+        
         <?php if ($operation !== null && isset($operation)) :?> 
             function confirmDelete() {
                 Swal.fire({
@@ -188,14 +187,7 @@
        
         
 
-        async function deleteExpense(id){
-            try {
-                await $.post("operation/delete_service/" + id);
-            } catch(e) {
-                console.log("Erreur : " + e);
-            }
-        }
-
+       
 
 
     </script>
