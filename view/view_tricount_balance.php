@@ -11,7 +11,8 @@
         href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400&family=Sen:wght@400;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
     <script src="lib/jquery-3.6.3.min.js" type="text/javascript"></script>
 </head>
 <style>
@@ -86,7 +87,7 @@
                 usort($users, function ($a, $b) {
                     return strcmp($a->getUserInfo(), $b->getUserInfo());
                 });
-                foreach ($users as $user):
+                foreach ($users as $index => $user):
                     $total_balance = 0;
                     $alberti_balance = Operation::total_alberti($tricount->get_id(), $user->get_user()); foreach ($operations_of_tricount as $operation):
                         if ($user->is_in_operation($operation->get_id()) || $user->getUserInfo() === $operation->getInitiator()) {
@@ -101,7 +102,7 @@
                     array_push($data, $balance);
                 endforeach;
 
-                foreach ($users as $user):
+                foreach ($users as $index => $user):
                     $total_balance = 0;
                     $alberti_balance = Operation::total_alberti($tricount->get_id(), $user->get_user());
                     foreach ($operations_of_tricount as $operation):
@@ -162,7 +163,40 @@
                             }
                         }
                     }
-                }
+                },
+                plugins: {
+    afterDraw: function(chart) {
+        var ctx = chart.ctx;
+        var dataset = chart.data.datasets[0];
+        var datasetMeta = chart.getDatasetMeta(0);
+        var datasetData = dataset.data;
+        var xScale = chart.scales.x;
+        var yScale = chart.scales.y;
+
+        datasetMeta.data.forEach(function(point, index) {
+            var label = chart.data.labels[index];
+            var value = datasetData[index];
+            var user = '<?php echo $users[$index]->getUserInfo(); ?>';
+            var x = xScale.getPixelForValue(value);
+            var y = point.y + (point.height / 2);
+
+            ctx.save();
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.font = "12px Arial";
+            if (value >= 0) {
+                ctx.fillStyle = "#000000";
+            } else {
+                ctx.fillStyle = "#FFFFFF";
+            }
+            ctx.fillText(user, x, y);
+            ctx.restore();
+        });
+    }
+}
+
+
+
             }
         });
 </script>
