@@ -21,10 +21,6 @@
     <script src="lib/just-validate-plugin-date-1.2.0.production.min.js" type="text/javascript"></script>
     <script src="lib/validationIT3.js" type="text/javascript"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="lib/just-validate-4.2.0.production.min.js" type="text/javascript"></script>
-    <script src="lib/just-validate-plugin-date-1.2.0.production.min.js" type="text/javascript"></script>
-    <script src="lib/validationIT3.js" type="text/javascript"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="lib/sweetalert2@11.js" type="text/javascript"></script>
 
     <?php

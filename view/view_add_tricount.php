@@ -4,9 +4,7 @@
 <head>
     <base href="<?= $web_root ?>" />
     <meta charset="UTF-8">
-    <title>
-        <?= $user->getFullName() ?>'s Tricount!
-    </title>
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <meta name="viewport"
@@ -23,7 +21,11 @@
     <script src="lib/just-validate-4.2.0.production.min.js" type="text/javascript"></script>
     <script src="lib/just-validate-plugin-date-1.2.0.production.min.js" type="text/javascript"></script>
     <script src="lib/validationIT3.js" type="text/javascript"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <title>
+        <?= $user->getFullName() ?>'s Tricount!
+    </title>
+    
     <?php
     $justvalidate = Configuration::get("justvalidate");
     ?>

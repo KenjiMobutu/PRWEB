@@ -2,9 +2,6 @@
 <html>
 
 <head>
-    <title>
-        <?php echo isset($operation) ? 'Edit Expense' : 'Add Expense'; ?>
-    </title>
     <base href="<?= $web_root ?>" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="css/style.css" rel="stylesheet" type="text/css" />
@@ -12,11 +9,13 @@
     <script src="lib/jquery-3.6.3.min.js" type="text/javascript"></script>
     <script src="lib/just-validate-4.2.0.production.min.js" type="text/javascript"></script>
     <script src="lib/just-validate-plugin-date-1.2.0.production.min.js" type="text/javascript"></script>
-    <script src="lib/just-validate-4.2.0.production.min.js" type="text/javascript"></script>
-    <script src="lib/just-validate-plugin-date-1.2.0.production.min.js" type="text/javascript"></script>
     <script src="lib/validationIT3.js" type="text/javascript"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="lib/sweetalert2@11.js" type="text/javascript"></script>
+
+    <title>
+        <?php echo isset($operation) ? 'Edit Expense' : 'Add Expense'; ?>
+    </title>
 
     <?php
     $justvalidate = Configuration::get("justvalidate");
@@ -114,16 +113,14 @@
                 calculateAmounts();
             });
 
-            $("input[type='number'], input[type='checkbox'], input ").change(function() {
-                isModified = true;        console.log(isModified);
+            $("input[type='number'], input[type='checkbox'], input ").change(function () {
+                isModified = true; console.log(isModified);
                 calculateAmounts();
             });
-    
-        
-        
-            <?php if (isset($operation) && $operation !== null) :?> 
-                $(".backBtn").on("click", function(e) {
-                    if(isModified){
+
+            <?php if (isset($operation) && $operation !== null): ?>
+                $(".backBtn").on("click", function (e) {
+                    if (isModified) {
                         e.preventDefault();
                         return confirmLeavePage();
                     }
@@ -147,60 +144,53 @@
                 }
             })
         }
-        async function deleteExpense(id){
+        async function deleteExpense(id) {
             try {
                 await $.post("operation/delete_service/" + id);
-            } catch(e) {
+            } catch (e) {
                 console.log("Erreur : " + e);
             }
         }
 
-            /** <---------------------------  IT3 ---------------------------> */
-        function showDeleteButton(){
+            // /** <---------------------------  IT3 ---------------------------> * /
+        function showDeleteButton() {
 
-            let deleteBtn ='<button class="delete-btn" onclick="confirmDelete()" style="background-color: gold" color: white;"> delete';
+            let deleteBtn = '<button class="delete-btn" onclick="confirmDelete()" style="background-color: gold" color: white;"> delete';
             $('.deleteContainer').html(deleteBtn);
         }
 
-        
-        <?php if (isset($operation) && $operation !== null ) :?> 
-            function confirmDelete() {
-                Swal.fire({
-                    title: 'Are you sure?',
-                    text: "You won't be able to revert this!",
-                    icon: 'warning',
-                    showCancelButton: true,
-                    confirmButtonColor: '#3085d6',
-                    cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, delete it!'
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        deleteExpense(<?= $operation->get_id(); ?>);
-                        Swal.fire(
-                            'Deleted!',
-                            'Your expense has been deleted.',
-                            'success'
-                        ).then(() => {
-                            window.location.href = 'operation/expenses/' + <?= $tricount->get_id(); ?>;
-                        });
-                    }
-                })
-                console.log(id);
+        <?php if (isset($operation) && $operation !== null): ?>
+                function confirmDelete() {
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to revert this!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Yes, delete it!'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            deleteExpense(<?= $operation->get_id(); ?>);
+                    Swal.fire(
+                        'Deleted!',
+                        'Your expense has been deleted.',
+                        'success'
+                    ).then(() => {
+                        window.location.href = 'operation/expenses/' + <?= $tricount->get_id(); ?>;
+                    });
+                }
+                    })
+            console.log(id);
 
-            }
+                }
         <?php endif; ?>
-       
-        
-
-       
-
 
     </script>
 
-
 </head>
 
-<body >
+<body>
     <?php include 'menu.php' ?>
     <div class="add-exp">
         <p>
@@ -366,9 +356,9 @@
         if ($action === 'edit' || $action === 'edit_expense') {
             echo '<div class="deleteContainer">';
 
-                echo '<button class="delete-btn" style="background-color: blue; color: white;">';
-                echo '<a href="/prwb_2223_c03/Operation/delete_confirm/' . $_GET['param1'] . '" style="text-decoration: none; color: white;">DELETE</a>';
-                echo '</button>';
+            echo '<button class="delete-btn" style="background-color: blue; color: white;">';
+            echo '<a href="/prwb_2223_c03/Operation/delete_confirm/' . $_GET['param1'] . '" style="text-decoration: none; color: white;">DELETE</a>';
+            echo '</button>';
             echo '</div>';
         }
         ?>
