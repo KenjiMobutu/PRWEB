@@ -103,7 +103,7 @@
         async function checkTitle() {
             const title = $(".tricountTitle").val();
 
-            
+
         }
 
 
@@ -263,7 +263,7 @@
             $("input[type='number'], input[type='checkbox'], input ").change(function() {
                 isModified = true;
             });
-            
+
             $(".headerButton.goBack").hide();
 
             $(".left").html("<a href='<?php $backValue ?>' class='headerGoBackButton'><i class='bi bi-arrow-left'></i></a>");

@@ -166,18 +166,14 @@ class ControllerTricount extends Controller{
       if (isset($_GET['param1']) && is_numeric($_GET['param1']) && $_GET['param1'] != null
           && isset($_POST["title"]) && !empty($_POST["title"])
           && isset($_POST["description"])|| ($_POST["description"]=="")){
+        $user_id = $user->getUserId();
 
         $id = $_GET['param1'];
         $title = Tools::sanitize($_POST["title"]);
-        $errors = Tricounts::validate_title($title);
+        $errors = Tricounts::validate_title($title, $user_id);
         $description = Tools::sanitize($_POST["description"]);
         $tricount = Tricounts::get_by_id($id);
-        if($tricount->get_title() !== $title ){
-          $tricountBool = Tricounts::get_by_title($tricount->get_title());
-          if($tricountBool == true){
-            $errors[]  = "This tricount already exist";
-          }
-        }
+
         $subscriptions = Participations::by_tricount($tricount->get_id());
         $users = $tricount->not_participate($tricount->get_id());
         foreach($subscriptions as $s){
@@ -212,11 +208,11 @@ class ControllerTricount extends Controller{
       if($tricount->get_title() !== $title){
         $tricountBool = Tricounts::get_by_title($tricount->get_title());
         if($tricountBool !== null ){
-          echo "true"; 
+          echo "true";
         }
-      } 
-      echo "false"; 
-    } 
+      }
+      echo "false";
+    }
 
 }
 

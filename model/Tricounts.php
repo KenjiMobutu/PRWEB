@@ -123,8 +123,17 @@ class Tricounts extends Model
       return new Tricounts($data["id"], $data["title"], $data["description"], $data["created_at"], $data["creator"]);
     }
   }
+  private static function title_exist($title, $creator){
+    $query = self::execute("SELECT title FROM tricounts WHERE title = :title and creator = :creator", array("title" => $title, "creator" => $creator));
+    $data = $query->fetch();
+    if ($query->rowCount() == 0) {
+      return false;
+    } else {
+      return $data["title"];
+    }
+  }
 
-  public static function validate_title($title)
+  public static function validate_title($title, $creator)
   {
     $errors = [];
     $title = Tools::sanitize($title);
@@ -133,6 +142,9 @@ class Tricounts extends Model
     }
     if (!(isset($title) && is_string($title) && strlen($title) <= 256)) {
       $errors[] = "Title can only contain letters, spaces and dashes and a maximum length of 256";
+    }
+    if ($title === self::title_exist($title, $creator)){
+      $errors[] = "This title already exist";
     }
     return $errors;
   }
