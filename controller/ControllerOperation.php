@@ -346,7 +346,6 @@ class ControllerOperation extends Controller
         );
 
     }
-    //TODO garder les weights en cas d'erreur ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public function add_expense()
     {
         $user = $this->get_user_or_redirect();
