@@ -94,8 +94,6 @@
 
         async function checkTitle() {
             const title = $(".tricountTitle").val();
-
-
         }
 
 
@@ -292,9 +290,7 @@
                 success: function (response) {
                     callback(response.unique);
                 },
-                error: function () {
-                    alert("An error occurred while validating the title. Please try again.");
-                }
+                
             });
         }
 

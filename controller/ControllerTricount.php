@@ -212,24 +212,24 @@ class ControllerTricount extends Controller{
         $tricount = Tricounts::get_by_id($_GET['param1']);
         $tricount = $tricount->delete($tricount->get_id());
     }
-}
+  }
 
 public function check_title(){
-  $title = $_POST['title'];
-  $tricount_id = $_POST['tricId'];
-  $originalTricount = Tricounts::get_by_id($tricount_id);
+    $title = $_POST['title'];
+    $tricount_id = $_POST['tricId'];
+    $originalTricount = Tricounts::get_by_id($tricount_id);
 
-  if($originalTricount === false || $originalTricount === null){
-      echo json_encode(['isUnique' => false]);
-      return;
-  }
-  $tricountByTitle = Tricounts::get_by_title($title);
+    if($originalTricount === false || $originalTricount === null){
+        echo json_encode(['isUnique' => false]);
+        return;
+    }
+    $tricountByTitle = Tricounts::get_by_title($title);
 
-  if ($tricountByTitle !== null && $tricountByTitle->get_id() != $originalTricount->get_id()) {
-      echo json_encode(['isUnique' => false]);
-  } else {
-      echo json_encode(['isUnique' => true]);
-  }
+    if ($tricountByTitle !== null && $tricountByTitle->get_id() != $originalTricount->get_id()) {
+        echo json_encode(['isUnique' => false]);
+    } else {
+        echo json_encode(['isUnique' => true]);
+    }
 }
 
 }
