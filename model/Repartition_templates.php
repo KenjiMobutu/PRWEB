@@ -7,32 +7,32 @@ class Repartition_templates extends Model
   public $title; //(varchar 256)
   public $tricount;
 
-  public function __construct($id, $title, $tricount)
+  function __construct($id, $title, $tricount)
   {
     $this->id = $id;
     $this->title = $title;
     $this->tricount = $tricount;
   }
 
-  public function get_id(): ?int
+  function get_id(): ?int
   {
     return $this->id;
   }
 
-  public function get_title(): string
+  function get_title(): string
   {
     return $this->title;
   }
-  public function get_tricount(): int|null
+  function get_tricount(): int|null
   {
     return $this->tricount;
   }
-  public function setId($id)
+  function setId($id)
   {
     $this->id = $id;
   }
 
-  public function setRepartitionTemplatesId()
+  function setRepartitionTemplatesId()
   {
     $query = self::execute("SELECT id FROM repartition_templates WHERE id = :id", array("id" => Model::lastInsertId()));
     $data = $query->fetchAll();
@@ -71,8 +71,7 @@ class Repartition_templates extends Model
   }
 
 
-  // peut-être juste call une methode dans items qui fait la même chose get_user_by_repartition($repartition)
-    public function get_items(){
+    function get_items(){
       $query =self::execute("select rti.* from repartition_template_items rti, repartition_templates rt, users u
                             where rt.id = rti.repartition_template 
                             and rt.id=:id 
@@ -111,11 +110,6 @@ class Repartition_templates extends Model
 
   public static function delete_by_tricount($tricount)
   {
-    // Repartition_template_items::delete_by_user_id($id);
-    // Repartition::delete_by_user_id($id);
-    // Operation::delete_by_user_id($id);
-    // Participation::delete_by_user_id($id);
-    // Tricount::delete_by_user_id($id);
     Repartition_template_items::delete_by_repartition_template($tricount);
     $query = self::execute("DELETE from `repartition_templates` where tricount=:tricount", array("tricount" => $tricount));
     if ($query->rowCount() == 0)
@@ -124,7 +118,7 @@ class Repartition_templates extends Model
       return $query;
   }
 
-  public function delete_by_id()
+  function delete_by_id()
   {
     //doit supprimer le tricount depuis repartition_template_items 
     Repartition_template_items::delete_by_repartition_template($this->id);
@@ -134,7 +128,7 @@ class Repartition_templates extends Model
     return $query;
   }
 
-  public function newTemplate($titre, $tricount)
+  function newTemplate($titre, $tricount)
   {
     if (($titre === null || strlen($titre < 3)) || $tricount === null)
       return null;
@@ -157,7 +151,7 @@ class Repartition_templates extends Model
   }
 
 
-  public function update_title($title)
+  function update_title($title)
   {
     self::execute("UPDATE `repartition_templates` SET
       title=:title,
@@ -172,7 +166,7 @@ class Repartition_templates extends Model
     return $this;
   }
 
-  public function update()
+  function update()
   {
     if (!is_null($this->id)) {
       self::execute("UPDATE `repartition_templates` SET

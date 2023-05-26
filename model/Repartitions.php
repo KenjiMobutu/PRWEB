@@ -11,24 +11,24 @@ class Repartitions extends Model
 
     public ?int $user;
 
-    public function __construct(int $weight = NULL, int $operation, int $user)
+    function __construct(int $weight = NULL, int $operation, int $user)
     {
         $this->weight = $weight;
         $this->operation = $operation;
         $this->user = $user;
     }
 
-    public function getWeight()
+    function getWeight()
     {
         return $this->weight;
     }
 
-    public function getOperation()
+    function getOperation()
     {
         return $this->operation;
     }
 
-    public function getUser()
+    function getUser()
     {
         return $this->user;
     }
@@ -94,27 +94,7 @@ class Repartitions extends Model
         } catch (Exception $e) {
             return false;
         }
-    }
-
-
-
-// public static function create()
-// {
-//     $query = self::execute(
-//         "INSERT INTO `repartitions` (`operation`, `user`, `weight`)
-//         VALUES (':operation', ':user', ':weight');",
-//         array(
-//             "operation" => $this->operation,
-//             "user" => $this->user,
-//             "weight" => $this->weight
-//         )
-//     );
-
-//     return $query->fetch();
-// }
-
-
-   
+    }   
 
 }
 

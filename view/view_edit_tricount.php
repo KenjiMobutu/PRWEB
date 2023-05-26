@@ -50,18 +50,7 @@
         let subscribers_json = <?= $subscribers_json ?>; // users who participate
         let addingUser = false;
         console.log("ISDELETABLE O ---> " + isDeletable);
-        $(function () {
-            usersList = $('#usersList');
-            addSubDropdown = $('#addSubDropdown');
-            addSubscriberButton = $('#btnAddSubscriber');
-            addSubscriberButton.attr("type", "button");
-            //addSubscriberButton.click(dropdownUserList);
-            //displayUserList();
-            loadUserList();
-            $('#subForm').hide();
-            //updateUserDeletability();
-        });
-
+     
         async function loadUserList() {
             await updateUserDeletability();
             displayUserList();
@@ -289,88 +278,86 @@
                     return confirmLeavePage();
                 }
             });
+
         });
-        $(".errors").hide();
-            function validateTitle(title, callback) {
-                $.ajax({
-                    url: "tricount/get_title_service",
-                    type: "POST",
-                    data: {
-                        title: title,
-                        creator: creator
-                    },
-                    dataType: "json",
-                    success: function (response) {
-                        // Assuming the server returns a JSON object with a 'unique' property
-                        if (response.unique) {
-                            callback(true);
-                        } else {
-                            callback(false);
-                        }
-                    },
-                    error: function () {
-                        alert("An error occurred while validating the title. Please try again.");
+        function validateTitle(title, creator, callback) {
+            $.ajax({
+                url: "tricount/check_title",
+                type: "POST",
+                data: {
+                    title: title,
+                    creator: creator
+                },
+                dataType: "json",
+                success: function (response) {
+                    callback(response.unique);
+                },
+                error: function () {
+                    alert("An error occurred while validating the title. Please try again.");
+                }
+            });
+        }
+
+        function showError(inputId, errorMessage) {
+            $(`#${inputId}`).addClass('input-error').removeClass('input-success');
+            $(`#${inputId}-icon`).html('<i class="bi bi-exclamation-circle-fill text-danger"></i>').show();
+            $(`#${inputId}-error`).text(errorMessage).show();
+            $(`#${inputId}-success`).text('').hide();
+        }
+
+        function showSuccess(inputId, successMessage) {
+            $(`#${inputId}`).addClass('input-success').removeClass('input-error');
+            $(`#${inputId}-icon`).html('<i class="bi bi-check-circle-fill text-success"></i>').show();
+            $(`#${inputId}-success`).text(successMessage).show();
+            $(`#${inputId}-error`).text('').hide();
+        }
+
+        function clearMessages(inputId) {
+            $(`#${inputId}`).removeClass('input-error input-success');
+            $(`#${inputId}-error`).text('').hide();
+            $(`#${inputId}-success`).text('').hide();
+        }
+
+        function validateInputs() {
+            const title = $("#title").val().trim();
+            const description = $("#description").val().trim();
+
+            clearMessages('title');
+            clearMessages('description');
+
+            if (title.length < 3) {
+                showError('title', 'Title must have at least 3 characters.');
+            } else {
+                validateTitle(title, creator, function (isTitleValid) {
+                    if (!isTitleValid) {
+                        showError('title', 'Title must be unique for the creator.');
+                    } else {
+                        showSuccess('title', 'Looks good!');
                     }
                 });
             }
 
-            function showError(inputId, errorMessage) {
-                $(`#${inputId}`).addClass('input-error').removeClass('input-success');
-                $(`#${inputId}-icon`).html('<i class="bi bi-exclamation-circle-fill text-danger"></i>').show();
-                $(`#${inputId}-error`).text(errorMessage).show();
-                $(`#${inputId}-success`).text('').hide();
+            if (description && description.length < 3) {
+                showError('description', 'Description must have at least 3 characters if provided.');
+            } else {
+                showSuccess('description', 'Looks good!');
             }
+        }
 
-            function showSuccess(inputId, successMessage) {
-                $(`#${inputId}`).addClass('input-success').removeClass('input-error');
-                $(`#${inputId}-icon`).html('<i class="bi bi-check-circle-fill text-success"></i>').show();
-                $(`#${inputId}-success`).text(successMessage).show();
-                $(`#${inputId}-error`).text('').hide();
+        $("#title, #description").on('input', validateInputs);
+
+        $("#updateTricount").submit(function (e) {
+            e.preventDefault();
+
+            validateInputs();
+
+            const hasError = $(".input-error").length > 0;
+
+            // submit if validations passed
+            if (!hasError) {
+                $("#updateTricount")[0].submit();
             }
-
-            function clearMessages(inputId) {
-                $(`#${inputId}`).removeClass('input-error input-success');
-                $(`#${inputId}-error`).text('').hide();
-                $(`#${inputId}-success`).text('').hide();
-            }
-
-            function validateInputs() {
-                const title = $("#title").val().trim();
-                const description = $("#description").val().trim();
-
-                if (title.length < 3) {
-                    showError('title', 'Title must have at least 3 characters.');
-                } else {
-                    validateTitle(title, function (isTitleValid) {
-                        if (!isTitleValid) {
-                            showError('title', 'Title must be unique for the creator.');
-                        } else {
-                            showSuccess('title', 'Looks good!');
-                        }
-                    });
-                }
-
-                if (description && description.length < 3) {
-                    showError('description', 'Description must have at least 3 characters if provided.');
-                } else {
-                    showSuccess('description', 'Looks good!');
-                }
-            }
-
-            $("#title, #description").on('input', validateInputs);
-
-            $("#updateTricount").submit(function (e) {
-                e.preventDefault();
-
-                validateInputs();
-
-                const hasError = $(".input-error").length > 0;
-
-                // submit if validations passed
-                if (!hasError) {
-                    $("#updateTricount")[0].submit();
-                }
-            });
+        });
     </script>
 
     <!-- CSS only -->
@@ -388,42 +375,44 @@
         <div class="pageTitle">
             <?= $tricount->get_title() ?> <i class="bi bi-caret-right-fill" style="font-size: 1em;"></i> Edit
         </div>
-        <!-- Formulaire de mise à jour du Tricount -->
-        <form id="updateTricount" action="tricount/update/<?= $tricount->get_id() ?>" method="post">
-            <div class="right">
-                <button type="submit" value="add" class="addTricount_btn">
-                    <i class="bi bi-save"></i>
-                </button>
-            </div>
     </div>
+
 
     <!-- Bloc de modification du Tricount -->
     <div class="edit-tricount">
+        
+        <!-- Formulaire de mise à jour du Tricount -->
+        
         <div class="edit-settingsTitle">
             <h1>Settings</h1>
         </div>
-        <div class="edit-settingsInput">
-            <h2>Title :</h2>
-            <input type="text" name="title" class="tricountTitle" onchange="checkTitle()" value='<?= $tricount->get_title() ?>'>
-            <p id="errorTitle"></p>
-            <h2>Description (optional) :</h2>
-            <input type="text" id="description" name="description"
-                value='<?= $tricount->get_description() == null ? " " : $tricount->get_description() ?>'>
 
-            <?php if (count($errors) != 0): ?>
-                <div class='errors'>
-                    <br><br>
-                    <p>Please correct the following error(s) :</p>
-                    <ul>
-                        <?php foreach ($errors as $error): ?>
-                            <li>
-                                <?= $error ?>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-            <?php endif; ?>
-        </div>
+        <form id="updateTricount" action="tricount/update/<?= $tricount->get_id() ?>" method="post">
+
+            <div class="edit-settingsInput">
+                <h2>Title :</h2>
+                <input type="text" name="title" class="tricountTitle" onchange="validateTitle()" value='<?= $tricount->get_title() ?>'>
+                <input type="text" name="tricId" id="tricId" value="<?php echo $tricount->get_id(); ?>" hidden>
+                <p id="errorTitle"></p>
+                <h2>Description (optional) :</h2>
+                <input type="text" id="description" name="description"
+                    value='<?= $tricount->get_description() == null ? " " : $tricount->get_description() ?>'>
+
+                <?php if (count($errors) != 0): ?>
+                    <div class='errors'>
+                        <br><br>
+                        <p>Please correct the following error(s) :</p>
+                        <ul>
+                            <?php foreach ($errors as $error): ?>
+                                <li>
+                                    <?= $error ?>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                <?php endif; ?>
+                <input type="submit" value="Edit_info" id="addTricount_btn"> 
+            </div>
         </form>
         <!-- Souscriptions au Tricount -->
         <div class="edit-settingsTitle">

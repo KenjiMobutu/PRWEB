@@ -106,4 +106,12 @@ class ControllerUser extends Controller
         }
     }
 
+    public function check_edit_prf_email() {
+        if (isset($_POST['email'])) {
+            $userId = User::get_by_mail($_POST['email']); // Fetch the userId from the session
+            $emailExists = $userId->EmailExists($userId, $_POST['email']);
+            echo $emailExists ? "true" : "false";
+        }
+    }
+
 }

@@ -51,21 +51,23 @@ class ControllerTricount extends Controller{
       $created_at = date('Y-m-d H:i:s');
       if ( (isset($_POST["title"]) && $_POST["title"]!="")&&(isset($_POST["description"])|| $_POST["description"]=="")){
         $title = Tools::sanitize($_POST["title"]);
-        $errors = Tricounts::validate_title($title);
+        $errors = Tricounts::validate_title($title, $user->getUserId());
         $description = Tools::sanitize($_POST["description"]);
         $creator = $user->getUserId();
-          $tricount = new Tricounts($id, $title, $description, $created_at, $creator);
-          $tricountBool = Tricounts::get_by_title($tricount->get_title());
-          if($tricountBool == true){
-            $errors[]  = "This tricount already exist";
-          }
-          if (count($errors) == 0) {
-            $tricount->addTricount();
-            $idT = $tricount->get_id();
-            $newSubscriber = new Participations($idT, $tricount->get_creator_id());
-            $newSubscriber->add();
-            $this->redirect("tricount", "result", $idT);
-          }
+        $tricount = new Tricounts($id, $title, $description, $created_at, $creator);
+        $tricountBool = Tricounts::get_by_title($tricount->get_title());
+        if(strlen($description) <3)
+          $errors[] = "description must be 3 characters long minimum";
+        if($tricountBool == true){
+          $errors[]  = "This tricount already exist";
+        }
+        if (count($errors) == 0) {
+          $tricount->addTricount();
+          $idT = $tricount->get_id();
+          $newSubscriber = new Participations($idT, $tricount->get_creator_id());
+          $newSubscriber->add();
+          $this->redirect("tricount", "result", $idT);
+        }
       }
       (new View("add_tricount"))->show(array("user" => $user,"tricount" =>$tricount, "errors"=>$errors));
     } else {
@@ -159,6 +161,7 @@ class ControllerTricount extends Controller{
       }
     }
   }
+
   public function update(){
     $user = $this->get_user_or_redirect();
     $errors = [];
@@ -170,10 +173,20 @@ class ControllerTricount extends Controller{
 
         $id = $_GET['param1'];
         $title = Tools::sanitize($_POST["title"]);
-        $errors = Tricounts::validate_title($title, $user_id);
-        $description = Tools::sanitize($_POST["description"]);
         $tricount = Tricounts::get_by_id($id);
-
+        
+        /**
+         *  sans le ucfirst(strtolower($title)) on recoit l'erreur de constraint.
+         */
+        if($tricount->get_title() !== $title)
+          $errors = Tricounts::validate_title(ucfirst(strtolower($title)) , $user_id);
+        // var_dump($tricount->get_title(). " ---- ". $title); 
+        // foreach($errors as $e)
+        //     var_dump($e);
+        // die();
+        $description = Tools::sanitize($_POST["description"]);
+        if(strlen($description) <3)
+            $errors[] = "Description must be 3 characters minimum";
         $subscriptions = Participations::by_tricount($tricount->get_id());
         $users = $tricount->not_participate($tricount->get_id());
         foreach($subscriptions as $s){
@@ -201,18 +214,23 @@ class ControllerTricount extends Controller{
     }
 }
 
-    public function check_title(){
-      $title = $_GET['param1'];
-      $tricount_id = $_GET['param2'];
-      $tricount = Tricounts::get_by_id($tricount_id);
-      if($tricount->get_title() !== $title){
-        $tricountBool = Tricounts::get_by_title($tricount->get_title());
-        if($tricountBool !== null ){
-          echo "true";
-        }
-      }
-      echo "false";
-    }
+public function check_title(){
+  $title = $_POST['title'];
+  $tricount_id = $_POST['tricId'];
+  $originalTricount = Tricounts::get_by_id($tricount_id);
+
+  if($originalTricount === false || $originalTricount === null){
+      echo json_encode(['isUnique' => false]);
+      return;
+  }
+  $tricountByTitle = Tricounts::get_by_title($title);
+
+  if ($tricountByTitle !== null && $tricountByTitle->get_id() != $originalTricount->get_id()) {
+      echo json_encode(['isUnique' => false]);
+  } else {
+      echo json_encode(['isUnique' => true]);
+  }
+}
 
 }
 
