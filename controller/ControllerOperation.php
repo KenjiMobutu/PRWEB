@@ -75,7 +75,6 @@ class ControllerOperation extends Controller
                 $this->redirect('operation', "index", $tricount->get_id());
             }
             $backValue = "operation/index/". $tricount->get_id();
-            //var_dump($tricount->get_id()); die();
             $weights = Repartitions::get_by_operation($tricount->get_id());
             $total = Tricounts::get_total_amount_by_tric_id($tricount->get_id());
         }
@@ -267,14 +266,9 @@ class ControllerOperation extends Controller
         $title = Tools::sanitize($title);
         $tricount = Tricounts::get_by_id($tricountId);
         $amount = Tools::sanitize(floatval($amount));
-        $init = User::get_by_name($initiator);
         $users = Participations::get_by_tricount($tricountId);
         $rti = Repartition_template_items::get_by_user_and_tricount($initiator, $tricountId);
         $template = Repartition_templates::get_by_id($_POST['rti']);
-        // var_dump($_POST); die();
-        //$ListUsers = Participations::get_by_tricount($tricountId);
-        // var_dump($tricount);
-        // var_dump($initiator); die();
         if (!$tricount || !$initiator) {
             $this->redirect("main", "error", "save");
             return;
@@ -346,7 +340,6 @@ class ControllerOperation extends Controller
         );
 
     }
-    //TODO garder les weights en cas d'erreur ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public function add_expense()
     {
         $user = $this->get_user_or_redirect();
@@ -386,7 +379,6 @@ class ControllerOperation extends Controller
             $operation = Operation::getOperationByOperationId($operationId);
             $users = Participations::get_by_tricount($tricount->get_id());
             $repartitions = Repartitions::get_by_operation($operationId);
-            $rti = Repartition_template_items::get_by_user_and_tricount($userId, $tricount->get_id());
             $backValue = "operation/expenses/" . $tricount->get_id();
             $allTemplates = Repartition_templates::get_by_tricount($tricount->get_id());
         }
@@ -416,14 +408,6 @@ class ControllerOperation extends Controller
         if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
             $this->redirect('main', 'error', 'aici3');
         }
-        //$operationId = $_POST['operationId'];
-
-        //$operation = Operation::getOperationByOperationId($operationId);
-        // var_dump($operation);
-        // if (!$operation) {
-        //     $this->redirect('main', 'error','aici4');
-        // }
-
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
@@ -448,8 +432,6 @@ class ControllerOperation extends Controller
             $initiator = User::get_by_id($_POST['initiator']);
 
             $created_at = date('y-m-d h:i:s');
-            // var_dump($amount); die();
-          
 
             $operation->setTitle($title);
             $operation->setTricount($tricountId);
