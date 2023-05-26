@@ -56,8 +56,9 @@
             addSubscriberButton = $('#btnAddSubscriber');
             addSubscriberButton.attr("type", "button");
             //addSubscriberButton.click(dropdownUserList);
-            //displayUserList();
-            loadUserList();
+            displayUserList();
+
+            //loadUserList();
             $('#subForm').hide();
             //updateUserDeletability();
         });
@@ -119,27 +120,27 @@
         }
 
         async function checkUserDeletability(userId) {
-            try {
-                const response = await fetch("user/handle_can_be_delete_request", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        userId: userId,
-                        tricountId: tricount_id,
-                        creator: creator
-                    })
-                });
-                console.log("RESPONSE__> " + response);
-                const data = await response.json();
-                console.log("DATA__> " + data);
-                return data.deletable;
-            } catch (error) {
-                console.log("Error retrieving user deletability: " + error);
-                return false;
-            }
+        try {
+            const response = await fetch("user/handle_can_be_delete_request", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    userId: userId,
+                    tricountId: tricount_id,
+                    creator: creator
+                })
+            });
+            console.log("RESPONSE__> " + response);
+            const data = await response.json();
+            console.log("DATA__> " + data);
+            return data.deletable;
+        } catch (error) {
+            console.log("Erreur lors de la récupération de la possibilité de supprimer l'utilisateur : " + error);
+            return false;
         }
+    }
 
         async function updateUserDeletability() {
             for (let u of subscribers_json) {
@@ -148,7 +149,13 @@
             }
             displayUserList();
         }
-
+        function displayUsersList() {
+        usersList.empty();
+        subscribers_json.forEach((user) => {
+            const deleteButton = createDeleteButton(user.id);
+            usersList.append($('<li>').text(user.username).append(deleteButton));
+        });
+    }
 
 
         function displayUserList() {
@@ -208,6 +215,16 @@
     function showDeleteButton(){
         let deleteBtn ='<button class="it3DeleteButton" onclick="confirmDelete()"  style="background-color: red" color: white;"> delete Tricount';
         $('.button-delete-tricount').html(deleteBtn);
+    }
+    function createDeleteButton(userId) {
+        const deleteButton = $('<button>').text('Supprimer').attr('type', 'button').click(() => {
+            deleteUser(userId);
+        });
+
+        if (isDeletable[userId] === false) {
+            deleteButton.attr('disabled', 'disabled');
+        }
+        return deleteButton;
     }
 
     function confirmDelete() {
@@ -388,42 +405,43 @@
         <div class="pageTitle">
             <?= $tricount->get_title() ?> <i class="bi bi-caret-right-fill" style="font-size: 1em;"></i> Edit
         </div>
-        <!-- Formulaire de mise à jour du Tricount -->
-        <form id="updateTricount" action="tricount/update/<?= $tricount->get_id() ?>" method="post">
-            <div class="right">
-                <button type="submit" value="add" class="addTricount_btn">
-                    <i class="bi bi-save"></i>
-                </button>
-            </div>
     </div>
+
 
     <!-- Bloc de modification du Tricount -->
     <div class="edit-tricount">
+
+        <!-- Formulaire de mise à jour du Tricount -->
+
         <div class="edit-settingsTitle">
             <h1>Settings</h1>
         </div>
-        <div class="edit-settingsInput">
-            <h2>Title :</h2>
-            <input type="text" name="title" class="tricountTitle" onchange="checkTitle()" value='<?= $tricount->get_title() ?>'>
-            <p id="errorTitle"></p>
-            <h2>Description (optional) :</h2>
-            <input type="text" id="description" name="description"
-                value='<?= $tricount->get_description() == null ? " " : $tricount->get_description() ?>'>
 
-            <?php if (count($errors) != 0): ?>
-                <div class='errors'>
-                    <br><br>
-                    <p>Please correct the following error(s) :</p>
-                    <ul>
-                        <?php foreach ($errors as $error): ?>
-                            <li>
-                                <?= $error ?>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                </div>
-            <?php endif; ?>
-        </div>
+        <form id="updateTricount" action="tricount/update/<?= $tricount->get_id() ?>" method="post">
+
+            <div class="edit-settingsInput">
+                <h2>Title :</h2>
+                <input type="text" name="title" class="tricountTitle" onchange="checkTitle()" value='<?= $tricount->get_title() ?>'>
+                <p id="errorTitle"></p>
+                <h2>Description (optional) :</h2>
+                <input type="text" id="description" name="description"
+                    value='<?= $tricount->get_description() == null ? " " : $tricount->get_description() ?>'>
+
+                <?php if (count($errors) != 0): ?>
+                    <div class='errors'>
+                        <br><br>
+                        <p>Please correct the following error(s) :</p>
+                        <ul>
+                            <?php foreach ($errors as $error): ?>
+                                <li>
+                                    <?= $error ?>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                <?php endif; ?>
+                <input type="submit" value="Edit_info" id="addTricount_btn">
+            </div>
         </form>
         <!-- Souscriptions au Tricount -->
         <div class="edit-settingsTitle">

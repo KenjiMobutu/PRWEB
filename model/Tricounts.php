@@ -134,20 +134,21 @@ class Tricounts extends Model
   }
 
   public static function validate_title($title, $creator)
-  {
+{
     $errors = [];
     $title = Tools::sanitize($title);
     if (!(isset($title) && is_string($title) && strlen($title) > 2)) {
-      $errors[] = "Min. 3 characters for the Title is required";
+        $errors[] = "Min. 3 characters for the Title is required";
     }
     if (!(isset($title) && is_string($title) && strlen($title) <= 256)) {
-      $errors[] = "Title can only contain letters, spaces and dashes and a maximum length of 256";
+        $errors[] = "Title can only contain letters, spaces and dashes and a maximum length of 256";
     }
-    if ($title === self::title_exist($title, $creator)){
-      $errors[] = "This title already exist";
+    if (self::title_exist($title, $creator) !== false) {
+        $errors[] = "This title already exists";
     }
     return $errors;
-  }
+}
+
 
   //retourne le tricount par son créateur
   public static function get_by_creator($creator)
