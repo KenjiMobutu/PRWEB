@@ -74,6 +74,7 @@
                     showError("Error encountered while retrieving the users!");
                 }
             }
+            //location.reload();
         }
 
         async function deleteUser(id) {
