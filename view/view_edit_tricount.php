@@ -60,10 +60,17 @@
             addSubscriberButton = $('#btnAddSubscriber');
             addSubscriberButton.attr("type", "button");
             //addSubscriberButton.click(dropdownUserList);
-            displayUserList();
+            //displayUserList();
+            loadUserList();
             $('#subForm').hide();
             //updateUserDeletability();
         });
+
+        async function loadUserList() {
+            await updateUserDeletability();
+            displayUserList();
+        }
+
 
         async function addUser() {
             const id = $('#addSubDropdown option:selected').data('user-id');
@@ -138,6 +145,15 @@
             }
         }
 
+        async function updateUserDeletability() {
+            for (let u of subscribers_json) {
+                isDeletable[u.id] = await checkUserDeletability(u.id);
+                console.log(isDeletable);
+            }
+            displayUserList();
+        }
+
+
 
         function displayUserList() {
             const sortedSubscribers = sortUsers(subscribers_json);
@@ -178,6 +194,7 @@
             </div>`;
             $('#usersList').html(html);
         }
+
 
         function sortUsers(users) {
             const creatorUser = users.find(el => el.id == creator);
