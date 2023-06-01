@@ -94,6 +94,11 @@ function showSelectSection() {
         "<option value='amount-desc'> by amount &#xf0dd;</option>" +
         "</select>";
     $('#js_Select').html(html);
+
+
+    // selection du choix par défaut
+    $('#sort-select').val('date-desc');
+
 }
 
 $(function(){

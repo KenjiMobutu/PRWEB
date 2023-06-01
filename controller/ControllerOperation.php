@@ -83,7 +83,7 @@ class ControllerOperation extends Controller
                 "total" => $total,
                 "users" => $users,
                 "operations_of_tricount" => $operations_of_tricount,
-                "user" => $user,
+                "userConnected" => $user,
                 "tricount" => $tricount,
                 "weights" => $weights,
                 "backValue"=> $backValue
@@ -182,7 +182,8 @@ class ControllerOperation extends Controller
                 $items = Repartition_template_items::get_user_by_repartition($templateId);
                 $info = $this->getInfoFromPost();
                 $rti = Repartition_template_items::get_by_user_and_tricount($userId, $tricId);
-                
+                $allTemplates = Repartition_templates::get_by_tricount($tricount->get_id());
+
                 if ($template === null) {
                     $this->redirect("operation", "expenses/" . $tricount->get_id());
                 }
@@ -195,10 +196,12 @@ class ControllerOperation extends Controller
             "operation" => $operation,
             "rti" => $rti,
             "templateId" => $templateId,
+            "template"=> $template,
             "users" => $users,
             "tricount" => $tricount,
             "repartitionTemplate" => $template,
             "ListUsers" => $listUsers,
+            "allTemplates" => $allTemplates,
             "info" => $info,
             "items" => $items,
             "init" => $init,

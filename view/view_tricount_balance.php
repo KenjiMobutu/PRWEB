@@ -112,7 +112,7 @@
                     endforeach;
                     $balance = $alberti_balance - $total_balance;
                     $proportion = $balance / $max_balance * 100;
-                    $user_info = $user->getUserInfo() == $_SESSION['user']->getFullName() ? $user->getUserInfo() . ' ( me )' : $user->getUserInfo();
+                    $user_info = $user->getUserInfo() == $userConnected->getFullName() ? $user->getUserInfo() . ' ( me )' : $user->getUserInfo();
                     $bar_style = $balance >= 0 ? 'background-color: green; color: white;' : 'background-color: red; color: white;';
                     echo '<li style="display: flex; align-items: center; justify-content: center; padding: 10px;">';
                     if ($balance >= 0) {

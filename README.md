@@ -28,6 +28,12 @@ le bouton back fonctionne avec du js
 
 ## Notes de version itération 2
 
+on a le js pour afficher des messages d'erreur pour l'it de edit tricount mais ne s'affiche pas
+
+concernant le point : "poids à zéro => décoche checkbox" on a préféré faire en sorte que si le user est checked mais que son poid est de 0 
+alors on le mettra dans la dépense avec un poid de 1 par défaut.
+
+
 ...
 
 ## Notes de version itération 3 

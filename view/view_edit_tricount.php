@@ -56,9 +56,8 @@
             addSubscriberButton = $('#btnAddSubscriber');
             addSubscriberButton.attr("type", "button");
             //addSubscriberButton.click(dropdownUserList);
-            displayUserList();
-
-            //loadUserList();
+            //displayUserList();
+            loadUserList();
             $('#subForm').hide();
             //updateUserDeletability();
         });
@@ -306,88 +305,86 @@
                     return confirmLeavePage();
                 }
             });
+
         });
-        $(".errors").hide();
-            function validateTitle(title, callback) {
-                $.ajax({
-                    url: "tricount/get_title_service",
-                    type: "POST",
-                    data: {
-                        title: title,
-                        creator: creator
-                    },
-                    dataType: "json",
-                    success: function (response) {
-                        // Assuming the server returns a JSON object with a 'unique' property
-                        if (response.unique) {
-                            callback(true);
-                        } else {
-                            callback(false);
-                        }
-                    },
-                    error: function () {
-                        alert("An error occurred while validating the title. Please try again.");
+        function validateTitle(title, creator, callback) {
+            $.ajax({
+                url: "tricount/check_title",
+                type: "POST",
+                data: {
+                    title: title,
+                    creator: creator
+                },
+                dataType: "json",
+                success: function (response) {
+                    callback(response.unique);
+                },
+                error: function () {
+                    alert("An error occurred while validating the title. Please try again.");
+                }
+            });
+        }
+
+        function showError(inputId, errorMessage) {
+            $(`#${inputId}`).addClass('input-error').removeClass('input-success');
+            $(`#${inputId}-icon`).html('<i class="bi bi-exclamation-circle-fill text-danger"></i>').show();
+            $(`#${inputId}-error`).text(errorMessage).show();
+            $(`#${inputId}-success`).text('').hide();
+        }
+
+        function showSuccess(inputId, successMessage) {
+            $(`#${inputId}`).addClass('input-success').removeClass('input-error');
+            $(`#${inputId}-icon`).html('<i class="bi bi-check-circle-fill text-success"></i>').show();
+            $(`#${inputId}-success`).text(successMessage).show();
+            $(`#${inputId}-error`).text('').hide();
+        }
+
+        function clearMessages(inputId) {
+            $(`#${inputId}`).removeClass('input-error input-success');
+            $(`#${inputId}-error`).text('').hide();
+            $(`#${inputId}-success`).text('').hide();
+        }
+
+        function validateInputs() {
+            const title = $("#title").val().trim();
+            const description = $("#description").val().trim();
+
+            clearMessages('title');
+            clearMessages('description');
+
+            if (title.length < 3) {
+                showError('title', 'Title must have at least 3 characters.');
+            } else {
+                validateTitle(title, creator, function (isTitleValid) {
+                    if (!isTitleValid) {
+                        showError('title', 'Title must be unique for the creator.');
+                    } else {
+                        showSuccess('title', 'Looks good!');
                     }
                 });
             }
 
-            function showError(inputId, errorMessage) {
-                $(`#${inputId}`).addClass('input-error').removeClass('input-success');
-                $(`#${inputId}-icon`).html('<i class="bi bi-exclamation-circle-fill text-danger"></i>').show();
-                $(`#${inputId}-error`).text(errorMessage).show();
-                $(`#${inputId}-success`).text('').hide();
+            if (description && description.length < 3) {
+                showError('description', 'Description must have at least 3 characters if provided.');
+            } else {
+                showSuccess('description', 'Looks good!');
             }
+        }
 
-            function showSuccess(inputId, successMessage) {
-                $(`#${inputId}`).addClass('input-success').removeClass('input-error');
-                $(`#${inputId}-icon`).html('<i class="bi bi-check-circle-fill text-success"></i>').show();
-                $(`#${inputId}-success`).text(successMessage).show();
-                $(`#${inputId}-error`).text('').hide();
+        $("#title, #description").on('input', validateInputs);
+
+        $("#updateTricount").submit(function (e) {
+            e.preventDefault();
+
+            validateInputs();
+
+            const hasError = $(".input-error").length > 0;
+
+            // submit if validations passed
+            if (!hasError) {
+                $("#updateTricount")[0].submit();
             }
-
-            function clearMessages(inputId) {
-                $(`#${inputId}`).removeClass('input-error input-success');
-                $(`#${inputId}-error`).text('').hide();
-                $(`#${inputId}-success`).text('').hide();
-            }
-
-            function validateInputs() {
-                const title = $("#title").val().trim();
-                const description = $("#description").val().trim();
-
-                if (title.length < 3) {
-                    showError('title', 'Title must have at least 3 characters.');
-                } else {
-                    validateTitle(title, function (isTitleValid) {
-                        if (!isTitleValid) {
-                            showError('title', 'Title must be unique for the creator.');
-                        } else {
-                            showSuccess('title', 'Looks good!');
-                        }
-                    });
-                }
-
-                if (description && description.length < 3) {
-                    showError('description', 'Description must have at least 3 characters if provided.');
-                } else {
-                    showSuccess('description', 'Looks good!');
-                }
-            }
-
-            $("#title, #description").on('input', validateInputs);
-
-            $("#updateTricount").submit(function (e) {
-                e.preventDefault();
-
-                validateInputs();
-
-                const hasError = $(".input-error").length > 0;
-
-                // submit if validations passed
-                if (!hasError) {
-                    $("#updateTricount")[0].submit();
-                }
-            });
+        });
     </script>
 
     <!-- CSS only -->
@@ -421,7 +418,8 @@
 
             <div class="edit-settingsInput">
                 <h2>Title :</h2>
-                <input type="text" name="title" class="tricountTitle" onchange="checkTitle()" value='<?= $tricount->get_title() ?>'>
+                <input type="text" name="title" class="tricountTitle" onchange="validateTitle()" value='<?= $tricount->get_title() ?>'>
+                <input type="text" name="tricId" id="tricId" value="<?php echo $tricount->get_id(); ?>" hidden>
                 <p id="errorTitle"></p>
                 <h2>Description (optional) :</h2>
                 <input type="text" id="description" name="description"

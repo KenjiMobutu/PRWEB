@@ -172,19 +172,22 @@
         <?php if (count($listUser) > 1) : ?>
 
             <p class="edit_template_p">Title :</p>
-            <input type="text" name="template_title" id="template_title" 
+            <div>
+                <input type="text" name="template_title" id="template_title" 
                     value="<?php 
                     if(isset($template))
                         echo $template->get_title();
                     if(isset($template_title))
                         echo $template_title;
                     ?>" required>
-            <span class="errTitle" id="errTitle"></span>
+            <!-- <span class="errTitle" id="errTitle"></span> -->
+            </div>
+
             <p class="edit_template_p">
             Template items :
             </p><br>
             <!-- pour récupérer l'id du tricount & template si reçu dans le submit du form -->
-            <input type="text" name="tricountId" value="<?php echo $tricount->get_id(); ?>" hidden>
+            <input type="text" name="tricountId" id="tricId" value="<?php echo $tricount->get_id(); ?>" hidden>
             <input type="text" name="templateID" value="<?php if(isset($templateID)){ echo $templateID;}  ?>" hidden>
             <span class="errItems" id="errItems"></span>
 
