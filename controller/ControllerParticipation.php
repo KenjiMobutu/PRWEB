@@ -40,7 +40,7 @@ class ControllerParticipation extends Controller{
     }
     return false;
   }
-  
+
   public function add_service() : void {
     $user = $this->add();
     echo $user ? "true" : "false";
@@ -74,6 +74,13 @@ class ControllerParticipation extends Controller{
         echo $users_json;
     } else {
         echo json_encode(array("error" => "ID is not defined."));
+    }
+  }
+
+  public function get_participation_by_user(){
+    if (isset($_GET["param1"]) && !empty($_GET["param1"])) {
+      $id = $_GET['param1'];
+      var_dump($id);
     }
   }
 

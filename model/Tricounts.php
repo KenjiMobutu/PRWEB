@@ -394,37 +394,6 @@ class Tricounts extends Model
     return json_encode($table);
   }
 
-  // public function users_deletable_as_json($tricount, $userId): string {
-  //   $query = self::execute(
-  //     "SELECT *
-  //     FROM subscriptions s
-  //     WHERE tricount = :tricount
-  //     AND user = :user
-  //     AND user NOT IN (
-  //       SELECT initiator
-  //       FROM operations
-  //       WHERE tricount = :tricount
-  //     )
-  //     AND user NOT IN (
-  //       SELECT user
-  //       FROM repartitions
-  //       JOIN operations
-  //       ON repartitions.operation = operations.id
-  //       WHERE tricount = :tricount
-  //     );",
-  //     array("tricount" => $tricount, "user" => $userId)
-  //   );
-  //   $data = $query->fetchAll();
-  //   $subscription = array();
-
-  //   foreach ($data as $row) {
-  //     $subscription[] = User::get_by_id($row["user"]);
-  //   }
-
-  //   return json_encode($subscription);
-  // }
-
-
   public function get_expenses(): array|null
   {
     return Operation::get_operations_by_tricount($this->get_id());
@@ -461,5 +430,38 @@ class Tricounts extends Model
 
     return $count == 0;
   }
+
+  public static function get_subcribtion_by_userId($userId) {
+    $query = self::execute(
+        "SELECT DISTINCT tricounts.*
+        FROM tricounts
+        JOIN subscriptions ON tricounts.id = subscriptions.tricount
+        WHERE subscriptions.user = :user",
+        array("user" => $userId)
+    );
+    $data = $query->fetchAll();
+    $tricount = [];
+    foreach ($data as $row) {
+        $tricount[] = new Tricounts($row["id"], $row["title"], $row["description"], $row["created_at"], $row["creator"]);
+    }
+    return $tricount;
+  }
+
+  public static function not_subscribe_byuserId($userId){
+    $query = self::execute(
+      "SELECT DISTINCT tricounts.*
+      FROM tricounts
+      LEFT JOIN subscriptions ON tricounts.id = subscriptions.tricount AND subscriptions.user = :user
+      WHERE subscriptions.user IS NULL",
+      array("user" => $userId)
+  );
+  $data = $query->fetchAll();
+  $tricount = [];
+  foreach ($data as $row) {
+      $tricount[] = new Tricounts($row["id"], $row["title"], $row["description"], $row["created_at"], $row["creator"]);
+  }
+  return $tricount;
+  }
+
 
 }

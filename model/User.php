@@ -163,12 +163,9 @@ class User extends Model
     }
 
 
-
-
-
     public function setRole(string $role): void
     {
-        $this->role = $role;
+        $this->role =$role;
     }
 
     public function getRole(): string
@@ -185,9 +182,8 @@ class User extends Model
         return $this->mail = $mail;
     }
 
-    public function isAdmin(): string
-    {
-        return $this->role == "admin";
+    public function isAdmin(): bool{
+        return $this->role === "admin";
     }
 
     public static function get_by_id($id)

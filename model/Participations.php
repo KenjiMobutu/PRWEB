@@ -48,7 +48,7 @@ class Participations extends Model
 
     public static function get_by_tricount($tricount)
     {
-        $query = self::execute("SELECT DISTINCT u.full_name, s.*, t.creator 
+        $query = self::execute("SELECT DISTINCT u.full_name, s.*, t.creator
                                         from users u JOIN subscriptions s on s.user = u.id
                                         JOIN tricounts t on s.tricount = t.id
                                         where t.id =:tricount
@@ -222,10 +222,10 @@ class Participations extends Model
 
     public function is_user_in_items($templateID, $targetUserId)
     {
-        $query = self::execute("SELECT DISTINCT rti.* 
-            from repartition_template_items rti, subscriptions o 
+        $query = self::execute("SELECT DISTINCT rti.*
+            from repartition_template_items rti, subscriptions o
             where o.tricount =:tricount
-            and rti.repartition_template = :repartition_template 
+            and rti.repartition_template = :repartition_template
             and rti.user = :user",
             array(
                 "tricount" => $this->tricount,
@@ -245,10 +245,10 @@ class Participations extends Model
 
     public function get_user_weight_in_items($templateID, $targetUserId)
     {
-        $query = self::execute("SELECT DISTINCT rti.* 
-            from repartition_template_items rti, subscriptions o 
+        $query = self::execute("SELECT DISTINCT rti.*
+            from repartition_template_items rti, subscriptions o
             where o.tricount =:tricount
-            and rti.repartition_template = :repartition_template 
+            and rti.repartition_template = :repartition_template
             and rti.user = :user",
             array(
                 "tricount" => $this->tricount,
@@ -268,7 +268,7 @@ class Participations extends Model
 
     public function get_weight_and_user_from_repartitions($operationId)
     {
-        $query = self::execute("SELECT weight, user FROM repartitions 
+        $query = self::execute("SELECT weight, user FROM repartitions
     WHERE operation=:operationId ",
             array("operationId" => $operationId)
         );
@@ -283,8 +283,8 @@ class Participations extends Model
 
     public function get_weight_by_user($repartition_template): int
     {
-        $query = self::execute("SELECT weight FROM repartition_template_items 
-                                WHERE repartition_template=:repartition_template 
+        $query = self::execute("SELECT weight FROM repartition_template_items
+                                WHERE repartition_template=:repartition_template
                                 AND user=:user",
             array("user" => $this->user, "repartition_template" => $repartition_template)
         );

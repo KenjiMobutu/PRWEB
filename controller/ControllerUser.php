@@ -24,6 +24,9 @@ class ControllerUser extends Controller
     {
         $user = $this->get_user_or_redirect();
         $user = User::get_by_id($user->getUserId());
+        if ($user->getUserId() === 1) {
+            $user->setRole("admin");
+        }
         (new View("profile"))->show(array("user" => $user));//show may throw Exception
     }
     public function handle_can_be_delete_request() {

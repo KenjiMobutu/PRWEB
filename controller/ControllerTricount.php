@@ -40,6 +40,34 @@ class ControllerTricount extends Controller{
     (new View("list_tricounts"))->show(array("loggedUser" => $loggedUser, "user" => $user, "tricounts_list"=>$tricounts_list));
   }
 
+  public function admin_view(){
+    $loggedUser = $this->get_user_or_redirect();
+    if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
+      $this->redirect('main', "error");
+    }
+    $user= array_key_exists('param1', $_GET) && $loggedUser->isAdmin() ? User::get_by_id($_GET['param1']) : $loggedUser;
+    $selectedUserId="";
+    $subscriberTricount = "";
+    $noSubscribeTricount = "";
+    if ($user->getUserId() === 1) {
+      $user->setRole("admin");
+      $users = User::getUsers();
+      if (isset($_POST['userId'])) {
+          $selectedUserId = $_POST['userId'];
+          $subscriberTricount = Tricounts::get_subcribtion_by_userId($selectedUserId);
+          //$subscriberTricount = Tricounts::by_user($selectedUserId);
+          $noSubscribeTricount = Tricounts::not_subscribe_byuserId($selectedUserId);
+      }
+  }
+
+    if (is_null($user)) {
+      $user = $loggedUser;
+    }
+
+    (new View("admin"))->show(array("loggedUser" => $loggedUser, "user" => $user,"users" => $users,
+    "subscriberTricount" => $subscriberTricount,"noSubscribeTricount"=> $noSubscribeTricount, "selectedUserId"=>$selectedUserId));
+  }
+
   public function add(){
     $user = $this->get_user_or_redirect();
     if (!is_null($user)) {
