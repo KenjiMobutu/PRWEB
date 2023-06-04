@@ -10,7 +10,7 @@ class Tricounts extends Model
   private $id; //(int)
 
 
-  public function __construct($id, $title, $description, $created_at, $creator)
+  function __construct($id, $title, $description, $created_at, $creator)
   {
     $this->id = $id;
     $this->title = $title;
@@ -19,28 +19,28 @@ class Tricounts extends Model
     $this->creator = $creator;
   }
   //retourne l'id du tricount
-  public function get_id()
+  function get_id()
   {
     return $this->id;
   }
   //retourne le titre du tricount
-  public function get_title(): string
+  function get_title(): string
   {
     return $this->title;
   }
   //retourne la description
-  public function get_description()
+  function get_description()
   {
     return $this->description;
   }
   //retourne la date de création
-  public function get_created_at(): datetime
+  function get_created_at(): datetime
   {
     return $this->created_at;
   }
 
   //retourne l'id du créateur
-  public function get_creator_id(): int
+  function get_creator_id(): int
   {
     return $this->creator;
   }
@@ -102,16 +102,6 @@ class Tricounts extends Model
       return new Tricounts($data["id"], $data["title"], $data["description"], $data["created_at"], $data["creator"]);
     }
   }
-  public function by_id($id)
-  {
-    $query = self::execute("SELECT * FROM tricounts WHERE id = :id", array("id" => $id));
-    $data = $query->fetch();
-    if ($query->rowCount() == 0) {
-      return false;
-    } else {
-      return new Tricounts($data["id"], $data["title"], $data["description"], $data["created_at"], $data["creator"]);
-    }
-  }
 
   public static function get_by_title($title)
   {
@@ -123,8 +113,17 @@ class Tricounts extends Model
       return new Tricounts($data["id"], $data["title"], $data["description"], $data["created_at"], $data["creator"]);
     }
   }
+  private static function title_exist($title, $creator){
+    $query = self::execute("SELECT title FROM tricounts WHERE title = :title and creator = :creator", array("title" => $title, "creator" => $creator));
+    $data = $query->fetch();
+    if ($query->rowCount() == 0) {
+      return false;
+    } else {
+      return $data["title"];
+    }
+  }
 
-  public static function validate_title($title)
+  public static function validate_title($title, $creator)
   {
     $errors = [];
     $title = Tools::sanitize($title);
@@ -133,6 +132,9 @@ class Tricounts extends Model
     }
     if (!(isset($title) && is_string($title) && strlen($title) <= 256)) {
       $errors[] = "Title can only contain letters, spaces and dashes and a maximum length of 256";
+    }
+    if ($title === self::title_exist($title, $creator)){
+      $errors[] = "This title already exist";
     }
     return $errors;
   }
@@ -149,7 +151,7 @@ class Tricounts extends Model
     }
   }
 
-  public function update()
+  function update()
   {
     if (!is_null($this->id)) {
       self::execute(
@@ -188,7 +190,7 @@ class Tricounts extends Model
     }
     return $this;
   }
-  public function addTricount()
+  function addTricount()
   {
     self::execute(
       "INSERT INTO
@@ -209,14 +211,14 @@ class Tricounts extends Model
     $this->id = self::lastInsertId();
   }
 
-  public function updateTricount($title, $description)
+  function updateTricount($title, $description)
   {
     self::execute(
       "UPDATE tricounts set title=:title,description=:description where id=:id",
       array("id" => $this->id, "title" => $title, "description" => $description)
     );
   }
-  public function delete($id)
+  function delete($id)
   {
 
     $query0 = self::execute("DELETE FROM repartitions WHERE operation IN (SELECT id FROM operations WHERE tricount = :id);", array("id" => $id));
@@ -288,7 +290,7 @@ class Tricounts extends Model
     return $data[0];
   }
 
-  public function not_participate($tricountId) : array{ //récup tous les users
+  function not_participate($tricountId) : array{ //récup tous les users
         $query = self::execute("SELECT *
             FROM users
             WHERE id
@@ -300,7 +302,7 @@ class Tricounts extends Model
         }
         return $results;
     }
-  public function not_participate_as_json($tricountId) : string{
+  function not_participate_as_json($tricountId) : string{
         $users = $this->not_participate($tricountId);
         $table = [];
         foreach($users as $user){
@@ -315,7 +317,7 @@ class Tricounts extends Model
         }
         return json_encode($table);
   }
-  public function subscribers($tricount){
+  function subscribers($tricount){
     $query = self::execute("SELECT s.*
                             FROM subscriptions s, tricounts t
                             where s.tricount = t.id
@@ -334,7 +336,7 @@ class Tricounts extends Model
 
     return $sub;
   }
-  public function subscribers_as_json($tricountId) : string{
+  function subscribers_as_json($tricountId) : string{
     $table = [];
     $users = $this->subscribers($tricountId);
     foreach($users as $user){
@@ -349,7 +351,7 @@ class Tricounts extends Model
     }
     return json_encode($table);
   }
-  public function users_deletable($tricount, $userId): array {
+  function users_deletable($tricount, $userId): array {
     $query = self::execute(
       "SELECT *
       FROM subscriptions s
@@ -378,7 +380,7 @@ class Tricounts extends Model
 
     return $subscription;
   }
-  public function users_deletable_as_json($tricountId,$userId) : string{
+  function users_deletable_as_json($tricountId,$userId) : string{
     $table = [];
     $users = $this->users_deletable($tricountId,$userId);
     foreach($users as $user){
@@ -394,43 +396,12 @@ class Tricounts extends Model
     return json_encode($table);
   }
 
-  // public function users_deletable_as_json($tricount, $userId): string {
-  //   $query = self::execute(
-  //     "SELECT *
-  //     FROM subscriptions s
-  //     WHERE tricount = :tricount
-  //     AND user = :user
-  //     AND user NOT IN (
-  //       SELECT initiator
-  //       FROM operations
-  //       WHERE tricount = :tricount
-  //     )
-  //     AND user NOT IN (
-  //       SELECT user
-  //       FROM repartitions
-  //       JOIN operations
-  //       ON repartitions.operation = operations.id
-  //       WHERE tricount = :tricount
-  //     );",
-  //     array("tricount" => $tricount, "user" => $userId)
-  //   );
-  //   $data = $query->fetchAll();
-  //   $subscription = array();
-
-  //   foreach ($data as $row) {
-  //     $subscription[] = User::get_by_id($row["user"]);
-  //   }
-
-  //   return json_encode($subscription);
-  // }
-
-
-  public function get_expenses(): array|null
+  function get_expenses(): array|null
   {
     return Operation::get_operations_by_tricount($this->get_id());
   }
 
-  public function get_expenses_as_json()
+  function get_expenses_as_json()
   {
     $str = "";
 

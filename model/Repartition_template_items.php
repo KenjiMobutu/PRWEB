@@ -10,26 +10,26 @@ class Repartition_template_items extends Model
   public $repartition_template;
 
 
-  public function __construct($weight, $user, $repartition_template)
+  function __construct($weight, $user, $repartition_template)
   {
     $this->weight = $weight;
     $this->user = $user;
     $this->repartition_template = $repartition_template;
   }
-  public function get_weight(): int
+  function get_weight(): int
   {
     return $this->weight;
   }
-  public function get_user(): int
+  function get_user(): int
   {
     return $this->user;
   }
-  public function get_rt(): int
+  function get_rt(): int
   {
     return $this->repartition_template;
   }
 
-  public function setId($id)
+  function setId($id)
   {
     return $this->user;
   }
@@ -69,7 +69,7 @@ class Repartition_template_items extends Model
   }
 
 
-  public function get_Sum_Weight(): int
+  function get_Sum_Weight(): int
   {
     $query = self::execute(
       "SELECT SUM(weight)
@@ -190,9 +190,10 @@ class Repartition_template_items extends Model
   public static function get_by_user_and_tricount($user, $tricountId)
   {
     $query = self::execute(
-      "SELECT * FROM  repartition_template_items rti, repartition_templates rt
-                              where rti.repartition_template = rt.id
-                              and rti.user=:user and rt.tricount=:tricount",
+      "SELECT * FROM repartition_templates rt
+    LEFT JOIN repartition_template_items rti ON 
+    rti.repartition_template = rt.id
+    WHERE rti.user=:user AND rt.tricount=:tricount",
       array("user" => $user, "tricount" => $tricountId)
     );
     $data = $query->fetchAll();
@@ -200,7 +201,8 @@ class Repartition_template_items extends Model
     return $data;
   }
 
-  public function get_user_info(): string
+
+  function get_user_info(): string
   { // on récupère les noms des utilisateurs lié a un template_items
     $query = self::execute(
       "SELECT *
@@ -250,7 +252,7 @@ class Repartition_template_items extends Model
   }
 
 
-  public function update()
+  function update()
   {
     if (!is_null($this->repartition_template)) {
       self::execute(

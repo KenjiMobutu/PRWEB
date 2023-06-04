@@ -23,7 +23,7 @@ class Participations extends Model
     }
 
 
-    public function is_in_operation($operationId)
+    function is_in_operation($operationId)
     {
         $query = self::execute(
             "SELECT user FROM repartitions WHERE operation = :id ",
@@ -35,7 +35,7 @@ class Participations extends Model
         return true;
     }
 
-    public function get_dette($operation): int
+    function get_dette($operation): int
     {
         if ($operation) {
             $dette = Operation::get_dette_by_operation($operation, $this->user);
@@ -64,7 +64,7 @@ class Participations extends Model
         return $participant;
     }
 
-    public function getUserInfo()
+    function getUserInfo()
     {
         $query = self::execute("SELECT u.full_name
                                     from `users` u, subscriptions s where u.id= s.user
@@ -136,14 +136,14 @@ class Participations extends Model
         else
             return true;
     }
-    public function add()
+    function add()
     {
         self::execute(
             "INSERT INTO `subscriptions`(`tricount`, `user`) VALUES (:tricount,:user)",
             array("tricount" => $this->tricount, "user" => $this->user)
         );
     }
-    public function update()
+    function update()
     {
         if (self::get_by_tricount($this->tricount) != null) {
             self::execute("UPDATE subscriptions
@@ -185,7 +185,7 @@ class Participations extends Model
         return $subscription;
     }
 
-    public function is_in_tricount($idTricount)
+    function is_in_tricount($idTricount)
     {
         $query = self::execute("SELECT * from subscriptions s where s.user = :user and s.tricount =:id  ", array("user" => $this->user, "id" => $idTricount));
         $data = $query->fetch();
@@ -193,7 +193,7 @@ class Participations extends Model
             return false;
         return $data;
     }
-    public function is_creator($idTricount)
+    function is_creator($idTricount)
     {
         $query = self::execute("SELECT * FROM tricounts t where t.creator =:user and t.id=:id ", array("user" => $this->user, "id" => $idTricount));
         $data = $query->fetch();
@@ -201,7 +201,7 @@ class Participations extends Model
             return false;
         return $data;
     }
-    public function is_in_Items($templateID){
+    function is_in_Items($templateID){
         $query = self::execute("SELECT DISTINCT rti.*
                 from repartition_template_items rti, subscriptions o
                 where o.tricount =:tricount
@@ -220,7 +220,7 @@ class Participations extends Model
 
     }
 
-    public function is_user_in_items($templateID, $targetUserId)
+    function is_user_in_items($templateID, $targetUserId)
     {
         $query = self::execute("SELECT DISTINCT rti.* 
             from repartition_template_items rti, subscriptions o 
@@ -243,7 +243,7 @@ class Participations extends Model
         return false;
     }
 
-    public function get_user_weight_in_items($templateID, $targetUserId)
+    function get_user_weight_in_items($templateID, $targetUserId)
     {
         $query = self::execute("SELECT DISTINCT rti.* 
             from repartition_template_items rti, subscriptions o 
@@ -266,7 +266,7 @@ class Participations extends Model
         return null;
     }
 
-    public function get_weight_and_user_from_repartitions($operationId)
+    function get_weight_and_user_from_repartitions($operationId)
     {
         $query = self::execute("SELECT weight, user FROM repartitions 
     WHERE operation=:operationId ",
@@ -281,7 +281,7 @@ class Participations extends Model
     }
 
 
-    public function get_weight_by_user($repartition_template): int
+    function get_weight_by_user($repartition_template): int
     {
         $query = self::execute("SELECT weight FROM repartition_template_items 
                                 WHERE repartition_template=:repartition_template 
@@ -295,7 +295,7 @@ class Participations extends Model
             return ($data["weight"]);
     }
 
-    public function is_in_repartition($userId, $operationId)
+    function is_in_repartition($userId, $operationId)
     {
         $query = self::execute("SELECT user FROM repartitions where user =:user and operation=:operation ", array("user" => $this->get_user(), "operation" => $operationId));
         if ($query->rowCount() == 0)
@@ -303,7 +303,7 @@ class Participations extends Model
         return true;
     }
 
-    public function get_weight_by_user_and_operation($userId, $operationId)
+    function get_weight_by_user_and_operation($userId, $operationId)
     {
         $query = self::execute("SELECT weight FROM repartitions WHERE user=:user and operation=:operation", array("user" => $this->get_user(), "operation" => $operationId));
         $data = $query->fetch();
@@ -312,7 +312,7 @@ class Participations extends Model
         return $data["weight"];
     }
 
-    public function get_weight_by_user_and_template($user, $templateId)
+    function get_weight_by_user_and_template($user, $templateId)
     {
         $query = self::execute("SELECT weight FROM repartition_template_items WHERE user=:user and repartition_template=:template", array("user" => $user, "template" => $templateId));
         $data = $query->fetch();

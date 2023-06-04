@@ -12,14 +12,62 @@
         href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400&family=Sen:wght@400;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <script src="lib/just-validate-4.2.0.production.min.js" type="text/javascript"></script>
+    <script src="lib/just-validate-plugin-date-1.2.0.production.min.js" type="text/javascript"></script>
+    <script src="lib/validationIT3.js" type="text/javascript"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="lib/sweetalert2@11.js" type="text/javascript"></script>
+
+    <?php
+    $justvalidate = Configuration::get("justvalidate");
+    ?>
+    <script>
+        const useJustValidate = <?= json_encode($justvalidate === "on") ?>;
+        if (useJustValidate) {
+            window.onload = function () {
+                JVEditProfile();
+            };
+        }
+    </script>
     <title>edit profile</title>
 </head>
-<style>
-   
-</style>
 
+<script>
+    $(document).ready(function() {
+        //pour it3
+        var isModified = false;
+        $("input[type='number'], input[type='checkbox'], input ").change(function() {
+            isModified = true;        console.log(isModified);
+        });
+        console.log(isModified);
+        
+        console.log(isModified);
+        $(".backBtn").on("click", function(e) {
+            if(isModified){
+                e.preventDefault();
+                return confirmLeavePage();
+            }
+        });
+    });
+    function confirmLeavePage() {
+        Swal.fire({
+            title: 'Attention!',
+            text: "Vous êtes sur le point de quitter la page sans enregistrer les modifications de la dépense. Voulez-vous vraiment quitter la page ?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Oui',
+            cancelButtonText: 'Annuler'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = "<?= $backValue; ?>";
+            }
+        })
+    }
+</script>
 <body>
-    <?php include 'menu.html' ?>
+    <?php include 'menu.php' ?>
     <div class="prf-body">
         <div class="edit_profile">
             <div class="chprof-form-items">
@@ -27,7 +75,7 @@
                     <?= $user->getFullName() ?>
                 </div>
                 <!-- Form pour collecter les données du user -->
-                <form action="profile/edit_profile" method="post">
+                <form id="edit_profile" action="profile/edit_profile" method="post">
                     <!-- récup son pseudo -->
                     <label for="fullName">Name:</label><br>
                     <input type="text" id="fullName" name="fullName" value="<?= isset($user) ? $user->getFullName() : $_SESSION['full_name'] ?>"><br>
@@ -44,9 +92,7 @@
                     <!-- Submit button to send the form data -->
 
                     <input type="submit" value="submit">
-                    <?php
-
-                    ?>
+                    
                 </form>
                 <a href="profile/change_password">change your password</a>
 

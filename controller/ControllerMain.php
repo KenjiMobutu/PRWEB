@@ -58,7 +58,7 @@ class ControllerMain extends Controller
         $password = '';
         $password_confirm = '';
         $errors = [];
-
+        $backValue = "main/login";
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if (
@@ -96,7 +96,8 @@ class ControllerMain extends Controller
             'password_confirm' => $password_confirm,
             'full_name' => $full_name,
             'iban' => $iban,
-            'errors' => $errors
+            'errors' => $errors,
+            "backValue"=> $backValue
         ]);
     }
 }

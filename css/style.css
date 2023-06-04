@@ -4,6 +4,29 @@
 @import url("https://unpkg.com/ionicons@4.5.10-0/dist/css/ionicons.min.css");
 @import url("https://fonts.googleapis.com/css?family=Poppins:400,500,600&display=swap");
 
+/* just validate */
+
+.error-field {
+  border: 1px solid red;
+  box-shadow: 0 0 10px 0 red!important;
+}
+
+.success-field {
+  border: 1px solid green;
+  box-shadow: 0 0 10px green;
+}
+
+.successJV {
+  color: green!important;
+  box-shadow: 0 0 10px green;
+}
+
+.errorsJV {
+  color: red;
+  box-shadow: 0 0 10px 0 red!important;
+}
+
+
 /* MENU */
 * {
   margin: 0;
@@ -47,10 +70,27 @@ body {
   flex: 9;
 }
 
+
 .menu-list {
   display: flex;
   list-style: none;
   justify-content: flex-end;
+}
+
+/*button back menu*/
+.backBtn {
+  padding: 10px 20px;
+  border: 2px solid rgb(204, 204, 0);
+  margin: 10px 10px 10px 10px;
+  border-radius: 5px;
+  color: white;
+  text-decoration: none;
+  transition: background-color 0.3s;
+  background-color: transparent;
+}
+
+.backBtn:hover {
+  background-color: rgb(160, 160, 78);
 }
 
 .errors {
@@ -117,7 +157,7 @@ body {
   text-align: center;
 }
 
-input[class="sign"],
+input.sign,
 select {
   width: 100%;
   padding: 12px 20px;
@@ -172,12 +212,13 @@ input[type="submit"]:hover {
 }
 
 input[class="signup-form-btn"] {
+  margin: 0!important;
   width: 85%;
   background-color: #5e43f3;
   color: white;
 }
 
-input[class="signup-form-items"],
+input.signup-form-items,
 select {
   width: 85%;
   padding: 12px 20px;
@@ -915,7 +956,6 @@ fieldset, legend{
   padding: 10px;
   /*top right bottom left */
   margin: 20px;
-  width: 20%;
   border-radius: 5px;
   border: none;
   background-color: #4a6785;
@@ -1008,6 +1048,26 @@ input[type="submit"]:hover {
   margin: auto;
   width: 80%;
   color: red !important;
+}
+
+
+
+
+
+.it3DeleteButton{
+  background-color: blue;
+	color: white;
+	padding: 10px 20px;
+	border-radius: 5px;
+	text-align: center;
+	text-decoration: none;
+	font-weight: bold;
+	box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.2);
+	transition: all 0.2s ease-in-out;
+}
+.it3DeleteButton:hover {
+	transform: translateY(-2px);
+	box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
 }
 /* .......> */
 

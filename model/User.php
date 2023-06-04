@@ -17,7 +17,7 @@ class User extends Model
         self::ROLE_USER
     ];
 
-    public function __construct(?int $id, string $mail, string $hashed_password, string $full_name, ?string $role, ?string $iban)
+    function __construct(?int $id, string $mail, string $hashed_password, string $full_name, ?string $role, ?string $iban)
     {
         $this->id = $id;
         $this->mail = $mail;
@@ -41,64 +41,37 @@ class User extends Model
     }
 
     //retourne l'id de l'utilisateur
-    public function getUserId()
+    function getUserId()
     {
         return $this->id;
     }
 
-    public function getFullName(): string
+    function getFullName(): string
     {
         return $this->full_name;
     }
 
-    public function getUserIban(): string|null
+    function getUserIban(): string|null
     {
         return $this->iban;
     }
 
-    public function setUserIban(string $iban): void
+    function setUserIban(string $iban): void
     {
         $this->iban = $iban;
     }
 
-    public function getPassword(): string
+    function getPassword(): string
     {
         return $this->hashed_password;
     }
 
-    public function setPassword(string $hashed_password): void
+    function setPassword(string $hashed_password): void
     {
         $this->hashed_password = $hashed_password;
     }
 
-
-    // public function delete($id)
-    // {
-    //     if(Repartition_template_items::delete_by_user_id($id)){
-    //         if(Repartition::delete_by_user_id($id)){
-    //             if(Operation::delete_by_user_id($id)){
-    //                 if(Participation::delete_by_user_id($id)){
-    //                     if(Tricount::delete_by_user_id($id)){
-    //                         $query = self::execute("DELETE from `user` where id=:id", array("id" => $id));
-    //                         if ($query->rowCount() == 0)
-    //                             return false;
-    //                         else
-    //                             return $query;
-    //                     }else{
-    //                         echo "problème avec la fonction delete_by_user_id du modele tricount";
-    //                     }
-    //                 }else
-    //                 echo "problème avec la fonction delete_by_user_id du modele Participation";
-    //             }else
-    //             echo "problème avec la fonction delete_by_user_id du modele operation";
-    //         }
-    //         echo "problème avec la fonction delete_by_user_id du modele repartition";
-    //     }else
-    //     echo "problème avec la fonction delete_by_user_id du modele Repartition_template_items";
-    // }
-
-
-    public function is_in_operation($operationId)
+    function is_in_operation($operationId)
     {
         $query = self::execute(
             "SELECT user FROM repartitions WHERE operation = :id ",
@@ -132,23 +105,23 @@ class User extends Model
 
     }
 
-    public function getIban(): string|null
+    function getIban(): string|null
     {
         return $this->iban;
     }
 
-    public function setFullName(string $fullname): string
+    function setFullName(string $fullname): string
     {
         return $this->full_name = $fullname;
     }
 
 
-    public function setIban(string $iban): void
+    function setIban(string $iban): void
     {
         $this->iban = $iban;
     }
 
-    public function update_password()
+    function update_password()
     {
         if (self::get_by_id($this->id) != null) {
             self::execute("UPDATE users SET
@@ -166,26 +139,26 @@ class User extends Model
 
 
 
-    public function setRole(string $role): void
+    function setRole(string $role): void
     {
         $this->role = $role;
     }
 
-    public function getRole(): string
+    function getRole(): string
     {
         return $this->role;
     }
 
-    public function getMail(): string
+    function getMail(): string
     {
         return $this->mail;
     }
-    public function setMail(string $mail): string
+    function setMail(string $mail): string
     {
         return $this->mail = $mail;
     }
 
-    public function isAdmin(): string
+    function isAdmin(): string
     {
         return $this->role == "admin";
     }
@@ -210,7 +183,7 @@ class User extends Model
         }
         return $results;
     }
-    public function not_participate($tricountId)
+    function not_participate($tricountId)
     { //récup tous les users
         $query = self::execute("SELECT *
             FROM users
@@ -258,7 +231,7 @@ class User extends Model
         }
     }
 
-    public function update_profile($full_name, $mail, $iban)
+    function update_profile($full_name, $mail, $iban)
     {
         if (self::get_by_id($this->id) != null) {
             self::execute("UPDATE users
@@ -278,7 +251,7 @@ class User extends Model
     }
 
 
-    public function update()
+    function update()
     {
         if (self::get_by_id($this->id) != null) {
             self::execute("UPDATE users SET
@@ -336,7 +309,24 @@ class User extends Model
         return $errors;
     }
 
-    public function validate(): array
+    public static function validate_login_it3($mail, $password)
+    {
+        // Retrieve the user with the provided email
+        $user = User::get_by_mail($mail);
+        // If a user exists with the given email
+        if ($user !== null) {
+            // Hash the provided password
+            $hashed_password = Tools::my_hash($password);
+
+            // Compare the hashed password with the stored hash
+            return $hashed_password === $user->hashed_password;
+        }
+
+        // If no user exists with the given email, return false
+        return false;
+    }
+
+    function validate(): array
     {
         $errors = [];
         if (isset($this->mail) && self::validateEmail($this->mail)) {
@@ -362,14 +352,36 @@ class User extends Model
         return true;
     }
 
-
-    public static function EmailExistsAlready($id, $email)
-    {
-        $query = self::execute("SELECT mail FROM Users WHERE mail=:email AND id!=:id", array("email" => $email, "id" => $id));
-        //query checks if the email address exists in the database for any user other than the logged-in user
-        $data = $query->fetch(); //un seul resultat max
+    //for profile changes => the actual email won't get flagged as already in use
+    function EmailExists($userId, $email) {
+        $query = self::execute("SELECT mail FROM Users WHERE mail = :email AND id != :userId", array(":email" => $email, ":userId" => $userId));
+        $data = $query->fetch();
         return $data ? true : false;
     }
+
+
+    //for signup
+    public static function EmailExistsAlready($email)
+    {
+        $query = self::execute("SELECT mail FROM Users WHERE mail=:email", array("email" => $email));
+        $data = $query->fetch();
+        return json_encode($data ? false : true);
+    }
+
+
+    public static function EmailCheckJSON($email)
+    {
+        $query = self::execute("SELECT mail FROM Users WHERE mail=:email", array("email" => $email));
+        $data = $query->fetch(); //max one result
+        $result = $data ? true : false;
+        if ($result) {
+            return json_encode(array("exists" => $result));
+        } else {
+            return json_encode(array("errorMessage" => "user not found"));
+        }
+    }
+
+
 
     public static function validateEmail($email): bool
     {
@@ -379,7 +391,8 @@ class User extends Model
         return false;
     }
 
-    public function get_dette($operation) : float{
+    function get_dette($operation): float
+    {
         return Operation::get_dette_by_operation($operation, $this->id);
     }
 
@@ -405,20 +418,6 @@ class User extends Model
         return $errors;
     }
 
-    // public static function validate_iban($iban):bool{
-    //     $pattern = '^[a-zA-Z]+[0-9]+(\s+([0-9]+\s+)+)[0-9]+$';
-    //     str_replace(' ','',$iban);
-    //     //si il n'est pas vide
-    //     if(!is_null($iban)){
-    //         if (!preg_match($pattern, $iban)) {
-    //             return false;
-    //         }
-    //         return true;
-    //     }
-    //     return true;
-    // }
-
-
     public static function validate_unicity($email): array
     {
         $errors = [];
@@ -435,7 +434,7 @@ class User extends Model
         return $hash === Tools::my_hash($clear_password);
     }
 
-    public function list_by_user()
+    function list_by_user()
     {
         $query = self::execute("SELECT * FROM `tricounts` t JOIN  subscriptions s ON t.id = s.tricount where user=:user", array("user" => $this->id));
         $data = $query->fetchAll();
@@ -446,7 +445,7 @@ class User extends Model
         }
     }
 
-    public function participates_in_tricount(): bool
+    function participates_in_tricount(): bool
     {
         $query = self::execute("SELECT *
                                 FROM repartition_template_items
@@ -463,7 +462,7 @@ class User extends Model
     }
 
 
-    public function can_be_delete($tricount): bool
+    function can_be_delete($tricount): bool
     {
         $query = self::execute("SELECT count(*)
         FROM subscriptions
@@ -489,7 +488,8 @@ class User extends Model
     }
 
 
-    public function deletable($tricount) {
+    function deletable($tricount)
+    {
         $query = self::execute("SELECT user
             FROM subscriptions
             WHERE tricount = :tricount
@@ -515,7 +515,8 @@ class User extends Model
         $users = $query->fetchAll(PDO::FETCH_ASSOC);
         return $users;
     }
-    public function beDeletable($tricount) {
+    function beDeletable($tricount)
+    {
         $query = self::execute("SELECT user
             FROM subscriptions
             WHERE tricount = :tricount
@@ -542,7 +543,7 @@ class User extends Model
         return $users;
     }
 
-    public function is_in_tricount($idTricount)
+    function is_in_tricount($idTricount)
     {
         $query = self::execute("SELECT * from subscriptions s where s.user = :user and s.tricount =:id  ", array("user" => $this->id, "id" => $idTricount));
         if ($query->rowCount() == 0)
@@ -550,21 +551,22 @@ class User extends Model
         return true;
     }
 
-    public function is_in_tricount_by_template($idTemplate, $idTricount)
+    function is_in_tricount_by_template($idTemplate, $idTricount)
     {
         $query = self::execute("SELECT * FROM repartition_templates rt where rt.id =:id and rt.tricount =:tricount ", array("tricount" => $idTricount, "id" => $idTemplate));
         if ($query->rowCount() == 0)
             return false;
         return true;
     }
-    public function is_creator($idTricount)
+    function is_creator($idTricount)
     {
         $query = self::execute("SELECT * FROM tricounts t where t.creator =:user and t.id=:id ", array("user" => $this->id, "id" => $idTricount));
         if ($query->rowCount() == 0)
             return false;
         return true;
     }
-    public function is_in_items($idTemplate)
+
+    function is_in_items($idTemplate)
     {
         $query = self::execute("SELECT * FROM repartition_template_items rti where rti.user =:user and rti.repartition_template=:id ", array("user" => $this->id, "id" => $idTemplate));
         if ($query->rowCount() == 0)

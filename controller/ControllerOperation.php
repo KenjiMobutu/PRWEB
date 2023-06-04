@@ -22,6 +22,9 @@ class ControllerOperation extends Controller
     {
         $user = $this->get_user_or_redirect();
         $user = User::get_by_id($user->getUserId());
+        
+        $backValue ="tricount/index";
+
         if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
             $this->redirect('main', "error");
         } else {
@@ -48,7 +51,8 @@ class ControllerOperation extends Controller
                 "mytot" => $mytot,
                 "participants" => $participants,
                 "nbOperations" => $nbOperations,
-                "expenses_json" => $expenses_json
+                "expenses_json" => $expenses_json,
+                "backValue" => $backValue
             )
         );
     }
@@ -70,7 +74,7 @@ class ControllerOperation extends Controller
             if (is_null($operations_of_tricount)) {
                 $this->redirect('operation', "index", $tricount->get_id());
             }
-            //var_dump($tricount->get_id()); die();
+            $backValue = "operation/index/". $tricount->get_id();
             $weights = Repartitions::get_by_operation($tricount->get_id());
             $total = Tricounts::get_total_amount_by_tric_id($tricount->get_id());
         }
@@ -79,9 +83,10 @@ class ControllerOperation extends Controller
                 "total" => $total,
                 "users" => $users,
                 "operations_of_tricount" => $operations_of_tricount,
-                "user" => $user,
+                "userConnected" => $user,
                 "tricount" => $tricount,
-                "weights" => $weights
+                "weights" => $weights,
+                "backValue"=> $backValue
             )
         );
     }
@@ -108,6 +113,9 @@ class ControllerOperation extends Controller
             $participants = Operation::getNumberParticipantsByOperationId($operationId);
             $operation_data = Operation::getOperationByOperationId($operationId);
             $usr = $operation_data->getInitiator();
+
+            $backValue ="operation/expenses/". $tricount->get_id();
+
         }
 
         (new View("detail_expense"))->show(
@@ -118,7 +126,8 @@ class ControllerOperation extends Controller
                 "operation_data" => $operation_data,
                 "participants" => $participants,
                 "tricount" => $tricount,
-                "usr" => $usr
+                "usr" => $usr,
+                "backValue"=> $backValue
             )
         );
 
@@ -173,10 +182,12 @@ class ControllerOperation extends Controller
                 $items = Repartition_template_items::get_user_by_repartition($templateId);
                 $info = $this->getInfoFromPost();
                 $rti = Repartition_template_items::get_by_user_and_tricount($userId, $tricId);
-                
+                $allTemplates = Repartition_templates::get_by_tricount($tricount->get_id());
+
                 if ($template === null) {
                     $this->redirect("operation", "expenses/" . $tricount->get_id());
                 }
+                $backValue ="operation/expenses/". $tricId;
             }
         }
     
@@ -185,15 +196,18 @@ class ControllerOperation extends Controller
             "operation" => $operation,
             "rti" => $rti,
             "templateId" => $templateId,
+            "template"=> $template,
             "users" => $users,
             "tricount" => $tricount,
-            "template" => $template,
+            "repartitionTemplate" => $template,
             "ListUsers" => $listUsers,
+            "allTemplates" => $allTemplates,
             "info" => $info,
             "items" => $items,
             "init" => $init,
             "errors" => $errors,
-            "action" => $action
+            "action" => $action,
+            "backValue" => $backValue
         ]);
     }
     //REFRESH HANDLER FUNCTIONS
@@ -244,6 +258,8 @@ class ControllerOperation extends Controller
         $created_at = date('y-m-d h:i:s');
         $errors = [];
 
+        $backValue ="operation/expenses/". $tricountId;
+
         if (!$title || !$tricountId || !$amount || !$operation_date || !$initiator) {
             // Handle missing fields error
             return;
@@ -253,14 +269,9 @@ class ControllerOperation extends Controller
         $title = Tools::sanitize($title);
         $tricount = Tricounts::get_by_id($tricountId);
         $amount = Tools::sanitize(floatval($amount));
-        $init = User::get_by_name($initiator);
         $users = Participations::get_by_tricount($tricountId);
         $rti = Repartition_template_items::get_by_user_and_tricount($initiator, $tricountId);
         $template = Repartition_templates::get_by_id($_POST['rti']);
-        // var_dump($_POST); die();
-        //$ListUsers = Participations::get_by_tricount($tricountId);
-        // var_dump($tricount);
-        // var_dump($initiator); die();
         if (!$tricount || !$initiator) {
             $this->redirect("main", "error", "save");
             return;
@@ -299,6 +310,7 @@ class ControllerOperation extends Controller
                     "template" => $template,
                     "errors" => $errors,
                     "action" => $action,
+                    "backValue" => $backValue
                 )
             );
     }
@@ -312,8 +324,9 @@ class ControllerOperation extends Controller
         } else {
             $userId = $user->getUserId();
             $tricount = Tricounts::get_by_id($_GET['param1']);
+            $backValue ="operation/expenses/". $tricount->get_id();
             $users = Participations::get_by_tricount($_GET['param1']);
-            $rti = Repartition_template_items::get_by_user_and_tricount($userId, $_GET['param1']);
+            $allTemplates = Repartition_templates::get_by_tricount($_GET['param1']);
             $action = $_GET['action'];
             $repartitions = [];
         }
@@ -321,15 +334,15 @@ class ControllerOperation extends Controller
             array(
                 "user" => $user,
                 "tricount" => $tricount,
-                "rti" => $rti,
+                "allTemplates" => $allTemplates,
                 "users" => $users,
                 "action" => $action,
-                "repartitions" => $repartitions
+                "repartitions" => $repartitions,
+                "backValue"=>$backValue
             )
         );
 
     }
-    //TODO garder les weights en cas d'erreur ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     public function add_expense()
     {
         $user = $this->get_user_or_redirect();
@@ -369,7 +382,8 @@ class ControllerOperation extends Controller
             $operation = Operation::getOperationByOperationId($operationId);
             $users = Participations::get_by_tricount($tricount->get_id());
             $repartitions = Repartitions::get_by_operation($operationId);
-            $rti = Repartition_template_items::get_by_user_and_tricount($userId, $tricount->get_id());
+            $backValue = "operation/expenses/" . $tricount->get_id();
+            $allTemplates = Repartition_templates::get_by_tricount($tricount->get_id());
         }
 
         (new View("add_expense"))->show(
@@ -378,11 +392,11 @@ class ControllerOperation extends Controller
                 "action" => $action,
                 "operation" => $operation,
                 "users" => $users,
-                "rti" => $rti,
+                "allTemplates" => $allTemplates,
                 "tricount" => $tricount,
                 "repartitions" => $repartitions,
-                "operationId" => $operationId
-                
+                "operationId" => $operationId,
+                "backValue" => $backValue
             )
 
         );
@@ -397,14 +411,6 @@ class ControllerOperation extends Controller
         if (isset($_GET['param1']) && !is_numeric($_GET['param1'])) {
             $this->redirect('main', 'error', 'aici3');
         }
-        //$operationId = $_POST['operationId'];
-
-        //$operation = Operation::getOperationByOperationId($operationId);
-        // var_dump($operation);
-        // if (!$operation) {
-        //     $this->redirect('main', 'error','aici4');
-        // }
-
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             return;
         }
@@ -429,8 +435,6 @@ class ControllerOperation extends Controller
             $initiator = User::get_by_id($_POST['initiator']);
 
             $created_at = date('y-m-d h:i:s');
-            // var_dump($amount); die();
-          
 
             $operation->setTitle($title);
             $operation->setTricount($tricountId);
@@ -439,6 +443,8 @@ class ControllerOperation extends Controller
             $operation->setInitiator($initiator->getUserId());
             $operation->setCreated_at($created_at);
             $operation->setId($operationId);
+
+            $backValue = "operation/expenses/" . $tricount->get_id();
 
             $errors = $operation->validateForEdit($title);
             if(empty($_POST['c'])){
@@ -468,7 +474,8 @@ class ControllerOperation extends Controller
                         "users"=>$users,
                         // "template" => $template,
                         "errors" => $errors,
-                        "action" => $action
+                        "action" => $action,
+                        "backValue" => $backValue
                     )
                 );
             }
@@ -507,12 +514,20 @@ class ControllerOperation extends Controller
     }
 
 
+    public function delete_service(){
+        if(isset($_GET['param1']) && $_GET['param1'] !== ""){
+            $operation = Operation::getOperationByOperationId($_GET['param1']);
+            $operation = $operation->delete();
+        }
+    }
+
     public function delete_confirm()
     {
         $user = $this->get_user_or_redirect();
         $errors = [];
         $operationId = $_GET['param1'];
         $checkOperation = Operation::exists($_GET['param1']);
+        $backValue = "Operation/edit/" .  $_GET['param1'];
         if ($checkOperation <= 0) {
             $this->redirect('main', "error");
         }
@@ -524,7 +539,9 @@ class ControllerOperation extends Controller
         }
         
         if (isset($_GET["param1"]) && $user->is_in_tricount($operation_data->getTricount())) {
-            (new View("delete_operation"))->show(array("user" => $user, "operationId" => $operationId, "operation_data" => $operation_data));
+            (new View("delete_operation"))->show(array("user" => $user, "operationId" => $operationId, 
+            "operation_data" => $operation_data,
+                "backValue" => $backValue));
         }else
             $this->redirect('user', "profile");
     }

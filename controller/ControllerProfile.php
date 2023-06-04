@@ -13,7 +13,6 @@ class ControllerProfile extends Controller
     public function index(): void
     {
         $this->profile();
-
     }
 
     //profil de l'utilisateur connecté ou donné
@@ -32,7 +31,6 @@ class ControllerProfile extends Controller
         if (isset($_GET['param1']) && is_numeric($_GET['param1'])) {
             if($_GET['param1'] === $loggedUser->getUserId())
                 $loggedUser = User::get_by_id($loggedUser->getUserId());
-            
         }
         (new View("profile"))->show(array("user"=>$loggedUser)); //show may throw Exception
     }
@@ -43,6 +41,8 @@ class ControllerProfile extends Controller
         $user = User::get_by_id($user->getUserId());
 
         $errors = [];
+        $backValue= "user/profile/". $user->getUserId();
+
         $success = array_key_exists('param2', $_GET) && $_GET['param2'] === 'ok' ? 
             "Your password has been successfully changed." : '';
 
@@ -68,7 +68,7 @@ class ControllerProfile extends Controller
                 if (empty($errors)) {
                     $user->setPassword(Tools::my_hash($newPass));
                     $user->update_password();
-                    $this->redirect("profile", "change_password", $user->getUserId(), "ok");
+                    $this->redirect("user", "profile", $user->getUserId(), "ok");
                 }
             }
         }
@@ -84,7 +84,8 @@ class ControllerProfile extends Controller
             "success" => $success,
             "newPasswordValue" => $newPasswordValue,
             "confirmPasswordValue" => $confirmPasswordValue,
-            "currentPasswordValue" => $currentPasswordValue
+            "currentPasswordValue" => $currentPasswordValue,
+            "backValue" => $backValue
         ]);
     }
 
@@ -100,7 +101,7 @@ class ControllerProfile extends Controller
         $success = array_key_exists('param2', $_GET) && $_GET['param2'] === 'ok' ?
             "Your profile has been successfully updated." : "";
 
-
+        $backValue= "user/profile/". $user->getUserId();
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             if (isset($_POST["mail"]) || isset($_POST["fullName"]) || isset($_POST["iban"])) {
                 if (isset($_POST["mail"])) {
@@ -110,7 +111,7 @@ class ControllerProfile extends Controller
                     if (!User::validateEmail( $mail)) {
                         $errors[] = "Wrong mail";
                     }
-                    if ($loggedUser->EmailExistsAlready($loggedUser->getUserId(), $_POST['mail'])) {
+                    if ($loggedUser->EmailExists($loggedUser->getUserId(), $_POST['mail'])) {
                         $errors[] = "Email address is already in use.";
                     }
 
@@ -136,7 +137,8 @@ class ControllerProfile extends Controller
             "success" => $success,
             "mailValue" => $mailValue,
             "fullnameValue" => $fullnameValue,
-            "ibanvalue" => $ibanValue
+            "ibanvalue" => $ibanValue,
+            "backValue" => $backValue
         ]);
     }
     public function result_profile()

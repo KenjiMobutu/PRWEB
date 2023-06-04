@@ -11,7 +11,6 @@
         href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400&family=Sen:wght@400;700;800&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
-    <link rel="stylesheet" href="path/to/font-awesome/css/font-awesome.min.css">
     <script src="lib/jquery-3.6.3.min.js" type="text/javascript"></script>
 
 </head>
@@ -95,6 +94,11 @@ function showSelectSection() {
         "<option value='amount-desc'> by amount &#xf0dd;</option>" +
         "</select>";
     $('#js_Select').html(html);
+
+
+    // selection du choix par défaut
+    $('#sort-select').val('date-desc');
+
 }
 
 $(function(){
@@ -107,7 +111,7 @@ $(function(){
     });
 });
 </script>
-    <?php include 'menu.html' ?>
+    <?php include 'menu.php' ?>
     
     <div id="js_Select" >
     </div>

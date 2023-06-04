@@ -67,14 +67,14 @@ class Operation extends Model
         return $this->id;
     }
 
-    public function isFirstOperation($tricountId)
+    function isFirstOperation($tricountId)
     {
       $query = self::execute("SELECT * FROM operations WHERE tricount = :id ORDER BY id ASC LIMIT 1", array("id" => $tricountId));
       $row = $query->fetch();
       return ($row && $row["id"] === $this->get_id());
     }
   
-    public function isLastOperation($tricountId)
+    function isLastOperation($tricountId)
     {
       $query = self::execute("SELECT * FROM operations WHERE tricount = :id ORDER BY id DESC LIMIT 1", array("id" => $tricountId));
       $row = $query->fetch();
@@ -114,7 +114,7 @@ class Operation extends Model
         return $data;
     }
 
-    public function getUserFullName()
+    function getUserFullName()
     {
         $query = self::execute("SELECT * FROM users  WHERE users.id =:id", array("id" => $this->initiator));
         $data = $query->fetch();
@@ -271,7 +271,7 @@ class Operation extends Model
         return $data;
     }
 
-    public function insert()
+    function insert()
     {
         $query = self::execute(
             "INSERT INTO `operations` (`title`, `tricount`, `amount`, `operation_date`, `initiator`, `created_at`)
@@ -330,21 +330,7 @@ class Operation extends Model
         return $query;
     }
 
-    public static function validateTitle($title)
-    {
-        $query = self::execute(
-            "SELECT title from operations WHERE title=:title",
-            array(
-                "title" => $title
-            )
-        );
-        if ($query->rowCount() == 0) {
-            return "Title already exists in the database.";
-        }
-        return;
-    }
-
-    public function validateForEdit($title)
+    function validateForEdit($title)
     {
         $errors = [];
 
@@ -352,10 +338,6 @@ class Operation extends Model
             $errors[] = "Title must be at least 3 characters.";
         }
 
-        if($title !== $this->title){
-            if(!self::validateTitle($title))
-                $errors[] = "Title already exists in the database.";
-        }
         if ((isset($this->amount) && ($this->amount < 0))) {
             $errors[] = "The amount must be positive.";
         }
@@ -363,16 +345,12 @@ class Operation extends Model
         return $errors;
     }
 
-    public function validate()
+    function validate()
     {
         $errors = [];
 
         if ((isset($this->title) && strlen($this->title) < 3)) {
             $errors[] = "Title must be at least 3 characters.";
-        }
-
-        if ($this->title && !self::validateTitle($this->title)) {
-            $errors[] = "Title already exists in the database.";
         }
 
         if ((isset($this->amount) && ($this->amount < 0))) {
@@ -383,7 +361,7 @@ class Operation extends Model
 
     }
 
-    public function update(): Operation
+    function update(): Operation
     {
 
         if (!is_null($this->id)) {
@@ -438,7 +416,7 @@ class Operation extends Model
         return $this;
     }
 
-    public function delete()
+    function delete()
     {
         $query0 = self::execute("DELETE FROM `repartitions` WHERE operation = :id", array("id" => $this->id));
         $query1 = self::execute("DELETE FROM `operations` WHERE id=:id", array("id" => $this->id));
@@ -447,7 +425,7 @@ class Operation extends Model
         return $data;
     }
 
-    public function setOperationId()
+    function setOperationId()
     {
         $query = self::execute("SELECT id FROM operations WHERE id = :id", array("id" => Model::lastInsertId()));
         $data = $query->fetchAll();
@@ -457,12 +435,12 @@ class Operation extends Model
         $this->setId($id);
     }
 
-    public function setId($id)
+    function setId($id)
     {
         $this->id = $id;
     }
 
-    public function get_previous_operation_by_tricount($id, $tricount)
+    function get_previous_operation_by_tricount($id, $tricount)
     {
         $query = self::execute("SELECT *
                                 FROM `operations` o
@@ -494,7 +472,7 @@ class Operation extends Model
     }
 
 
-    public function get_next_operation_by_tricount($id, $tricount)
+    function get_next_operation_by_tricount($id, $tricount)
     {
         $query = self::execute("SELECT o.*
                                 FROM `operations` o
@@ -526,37 +504,37 @@ class Operation extends Model
     }
 
 
-    public function setTitle(string $title): void
+    function setTitle(string $title): void
     {
         $this->title = $title;
     }
 
-    public function setTricount(int $tricount): void
+    function setTricount(int $tricount): void
     {
         $this->tricount = $tricount;
     }
 
-    public function setAmount(float $amount): void
+    function setAmount(float $amount): void
     {
         $this->amount = $amount;
     }
 
-    public function setOperation_date(string $operation_date): void
+    function setOperation_date(string $operation_date): void
     {
         $this->operation_date = $operation_date;
     }
 
-    public function setInitiator(int $initiator)
+    function setInitiator(int $initiator)
     {
         $this->initiator = $initiator;
     }
 
-    public function setCreated_at(string $created_at): void
+    function setCreated_at(string $created_at): void
     {
         $this->created_at = $created_at;
     }
 
-    public function get_user($user) : User{
+    function get_user($user) : User{
         return User::get_by_id($user);
     }
 

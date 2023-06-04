@@ -11,12 +11,29 @@
             rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
         <script src="lib/jquery-3.6.3.min.js" type="text/javascript"></script>
+        <script src="lib/just-validate-4.2.0.production.min.js" type="text/javascript"></script>
+        <script src="lib/just-validate-plugin-date-1.2.0.production.min.js" type="text/javascript"></script>
+        <script src="lib/validationIT3.js" type="text/javascript"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="lib/sweetalert2@11.js" type="text/javascript"></script>
 
+        <?php
+        $justvalidate = Configuration::get("justvalidate");
+        ?>
+        <script>
+            const useJustValidate = <?= json_encode($justvalidate === "on") ?>;
+            if (useJustValidate) {
+                window.onload = function () {
+                    JVEditTemplate();
+                };
+            }
+        </script>
         <title>Edit Template</title>
 </head>
 <body>
 <script>
        $(function() {
+        
             let title = $("#template_title");
             let errTitle = $("#errTitle");
             let btn = $("#btnSubmit");
@@ -56,29 +73,121 @@
                     btn.prop("disabled", false);
                 }
             });
+           
         });
 
+    <?php if(isset($templateID) && $templateID !== ""): ?>
+        let templateId = <?= $templateID ;?>;
+        let tricount = <?= $tricount->get_id(); ?>;
+        $(document).ready(function() {
+            showDeleteButton();
+            //pour it3
+            var isModified = false;
+            $("input[type='number'], input[type='checkbox'], input ").change(function() {
+                isModified = true;
+            });
+            $(".backBtn").on("click", function(e) {
+                if(isModified){
+                    e.preventDefault();
+                    return confirmLeavePage();
+                }
+            });
+        });
+                    
+        function confirmLeavePage() {
+            Swal.fire({
+                title: 'Attention!',
+                text: "Vous êtes sur le point de quitter la page sans enregistrer les modifications de la dépense. Voulez-vous vraiment quitter la page ?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Oui',
+                cancelButtonText: 'Annuler'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "<?= $backValue; ?>";
+                }
+            })
+        }
+
+        function showDeleteButton(){
+            let deleteBtn ='<button class="it3DeleteButton" onclick="confirmDelete()"  style="background-color: red" color: white;"> delete Template';
+            $('.delete-btn').html(deleteBtn);
+        }
+
+        function confirmDelete() {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        deleteTemplate();
+                        Swal.fire(
+                            'Deleted!',
+                            'Your template has been deleted.',
+                            'success'
+                        ).then(() => {
+                            window.location.href = 'templates/templates/'+ tricount;
+                        });
+                    }
+            })
+        }
+        function confirmLeavePage() {
+            Swal.fire({
+                title: 'Attention!',
+                text: "Vous êtes sur le point de quitter la page sans enregistrer les modifications de la dépense. Voulez-vous vraiment quitter la page ?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Oui',
+                cancelButtonText: 'Annuler'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "<?= $backValue; ?>";
+                }
+            })
+        }
+
+        async function deleteTemplate(){
+            try {
+                await $.post("templates/delete_service/" +templateId);
+            } catch(e){
+                console.log("Erreur : " + e);
+            }
+        }
+    <?php endif;?>
 </script>
 
-<?php include 'menu.html' ?>
+<?php include 'menu.php' ?>
+<div class="edit_template_container">
+
     <form action="templates/editTemplate" method="post" id="edit_template_form">
-        <div class="edit_template_container">
         <?php if (count($listUser) > 1) : ?>
 
             <p class="edit_template_p">Title :</p>
-            <input type="text" name="template_title" id="template_title" 
+            <div>
+                <input type="text" name="template_title" id="template_title" 
                     value="<?php 
                     if(isset($template))
                         echo $template->get_title();
                     if(isset($template_title))
                         echo $template_title;
                     ?>" required>
-            <span class="errTitle" id="errTitle"></span>
+            <!-- <span class="errTitle" id="errTitle"></span> -->
+            </div>
+
             <p class="edit_template_p">
             Template items :
             </p><br>
             <!-- pour récupérer l'id du tricount & template si reçu dans le submit du form -->
-            <input type="text" name="tricountId" value="<?php echo $tricount->get_id(); ?>" hidden>
+            <input type="text" name="tricountId" id="tricId" value="<?php echo $tricount->get_id(); ?>" hidden>
             <input type="text" name="templateID" value="<?php if(isset($templateID)){ echo $templateID;}  ?>" hidden>
             <span class="errItems" id="errItems"></span>
 
@@ -103,7 +212,7 @@
                             
                     
                     <?php endif;?>
-                    <input  type="text" name="user"  value="<?php echo $listusr->getUserInfo(); ?>"  disabled="disabled">
+                    <input  type="text" name="user" id="user"  value="<?php echo $listusr->getUserInfo(); ?>"  disabled="disabled">
                     <fieldset>
                         <legend>Weight</legend>
                         <input  type="number" name="weight[<?= $listusr->get_user() ; ?>]"min="0" placeholder="0"  
@@ -138,13 +247,16 @@
                 <p>You're alone. Don't be shy -> <a href="tricount/edit/<?php echo $tricount->get_id(); ?>"> ADD FRIENDS</a> ☻</p>
         <?php endif;?>
             
-        <?php if(isset($templateID) && $templateID !== ""){
-            echo "<a href='templates/delete_template/$templateID'"; echo " id='delete_template'>DELETE</a>";
-        }?>
+       
 
-        </div>
 
     </form>
-    
+    <?php if(isset($templateID) && $templateID !== ""){
+            echo '<div class="delete-btn">';
+                echo "<a href='templates/delete_template/$templateID'"; echo " id='delete_template'>DELETE</a>";
+            echo '</div>';
+        }?>
+    </div>
+
 </body>
 </html>
