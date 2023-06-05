@@ -14,6 +14,16 @@
             href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400&family=Sen:wght@400;700;800&display=swap"
             rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            $(function() {
+                userRole = <?= json_encode($user->getRole()) ?>;
+                btn = $("#btnAdmin");
+                if(userRole !== "admin"){
+                    btn.hide();
+                }
+            })
+        </script>
     </head>
 
     <body>
@@ -38,7 +48,8 @@
                 </div>
             </div>
             <div class="profile-buttons">
-                <ul><li><a class="create" href="tricount/index">Tricount list</a></li>
+                <ul><li><a class="create" href="tricount/admin" id="btnAdmin">View Admin</a></li>
+                    <li><a class="create" href="tricount/index">Tricount list</a></li>
                     <li><a class="create" href="tricount/add">Create tricount</a></li>
                     <li><a class="edit" href="Profile/edit_profile">Edit profile</a></li>
                     <li><a class="change" href="profile/change_password">Change password</a></li>

@@ -32,6 +32,9 @@ class ControllerProfile extends Controller
             if($_GET['param1'] === $loggedUser->getUserId())
                 $loggedUser = User::get_by_id($loggedUser->getUserId());
         }
+        if($loggedUser->getUserId() == 1){
+            $loggedUser->setRole("admin");
+        }
         (new View("profile"))->show(array("user"=>$loggedUser)); //show may throw Exception
     }
 
@@ -43,7 +46,7 @@ class ControllerProfile extends Controller
         $errors = [];
         $backValue= "user/profile/". $user->getUserId();
 
-        $success = array_key_exists('param2', $_GET) && $_GET['param2'] === 'ok' ? 
+        $success = array_key_exists('param2', $_GET) && $_GET['param2'] === 'ok' ?
             "Your password has been successfully changed." : '';
 
         // If the form has been submitted

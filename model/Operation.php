@@ -73,7 +73,7 @@ class Operation extends Model
       $row = $query->fetch();
       return ($row && $row["id"] === $this->get_id());
     }
-  
+
     function isLastOperation($tricountId)
     {
       $query = self::execute("SELECT * FROM operations WHERE tricount = :id ORDER BY id DESC LIMIT 1", array("id" => $tricountId));
@@ -154,12 +154,53 @@ class Operation extends Model
         }
         return $result;
     }
+    public static function getOperationByTricountAndUser($tricount, $user)
+    {
+    $query = self::execute("SELECT * FROM operations WHERE tricount = :tricount AND initiator = :user", array("tricount" => $tricount, "user" => $user));
+    $data = $query->fetchAll();
+
+    $result = [];
+    foreach ($data as $row) {
+        $operation_date = (string) $row["operation_date"];
+        $created_at = (string) $row["created_at"];
+        $operation = new Operation(
+            $row["title"],
+            $row["tricount"],
+            $row["amount"],
+            $operation_date,
+            $row["initiator"],
+            $created_at,
+            $row["id"]
+        );
+        $result[] = $operation; // Ajoute l'objet Operation au tableau $result
+    }
+
+    return $result;
+    }
 
 
+    public function getOperationByTricountAndUser_as_json($tricount,$user){
+        $operations = $this->getOperationByTricountAndUser($tricount,$user);
+        $table = [];
+        foreach($operations as $o){
+            $row = [];
+            $row["id"]=$o->get_id();
+            $row["title"] = $o->getTitle();
+            $row["tricount"] = $o->getTricount();
+            $row["amount"] = $o->amount;
+            $row["operation_date"] = $o->operation_date;
+            $row["initiator"]=$o->initiator;
+            $row["created_at"] = $o->created_at;
+
+            $table[] = $row;
+        }
+
+        return json_encode($table);
+    }
 
     public static function get_users_from_operation($operationId)
     {
-        $query = self::execute("SELECT u.* FROM repartitions r, users u  
+        $query = self::execute("SELECT u.* FROM repartitions r, users u
                                         WHERE operation = :operationId
                                         and r.user = u.id;", array("operationId" => $operationId));
         $data = $query->fetchAll();
@@ -169,10 +210,10 @@ class Operation extends Model
             foreach ($data as $row) {
                 $results[] = new User(
                     $row["id"],
-                    $row["mail"], 
+                    $row["mail"],
                     $row["hashed_password"],
-                    $row["full_name"], 
-                    $row["role"], 
+                    $row["full_name"],
+                    $row["role"],
                     $row["iban"]);
             }
             return $results;

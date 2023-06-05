@@ -162,6 +162,49 @@ class ControllerTricount extends Controller{
     }
   }
 
+  public function admin(){
+    $user = $this->get_user_or_redirect();
+    $users = User::getUsers();
+    $selectedUserId = '';
+    if(isset($_POST['selectedUserId'])){
+      $selectedUserId = $_POST['selectedUserId'];
+      $this->redirect("tricount","adminResult",$selectedUserId);
+    }else{
+      (new View("admin"))->show(array("user" => $user,"users" => $users));
+    }
+
+  }
+  public function adminResult(){
+    $user = $this->get_user_or_redirect();
+    $users = User::getUsers();
+    $selectedUserId = '';
+    $subscribedTricount='';
+    $notSubscribedTricount='';
+    if (!empty($_GET["param1"])) {
+      $selectedUserId = $_GET["param1"];
+      $subscribedTricount = Tricounts::list($selectedUserId);
+      $notSubscribedTricount = Tricounts::notSubscribedTricount($selectedUserId);
+      //$operations = Operation::get_by_tricount_and_initiator();
+      (new View("admin"))->show(array("user" => $user,"users" => $users, "selectedUserId" =>$selectedUserId,"subscribedTricount"=>$subscribedTricount,"notSubscribedTricount"=>$notSubscribedTricount));
+    }
+
+  }
+  public function get_operation_service() : void {
+    $operationsJSON = '';
+    if(isset($_GET["param1"]) && $_GET["param1"] !== "" && isset($_GET["param2"]) && $_GET["param2"] !== ""){
+        $tricountId = $_GET["param1"];
+        $userId = $_GET["param2"];
+        $operations = Operation::getOperationByTricountAndUser($tricountId, $userId);
+        //var_dump($operations);
+        foreach($operations as $o){
+          $operationsJSON = $o->getOperationByTricountAndUser_as_json($tricountId, $userId);
+        }
+
+    }
+    echo $operationsJSON;
+}
+
+
   public function update(){
     $user = $this->get_user_or_redirect();
     $errors = [];
@@ -174,13 +217,13 @@ class ControllerTricount extends Controller{
         $id = $_GET['param1'];
         $title = Tools::sanitize($_POST["title"]);
         $tricount = Tricounts::get_by_id($id);
-        
+
         /**
          *  sans le ucfirst(strtolower($title)) on recoit l'erreur de constraint.
          */
         if($tricount->get_title() !== $title)
           $errors = Tricounts::validate_title(ucfirst(strtolower($title)) , $user_id);
-        // var_dump($tricount->get_title(). " ---- ". $title); 
+        // var_dump($tricount->get_title(). " ---- ". $title);
         // foreach($errors as $e)
         //     var_dump($e);
         // die();
