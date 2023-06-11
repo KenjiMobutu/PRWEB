@@ -264,6 +264,24 @@ class Tricounts extends Model
     }
     return $tricount;
   }
+  public static function subscribedTricount($userId)
+  {
+    $query = self::execute(
+      "SELECT DISTINCT tricounts.*
+                              FROM tricounts
+                              LEFT JOIN subscriptions
+                              ON tricounts.id = subscriptions.tricount
+                              WHERE
+                              subscriptions.user =:user",
+      array("user" => $userId)
+    );
+    $data = $query->fetchAll();
+    $tricount = [];
+    foreach ($data as $row) {
+      $tricount[] = new Tricounts($row["id"], $row["title"], $row["description"], $row["created_at"], $row["creator"]);
+    }
+    return $tricount;
+  }
   public static function notSubscribedTricount($user){
     $query = self::execute(
       "SELECT DISTINCT tricounts.*

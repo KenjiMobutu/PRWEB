@@ -37,7 +37,7 @@ class ControllerParticipation extends Controller{
     }
     return false;
   }
-  
+
   public function add_service() : void {
     $user = $this->add();
     echo $user ? "true" : "false";
@@ -52,7 +52,7 @@ class ControllerParticipation extends Controller{
       $id = $_POST["userId" ];
       $idT = $_GET["param1"];
       $tricount = Tricounts::get_by_id($idT);
-      $result = Participations::delete_by_user_id_and_tricount($id,$tricount->get_id());
+      $result = Participations::delete_by_user_id_and_tricount($id,$idT);
       if ($result) {
         $this->redirect('tricount', "edit",$tricount->get_id());
       } else {

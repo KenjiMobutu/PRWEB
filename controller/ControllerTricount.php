@@ -166,11 +166,11 @@ class ControllerTricount extends Controller{
     $user = $this->get_user_or_redirect();
     $users = User::getUsers();
     $selectedUserId = '';
-    if(isset($_POST['selectedUserId'])){
+    if(isset($_POST['selectedUserId']) && !empty($_POST['selectedUserId']) ){
       $selectedUserId = $_POST['selectedUserId'];
       $this->redirect("tricount","adminResult",$selectedUserId);
     }else{
-      (new View("admin"))->show(array("user" => $user,"users" => $users));
+      (new View("admin"))->show(array("user" => $user,"users" => $users, "selectedUserId" => $selectedUserId ));
     }
 
   }
@@ -180,9 +180,9 @@ class ControllerTricount extends Controller{
     $selectedUserId = '';
     $subscribedTricount='';
     $notSubscribedTricount='';
-    if (!empty($_GET["param1"])) {
+    if (!empty($_GET["param1"]) && isset($_GET["param1"])) {
       $selectedUserId = $_GET["param1"];
-      $subscribedTricount = Tricounts::list($selectedUserId);
+      $subscribedTricount = Tricounts::subscribedTricount($selectedUserId);
       $notSubscribedTricount = Tricounts::notSubscribedTricount($selectedUserId);
       //$operations = Operation::get_by_tricount_and_initiator();
       (new View("admin"))->show(array("user" => $user,"users" => $users, "selectedUserId" =>$selectedUserId,"subscribedTricount"=>$subscribedTricount,"notSubscribedTricount"=>$notSubscribedTricount));

@@ -58,22 +58,41 @@
             displayOperation();
           } catch(e) {
             console.log(e);
-            operationsList.html("<tr><td>Error encountered while retrieving the messages!</td></tr>");
+            operationsList.html("<tr><td>No operations!</td></tr>");
           }
     }
+    async function addTenPercent() {
+      console.log("10 Percent");
 
-    function displayOperation(){
-      let html = "";
-      for (let o of operations) {
+      // Parcourir les opérations
+      for (let i = 0; i < operations.length; i++) {
+        let operation = operations[i];
+        console.log(operation.title + " =>" +i);
+        // Vérifier si la case à cocher est cochée pour cette opération
+        let checkbox = $('#checkbox' + i)[0];
+        console.log(checkbox.checked);
+        if (checkbox.checked) {
+          // Ajouter 10% au montant de l'opération
+          operation.amount *= 1.1;
+        }
+      }
 
-                    html += "<tr>";
-                    html += "<td>" + o.title + "</td>";
-                    html += "<td>" + o.amount+ "</td>";
-                    //html += "<td><input type='checkbox' disabled" + (m.private ? ' checked' : '') + "></td>";
-                    html += "</tr>";
-                }
-                operationsList.html(html);
+      // Mettre à jour l'affichage des opérations
+      displayOperation();
     }
+
+
+    function displayOperation() {
+      let html = "";
+      for (let i = 0; i < operations.length; i++) {
+        let o = operations[i];
+        html += "<ul><li><input type='checkbox' id='checkbox" + i + "'>" + o.title + ", " + o.amount + "</li></ul>";
+      }
+      html += "<button onclick='addTenPercent()'>Add 10% </button>";
+      operationsList.html(html);
+    }
+
+
   </script>
 </head>
 <body>
@@ -87,7 +106,7 @@
         <select class="selectSub" name="selectedUserId" id="selectedUserId">
           <option value="">--All Users--</option>
             <?php foreach ($users as $u): ?>
-              <option id="subValue" value='<?= $u->getUserId() ?>'><?= $u->getFullName() ?></option>
+              <option id="subValue" value='<?= $u->getUserId() ?>' <?=($u->getUserId()== $selectedUserId)?'selected':"" ?>><?= $u->getFullName() ?></option>
             <?php endforeach; ?>
         </select>
         <button id="showSubscriber">SHOW</button>
@@ -110,7 +129,7 @@
   </div>
 
   <div id="notSubscribedTricountCombo">
-    <form action="tricount/admin/" method="post">
+
       <div class="edit-selectSub">
         <select class="selectSub" name="notSubscribedTricount" id="notSubscribedTricount">
           <option value="">--Not Subscribed Tricount--</option>
@@ -120,7 +139,7 @@
         </select>
         <button id="showSubscriber" onclick="addTricount()">Add</button>
       </div>
-    </form>
+
   </div>
 
   <div id="operationsList">

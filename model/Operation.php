@@ -154,49 +154,58 @@ class Operation extends Model
         }
         return $result;
     }
-    public static function getOperationByTricountAndUser($tricount, $user)
-    {
-    $query = self::execute("SELECT * FROM operations WHERE tricount = :tricount AND initiator = :user", array("tricount" => $tricount, "user" => $user));
-    $data = $query->fetchAll();
+    public static function getOperationByTricountAndUser($tricount, $user){
+        $query = self::execute("SELECT * FROM operations
+                                WHERE tricount = :tricount
+                                AND initiator = :user",
+                                array("tricount" => $tricount, "user" => $user));
+        $data = $query->fetchAll();
 
-    $result = [];
-    foreach ($data as $row) {
-        $operation_date = (string) $row["operation_date"];
-        $created_at = (string) $row["created_at"];
-        $operation = new Operation(
-            $row["title"],
-            $row["tricount"],
-            $row["amount"],
-            $operation_date,
-            $row["initiator"],
-            $created_at,
-            $row["id"]
-        );
-        $result[] = $operation; // Ajoute l'objet Operation au tableau $result
-    }
-
-    return $result;
-    }
-
-
-    public function getOperationByTricountAndUser_as_json($tricount,$user){
-        $operations = $this->getOperationByTricountAndUser($tricount,$user);
-        $table = [];
-        foreach($operations as $o){
-            $row = [];
-            $row["id"]=$o->get_id();
-            $row["title"] = $o->getTitle();
-            $row["tricount"] = $o->getTricount();
-            $row["amount"] = $o->amount;
-            $row["operation_date"] = $o->operation_date;
-            $row["initiator"]=$o->initiator;
-            $row["created_at"] = $o->created_at;
-
-            $table[] = $row;
+        $result = [];
+        foreach ($data as $row) {
+            $operation_date = (string) $row["operation_date"];
+            $created_at = (string) $row["created_at"];
+            $operation = new Operation(
+                $row["title"],
+                $row["tricount"],
+                $row["amount"],
+                $operation_date,
+                $row["initiator"],
+                $created_at,
+                $row["id"]
+            );
+            $result[] = $operation; // Ajoute l'objet Operation au tableau $result
         }
 
-        return json_encode($table);
+        return $result;
     }
+
+    public static function getOperationByTricountAndUser_as_json($tricount, $user){
+        $query = self::execute("SELECT * FROM operations
+                                WHERE tricount = :tricount
+                                AND initiator = :user",
+                                array("tricount" => $tricount, "user" => $user));
+        $data = $query->fetchAll();
+
+        $result = [];
+        foreach ($data as $row) {
+            $operation_date = (string) $row["operation_date"];
+            $created_at = (string) $row["created_at"];
+            $operation = new Operation(
+                $row["title"],
+                $row["tricount"],
+                $row["amount"],
+                $operation_date,
+                $row["initiator"],
+                $created_at,
+                $row["id"]
+            );
+            $result[] = $operation; // Ajoute l'objet Operation au tableau $result
+        }
+
+        return json_encode($result);
+    }
+
 
     public static function get_users_from_operation($operationId)
     {
