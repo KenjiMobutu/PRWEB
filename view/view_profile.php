@@ -5,7 +5,7 @@
         <base href="<?= $web_root ?>" />
         <meta charset="UTF-8">
         <title>
-            <?= $user->getFullName() ?>'s Tricount!
+            <?= $user->getFullName() ?>'s Tricount!!!!!
         </title>
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
