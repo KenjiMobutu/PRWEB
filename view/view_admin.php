@@ -14,7 +14,6 @@
 
     $(function(){
       operationsList = $('#operationsList');
-
     });
 
     async function addTricount() {
@@ -24,7 +23,6 @@
       const userName = selectedUser.text();
       const tricountId = selectedOption.val();
       const tricountTitle = selectedOption.text();
-
 
       // Ajouter l'option sélectionnée à la comboBox "subscribedTricounts"
       $('#subscribedTricount').append(selectedOption);
@@ -41,9 +39,7 @@
       const tricountId = selectedOption.val();
       const tricountTitle = selectedOption.text();
 
-
       $('#notSubscribedTricount').append(selectedOption);
-
       await $.post("participation/delete_service/" + tricountId, { "userId": userId });
     }
 
@@ -57,13 +53,13 @@
             operations = await $.getJSON("tricount/get_operation_service/" + tricountId +"/"+ userId);
             displayOperation();
           } catch(e) {
-            console.log(e);
+            //console.log(e);
             operationsList.html("<tr><td>No operations!</td></tr>");
           }
     }
+
     async function addTenPercent() {
       console.log("10 Percent");
-
       // Parcourir les opérations
       for (let i = 0; i < operations.length; i++) {
         let operation = operations[i];
@@ -76,7 +72,6 @@
           operation.amount *= 1.1;
         }
       }
-
       // Mettre à jour l'affichage des opérations
       displayOperation();
     }

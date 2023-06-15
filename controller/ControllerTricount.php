@@ -172,7 +172,6 @@ class ControllerTricount extends Controller{
     }else{
       (new View("admin"))->show(array("user" => $user,"users" => $users, "selectedUserId" => $selectedUserId ));
     }
-
   }
   public function adminResult(){
     $user = $this->get_user_or_redirect();
@@ -184,24 +183,22 @@ class ControllerTricount extends Controller{
       $selectedUserId = $_GET["param1"];
       $subscribedTricount = Tricounts::subscribedTricount($selectedUserId);
       $notSubscribedTricount = Tricounts::notSubscribedTricount($selectedUserId);
-      //$operations = Operation::get_by_tricount_and_initiator();
       (new View("admin"))->show(array("user" => $user,"users" => $users, "selectedUserId" =>$selectedUserId,"subscribedTricount"=>$subscribedTricount,"notSubscribedTricount"=>$notSubscribedTricount));
     }
-
   }
+
   public function get_operation_service() : void {
     $operationsJSON = '';
     if(isset($_GET["param1"]) && $_GET["param1"] !== "" && isset($_GET["param2"]) && $_GET["param2"] !== ""){
         $tricountId = $_GET["param1"];
         $userId = $_GET["param2"];
-        $operations = Operation::getOperationByTricountAndUser($tricountId, $userId);
+        $operations = Operation::getOperationByTricountAndUser_as_json($tricountId, $userId);
         //var_dump($operations);
-        foreach($operations as $o){
+        /*foreach($operations as $o){
           $operationsJSON = $o->getOperationByTricountAndUser_as_json($tricountId, $userId);
-        }
-
+        }*/
     }
-    echo $operationsJSON;
+    echo $operations;
 }
 
 
