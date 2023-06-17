@@ -12,6 +12,7 @@ class ControllerExam1s2c extends Controller{
   public function index() :void{
     $user = $this->get_user_or_redirect();
     $users = User::get_all();
+    $selectedUser ='';
     if(isset($_POST['userId'])){
       $selectedUser = $_POST['userId'];
       $this->redirect("exam1s2c","admin",$selectedUser);
