@@ -238,7 +238,7 @@ class Tricounts extends Model
   }
   public static function by_user($user)
   {
-    $query = self::execute("SELECT t.title FROM `tricounts` t JOIN  subscriptions s ON t.id = s.tricount where user=:user", array("user" => $user));
+    $query = self::execute("SELECT * FROM `tricounts` t JOIN  subscriptions s ON t.id = s.tricount where user=:user", array("user" => $user));
     $data = $query->fetchAll();
     $tricount = [];
     foreach ($data as $row) {
@@ -246,6 +246,23 @@ class Tricounts extends Model
     }
     return $tricount;
   }
+  public static function not_subscribed($user)
+  {
+    $query = self::execute("SELECT DISTINCT tricounts.*
+    FROM tricounts
+    LEFT JOIN subscriptions
+    ON tricounts.id = subscriptions.tricount
+    AND subscriptions.user =:user
+    WHERE subscriptions.user =:user IS NULL
+    Order by title", array("user" => $user));
+    $data = $query->fetchAll();
+    $tricount = [];
+    foreach ($data as $row) {
+      $tricount[] = new Tricounts($row["id"], $row["title"], $row["description"], $row["created_at"], $row["creator"]);
+    }
+    return $tricount;
+  }
+
   public static function list($creator)
   {
     $query = self::execute(

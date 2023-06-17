@@ -38,7 +38,8 @@
                 </div>
             </div>
             <div class="profile-buttons">
-                <ul><li><a class="create" href="tricount/index">Tricount list</a></li>
+                <ul><li><a class="create" href="tricount/postSession1">Session1</a></li>
+                    <li><a class="create" href="tricount/index">Tricount list</a></li>
                     <li><a class="create" href="tricount/add">Create tricount</a></li>
                     <li><a class="edit" href="Profile/edit_profile">Edit profile</a></li>
                     <li><a class="change" href="profile/change_password">Change password</a></li>

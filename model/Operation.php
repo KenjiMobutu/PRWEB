@@ -73,7 +73,7 @@ class Operation extends Model
       $row = $query->fetch();
       return ($row && $row["id"] === $this->get_id());
     }
-  
+
     function isLastOperation($tricountId)
     {
       $query = self::execute("SELECT * FROM operations WHERE tricount = :id ORDER BY id DESC LIMIT 1", array("id" => $tricountId));
@@ -155,11 +155,35 @@ class Operation extends Model
         return $result;
     }
 
+    public static function getOperationByTricountAndInitiator($tricount,$user)
+    {
+        $query = self::execute("SELECT * FROM operations WHERE tricount =:tricount AND initiator =:initiator", array("tricount" => $tricount, "initiator" =>$user));
+        $data = $query->fetchAll();
+
+            $result = [];
+            foreach ($data as $row) {
+                $operation_date = (string) $row["operation_date"];
+
+                $created_at = (string) $row["created_at"];
+                $result[] = new Operation(
+                    $row["title"],
+                    $row["tricount"],
+                    $row["amount"],
+                    $operation_date,
+                    $row["initiator"],
+                    $created_at,
+                    $row["id"]
+                );
+            }
+
+        return json_encode($result);
+    }
+
 
 
     public static function get_users_from_operation($operationId)
     {
-        $query = self::execute("SELECT u.* FROM repartitions r, users u  
+        $query = self::execute("SELECT u.* FROM repartitions r, users u
                                         WHERE operation = :operationId
                                         and r.user = u.id;", array("operationId" => $operationId));
         $data = $query->fetchAll();
@@ -169,10 +193,10 @@ class Operation extends Model
             foreach ($data as $row) {
                 $results[] = new User(
                     $row["id"],
-                    $row["mail"], 
+                    $row["mail"],
                     $row["hashed_password"],
-                    $row["full_name"], 
-                    $row["role"], 
+                    $row["full_name"],
+                    $row["role"],
                     $row["iban"]);
             }
             return $results;

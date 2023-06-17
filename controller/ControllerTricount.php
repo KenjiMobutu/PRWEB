@@ -24,8 +24,37 @@ class ControllerTricount extends Controller{
         header('Content-Type: application/json');
         echo json_encode($response);
     }
-}
+  }
 
+  public function postSession1(){
+    $user = $this->get_user_or_redirect();
+
+    $users = User::get_all();
+    if (isset($_POST['userId']) && isset($_POST['userId'])!= null){
+      $userId = $_POST['userId'];
+      $users = User::get_all();
+      $this->redirect("tricount","session1",$userId);
+    }
+    (new View("session1"))->show(array("user" => $user,"users" => $users));
+  }
+
+  public function session1(){
+    $user = $this->get_user_or_redirect();
+    $users='';
+    $users = User::get_all();
+    $subscribedTricount = '';
+    $notSubscribedTricount = '';
+    $userId ='';
+    if(isset($_GET['param1'])){
+      $userId = $_GET['param1'];
+      $users = User::get_all();
+      $subscribedTricount = Tricounts::by_user($userId);
+      $notSubscribedTricount = Tricounts::not_subscribed($userId);
+    }
+    (new View("session1"))->show(array("user" => $user,"users" => $users,
+    "subscribedTricount" => $subscribedTricount,"notSubscribedTricount" => $notSubscribedTricount,
+    "userId" => $userId ));
+  }
 
   public function tricount_list(){
     $loggedUser = $this->get_user_or_redirect();
@@ -174,13 +203,13 @@ class ControllerTricount extends Controller{
         $id = $_GET['param1'];
         $title = Tools::sanitize($_POST["title"]);
         $tricount = Tricounts::get_by_id($id);
-        
+
         /**
          *  sans le ucfirst(strtolower($title)) on recoit l'erreur de constraint.
          */
         if($tricount->get_title() !== $title)
           $errors = Tricounts::validate_title(ucfirst(strtolower($title)) , $user_id);
-        // var_dump($tricount->get_title(). " ---- ". $title); 
+        // var_dump($tricount->get_title(). " ---- ". $title);
         // foreach($errors as $e)
         //     var_dump($e);
         // die();
