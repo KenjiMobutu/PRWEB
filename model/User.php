@@ -23,7 +23,7 @@ class User extends Model
         $this->mail = $mail;
         $this->hashed_password = $hashed_password;
         $this->full_name = $full_name;
-        $this->role = self::ROLE_USER;
+        $this->role = $role;
         $this->iban = $iban;
     }
 

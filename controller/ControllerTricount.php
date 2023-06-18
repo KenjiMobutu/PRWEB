@@ -39,6 +39,37 @@ class ControllerTricount extends Controller{
     $tricounts_list = Tricounts::list($user->getUserId());
     (new View("list_tricounts"))->show(array("loggedUser" => $loggedUser, "user" => $user, "tricounts_list"=>$tricounts_list));
   }
+  public function session1(){
+    $user = $this->get_user_or_redirect();
+    $users = User::get_all();
+    if($user->isAdmin()){
+      if(isset($_POST['userId'])){
+        $selectedUser = $_POST['userId'];
+        $this->redirect("tricount","resultSession1",$selectedUser);
+      }
+      (new View("session1"))->show(array("user" => $user, "users" => $users));
+    }else {
+      $this->redirect("user","profile");
+    }
+
+  }
+
+  public function resultSession1(){
+    $user = $this->get_user_or_redirect();
+    $users = User::get_all();
+    if($user->isAdmin()){
+      if(isset($_GET['param1'])){
+        $selectedUser = $_GET['param1'];
+        $subscribedTricount = Tricounts::by_user($selectedUser);
+        $notSubscribedTricount  = Tricounts::not_participate_by_user($selectedUser);
+      }
+
+      (new View("session1"))->show(array("selectedUser" => $selectedUser,"user" => $user, "users" => $users, "subscribedTricount" => $subscribedTricount, "notSubscribedTricount" => $notSubscribedTricount));
+    }else {
+      $this->redirect("user","profile");
+    }
+
+  }
 
   public function add(){
     $user = $this->get_user_or_redirect();
